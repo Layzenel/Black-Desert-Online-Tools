@@ -1,14 +1,18 @@
-name: Black Desert Online Tools
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # Или ваша основная ветка
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -22,6 +26,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
+
+      # 👇 КЛЮЧЕВОЙ ШАГ: Даем права на выполнение gradlew
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
