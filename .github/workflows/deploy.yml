@@ -39,7 +39,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/dist/wasmJs/productionExecutable
+          path: webApp/build/dist/wasmJs/productionExecutable
 
   # 👇 ВАЖНО: deploy job должен быть отдельным и иметь environment
   deploy:
