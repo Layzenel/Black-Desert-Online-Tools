@@ -23,6 +23,7 @@ data class AppTypography(
     val value: TextStyle,
 )
 
+/** Стили текста темы с заданным шрифтом. */
 fun appTypography(fontFamily: FontFamily = FontFamily.Default) = AppTypography(
     windowTitle = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp, lineHeight = 20.sp),
     sectionTitle = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 14.sp, lineHeight = 18.sp),

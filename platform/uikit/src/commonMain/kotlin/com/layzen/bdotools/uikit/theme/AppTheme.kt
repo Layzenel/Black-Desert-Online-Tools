@@ -11,8 +11,11 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.font.FontFamily
 
+/** Палитра текущей темы. Читать через [AppTheme.colors]. */
 val LocalAppColors = staticCompositionLocalOf { DefaultAppColors }
+/** Текстовые стили текущей темы. Читать через [AppTheme.typography]. */
 val LocalAppTypography = staticCompositionLocalOf { appTypography() }
+/** Отступы и размеры текущей темы. Читать через [AppTheme.dimens]. */
 val LocalAppDimens = staticCompositionLocalOf { AppDimens() }
 
 /**
@@ -42,6 +45,7 @@ fun AppTheme(
     }
 }
 
+/** Доступ к токенам темы из composable-функций: `AppTheme.colors`, `AppTheme.typography`, `AppTheme.dimens`. */
 object AppTheme {
     val colors: AppColors
         @Composable @ReadOnlyComposable get() = LocalAppColors.current

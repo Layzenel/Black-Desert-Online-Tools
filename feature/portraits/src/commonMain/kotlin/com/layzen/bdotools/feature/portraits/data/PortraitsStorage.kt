@@ -1,32 +1,5 @@
 package com.layzen.bdotools.feature.portraits.data
 
-/** Состояние доступа к папке `Документы\Black Desert`. */
-sealed interface FolderAccess {
-    /** Браузер не умеет записывать в папки на диске (не Chromium). */
-    data object Unsupported : FolderAccess
-
-    /** Папка ещё ни разу не выбиралась. */
-    data object NotSelected : FolderAccess
-
-    /** Папка выбрана раньше, но после перезагрузки страницы браузер снова спрашивает разрешение. */
-    data class NeedsPermission(val folderName: String) : FolderAccess
-
-    data class Granted(val folderName: String) : FolderAccess
-}
-
-enum class PortraitsError {
-    Cancelled,
-    NotGameFolder,
-    Permission,
-    Blocked,
-    Network,
-    NotImage,
-    Unknown,
-}
-
-class PortraitsException(val error: PortraitsError, details: String? = null) :
-    Exception(details ?: error.name)
-
 /** Файлы игры в папке `Документы\Black Desert`. Все методы, кроме [access], требуют [FolderAccess.Granted]. */
 interface PortraitsStorage {
     suspend fun access(): FolderAccess
@@ -67,12 +40,4 @@ interface PortraitsStorage {
     suspend fun writeToolFile(name: String, bytes: ByteArray)
 
     suspend fun deleteToolFile(name: String)
-}
-
-/** Источник нового изображения для портрета. */
-interface ImageSource {
-    /** Выбор файла на устройстве. `null`, если пользователь закрыл окно выбора. */
-    suspend fun pickFromDevice(): ByteArray?
-
-    suspend fun download(url: String): ByteArray
 }

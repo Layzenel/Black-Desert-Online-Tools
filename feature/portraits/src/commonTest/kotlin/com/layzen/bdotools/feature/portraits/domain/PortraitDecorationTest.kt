@@ -23,8 +23,8 @@ class PortraitDecorationTest {
     @Test
     fun removingBadgeClearsSlot() {
         val decoration = PortraitDecoration()
-            .withBadge(BadgeSlot.LeftUpper, BadgeIcon.Gatherer)
-            .withBadge(BadgeSlot.LeftUpper, null)
+            .withBadge(BadgeSlot.Left, BadgeIcon.Gatherer)
+            .withBadge(BadgeSlot.Left, null)
 
         assertTrue(decoration.badges.isEmpty())
     }
@@ -34,11 +34,11 @@ class PortraitDecorationTest {
         val decoration = PortraitDecoration()
             .withCaption("Твинк артефакта")
             .withBadge(BadgeSlot.Top, BadgeIcon.Fisher)
-            .withBadge(BadgeSlot.RightUpper, BadgeIcon.HorseBreeder)
+            .withBadge(BadgeSlot.Right, BadgeIcon.HorseBreeder)
 
         val text = encodeDecoration(decoration)
 
-        assertEquals("caption=Твинк артефакта\ntop=fisher\nright-top=horse-breeder\n", text)
+        assertEquals("caption=Твинк артефакта\ntop=fisher\nright=horse-breeder\n", text)
         assertEquals(decoration, decodeDecoration(text))
     }
 
@@ -57,18 +57,18 @@ class PortraitDecorationTest {
     }
 
     @Test
-    fun legacySideKeysMapToUpperSlots() {
-        val decoration = decodeDecoration("left=sailor\nright=barter\nleft-bottom=fisher\n")
+    fun legacyPairedSideKeysKeepUpperBadge() {
+        // версия с двумя значками сбоку: верхний остаётся, нижний используется, только если верхнего нет
+        val decoration = decodeDecoration("left-top=sailor\nleft-bottom=fisher\nright-bottom=barter\n")
 
         assertEquals(
             mapOf(
-                BadgeSlot.LeftUpper to BadgeIcon.Sailor,
-                BadgeSlot.RightUpper to BadgeIcon.Barter,
-                BadgeSlot.LeftLower to BadgeIcon.Fisher,
+                BadgeSlot.Left to BadgeIcon.Sailor,
+                BadgeSlot.Right to BadgeIcon.Barter,
             ),
             decoration.badges,
         )
-        assertEquals("left-top=sailor\nleft-bottom=fisher\nright-top=barter\n", encodeDecoration(decoration))
+        assertEquals("left=sailor\nright=barter\n", encodeDecoration(decoration))
     }
 
     @Test

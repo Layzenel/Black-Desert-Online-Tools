@@ -52,7 +52,8 @@ feature/<имя>/
     ├── commonMain/kotlin/com/layzen/bdotools/feature/<пакет>/
     │   ├── domain/        формулы и модели, чистый Kotlin без Compose
     │   ├── data/          источники данных (JSON, API), если нужны
-    │   ├── presentation/  <Имя>State, <Имя>Event, <Имя>ViewModel, <Имя>Screen, <Имя>Dimens
+    │   ├── presentation/  <Имя>ViewModel; state/, event/, ui/ (экран и его части по папкам),
+    │   │                  controller/ — если ViewModel разрастается (см. скилл clean-code)
     │   └── di/            <имя>Module (Koin)
     └── commonTest/kotlin/com/layzen/bdotools/feature/<пакет>/
         └── domain/        тесты формул — обязательны
