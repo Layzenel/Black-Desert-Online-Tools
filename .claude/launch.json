@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "webApp-wasm",
+      "runtimeExecutable": "D:/IntellijIdea/Projects/BDO/Black Desert Online Tools/gradlew.bat",
+      "runtimeArgs": ["-p", "D:/IntellijIdea/Projects/BDO/Black Desert Online Tools", ":webApp:wasmJsBrowserDevelopmentRun", "--continuous"],
+      "port": 8080
+    }
+  ]
+}

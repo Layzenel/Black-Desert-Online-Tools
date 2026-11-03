@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Серп: изогнутое лезвие и рукоять -->
+  <path fill="#FFFFFF" d="M25 43 C11 33 12 12 30 7 C44 3 57 12 58 25 C53 17 44 12 34 13 C21 15 17 30 29 40 Z"/>
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round">
+    <path d="M26 42 L28 45" stroke-width="5"/>
+    <path d="M27 45 L15 59" stroke-width="7"/>
+  </g>
+</svg>

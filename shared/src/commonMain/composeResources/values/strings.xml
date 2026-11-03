@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_title">BDO Tools</string>
+
+    <!-- Вкладки верхней навигации -->
+    <string name="tab_portraits">Портреты</string>
+    <string name="tab_2">Вкладка 2</string>
+    <string name="tab_3">Вкладка 3</string>
+    <string name="tab_4">Вкладка 4</string>
+    <string name="tab_5">Вкладка 5</string>
+
+    <!-- Заглушка вкладки без фичи -->
+    <string name="placeholder_title">Раздел в разработке</string>
+    <string name="placeholder_description">Скоро здесь появится новый инструмент.</string>
+</resources>

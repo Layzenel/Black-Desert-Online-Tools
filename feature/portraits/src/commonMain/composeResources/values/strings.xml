@@ -1,0 +1,125 @@
+<resources>
+    <string name="portraits_title">Портреты</string>
+
+    <!-- Доступ к папке игры -->
+    <string name="portraits_checking_access">Проверяю доступ к папке игры…</string>
+    <string name="portraits_unsupported_title">Браузер не поддерживается</string>
+    <string name="portraits_unsupported_description">Замена портретов работает только в Chrome, Edge, Opera и Яндекс.Браузере: другие браузеры не умеют записывать файлы в папки на компьютере.</string>
+    <string name="portraits_folder_title">Папка игры</string>
+    <string name="portraits_folder_description">Выберите папку «Документы\\Black Desert». Сайт прочитает портреты из FaceTexture, порядок персонажей из UserCache и сможет записать новые портреты.</string>
+    <string name="portraits_folder_select">Выбрать папку</string>
+    <string name="portraits_permission_description">Браузер снова спрашивает разрешение на папку «%1$s». Разрешите доступ, чтобы загрузить портреты.</string>
+    <string name="portraits_permission_request">Разрешить доступ</string>
+    <string name="portraits_folder_change">Сменить папку</string>
+
+    <!-- Сетка портретов -->
+    <string name="portraits_loading">Загружаю портреты…</string>
+    <string name="portraits_empty">В папке FaceTexture нет портретов.</string>
+    <string name="portraits_grid_title">Персонажи: %1$d</string>
+    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Нажмите на портрет, чтобы заменить только его.</string>
+    <string name="portraits_upload">Загрузить изображение</string>
+    <string name="portraits_reload">Обновить</string>
+    <string name="portraits_dismiss">Скрыть</string>
+
+    <!-- Выбор источника -->
+    <string name="portraits_source_title_all">Изображение для всех портретов</string>
+    <string name="portraits_source_title_one">Изображение для портрета</string>
+    <string name="portraits_source_device">С устройства</string>
+    <string name="portraits_source_device_description">PNG, JPG, WEBP, BMP или GIF с этого компьютера.</string>
+    <string name="portraits_source_device_pick">Выбрать файл</string>
+    <string name="portraits_source_url">По ссылке</string>
+    <string name="portraits_source_url_description">Прямая ссылка на картинку.</string>
+    <string name="portraits_source_url_placeholder">https://…</string>
+    <string name="portraits_source_url_load">Загрузить</string>
+    <string name="portraits_source_loading">Загружаю изображение…</string>
+    <string name="portraits_cancel">Отмена</string>
+
+    <!-- Подгонка под маску -->
+    <string name="portraits_editor_title_all">Подгонка изображения</string>
+    <string name="portraits_editor_title_one">Подгонка портрета</string>
+    <string name="portraits_editor_hint">Перетаскивайте изображение мышью, колесо меняет масштаб. Отступы между ячейками в игру не попадут.</string>
+    <string name="portraits_editor_zoom">Масштаб, %</string>
+    <string name="portraits_editor_rotation">Поворот, °</string>
+    <string name="portraits_editor_reset">Сбросить</string>
+    <string name="portraits_editor_apply">Применить</string>
+    <string name="portraits_editor_saving">Сохраняю портреты…</string>
+
+    <!-- Сообщения -->
+    <string name="portraits_saved">Портреты сохранены. Старые файлы — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
+    <string name="portraits_error_not_game_folder">В выбранной папке нет FaceTexture. Выберите «Документы\\Black Desert».</string>
+    <string name="portraits_error_permission">Браузер не дал доступ к папке. Попробуйте ещё раз и нажмите «Разрешить».</string>
+    <string name="portraits_error_blocked">Сайт с картинкой не разрешает скачивать её с других сайтов. Сохраните картинку на компьютер и загрузите её с устройства.</string>
+    <string name="portraits_error_network">Не удалось скачать картинку по ссылке. Проверьте адрес.</string>
+    <string name="portraits_error_not_image">Это не изображение или формат не поддерживается.</string>
+    <string name="portraits_error_unknown">Что-то пошло не так: %1$s</string>
+
+    <!-- Меню портрета -->
+    <string name="portraits_menu_replace">Заменить портрет</string>
+    <string name="portraits_menu_caption">Надпись</string>
+    <string name="portraits_menu_badges">Значки</string>
+
+    <!-- Надпись -->
+    <string name="portraits_caption_title">Надпись на портрете</string>
+    <string name="portraits_caption_field">Текст</string>
+    <string name="portraits_caption_description">До 24 символов. Длинная надпись переносится на вторую строку, а шрифт уменьшается, чтобы она влезла. Плашка стоит над нижней полосой игры и не закрывает уровень.</string>
+    <string name="portraits_caption_placeholder">Например, Рыбак</string>
+    <string name="portraits_caption_counter">%1$d / %2$d</string>
+    <string name="portraits_caption_clear">Убрать надпись</string>
+
+    <!-- Значки -->
+    <string name="portraits_badges_title">Значки на портрете</string>
+    <string name="portraits_badges_description">Сверху значок встаёт между значками игры, слева и справа — по два у краёв портрета, над надписью.</string>
+    <string name="portraits_badges_clear">Убрать значки</string>
+    <string name="portraits_badge_slot_top">Сверху</string>
+    <string name="portraits_badge_slot_left_upper">Слева вверху</string>
+    <string name="portraits_badge_slot_left_lower">Слева внизу</string>
+    <string name="portraits_badge_slot_right_upper">Справа вверху</string>
+    <string name="portraits_badge_slot_right_lower">Справа внизу</string>
+    <string name="portraits_badge_none">Нет</string>
+    <string name="portraits_badge_fisher">Рыбак</string>
+    <string name="portraits_badge_horse_breeder">Коневод</string>
+    <string name="portraits_badge_gatherer">Собиратель</string>
+    <string name="portraits_badge_sailor">Моряк</string>
+    <string name="portraits_badge_barter">Бартер</string>
+
+    <!-- Предпросмотр -->
+    <string name="portraits_preview_hint">Затемнённые полосы — места, где игра рисует уровень и свои значки.</string>
+    <string name="portraits_decoration_loading">Загружаю портрет…</string>
+    <string name="portraits_decoration_saved">Портрет обновлён. Старый файл — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
+
+    <string name="portraits_menu_restore">Из резервной копии</string>
+
+    <!-- Резервные копии -->
+    <string name="portraits_restore_button">Резервные копии</string>
+    <string name="portraits_restore_title_all">Резервные копии</string>
+    <string name="portraits_restore_title_one">Портрет из резервной копии</string>
+    <string name="portraits_restore_empty">Резервных копий пока нет. Они появляются перед каждой записью портретов.</string>
+    <string name="portraits_restore_backups">Копии</string>
+    <string name="portraits_restore_portraits">Портреты в копии: %1$d</string>
+    <string name="portraits_restore_description_all">Отмеченные портреты заменят текущие.</string>
+    <string name="portraits_restore_description_one">Выберите версию портрета.</string>
+    <string name="portraits_restore_warning">Надписи и значки у восстановленных портретов пропадут. На картинке из копии они могут остаться нарисованными, но изменить их или сохранить при следующей замене картинки уже не получится.</string>
+    <string name="portraits_restore_check_all">Отметить все</string>
+    <string name="portraits_restore_uncheck_all">Снять отметки</string>
+    <string name="portraits_restore_current">Сейчас</string>
+    <string name="portraits_restore_apply">Восстановить</string>
+    <string name="portraits_restore_apply_count">Восстановить (%1$d)</string>
+    <string name="portraits_restore_loading">Загружаю превью…</string>
+    <string name="portraits_restored">Портреты восстановлены. Файлы, которые были до этого, сохранены в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
+
+    <!-- Ожидание -->
+    <string name="portraits_busy_loading">Загружаю портреты</string>
+    <string name="portraits_busy_rendering">Готовлю портреты</string>
+    <string name="portraits_busy_saving">Сохраняю портреты</string>
+    <string name="portraits_busy_restoring">Читаю резервную копию</string>
+    <string name="portraits_busy_progress">%1$d из %2$d</string>
+
+
+    <!-- Удаление резервных копий -->
+    <string name="portraits_backups_delete">Удалить (%1$d)</string>
+    <string name="portraits_backups_delete_title">Удалить резервные копии?</string>
+    <string name="portraits_backups_delete_text">Будут удалены копии: %1$d. Портреты из них вернуть уже не получится.</string>
+    <string name="portraits_backups_delete_confirm">Удалить</string>
+    <string name="portraits_backups_deleted">Удалено резервных копий: %1$d.</string>
+    <string name="portraits_busy_deleting">Удаляю резервные копии</string>
+</resources>

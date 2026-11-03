@@ -19,6 +19,9 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":platform:composable"))
+            implementation(project(":feature:portraits"))
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -35,4 +38,8 @@ kotlin {
             implementation(libs.wrappers.browser)
         }
     }
+}
+
+compose.resources {
+    packageOfResClass = "com.layzen.bdotools.resources"
 }

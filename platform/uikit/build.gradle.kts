@@ -30,3 +30,7 @@ kotlin {
         }
     }
 }
+
+compose.resources {
+    packageOfResClass = "com.layzen.bdotools.uikit.resources"
+}
