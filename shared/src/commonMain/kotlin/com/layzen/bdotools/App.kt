@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.terrakok.navigation3.browser.ChronologicalBrowserNavigation
 import com.layzen.bdotools.feature.portraits.di.portraitsModule
-import com.layzen.bdotools.feature.portraits.presentation.PortraitsRoute
+import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsRoute
 import com.layzen.bdotools.navigation.AppTab
 import com.layzen.bdotools.navigation.Destination
 import com.layzen.bdotools.navigation.PlaceholderScreen

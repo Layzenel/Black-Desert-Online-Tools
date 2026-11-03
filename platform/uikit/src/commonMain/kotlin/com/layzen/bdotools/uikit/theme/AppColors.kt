@@ -50,6 +50,7 @@ data class AppColors(
     val onBadge: Color,
 )
 
+/** Значения палитры, снятые со скриншотов окон игры. */
 val DefaultAppColors = AppColors(
     backgroundDeep = Color(0xFF18181A),
     backgroundSurface = Color(0xFF222226),

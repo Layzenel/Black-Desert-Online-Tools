@@ -29,6 +29,7 @@ internal val BadgeIcon.drawable: DrawableResource
         BadgeIcon.Barter -> Res.drawable.badge_barter
     }
 
+/** Название значка в списках выбора. */
 internal val BadgeIcon.label: StringResource
     get() = when (this) {
         BadgeIcon.Fisher -> Res.string.portraits_badge_fisher
@@ -38,6 +39,7 @@ internal val BadgeIcon.label: StringResource
         BadgeIcon.Barter -> Res.string.portraits_badge_barter
     }
 
+/** Название места значка в окне значков. */
 internal val BadgeSlot.label: StringResource
     get() = when (this) {
         BadgeSlot.Top -> Res.string.portraits_badge_slot_top

@@ -1,6 +1,5 @@
 package com.layzen.bdotools.uikit.theme
 
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -71,15 +70,3 @@ data class AppDimens(
     val sliderTrackHeight: Dp = 3.dp,
     val sliderThumbSize: Dp = 10.dp,
 )
-
-object AppShapes {
-    val Sharp = RoundedCornerShape(0.dp)
-    val Small = RoundedCornerShape(2.dp)
-    val Pill = RoundedCornerShape(percent = 50)
-
-    /** Всплывающие меню: заметно скруглены, чтобы отличаться от окон. */
-    val Menu = RoundedCornerShape(6.dp)
-
-    /** Подсветка пункта внутри всплывающего меню. */
-    val MenuItem = RoundedCornerShape(4.dp)
-}

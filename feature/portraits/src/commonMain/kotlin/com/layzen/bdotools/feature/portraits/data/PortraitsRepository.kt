@@ -11,18 +11,6 @@ import com.layzen.bdotools.feature.portraits.domain.sortByCharacterOrder
 private const val BASE_EXTENSION = ".bmp"
 private const val DECORATION_EXTENSION = ".txt"
 
-/**
- * Что записать для одного персонажа.
- * [face] уходит в `FaceTexture`. Если [decoration] не пустое, рядом сохраняются [cleanBase] — портрет без
- * украшений — и само украшение, чтобы его можно было поменять позже. Пустое украшение удаляет оба файла.
- */
-class PortraitWrite(
-    val characterId: String,
-    val face: ByteArray,
-    val cleanBase: ByteArray,
-    val decoration: PortraitDecoration,
-)
-
 /** Порядок портретов как в окне выбора персонажа и запись новых портретов с резервной копией. */
 class PortraitsRepository(private val storage: PortraitsStorage) {
 
