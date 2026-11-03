@@ -48,6 +48,10 @@ data class AppColors(
     val badgeNew: Color,
     val badgeHot: Color,
     val onBadge: Color,
+
+    // Силуэт индикатора загрузки
+    val silhouette: Color,
+    val silhouetteOutline: Color,
 )
 
 /** Значения палитры, снятые со скриншотов окон игры. */
@@ -85,4 +89,7 @@ val DefaultAppColors = AppColors(
     badgeNew = Color(0xFFD09820),
     badgeHot = Color(0xFFD05020),
     onBadge = Color(0xFFF8F8F8),
+
+    silhouette = Color(0xFF000000),
+    silhouetteOutline = Color(0xFFE0C8A0),
 )

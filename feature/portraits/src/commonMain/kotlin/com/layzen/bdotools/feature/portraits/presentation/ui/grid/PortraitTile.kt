@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import com.layzen.bdotools.feature.portraits.domain.PortraitTexture
-import com.layzen.bdotools.uikit.components.Spinner
+import com.layzen.bdotools.uikit.components.RunningGoblin
 import com.layzen.bdotools.uikit.components.Tile
 import com.layzen.bdotools.uikit.theme.AppTheme
 
@@ -33,7 +33,7 @@ internal fun PortraitTile(
 ) {
     Tile(modifier.fillMaxWidth().aspectRatio(PORTRAIT_RATIO), selected = selected, onClick = onClick) {
         if (image == null) {
-            Spinner(Modifier.align(Alignment.Center), size = AppTheme.dimens.iconSize)
+            RunningGoblin(Modifier.align(Alignment.Center))
         } else {
             Image(
                 bitmap = image,

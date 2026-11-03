@@ -38,14 +38,14 @@ data class AppDimens(
     val iconSize: Dp = 20.dp,
     val closeIconSize: Dp = 12.dp,
 
-    // Меню по наведению
-    val popupMenuWidth: Dp = 200.dp,
-    val popupMenuItemHeight: Dp = 32.dp,
-    val popupMenuItemInset: Dp = 3.dp,
+    // Меню действий по наведению
+    val actionMenuItemHeight: Dp = 32.dp,
+    val actionMenuItemInset: Dp = 3.dp,
 
     // Ожидание
-    val spinnerSize: Dp = 36.dp,
-    val spinnerStroke: Dp = 3.dp,
+    val loaderSize: Dp = 44.dp,
+    val loaderSmallSize: Dp = 26.dp,
+    val loaderOutline: Dp = 1.dp,
     val progressHeight: Dp = 4.dp,
     val busyOverlayWidth: Dp = 320.dp,
 

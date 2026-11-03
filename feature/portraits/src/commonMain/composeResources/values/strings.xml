@@ -16,7 +16,7 @@
     <string name="portraits_loading">Загружаю портреты…</string>
     <string name="portraits_empty">В папке FaceTexture нет портретов.</string>
     <string name="portraits_grid_title">Персонажи: %1$d</string>
-    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Нажмите на портрет, чтобы заменить только его. Для применения изменения портрета закройте окно выбора персонажа в игре.</string>
+    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Наведите курсор на портрет, чтобы заменить его, добавить надпись или значки. Для применения изменения портрета закройте окно выбора персонажа в игре.</string>
     <string name="portraits_upload">Загрузить изображение</string>
     <string name="portraits_reload">Обновить</string>
     <string name="portraits_dismiss">Скрыть</string>
@@ -54,7 +54,7 @@
     <string name="portraits_error_unknown">Что-то пошло не так: %1$s</string>
 
     <!-- Меню портрета -->
-    <string name="portraits_menu_replace">Заменить портрет</string>
+    <string name="portraits_menu_replace">Заменить</string>
     <string name="portraits_menu_caption">Надпись</string>
     <string name="portraits_menu_badges">Значки</string>
 
@@ -85,7 +85,7 @@
     <string name="portraits_decoration_loading">Загружаю портрет…</string>
     <string name="portraits_decoration_saved">Портрет обновлён. Старый файл — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
 
-    <string name="portraits_menu_restore">Из резервной копии</string>
+    <string name="portraits_menu_restore">Резервные копии</string>
 
     <!-- Резервные копии -->
     <string name="portraits_restore_button">Резервные копии</string>
