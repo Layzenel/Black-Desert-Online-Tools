@@ -33,7 +33,7 @@ fun BusyOverlay(text: String, progress: Float? = null, details: String? = null) 
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
         ) {
-            Spinner()
+            RunningGoblin()
             Text(text, style = AppTheme.typography.sectionTitle, color = AppTheme.colors.textBeige)
             if (progress != null) ProgressBar(progress)
             if (details != null) DescriptionText(details)

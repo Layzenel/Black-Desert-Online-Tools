@@ -43,8 +43,9 @@ data class AppDimens(
     val actionMenuItemInset: Dp = 3.dp,
 
     // Ожидание
-    val spinnerSize: Dp = 36.dp,
-    val spinnerStroke: Dp = 3.dp,
+    val loaderSize: Dp = 44.dp,
+    val loaderSmallSize: Dp = 26.dp,
+    val loaderOutline: Dp = 1.dp,
     val progressHeight: Dp = 4.dp,
     val busyOverlayWidth: Dp = 320.dp,
 
