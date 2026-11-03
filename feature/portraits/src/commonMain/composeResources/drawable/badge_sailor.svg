@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Якорь: кольцо, шток с перекладиной и рога с лапами -->
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="32" cy="10" r="5" stroke-width="4"/>
+    <path d="M32 15 L32 55" stroke-width="5.5"/>
+    <path d="M21 22 L43 22" stroke-width="5"/>
+    <path d="M10 38 C12 50 21 56 32 56 C43 56 52 50 54 38" stroke-width="5"/>
+  </g>
+  <path fill="#FFFFFF" d="M4 43 L10 32 L17 42 Z M60 43 L54 32 L47 42 Z"/>
+</svg>
