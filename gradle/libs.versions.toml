@@ -5,6 +5,10 @@ junit = "4.13.2"
 kotlin = "2.4.10"
 kotlin-wrappers = "2026.7.2"
 material3 = "1.11.0-alpha07"
+koin = "4.2.2"
+kotlinx-coroutines = "1.11.0"
+compose-multiplatform-navigation3-browser = "1.1.0"
+file-picker = "0.14.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -19,6 +23,15 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMul
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+navigation3-browser = { module = "com.github.terrakok:navigation3-browser", version.ref = "compose-multiplatform-navigation3-browser" }
+file-picker-core = { module = "io.github.vinceglb:filekit-core", version.ref = "file-picker" }
+file-picker-dialogs = { module = "io.github.vinceglb:filekit-dialogs", version.ref = "file-picker" }
+file-picker-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "file-picker" }
+file-picker-coil = { module = "io.github.vinceglb:filekit-coil", version.ref = "file-picker" }
 
 [plugins]
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }

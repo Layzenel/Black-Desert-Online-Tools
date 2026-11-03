@@ -29,3 +29,7 @@ dependencyResolutionManagement {
 
 include(":shared")
 include(":webApp")
+include("platform")
+include("platform:core")
+include("platform:composable")
+include("platform:uikit")
