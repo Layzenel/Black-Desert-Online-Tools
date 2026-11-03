@@ -16,7 +16,7 @@
     <string name="portraits_loading">Загружаю портреты…</string>
     <string name="portraits_empty">В папке FaceTexture нет портретов.</string>
     <string name="portraits_grid_title">Персонажи: %1$d</string>
-    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Нажмите на портрет, чтобы заменить только его.</string>
+    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Нажмите на портрет, чтобы заменить только его. Для применения изменения портрета закройте окно выбора персонажа в игре.</string>
     <string name="portraits_upload">Загрузить изображение</string>
     <string name="portraits_reload">Обновить</string>
     <string name="portraits_dismiss">Скрыть</string>
@@ -68,13 +68,11 @@
 
     <!-- Значки -->
     <string name="portraits_badges_title">Значки на портрете</string>
-    <string name="portraits_badges_description">Сверху значок встаёт между значками игры, слева и справа — по два у краёв портрета, над надписью.</string>
+    <string name="portraits_badges_description">Сверху значок встаёт между значками игры, слева и справа — у краёв портрета, над надписью.</string>
     <string name="portraits_badges_clear">Убрать значки</string>
     <string name="portraits_badge_slot_top">Сверху</string>
-    <string name="portraits_badge_slot_left_upper">Слева вверху</string>
-    <string name="portraits_badge_slot_left_lower">Слева внизу</string>
-    <string name="portraits_badge_slot_right_upper">Справа вверху</string>
-    <string name="portraits_badge_slot_right_lower">Справа внизу</string>
+    <string name="portraits_badge_slot_left">Слева</string>
+    <string name="portraits_badge_slot_right">Справа</string>
     <string name="portraits_badge_none">Нет</string>
     <string name="portraits_badge_fisher">Рыбак</string>
     <string name="portraits_badge_horse_breeder">Коневод</string>

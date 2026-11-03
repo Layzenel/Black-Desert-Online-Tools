@@ -13,10 +13,8 @@ import com.layzen.bdotools.feature.portraits.resources.portraits_badge_fisher
 import com.layzen.bdotools.feature.portraits.resources.portraits_badge_gatherer
 import com.layzen.bdotools.feature.portraits.resources.portraits_badge_horse_breeder
 import com.layzen.bdotools.feature.portraits.resources.portraits_badge_sailor
-import com.layzen.bdotools.feature.portraits.resources.portraits_badge_slot_left_lower
-import com.layzen.bdotools.feature.portraits.resources.portraits_badge_slot_left_upper
-import com.layzen.bdotools.feature.portraits.resources.portraits_badge_slot_right_lower
-import com.layzen.bdotools.feature.portraits.resources.portraits_badge_slot_right_upper
+import com.layzen.bdotools.feature.portraits.resources.portraits_badge_slot_left
+import com.layzen.bdotools.feature.portraits.resources.portraits_badge_slot_right
 import com.layzen.bdotools.feature.portraits.resources.portraits_badge_slot_top
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -43,8 +41,6 @@ internal val BadgeIcon.label: StringResource
 internal val BadgeSlot.label: StringResource
     get() = when (this) {
         BadgeSlot.Top -> Res.string.portraits_badge_slot_top
-        BadgeSlot.LeftUpper -> Res.string.portraits_badge_slot_left_upper
-        BadgeSlot.LeftLower -> Res.string.portraits_badge_slot_left_lower
-        BadgeSlot.RightUpper -> Res.string.portraits_badge_slot_right_upper
-        BadgeSlot.RightLower -> Res.string.portraits_badge_slot_right_lower
+        BadgeSlot.Left -> Res.string.portraits_badge_slot_left
+        BadgeSlot.Right -> Res.string.portraits_badge_slot_right
     }

@@ -16,21 +16,19 @@ enum class BadgeIcon(val key: String) {
 
 /**
  * Место значка. Углы портрета заняты значками игры, поэтому один значок по центру верхней полосы
- * и по два у левого и правого краёв.
+ * и по одному у левого и правого краёв.
  */
 enum class BadgeSlot(val key: String) {
     Top("top"),
-    LeftUpper("left-top"),
-    LeftLower("left-bottom"),
-    RightUpper("right-top"),
-    RightLower("right-bottom"),
+    Left("left"),
+    Right("right"),
     ;
 
     companion object {
-        /** `left` и `right` — ключи из первой версии, когда сбоку было по одному значку. */
+        /** `left-top`, `left-bottom` и т. д. — ключи из версии, где сбоку было по два значка. */
         fun fromKey(key: String): BadgeSlot? = when (key) {
-            "left" -> LeftUpper
-            "right" -> RightUpper
+            "left-top", "left-bottom" -> Left
+            "right-top", "right-bottom" -> Right
             else -> entries.firstOrNull { it.key == key }
         }
     }
@@ -81,6 +79,8 @@ fun decodeDecoration(text: String): PortraitDecoration =
             val slot = BadgeSlot.fromKey(key)
             when {
                 key == CAPTION_KEY -> decoration.withCaption(value)
+                // из двух старых боковых значков остаётся верхний: нижний не перезаписывает занятое место
+                slot != null && key.endsWith("-bottom") && slot in decoration.badges -> decoration
                 slot != null -> decoration.withBadge(slot, BadgeIcon.fromKey(value.trim()))
                 else -> decoration
             }
