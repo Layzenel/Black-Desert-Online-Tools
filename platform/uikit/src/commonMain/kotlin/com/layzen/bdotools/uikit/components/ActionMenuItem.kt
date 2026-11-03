@@ -18,12 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import com.layzen.bdotools.uikit.theme.AppShapes
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Пункт меню [HoverMenuBox]. */
+/** Пункт меню действий [HoverActionsBox]: кликается вся строка, подсвечивается скруглённая плашка. */
 @Composable
-fun PopupMenuItem(
+fun ActionMenuItem(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -39,12 +40,12 @@ fun PopupMenuItem(
             .fillMaxWidth()
             .pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default)
             .clickable(interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
-            .padding(horizontal = dimens.spaceXs, vertical = dimens.popupMenuItemInset),
+            .padding(horizontal = dimens.spaceXs, vertical = dimens.actionMenuItemInset),
     ) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .heightIn(min = dimens.popupMenuItemHeight - dimens.popupMenuItemInset * 2)
+                .heightIn(min = dimens.actionMenuItemHeight - dimens.actionMenuItemInset * 2)
                 .background(if (hovered && enabled) colors.backgroundSelected else Color.Transparent, AppShapes.MenuItem)
                 .padding(horizontal = dimens.spaceS),
             contentAlignment = Alignment.CenterStart,
@@ -57,7 +58,8 @@ fun PopupMenuItem(
                     hovered -> colors.accentGold
                     else -> colors.textPrimary
                 },
-                maxLines = 1,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

@@ -15,10 +15,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionMenuDivider
+import com.layzen.bdotools.uikit.components.ActionMenuItem
 import com.layzen.bdotools.uikit.components.GameWindow
-import com.layzen.bdotools.uikit.components.HoverMenuBox
+import com.layzen.bdotools.uikit.components.HoverActionsBox
 import com.layzen.bdotools.uikit.components.ModalWindow
-import com.layzen.bdotools.uikit.components.PopupMenuItem
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.Tile
 import com.layzen.bdotools.uikit.components.ValueText
@@ -37,7 +38,7 @@ import com.layzen.bdotools.uikit.resources.showcase_modal_title
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
-/** Пример окна выбора персонажа: плитки с меню по наведению и модальное окно. */
+/** Пример окна выбора персонажа: плитки с действиями по наведению и модальное окно. */
 @Composable
 internal fun TilesSample(modifier: Modifier) {
     var selected by remember { mutableIntStateOf(0) }
@@ -79,20 +80,15 @@ internal fun TilesSample(modifier: Modifier) {
                 Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
                     (0 until 4).forEach { col ->
                         val index = row * 4 + col
-                        HoverMenuBox(
+                        HoverActionsBox(
                             modifier = Modifier.size(ShowcaseDimens.tileSize),
-                            menu = { close ->
-                                PopupMenuItem(stringResource(Res.string.showcase_exit_select), onClick = {
-                                    selected = index
-                                    close()
-                                })
-                                PopupMenuItem(stringResource(Res.string.showcase_modal_title), onClick = {
-                                    close()
-                                    modalOpen = true
-                                })
+                            actions = {
+                                ActionMenuItem(stringResource(Res.string.showcase_exit_select), onClick = { selected = index })
+                                ActionMenuDivider()
+                                ActionMenuItem(stringResource(Res.string.showcase_modal_title), onClick = { modalOpen = true })
                             },
-                        ) { menuOpen ->
-                            Tile(Modifier.matchParentSize(), selected = index == selected || menuOpen) {
+                        ) { hovered ->
+                            Tile(Modifier.matchParentSize(), selected = index == selected || hovered) {
                                 Text(
                                     stringResource(Res.string.showcase_exit_tile_stats, 394, 2),
                                     style = AppTheme.typography.bodyBold,

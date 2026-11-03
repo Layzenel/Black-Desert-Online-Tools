@@ -9,9 +9,6 @@ object AppShapes {
     val Small = RoundedCornerShape(2.dp)
     val Pill = RoundedCornerShape(percent = 50)
 
-    /** Всплывающие меню: заметно скруглены, чтобы отличаться от окон. */
-    val Menu = RoundedCornerShape(6.dp)
-
-    /** Подсветка пункта внутри всплывающего меню. */
+    /** Подсветка пункта в меню действий. */
     val MenuItem = RoundedCornerShape(4.dp)
 }

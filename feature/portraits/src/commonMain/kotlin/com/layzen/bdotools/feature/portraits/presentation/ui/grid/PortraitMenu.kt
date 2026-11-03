@@ -10,17 +10,15 @@ import com.layzen.bdotools.feature.portraits.resources.portraits_menu_badges
 import com.layzen.bdotools.feature.portraits.resources.portraits_menu_caption
 import com.layzen.bdotools.feature.portraits.resources.portraits_menu_replace
 import com.layzen.bdotools.feature.portraits.resources.portraits_menu_restore
-import com.layzen.bdotools.uikit.components.PopupMenuDivider
-import com.layzen.bdotools.uikit.components.PopupMenuItem
-import org.jetbrains.compose.resources.StringResource
+import com.layzen.bdotools.uikit.components.ActionMenuDivider
+import com.layzen.bdotools.uikit.components.ActionMenuItem
 import org.jetbrains.compose.resources.stringResource
 
-/** Меню портрета: замена, надпись, значки и — если есть копии — восстановление. */
+/** Действия над портретом: замена, надпись, значки и — если есть копии — восстановление. */
 @Composable
 internal fun ColumnScope.PortraitMenu(
     characterId: String,
     hasBackups: Boolean,
-    close: () -> Unit,
     onEvent: (PortraitsEvent) -> Unit,
 ) {
     val items = buildList {
@@ -30,15 +28,7 @@ internal fun ColumnScope.PortraitMenu(
         if (hasBackups) add(Res.string.portraits_menu_restore to PortraitsEvent.OpenRestore(ReplaceTarget.One(characterId)))
     }
     items.forEachIndexed { index, (title, event) ->
-        if (index > 0) PopupMenuDivider()
-        MenuAction(title) {
-            close()
-            onEvent(event)
-        }
+        if (index > 0) ActionMenuDivider()
+        ActionMenuItem(stringResource(title), onClick = { onEvent(event) })
     }
-}
-
-@Composable
-private fun MenuAction(title: StringResource, onClick: () -> Unit) {
-    PopupMenuItem(stringResource(title), onClick = onClick)
 }

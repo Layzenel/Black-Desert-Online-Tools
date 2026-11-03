@@ -11,7 +11,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 
 /** Тонкая линия между пунктами меню. */
 @Composable
-fun PopupMenuDivider(modifier: Modifier = Modifier) {
+fun ActionMenuDivider(modifier: Modifier = Modifier) {
     Box(
         modifier
             .fillMaxWidth()
