@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -18,7 +19,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Поле ввода (поиск, числа в калькуляторах). Тёмная подложка, бежевая подсказка. */
+/**
+ * Поле ввода (поиск, числа в калькуляторах). Тёмная подложка, бежевая подсказка.
+ * [leading] и [trailing] — иконки или кнопки слева и справа от текста.
+ */
 @Composable
 fun InputField(
     value: String,
@@ -26,6 +30,7 @@ fun InputField(
     modifier: Modifier = Modifier,
     placeholder: String? = null,
     leading: (@Composable () -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     textAlign: TextAlign = TextAlign.Start,
 ) {
@@ -50,12 +55,20 @@ fun InputField(
                 horizontalArrangement = Arrangement.spacedBy(dimens.spaceS),
             ) {
                 if (leading != null) leading()
-                Box(Modifier.weight(1f)) {
+                // Поле тянется на всю ширину, иначе курсор пустого поля прилипает к левому краю при любом textAlign
+                Box(Modifier.weight(1f), propagateMinConstraints = true) {
                     if (value.isEmpty() && placeholder != null) {
-                        Text(placeholder, style = AppTheme.typography.bodyBold, color = colors.textMuted)
+                        Text(
+                            placeholder,
+                            style = AppTheme.typography.bodyBold,
+                            color = colors.textMuted,
+                            textAlign = textAlign,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
                     inner()
                 }
+                if (trailing != null) trailing()
             }
         },
     )

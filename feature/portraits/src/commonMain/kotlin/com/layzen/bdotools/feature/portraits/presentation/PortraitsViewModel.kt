@@ -61,7 +61,7 @@ class PortraitsViewModel(
             PortraitsEvent.CloseEditor -> replacement.closeEditor()
             PortraitsEvent.Apply -> replacement.apply()
 
-            is PortraitsEvent.OpenDecoration -> decoration.open(event.characterId, event.mode)
+            is PortraitsEvent.OpenDecoration -> decoration.open(event.characterId)
             is PortraitsEvent.CaptionChanged -> decoration.changeCaption(event.text)
             is PortraitsEvent.BadgeChanged -> decoration.changeBadge(event.slot, event.icon)
             PortraitsEvent.CloseDecoration -> decoration.close()

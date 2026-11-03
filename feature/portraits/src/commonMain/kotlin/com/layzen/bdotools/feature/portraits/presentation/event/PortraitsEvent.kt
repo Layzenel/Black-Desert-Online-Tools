@@ -3,7 +3,6 @@ package com.layzen.bdotools.feature.portraits.presentation.event
 import com.layzen.bdotools.feature.portraits.domain.BadgeIcon
 import com.layzen.bdotools.feature.portraits.domain.BadgeSlot
 import com.layzen.bdotools.feature.portraits.presentation.render.PortraitDecorator
-import com.layzen.bdotools.feature.portraits.presentation.state.DecorationMode
 import com.layzen.bdotools.feature.portraits.presentation.state.ReplaceTarget
 
 /** Действия пользователя на странице портретов. */
@@ -30,7 +29,7 @@ sealed interface PortraitsEvent {
     data object CloseEditor : PortraitsEvent
     data object Apply : PortraitsEvent
 
-    data class OpenDecoration(val characterId: String, val mode: DecorationMode) : PortraitsEvent
+    data class OpenDecoration(val characterId: String) : PortraitsEvent
     data class CaptionChanged(val text: String) : PortraitsEvent
     data class BadgeChanged(val slot: BadgeSlot, val icon: BadgeIcon?) : PortraitsEvent
     data object CloseDecoration : PortraitsEvent

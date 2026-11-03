@@ -36,6 +36,7 @@ data class AppDimens(
     val menuIconBoxSize: Dp = 24.dp,
     val navItemHeight: Dp = 34.dp,
     val iconSize: Dp = 20.dp,
+    val infoTipMaxWidth: Dp = 260.dp,
     val closeIconSize: Dp = 12.dp,
 
     // Меню действий по наведению

@@ -55,20 +55,17 @@
 
     <!-- Меню портрета -->
     <string name="portraits_menu_replace">Заменить</string>
-    <string name="portraits_menu_caption">Надпись</string>
-    <string name="portraits_menu_badges">Значки</string>
+    <string name="portraits_menu_edit">Изменить</string>
+
+    <!-- Окно надписи и значков -->
+    <string name="portraits_decoration_title">Надпись и значки</string>
+    <string name="portraits_decoration_hint">Надпись вводится прямо на портрете. Нажмите «+», чтобы поставить значок, или на значок, чтобы заменить его.</string>
 
     <!-- Надпись -->
-    <string name="portraits_caption_title">Надпись на портрете</string>
-    <string name="portraits_caption_field">Текст</string>
     <string name="portraits_caption_description">До 24 символов. Длинная надпись переносится на вторую строку, а шрифт уменьшается, чтобы она влезла. Плашка стоит над нижней полосой игры и не закрывает уровень.</string>
-    <string name="portraits_caption_placeholder">Например, Рыбак</string>
-    <string name="portraits_caption_counter">%1$d / %2$d</string>
-    <string name="portraits_caption_clear">Убрать надпись</string>
+    <string name="portraits_caption_placeholder">Рыбак</string>
 
     <!-- Значки -->
-    <string name="portraits_badges_title">Значки на портрете</string>
-    <string name="portraits_badges_hint">Нажмите «+», чтобы поставить значок, или на значок, чтобы заменить его.</string>
     <string name="portraits_badge_add">Добавить значок</string>
     <string name="portraits_badge_change">Заменить значок</string>
     <string name="portraits_badge_fisher">Рыбак</string>

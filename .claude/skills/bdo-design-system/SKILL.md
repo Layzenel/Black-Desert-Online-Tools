@@ -110,7 +110,8 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `GameWindow(title, actions, footer) { }` | основной контейнер каждой тулзы: шапка, тело и необязательный футер |
 | `WindowTitleBar`, `WindowFooter`, `Panel` | части окна, если нужна нестандартная компоновка |
 | `ModalWindow(title, onDismissRequest, dismissible, footer) { }` | модальное окно поверх страницы: выбор, подтверждение, редактор. Пока идёт долгая операция, передавай `dismissible = false` |
-| `CloseButton(onClick)` | крестик в шапке окна (нарисован линиями) |
+| `CloseButton(onClick)` | крестик (нарисован линиями): в шапке окна и для очистки поля |
+| `InfoButton(text)` | кружок с «!»; по клику над ним подсказка с `text` — ограничения поля, правила |
 | `HoverActionsBox(actions = { ActionMenuItem(...) }) { }` | действия над элементом (плиткой) по наведению курсора: элемент размывается (`hoverBlurRadius`) и затемняется, поверх встаёт чёткая золотая рамка, пункты — по центру внутри элемента и не перекрывают соседей. Подсвечивать элемент самому не нужно. Всплывающих меню-тултипов в дизайн-системе нет: действия показываются внутри элемента |
 | `RunningGoblin()`, `LoadingRow(text)` | индикатор загрузки — чёрный гоблин со светлой обводкой бежит на месте (цвета `silhouette`, `silhouetteOutline`); строка «гоблин + текст» для короткого ожидания внутри окна |
 | `ProgressBar(progress)` | полоса прогресса 0…1 |
@@ -129,7 +130,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. `DropdownSelect` построен на нём |
 | `ValueSlider(value, onValueChange, range)` | целое число в диапазоне, где важна наглядность |
 | `NumberField(value, onValueChange, range)` | точный ввод числа (фейлстак, цена, количество) |
-| `InputField(value, onValueChange, placeholder)` | текст и поиск |
+| `InputField(value, onValueChange, placeholder, leading, trailing)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями |
 | `ToggleSwitch(checked, onCheckedChange, label, description)` | включить или выключить опцию |
 | `CheckBox(checked, onCheckedChange)` | отметка элементов списка для массового действия (например, удаления). Внутри строки `MenuItem` передавай его в слот `icon` |
 | `Tile(selected, onClick) { }` | плитка в сетке: предметы, классы, персонажи |
