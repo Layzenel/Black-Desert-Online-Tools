@@ -8,7 +8,6 @@ import com.layzen.bdotools.feature.portraits.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraits.presentation.render.toBmp
 import com.layzen.bdotools.feature.portraits.presentation.state.BusyKind
 import com.layzen.bdotools.feature.portraits.presentation.state.DecorationDialogState
-import com.layzen.bdotools.feature.portraits.presentation.state.DecorationMode
 import com.layzen.bdotools.feature.portraits.presentation.state.Notice
 import com.layzen.bdotools.feature.portraits.presentation.state.NoticeKind
 import com.layzen.bdotools.feature.portraits.presentation.toNotice
@@ -22,9 +21,9 @@ internal class DecorationController(private val context: PortraitsContext) {
     /** Байты чистого портрета открытого окна: сохраняются как основа без перекодирования. */
     private var baseBytes: ByteArray? = null
 
-    fun open(characterId: String, mode: DecorationMode) {
+    fun open(characterId: String) {
         val draft = context.current.decorationOf(characterId)
-        context.update { it.copy(decorationDialog = DecorationDialogState(characterId, mode, draft)) }
+        context.update { it.copy(decorationDialog = DecorationDialogState(characterId, draft)) }
         context.launch(onError = { e -> close().also { context.showNotice(e.toNotice()) } }) {
             val bytes = context.repository.readCleanBase(characterId)
             context.breathe()

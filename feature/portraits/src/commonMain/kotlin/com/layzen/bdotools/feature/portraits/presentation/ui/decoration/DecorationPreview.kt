@@ -31,12 +31,14 @@ private const val GAME_TOP_STRIP_RATIO = 0.15f
 
 /**
  * Портрет с украшениями и затемнёнными полосами, где игра рисует свои значки и уровень.
- * [overlay] рисуется поверх готового портрета, например места значков.
+ * [overlay] рисуется поверх готового портрета, например места значков и поле надписи.
+ * [hideCaption] рисует портрет без надписи — пока её редактируют в поле поверх.
  */
 @Composable
 internal fun DecorationPreview(
     state: DecorationDialogState,
     decorator: PortraitDecorator,
+    hideCaption: Boolean = false,
     overlay: @Composable BoxScope.() -> Unit = {},
 ) {
     val zone = AppTheme.colors.backgroundDeep.copy(alpha = GAME_ZONE_ALPHA)
@@ -52,7 +54,8 @@ internal fun DecorationPreview(
             DescriptionText(stringResource(Res.string.portraits_decoration_loading))
             return@Box
         }
-        val preview = remember(base, state.draft, decorator) { decorator.decorate(base, state.draft) }
+        val draft = if (hideCaption) state.draft.withCaption("") else state.draft
+        val preview = remember(base, draft, decorator) { decorator.decorate(base, draft) }
         Image(
             bitmap = preview,
             contentDescription = null,
