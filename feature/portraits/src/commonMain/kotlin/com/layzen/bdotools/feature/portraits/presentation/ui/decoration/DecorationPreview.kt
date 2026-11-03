@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
@@ -28,9 +29,16 @@ import org.jetbrains.compose.resources.stringResource
 private const val GAME_ZONE_ALPHA = 0.55f
 private const val GAME_TOP_STRIP_RATIO = 0.15f
 
-/** Портрет с украшениями и затемнёнными полосами, где игра рисует свои значки и уровень. */
+/**
+ * Портрет с украшениями и затемнёнными полосами, где игра рисует свои значки и уровень.
+ * [overlay] рисуется поверх готового портрета, например места значков.
+ */
 @Composable
-internal fun DecorationPreview(state: DecorationDialogState, decorator: PortraitDecorator) {
+internal fun DecorationPreview(
+    state: DecorationDialogState,
+    decorator: PortraitDecorator,
+    overlay: @Composable BoxScope.() -> Unit = {},
+) {
     val zone = AppTheme.colors.backgroundDeep.copy(alpha = GAME_ZONE_ALPHA)
     Box(
         Modifier
@@ -57,5 +65,6 @@ internal fun DecorationPreview(state: DecorationDialogState, decorator: Portrait
             drawRect(zone, Offset.Zero, Size(size.width, size.height * GAME_TOP_STRIP_RATIO))
             drawRect(zone, Offset(0f, bottomTop), Size(size.width, size.height - bottomTop))
         }
+        overlay()
     }
 }

@@ -41,6 +41,7 @@ data class AppDimens(
     // Меню действий по наведению
     val actionMenuItemHeight: Dp = 32.dp,
     val actionMenuItemInset: Dp = 3.dp,
+    val hoverBlurRadius: Dp = 6.dp,
 
     // Ожидание
     val loaderSize: Dp = 44.dp,

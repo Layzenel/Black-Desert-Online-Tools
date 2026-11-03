@@ -15,8 +15,8 @@ internal fun PortraitGridView(state: PortraitsState, onEvent: (PortraitsEvent) -
         val id = portrait.characterId
         HoverActionsBox(
             actions = { PortraitMenu(id, hasBackups = state.hasBackups(id), onEvent = onEvent) },
-        ) { hovered ->
-            PortraitTile(portrait.image, contentDescription = id, selected = hovered)
+        ) {
+            PortraitTile(portrait.image, contentDescription = id)
         }
     }
 }
