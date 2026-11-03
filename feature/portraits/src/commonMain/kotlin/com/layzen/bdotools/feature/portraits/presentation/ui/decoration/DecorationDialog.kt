@@ -13,6 +13,7 @@ import com.layzen.bdotools.feature.portraits.presentation.state.DecorationDialog
 import com.layzen.bdotools.feature.portraits.presentation.state.DecorationMode
 import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.feature.portraits.resources.Res
+import com.layzen.bdotools.feature.portraits.resources.portraits_badges_hint
 import com.layzen.bdotools.feature.portraits.resources.portraits_badges_title
 import com.layzen.bdotools.feature.portraits.resources.portraits_cancel
 import com.layzen.bdotools.feature.portraits.resources.portraits_caption_title
@@ -24,22 +25,25 @@ import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
-/** Надпись или значки для одного портрета: слева живой предпросмотр, справа настройки. */
+/**
+ * Надпись или значки для одного портрета. Надпись: слева живой предпросмотр, справа поле.
+ * Значки ставятся прямо на предпросмотре, поэтому окно значков — только портрет с подсказкой.
+ */
 @Composable
 internal fun DecorationDialog(
     state: DecorationDialogState,
     decorator: PortraitDecorator,
     onEvent: (PortraitsEvent) -> Unit,
 ) {
-    val title = when (state.mode) {
-        DecorationMode.Caption -> Res.string.portraits_caption_title
-        DecorationMode.Badges -> Res.string.portraits_badges_title
+    val (title, width) = when (state.mode) {
+        DecorationMode.Caption -> Res.string.portraits_caption_title to PortraitsDimens.decorationDialogWidth
+        DecorationMode.Badges -> Res.string.portraits_badges_title to PortraitsDimens.badgesDialogWidth
     }
     val ready = state.base != null && decorator.isReady
     ModalWindow(
         title = stringResource(title),
         onDismissRequest = { onEvent(PortraitsEvent.CloseDecoration) },
-        modifier = Modifier.width(PortraitsDimens.decorationDialogWidth),
+        modifier = Modifier.width(width),
         footer = {
             ActionButton(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseDecoration) })
             ActionButton(
@@ -49,20 +53,42 @@ internal fun DecorationDialog(
             )
         },
     ) {
-        Row(
-            Modifier.padding(AppTheme.dimens.spaceL),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL),
-        ) {
-            Column(Modifier.width(PortraitsDimens.decorationPreviewWidth), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-                DecorationPreview(state, decorator)
-                DescriptionText(stringResource(Res.string.portraits_preview_hint))
-            }
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
-                when (state.mode) {
-                    DecorationMode.Caption -> CaptionControls(state.draft, onEvent)
-                    DecorationMode.Badges -> BadgeControls(state.draft, onEvent)
-                }
+        when (state.mode) {
+            DecorationMode.Caption -> CaptionLayout(state, decorator, onEvent)
+            DecorationMode.Badges -> PreviewColumn(state, decorator, Modifier.padding(AppTheme.dimens.spaceL), onEvent) {
+                DescriptionText(stringResource(Res.string.portraits_badges_hint))
             }
         }
+    }
+}
+
+@Composable
+private fun CaptionLayout(state: DecorationDialogState, decorator: PortraitDecorator, onEvent: (PortraitsEvent) -> Unit) {
+    Row(
+        Modifier.padding(AppTheme.dimens.spaceL),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL),
+    ) {
+        PreviewColumn(state, decorator, Modifier.width(PortraitsDimens.decorationPreviewWidth))
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
+            CaptionControls(state.draft, onEvent)
+        }
+    }
+}
+
+/** Предпросмотр с подсказками под ним. В режиме значков поверх него стоят места значков. */
+@Composable
+private fun PreviewColumn(
+    state: DecorationDialogState,
+    decorator: PortraitDecorator,
+    modifier: Modifier,
+    onEvent: ((PortraitsEvent) -> Unit)? = null,
+    hint: @Composable () -> Unit = {},
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
+        DecorationPreview(state, decorator) {
+            if (onEvent != null) BadgeSlotsOverlay(state.draft.badges, onEvent)
+        }
+        hint()
+        DescriptionText(stringResource(Res.string.portraits_preview_hint))
     }
 }

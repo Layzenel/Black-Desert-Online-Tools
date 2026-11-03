@@ -68,12 +68,9 @@
 
     <!-- Значки -->
     <string name="portraits_badges_title">Значки на портрете</string>
-    <string name="portraits_badges_description">Сверху значок встаёт между значками игры, слева и справа — у краёв портрета, над надписью.</string>
-    <string name="portraits_badges_clear">Убрать значки</string>
-    <string name="portraits_badge_slot_top">Сверху</string>
-    <string name="portraits_badge_slot_left">Слева</string>
-    <string name="portraits_badge_slot_right">Справа</string>
-    <string name="portraits_badge_none">Нет</string>
+    <string name="portraits_badges_hint">Нажмите «+», чтобы поставить значок, или на значок, чтобы заменить его.</string>
+    <string name="portraits_badge_add">Добавить значок</string>
+    <string name="portraits_badge_change">Заменить значок</string>
     <string name="portraits_badge_fisher">Рыбак</string>
     <string name="portraits_badge_horse_breeder">Коневод</string>
     <string name="portraits_badge_gatherer">Собиратель</string>
@@ -85,7 +82,7 @@
     <string name="portraits_decoration_loading">Загружаю портрет…</string>
     <string name="portraits_decoration_saved">Портрет обновлён. Старый файл — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
 
-    <string name="portraits_menu_restore">Резервные копии</string>
+    <string name="portraits_menu_restore">Откатить</string>
 
     <!-- Резервные копии -->
     <string name="portraits_restore_button">Резервные копии</string>

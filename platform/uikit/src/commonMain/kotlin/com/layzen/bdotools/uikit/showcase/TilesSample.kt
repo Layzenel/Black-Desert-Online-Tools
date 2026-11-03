@@ -87,8 +87,8 @@ internal fun TilesSample(modifier: Modifier) {
                                 ActionMenuDivider()
                                 ActionMenuItem(stringResource(Res.string.showcase_modal_title), onClick = { modalOpen = true })
                             },
-                        ) { hovered ->
-                            Tile(Modifier.matchParentSize(), selected = index == selected || hovered) {
+                        ) {
+                            Tile(Modifier.matchParentSize(), selected = index == selected) {
                                 Text(
                                     stringResource(Res.string.showcase_exit_tile_stats, 394, 2),
                                     style = AppTheme.typography.bodyBold,

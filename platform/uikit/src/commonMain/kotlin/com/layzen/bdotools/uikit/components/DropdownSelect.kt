@@ -1,6 +1,5 @@
 package com.layzen.bdotools.uikit.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +29,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import com.layzen.bdotools.uikit.theme.AppShapes
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /** Выпадающий список: тёмное поле со значением по центру и треугольником справа. */
@@ -82,29 +78,14 @@ fun <T> DropdownSelect(
                 )
             }
         }
-        DropdownMenu(
+        OptionsMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            options = options,
+            selected = selected,
+            onSelect = onSelect,
+            label = label,
             modifier = if (anchorWidth != Dp.Unspecified) Modifier.width(anchorWidth) else Modifier,
-            containerColor = colors.backgroundRaised,
-            shape = AppShapes.Sharp,
-            border = BorderStroke(dimens.borderWidth, colors.border),
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            label(option),
-                            style = AppTheme.typography.bodyBold,
-                            color = if (option == selected) colors.accentGold else colors.textPrimary,
-                        )
-                    },
-                    onClick = {
-                        expanded = false
-                        onSelect(option)
-                    },
-                )
-            }
-        }
+        )
     }
 }
