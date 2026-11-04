@@ -6,6 +6,7 @@ kotlin = "2.4.10"
 material3 = "1.11.0-alpha07"
 koin = "4.2.2"
 kotlinx-coroutines = "1.11.0"
+kotlinx-serialization = "1.9.0"
 compose-multiplatform-navigation3-browser = "1.1.0"
 file-picker = "0.14.2"
 
@@ -26,7 +27,8 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-test ={ module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 navigation3-browser = { module = "com.github.terrakok:navigation3-browser", version.ref = "compose-multiplatform-navigation3-browser" }
 file-picker-core = { module = "io.github.vinceglb:filekit-core", version.ref = "file-picker" }
 file-picker-dialogs = { module = "io.github.vinceglb:filekit-dialogs", version.ref = "file-picker" }
@@ -37,3 +39,4 @@ file-picker-coil = { module = "io.github.vinceglb:filekit-coil", version.ref = "
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

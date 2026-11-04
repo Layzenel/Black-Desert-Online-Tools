@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.portraits.data
 
+import com.layzen.bdotools.core.folder.FolderAccess
+import com.layzen.bdotools.core.folder.GameFolderSettings
 import java.nio.file.Path
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories

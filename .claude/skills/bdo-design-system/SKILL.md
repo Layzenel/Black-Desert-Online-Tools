@@ -83,6 +83,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `accentGold` | `#F8C038` | активное, текущее значение, важное |
 | `accentGoldPale` | `#D8B080` | рамка выбранной плитки |
 | `danger` | `#D86048` | предупреждения, ошибки |
+| `accentBlue` / `accentRed` | `#4F8CD8` / `#C83C3C` | цветовые метки категорий (группы элементов в редакторе слотов); не для кнопок и не для ошибок |
 | `badgeNew` / `badgeHot` | `#D09820` / `#D05020` | плашки NEW / HOT |
 
 ## Типографика
@@ -138,7 +139,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `Modifier.verticalScrollbar(scrollState)` | тонкая полоса прокрутки у правого края; ставится перед `verticalScroll(scrollState)` |
 | `ValueSlider(value, onValueChange, range)` | целое число в диапазоне, где важна наглядность |
 | `NumberField(value, onValueChange, range)` | точный ввод числа (фейлстак, цена, количество) |
-| `InputField(value, onValueChange, placeholder, leading, trailing)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями |
+| `InputField(value, onValueChange, placeholder, leading, trailing, minLines)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями. `minLines` больше 1 — многострочное поле (вставка текста файла) |
 | `ToggleSwitch(checked, onCheckedChange, label, description)` | включить или выключить опцию |
 | `CheckBox(checked, onCheckedChange)` | отметка элементов списка для массового действия (например, удаления). Внутри строки `MenuItem` передавай его в слот `icon` |
 | `Tile(selected, onClick) { }` | плитка в сетке: предметы, классы, персонажи |

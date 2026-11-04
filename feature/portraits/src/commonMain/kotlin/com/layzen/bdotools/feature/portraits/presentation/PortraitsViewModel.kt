@@ -2,7 +2,7 @@ package com.layzen.bdotools.feature.portraits.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.layzen.bdotools.feature.portraits.data.FolderAccess
+import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.portraits.data.ImageSource
 import com.layzen.bdotools.feature.portraits.data.PortraitsRepository
 import com.layzen.bdotools.feature.portraits.data.PortraitsStorage

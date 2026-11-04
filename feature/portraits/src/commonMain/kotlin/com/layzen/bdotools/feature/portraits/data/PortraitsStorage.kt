@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.portraits.data
 
+import com.layzen.bdotools.core.folder.FolderAccess
+
 /** Файлы игры в папке `Документы\Black Desert`. Все методы, кроме [access], требуют [FolderAccess.Granted]. */
 interface PortraitsStorage {
     suspend fun access(): FolderAccess

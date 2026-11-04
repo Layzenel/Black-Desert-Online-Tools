@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.portraits.data
 
+import com.layzen.bdotools.core.folder.GameFolderSettings
+
 /** Файлы игры и источник картинок настольной версии в одном объекте, как того ждёт Koin-модуль фичи. */
 internal class DesktopGameFiles(storage: PortraitsStorage, images: ImageSource) :
     GameFiles,

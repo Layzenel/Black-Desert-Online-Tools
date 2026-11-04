@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.portraits.data
 
+import com.layzen.bdotools.core.folder.FolderAccess
+import com.layzen.bdotools.core.folder.GameFolderSettings
 import com.layzen.bdotools.feature.portraits.domain.parseBackupList
 import java.nio.file.Files
 import java.nio.file.Path

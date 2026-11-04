@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.layzen.bdotools.feature.portraits.data.FolderAccess
+import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.portraits.presentation.PortraitsViewModel
 import com.layzen.bdotools.feature.portraits.presentation.event.PortraitsEvent
 import com.layzen.bdotools.feature.portraits.presentation.render.rememberPortraitDecorator
