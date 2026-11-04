@@ -5,7 +5,6 @@ import com.layzen.bdotools.feature.portraits.domain.SlotIcon
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 import com.layzen.bdotools.feature.portraits.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraits.presentation.render.toBmp
-import com.layzen.bdotools.feature.portraits.presentation.state.BusyKind
 import com.layzen.bdotools.feature.portraits.presentation.state.DecorationDialogState
 import com.layzen.bdotools.feature.portraits.presentation.state.Notice
 import com.layzen.bdotools.feature.portraits.presentation.state.NoticeKind
@@ -46,14 +45,22 @@ internal class DecorationController(private val context: PortraitsContext) {
         val base = dialog.base ?: return
         val bytes = baseBytes ?: return
         val decoration = dialog.draft.withCaption(dialog.draft.caption.trim())
-        context.launch {
-            close()
-            val face = context.withBusy(BusyKind.Rendering) { context.images.decorate(base, decoration) }
+        val id = dialog.characterId
+        val previous = context.current.portraits.firstOrNull { it.characterId == id }?.image
+        close()
+        // один портрет рисуется и пишется быстро: без окна ожидания, новая картинка сразу встаёт в сетку
+        context.launch(
+            onError = { e ->
+                if (previous != null) context.update { it.withPortraitImages(mapOf(id to previous)) }
+                context.showNotice(e.toNotice())
+            },
+        ) {
+            context.breathe()
+            val face = context.images.decorate(base, decoration)
+            context.update { it.withPortraitImages(mapOf(id to face)) }
             val faceBytes = if (decoration.isEmpty) bytes else face.toBmp()
-            val backup = context.save(listOf(PortraitWrite(dialog.characterId, faceBytes, bytes, decoration)))
-            context.update {
-                it.withPortraitImages(mapOf(dialog.characterId to face)).copy(notice = Notice(NoticeKind.DecorationSaved, backup))
-            }
+            val backup = context.saveQuietly(listOf(PortraitWrite(id, faceBytes, bytes, decoration)))
+            context.showNotice(Notice(NoticeKind.DecorationSaved, backup))
         }
     }
 
