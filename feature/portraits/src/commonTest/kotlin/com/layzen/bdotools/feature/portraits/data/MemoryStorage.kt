@@ -1,9 +1,11 @@
 package com.layzen.bdotools.feature.portraits.data
 
-/** Хранилище в памяти для тестов: файлы игры и папка BDO Tools — обычные Map, [log] — порядок записей. */
+/** Хранилище в памяти для тестов: файлы игры, папки BDO Tools и избранного — обычные Map, [log] — порядок записей. */
 internal class MemoryStorage : PortraitsStorage {
     val faces = mutableMapOf<String, ByteArray>()
     val tools = mutableMapOf<String, ByteArray>()
+    /** Избранное: ключ — `<папка>/<файл>`. */
+    val favorites = mutableMapOf<String, ByteArray>()
     val log = mutableListOf<String>()
 
     override suspend fun access(): FolderAccess = FolderAccess.Granted("Black Desert")
@@ -40,5 +42,20 @@ internal class MemoryStorage : PortraitsStorage {
 
     override suspend fun deleteToolFile(name: String) {
         tools.remove(name)
+    }
+
+    override suspend fun createFavoriteSet(): String = "set${favorites.keys.map { it.substringBefore('/') }.toSet().size + 1}"
+
+    override suspend fun favoriteListing() =
+        favorites.keys.groupBy({ it.substringBefore('/') }, { it.substringAfter('/') })
+            .entries.joinToString("\n") { (set, files) -> set + "\t" + files.joinToString(",") }
+
+    override suspend fun readFavoriteFile(set: String, name: String) = favorites["$set/$name"]
+    override suspend fun writeFavoriteFile(set: String, name: String, bytes: ByteArray) {
+        favorites["$set/$name"] = bytes
+    }
+
+    override suspend fun deleteFavoriteSet(set: String) {
+        favorites.keys.removeAll { it.startsWith("$set/") }
     }
 }

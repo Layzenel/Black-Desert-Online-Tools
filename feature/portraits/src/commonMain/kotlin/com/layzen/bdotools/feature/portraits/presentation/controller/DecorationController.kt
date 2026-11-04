@@ -1,8 +1,7 @@
 package com.layzen.bdotools.feature.portraits.presentation.controller
 
 import com.layzen.bdotools.feature.portraits.data.PortraitWrite
-import com.layzen.bdotools.feature.portraits.domain.BadgeIcon
-import com.layzen.bdotools.feature.portraits.domain.BadgeSlot
+import com.layzen.bdotools.feature.portraits.domain.SlotIcon
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 import com.layzen.bdotools.feature.portraits.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraits.presentation.render.toBmp
@@ -35,7 +34,7 @@ internal class DecorationController(private val context: PortraitsContext) {
 
     fun changeCaption(text: String) = updateDraft { it.withCaption(text) }
 
-    fun changeBadge(slot: BadgeSlot, icon: BadgeIcon?) = updateDraft { it.withBadge(slot, icon) }
+    fun changeBadge(icon: SlotIcon?) = updateDraft { it.withBadge(icon) }
 
     fun close() {
         baseBytes = null

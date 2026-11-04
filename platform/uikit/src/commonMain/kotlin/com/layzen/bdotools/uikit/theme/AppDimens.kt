@@ -37,6 +37,13 @@ data class AppDimens(
     val navItemHeight: Dp = 34.dp,
     val iconSize: Dp = 20.dp,
     val infoTipMaxWidth: Dp = 260.dp,
+
+    // Списки и прокрутка
+    val optionsMenuMaxHeight: Dp = 320.dp,
+    val groupedMenuOptionsWidth: Dp = 220.dp,
+    val menuShadow: Dp = 3.dp,
+    val scrollbarWidth: Dp = 4.dp,
+    val scrollbarInset: Dp = 2.dp,
     val closeIconSize: Dp = 12.dp,
 
     // Меню действий по наведению
@@ -50,6 +57,10 @@ data class AppDimens(
     val loaderOutline: Dp = 1.dp,
     val progressHeight: Dp = 4.dp,
     val busyOverlayWidth: Dp = 320.dp,
+
+    // Всплывающие сообщения
+    val toastMaxWidth: Dp = 560.dp,
+    val toastBottomOffset: Dp = 32.dp,
 
     // Поля ввода
     val inputHeight: Dp = 32.dp,

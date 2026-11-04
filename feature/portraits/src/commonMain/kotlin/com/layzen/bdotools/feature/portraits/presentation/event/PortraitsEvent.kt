@@ -1,7 +1,6 @@
 package com.layzen.bdotools.feature.portraits.presentation.event
 
-import com.layzen.bdotools.feature.portraits.domain.BadgeIcon
-import com.layzen.bdotools.feature.portraits.domain.BadgeSlot
+import com.layzen.bdotools.feature.portraits.domain.SlotIcon
 import com.layzen.bdotools.feature.portraits.presentation.render.PortraitDecorator
 import com.layzen.bdotools.feature.portraits.presentation.state.ReplaceTarget
 
@@ -31,7 +30,7 @@ sealed interface PortraitsEvent {
 
     data class OpenDecoration(val characterId: String) : PortraitsEvent
     data class CaptionChanged(val text: String) : PortraitsEvent
-    data class BadgeChanged(val slot: BadgeSlot, val icon: BadgeIcon?) : PortraitsEvent
+    data class BadgeChanged(val icon: SlotIcon?) : PortraitsEvent
     data object CloseDecoration : PortraitsEvent
     data object ApplyDecoration : PortraitsEvent
 
@@ -46,4 +45,23 @@ sealed interface PortraitsEvent {
     data object RequestDeleteBackups : PortraitsEvent
     data object CancelDeleteBackups : PortraitsEvent
     data object ConfirmDeleteBackups : PortraitsEvent
+
+    data object StartReorder : PortraitsEvent
+    data class PickReorderPortrait(val characterId: String) : PortraitsEvent
+    data object CancelReorder : PortraitsEvent
+
+    data object OpenFavorites : PortraitsEvent
+    data class SelectFavorite(val name: String) : PortraitsEvent
+    data object SaveFavorites : PortraitsEvent
+    data object ApplyFavorite : PortraitsEvent
+    data object CloseFavorites : PortraitsEvent
+    data class FavoriteTitleChanged(val text: String) : PortraitsEvent
+    data object RenameFavorite : PortraitsEvent
+    data class ToggleFavoriteMark(val name: String) : PortraitsEvent
+    data object RequestDeleteFavorites : PortraitsEvent
+    data object CancelDeleteFavorites : PortraitsEvent
+    data object ConfirmDeleteFavorites : PortraitsEvent
+    data object RequestReplaceFavorite : PortraitsEvent
+    data object CancelReplaceFavorite : PortraitsEvent
+    data object ConfirmReplaceFavorite : PortraitsEvent
 }

@@ -16,10 +16,9 @@
     <string name="portraits_loading">Загружаю портреты…</string>
     <string name="portraits_empty">В папке FaceTexture нет портретов.</string>
     <string name="portraits_grid_title">Персонажи: %1$d</string>
-    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Наведите курсор на портрет, чтобы заменить его, добавить надпись или значки. Для применения изменения портрета закройте окно выбора персонажа в игре.</string>
+    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Наведите курсор на портрет, чтобы заменить его или редактировать.\nПеред загрузкой или редактированием портретов закройте окно выбора персонажа в игре.</string>
     <string name="portraits_upload">Загрузить изображение</string>
     <string name="portraits_reload">Обновить</string>
-    <string name="portraits_dismiss">Скрыть</string>
 
     <!-- Выбор источника -->
     <string name="portraits_source_title_all">Изображение для всех портретов</string>
@@ -54,34 +53,57 @@
     <string name="portraits_error_unknown">Что-то пошло не так: %1$s</string>
 
     <!-- Меню портрета -->
-    <string name="portraits_menu_replace">Заменить</string>
-    <string name="portraits_menu_edit">Изменить</string>
+    <string name="portraits_menu_replace">Загрузить</string>
+    <string name="portraits_menu_edit">Редактировать</string>
+    <string name="portraits_menu_restore">Восстановить</string>
 
     <!-- Окно надписи и значков -->
     <string name="portraits_decoration_title">Надпись и значки</string>
-    <string name="portraits_decoration_hint">Надпись вводится прямо на портрете. Нажмите «+», чтобы поставить значок, или на значок, чтобы заменить его.</string>
+    <string name="portraits_decoration_hint">Нажмите на надпись, чтобы изменить её. «+» в центре ставит значок: класс персонажа или функциональный; клик по значку его заменяет.</string>
 
     <!-- Надпись -->
-    <string name="portraits_caption_description">До 24 символов. Длинная надпись переносится на вторую строку, а шрифт уменьшается, чтобы она влезла. Плашка стоит над нижней полосой игры и не закрывает уровень.</string>
+    <string name="portraits_caption_description">До 24 символов. Длинная надпись переносится на вторую строку, а шрифт уменьшается, чтобы она влезла.</string>
     <string name="portraits_caption_placeholder">Рыбак</string>
 
     <!-- Значки -->
     <string name="portraits_badge_add">Добавить значок</string>
     <string name="portraits_badge_change">Заменить значок</string>
-    <string name="portraits_badge_fisher">Рыбак</string>
-    <string name="portraits_badge_horse_breeder">Коневод</string>
-    <string name="portraits_badge_gatherer">Собиратель</string>
-    <string name="portraits_badge_sailor">Моряк</string>
-    <string name="portraits_badge_barter">Бартер</string>
+    <string name="portraits_badge_group_class">Класс</string>
+    <string name="portraits_badge_group_functional">Функциональные</string>
 
     <!-- Предпросмотр -->
-    <string name="portraits_preview_hint">Затемнённые полосы — места, где игра рисует уровень и свои значки.</string>
     <string name="portraits_decoration_loading">Загружаю портрет…</string>
     <string name="portraits_decoration_saved">Портрет обновлён. Старый файл — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
 
-    <string name="portraits_menu_restore">Откатить</string>
+    <!-- Избранное -->
+    <string name="portraits_favorites_title">Избранное</string>
+    <string name="portraits_favorites_button">Избранное</string>
+    <string name="portraits_favorites_description">Наборы всех портретов в папке «Favorite FaceTexture» рядом с FaceTexture. Сохраняются и применяются только все портреты сразу: «Применить» вернёт портреты из набора всем персонажам, которые есть сейчас, вместе с надписями и значками. Старые портреты попадут в резервную копию.</string>
+    <string name="portraits_favorites_sets">Наборы</string>
+    <string name="portraits_favorites_portraits">Портреты: %1$d</string>
+    <string name="portraits_favorites_empty">В избранном пока пусто. Сохраните текущие портреты кнопкой ниже.</string>
+    <string name="portraits_favorites_save">Сохранить текущие портреты</string>
+    <string name="portraits_favorites_apply">Применить</string>
+    <string name="portraits_favorite_added">Портреты сохранены в избранное: «Favorite FaceTexture\%1$s».</string>
+    <string name="portraits_favorites_loading">Читаю избранное…</string>
+    <string name="portraits_favorites_close">Закрыть</string>
+    <string name="portraits_favorite_applied">Портреты из избранного применены. Старые файлы — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
+    <string name="portraits_favorites_title_placeholder">Название набора</string>
+    <string name="portraits_favorites_rename">Переименовать</string>
+    <string name="portraits_favorites_delete_title">Удалить наборы избранного?</string>
+    <string name="portraits_favorites_delete_text">Будут удалены наборы: %1$d. Портреты из них вернуть уже не получится.</string>
+    <string name="portraits_favorites_deleted">Удалено наборов избранного: %1$d.</string>
+    <string name="portraits_favorites_replace">Заменить выбранный</string>
+    <string name="portraits_favorites_replace_title">Заменить набор текущими портретами?</string>
+    <string name="portraits_favorites_replace_text">Портреты в наборе заменятся на текущие, название останется. Старые портреты из набора вернуть уже не получится.</string>
+    <string name="portraits_favorites_replace_confirm">Заменить</string>
+    <string name="portraits_favorite_replaced">Набор «%1$s» заменён текущими портретами.</string>
 
     <!-- Резервные копии -->
+    <string name="portraits_reorder_button">Изменение порядка</string>
+    <string name="portraits_reorder_cancel">Отменить изменение порядка</string>
+    <string name="portraits_reorder_description">Выберите два портрета — они сразу обменяются картинками вместе с надписями и значками. Пригодится, если в окне выбора персонажа поменять персонажей местами и картинка, нарезанная на портреты, разъехалась. Перед заменой оба портрета попадут в резервную копию.</string>
+    <string name="portraits_swapped">Портреты поменялись местами. Файлы, которые были до этого, сохранены в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
     <string name="portraits_restore_button">Резервные копии</string>
     <string name="portraits_restore_title_all">Резервные копии</string>
     <string name="portraits_restore_title_one">Портрет из резервной копии</string>
@@ -100,7 +122,7 @@
     <string name="portraits_restored">Портреты восстановлены. Файлы, которые были до этого, сохранены в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
 
     <!-- Ожидание -->
-    <string name="portraits_busy_loading">Загружаю портреты</string>
+    <string name="portraits_loading_progress">Загружаю портреты: %1$d из %2$d</string>
     <string name="portraits_busy_rendering">Готовлю портреты</string>
     <string name="portraits_busy_saving">Сохраняю портреты</string>
     <string name="portraits_busy_restoring">Читаю резервную копию</string>
@@ -108,10 +130,12 @@
 
 
     <!-- Удаление резервных копий -->
-    <string name="portraits_backups_delete">Удалить (%1$d)</string>
+    <string name="portraits_delete_marked">Удалить (%1$d)</string>
     <string name="portraits_backups_delete_title">Удалить резервные копии?</string>
     <string name="portraits_backups_delete_text">Будут удалены копии: %1$d. Портреты из них вернуть уже не получится.</string>
-    <string name="portraits_backups_delete_confirm">Удалить</string>
+    <string name="portraits_delete_confirm">Удалить</string>
     <string name="portraits_backups_deleted">Удалено резервных копий: %1$d.</string>
     <string name="portraits_busy_deleting">Удаляю резервные копии</string>
+    <string name="portraits_busy_saving_favorites">Сохраняю портреты в избранное</string>
+    <string name="portraits_busy_reading_favorites">Читаю избранное</string>
 </resources>

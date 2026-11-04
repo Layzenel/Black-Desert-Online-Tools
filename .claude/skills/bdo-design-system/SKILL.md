@@ -7,7 +7,8 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 
 Интерфейс повторяет **стиль** игровых окон Black Desert Online: тёмные графитовые панели,
 бронзовая шапка окна, бежевый текст, золотые акценты. Мы берём только стиль — цвета, пропорции, форму.
-Игровые иконки, текстуры и логотипы не копируем: это чужие ассеты.
+Игровые иконки, текстуры и логотипы сами не рисуем и не копируем: это чужие ассеты. Исключение — иконки классов и жизненных навыков,
+которые пользователь положил сам (см. `icons/CharacterClassIcons.kt`, `icons/LifeSkillIcons.kt`).
 
 Весь код находится в `platform/uikit/src/commonMain/kotlin/com/layzen/bdotools/uikit/`:
 
@@ -18,6 +19,8 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `theme/AppDimens.kt` | отступы и размеры `AppDimens`, формы `AppShapes` |
 | `theme/AppTheme.kt` | `AppTheme { }` и доступ к токенам через `AppTheme.colors / typography / dimens` |
 | `components/*.kt` | готовые UI-компоненты |
+| `icons/CharacterClassIcons.kt` | иконки и названия классов: `CharacterClass.icon` (SVG, белый силуэт `viewBox 0 0 64 64`, цвет — через `ColorFilter.tint`) и `CharacterClass.title`. Сам `CharacterClass` лежит в `platform/core` (`core.game`) |
+| `icons/LifeSkillIcons.kt` | то же для жизненных навыков: `LifeSkill.icon` и `LifeSkill.title` (алхимия, бартер, изготовление, кулинария, охота, рыбалка, сбор, судоходство, торговля, укрощение, урожай). Сам `LifeSkill` лежит в `platform/core` (`core.game`) |
 | `showcase/ComponentShowcase.kt` | живой каталог всех компонентов (`ShowcaseDimens.kt` — его размеры) |
 | `../../composeResources/values/strings.xml` | строки модуля, в том числе каталога |
 
@@ -114,6 +117,8 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `InfoButton(text)` | кружок с «!»; по клику над ним подсказка с `text` — ограничения поля, правила |
 | `HoverActionsBox(actions = { ActionMenuItem(...) }) { }` | действия над элементом (плиткой) по наведению курсора: элемент размывается (`hoverBlurRadius`) и затемняется, поверх встаёт чёткая золотая рамка, пункты — по центру внутри элемента и не перекрывают соседей. Подсвечивать элемент самому не нужно. Всплывающих меню-тултипов в дизайн-системе нет: действия показываются внутри элемента |
 | `RunningGoblin()`, `LoadingRow(text)` | индикатор загрузки — чёрный гоблин со светлой обводкой бежит на месте (цвета `silhouette`, `silhouetteOutline`); строка «гоблин + текст» для короткого ожидания внутри окна |
+| `Skeleton(modifier)` | заглушка на месте содержимого, которое ещё грузится: пульсирует между `backgroundRaised` и `backgroundItem`. Для картинок и плиток вместо гоблина; размер задаёт `modifier` (`matchParentSize()` в плитке) |
+| `Toast(text, onDismiss, isError, durationMillis)` | всплывающее сообщение внизу по центру окна о результате действия: появляется, когда `text` не `null`, и само зовёт `onDismiss` через `TOAST_DURATION_MS` (5 с) или по клику. Ошибка — красные текст и рамка. Не перехватывает фокус |
 | `ProgressBar(progress)` | полоса прогресса 0…1 |
 | `BusyOverlay(text, progress, details)` | окно ожидания поверх страницы на время долгой операции, закрыть нельзя. В браузере всё работает в одном потоке: между тяжёлыми шагами делай короткую паузу (`delay(16)`), иначе индикатор замрёт вместе со страницей |
 | `ActionMenuItem(text, onClick)`, `ActionMenuDivider()` | пункт меню действий и разделитель между пунктами. Кликается вся строка, подсветка — скруглённая плашка `AppShapes.MenuItem` с отступом от разделителей. Длинный текст переносится на вторую строку |
@@ -127,7 +132,9 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `LabelBadge(text, kind)` | NEW / HOT (`LabelBadgeKind.New` / `Hot`) |
 | `OptionGroup(options, selected, onSelect, label)` | выбор одного из 2–4 вариантов |
 | `DropdownSelect(selected, options, onSelect, label)` | выбор из длинного списка |
-| `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. `DropdownSelect` построен на нём |
+| `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. Не выше `optionsMenuMaxHeight`, длинный прокручивается с полосой прокрутки. `DropdownSelect` построен на нём |
+| `GroupedOptionsMenu(expanded, onDismissRequest, groups, groupLabel, options, selected, onSelect, label, groupIcon, icon)` | двухуровневый список: слева группы со стрелкой, при наведении справа раскрываются их варианты (с прокруткой) и прячутся, когда курсор уходит и с группы, и с вариантов. У каждой колонки своя панель своей высоты |
+| `Modifier.verticalScrollbar(scrollState)` | тонкая полоса прокрутки у правого края; ставится перед `verticalScroll(scrollState)` |
 | `ValueSlider(value, onValueChange, range)` | целое число в диапазоне, где важна наглядность |
 | `NumberField(value, onValueChange, range)` | точный ввод числа (фейлстак, цена, количество) |
 | `InputField(value, onValueChange, placeholder, leading, trailing)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями |

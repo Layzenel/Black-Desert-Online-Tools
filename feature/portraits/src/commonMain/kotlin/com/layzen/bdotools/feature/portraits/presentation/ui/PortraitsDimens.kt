@@ -10,6 +10,7 @@ internal object PortraitsDimens {
     val maskBorderWidth = 1.dp
     val urlButtonMinWidth = 110.dp
     val decorationDialogWidth = 360.dp
+    val badgeLineWidth = 3.dp
 
     val restoreDialogWidth = 1040.dp
     val restoreOneDialogWidth = 640.dp

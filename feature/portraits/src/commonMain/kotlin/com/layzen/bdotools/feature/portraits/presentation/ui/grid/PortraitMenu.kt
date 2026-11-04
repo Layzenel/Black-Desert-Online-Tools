@@ -12,7 +12,7 @@ import com.layzen.bdotools.uikit.components.ActionMenuDivider
 import com.layzen.bdotools.uikit.components.ActionMenuItem
 import org.jetbrains.compose.resources.stringResource
 
-/** Действия над портретом: замена, изменение надписи и значков и — если есть копии — откат. */
+/** Действия над портретом: замена, надпись и значки и — если есть копии — откат. */
 @Composable
 internal fun ColumnScope.PortraitMenu(
     characterId: String,

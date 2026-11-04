@@ -14,29 +14,25 @@ import com.layzen.bdotools.feature.portraits.presentation.PortraitsViewModel
 import com.layzen.bdotools.feature.portraits.presentation.event.PortraitsEvent
 import com.layzen.bdotools.feature.portraits.presentation.render.rememberPortraitDecorator
 import com.layzen.bdotools.feature.portraits.presentation.state.PortraitsState
-import com.layzen.bdotools.feature.portraits.presentation.state.ReplaceTarget
 import com.layzen.bdotools.feature.portraits.presentation.ui.decoration.DecorationDialog
 import com.layzen.bdotools.feature.portraits.presentation.ui.editor.MaskEditor
-import com.layzen.bdotools.feature.portraits.presentation.ui.notice.NoticeBar
+import com.layzen.bdotools.feature.portraits.presentation.ui.favorites.FavoritesDialog
+import com.layzen.bdotools.feature.portraits.presentation.ui.notice.noticeText
 import com.layzen.bdotools.feature.portraits.presentation.ui.restore.RestoreDialog
 import com.layzen.bdotools.feature.portraits.presentation.ui.source.SourceDialog
 import com.layzen.bdotools.feature.portraits.resources.Res
 import com.layzen.bdotools.feature.portraits.resources.portraits_checking_access
-import com.layzen.bdotools.feature.portraits.resources.portraits_folder_change
 import com.layzen.bdotools.feature.portraits.resources.portraits_folder_description
 import com.layzen.bdotools.feature.portraits.resources.portraits_folder_select
 import com.layzen.bdotools.feature.portraits.resources.portraits_permission_description
 import com.layzen.bdotools.feature.portraits.resources.portraits_permission_request
-import com.layzen.bdotools.feature.portraits.resources.portraits_reload
-import com.layzen.bdotools.feature.portraits.resources.portraits_restore_button
 import com.layzen.bdotools.feature.portraits.resources.portraits_title
 import com.layzen.bdotools.feature.portraits.resources.portraits_unsupported_description
 import com.layzen.bdotools.feature.portraits.resources.portraits_unsupported_title
-import com.layzen.bdotools.feature.portraits.resources.portraits_upload
-import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.GameWindow
 import com.layzen.bdotools.uikit.components.SectionHeader
+import com.layzen.bdotools.uikit.components.Toast
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,20 +52,7 @@ fun PortraitsScreen(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
         title = stringResource(Res.string.portraits_title),
         modifier = Modifier.widthIn(max = PortraitsDimens.windowMaxWidth),
         footer = if (ready) {
-            {
-                ActionButton(stringResource(Res.string.portraits_folder_change), onClick = { onEvent(PortraitsEvent.SelectFolder) })
-                ActionButton(stringResource(Res.string.portraits_reload), onClick = { onEvent(PortraitsEvent.Reload) })
-                ActionButton(
-                    stringResource(Res.string.portraits_restore_button),
-                    onClick = { onEvent(PortraitsEvent.OpenRestore(ReplaceTarget.All)) },
-                    enabled = state.backups.isNotEmpty(),
-                )
-                ActionButton(
-                    stringResource(Res.string.portraits_upload),
-                    onClick = { onEvent(PortraitsEvent.OpenSource(ReplaceTarget.All)) },
-                    enabled = state.portraits.isNotEmpty(),
-                )
-            }
+            { PortraitsFooter(state, onEvent) }
         } else {
             null
         },
@@ -78,7 +61,6 @@ fun PortraitsScreen(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
             Modifier.padding(AppTheme.dimens.spaceL),
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
         ) {
-            state.notice?.let { NoticeBar(it, onDismiss = { onEvent(PortraitsEvent.DismissNotice) }) }
             when (val access = state.access) {
                 null -> DescriptionText(stringResource(Res.string.portraits_checking_access))
                 FolderAccess.Unsupported -> SectionHeader(
@@ -104,5 +86,12 @@ fun PortraitsScreen(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
     state.editor?.let { MaskEditor(it, onEvent) }
     state.decorationDialog?.let { DecorationDialog(it, decorator, onEvent) }
     state.restoreDialog?.let { RestoreDialog(it, state.portraits, onEvent) }
+    state.favoritesDialog?.let { FavoritesDialog(it, onEvent) }
     state.busy?.let { BusyIndicator(it) }
+    val notice = state.notice
+    Toast(
+        text = notice?.let { noticeText(it) },
+        onDismiss = { onEvent(PortraitsEvent.DismissNotice) },
+        isError = notice?.isError == true,
+    )
 }

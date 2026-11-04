@@ -65,6 +65,23 @@ internal class BrowserPortraitsStorage : GameFiles {
         FileSystemBridge.call("toolDelete", name)
     }
 
+    override suspend fun createFavoriteSet(): String = FileSystemBridge.call("favoriteCreate")
+
+    override suspend fun favoriteListing(): String = FileSystemBridge.call("favorites")
+
+    override suspend fun readFavoriteFile(set: String, name: String): ByteArray? {
+        val result = FileSystemBridge.call("favoriteRead", set, name)
+        return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
+    }
+
+    override suspend fun writeFavoriteFile(set: String, name: String, bytes: ByteArray) {
+        FileSystemBridge.call("favoriteWrite", "$set/$name", Base64.encode(bytes))
+    }
+
+    override suspend fun deleteFavoriteSet(set: String) {
+        FileSystemBridge.call("favoriteDelete", set)
+    }
+
     override suspend fun pickFromDevice(): ByteArray? =
         try {
             Base64.decode(FileSystemBridge.call("pickImage"))

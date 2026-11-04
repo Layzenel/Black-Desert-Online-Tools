@@ -34,6 +34,7 @@ fun ComponentShowcase(modifier: Modifier = Modifier) {
             MenuSample(Modifier.width(ShowcaseDimens.menuWindowWidth))
             SettingsSample(Modifier.widthIn(max = dimens.contentMaxWidth))
             TilesSample(Modifier.width(ShowcaseDimens.tilesWindowWidth))
+            FeedbackSample(Modifier.width(ShowcaseDimens.tilesWindowWidth))
         }
     }
 }

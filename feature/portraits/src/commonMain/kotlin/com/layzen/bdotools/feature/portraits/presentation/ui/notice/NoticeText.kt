@@ -12,8 +12,13 @@ import com.layzen.bdotools.feature.portraits.resources.portraits_error_not_game_
 import com.layzen.bdotools.feature.portraits.resources.portraits_error_not_image
 import com.layzen.bdotools.feature.portraits.resources.portraits_error_permission
 import com.layzen.bdotools.feature.portraits.resources.portraits_error_unknown
+import com.layzen.bdotools.feature.portraits.resources.portraits_favorite_added
+import com.layzen.bdotools.feature.portraits.resources.portraits_favorite_applied
+import com.layzen.bdotools.feature.portraits.resources.portraits_favorite_replaced
+import com.layzen.bdotools.feature.portraits.resources.portraits_favorites_deleted
 import com.layzen.bdotools.feature.portraits.resources.portraits_restored
 import com.layzen.bdotools.feature.portraits.resources.portraits_saved
+import com.layzen.bdotools.feature.portraits.resources.portraits_swapped
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -22,6 +27,11 @@ internal fun noticeText(notice: Notice): String = when (notice.kind) {
     NoticeKind.DecorationSaved -> stringResource(Res.string.portraits_decoration_saved, notice.argument)
     NoticeKind.Restored -> stringResource(Res.string.portraits_restored, notice.argument)
     NoticeKind.BackupsDeleted -> stringResource(Res.string.portraits_backups_deleted, notice.argument.toInt())
+    NoticeKind.FavoriteAdded -> stringResource(Res.string.portraits_favorite_added, notice.argument)
+    NoticeKind.FavoriteApplied -> stringResource(Res.string.portraits_favorite_applied, notice.argument)
+    NoticeKind.Swapped -> stringResource(Res.string.portraits_swapped, notice.argument)
+    NoticeKind.FavoritesDeleted -> stringResource(Res.string.portraits_favorites_deleted, notice.argument.toInt())
+    NoticeKind.FavoriteReplaced -> stringResource(Res.string.portraits_favorite_replaced, notice.argument)
     NoticeKind.NotGameFolder -> stringResource(Res.string.portraits_error_not_game_folder)
     NoticeKind.Permission -> stringResource(Res.string.portraits_error_permission)
     NoticeKind.Blocked -> stringResource(Res.string.portraits_error_blocked)
