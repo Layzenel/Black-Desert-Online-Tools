@@ -29,6 +29,7 @@ dependencyResolutionManagement {
 
 include(":shared")
 include(":webApp")
+include(":desktopApp")
 include("platform")
 include("platform:core")
 include("platform:composable")

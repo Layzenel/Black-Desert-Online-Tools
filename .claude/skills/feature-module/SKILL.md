@@ -23,6 +23,7 @@ description: Правило проекта BDO Tools — каждая новая
 | `platform/composable` | связка core + uikit + Koin + навигация, общие Compose-утилиты | код одной фичи |
 | `shared` | корень приложения: `AppTheme`, `KoinApplication`, верхняя навигация, список фич | экраны и логика фич |
 | `webApp` | только `main()` и `index.html` | всё остальное |
+| `desktopApp` | только `main()` с окном и настройка установщика | всё остальное |
 
 Код, нужный только одной фиче, остаётся в ней. Переносить его в `platform/*` можно только тогда,
 когда он реально понадобился второй фиче.
@@ -30,7 +31,9 @@ description: Правило проекта BDO Tools — каждая новая
 ## Правила зависимостей
 
 - Фича зависит **только** от `:platform:composable`. Через него транзитивно (`api`) доступны `core`, `uikit`,
-  coroutines, Koin, lifecycle-viewmodel и navigation3-browser.
+  coroutines, Koin, lifecycle-viewmodel, а в `webMain` ещё и navigation3-browser (на Desktop его нет).
+- Код, который различается в браузере и на Desktop, — `expect` в `commonMain`, `actual` в `webMain` и `desktopMain`
+  (пример — `createGameFiles()` и `PlatformTexts.kt` в фиче портретов).
 - **Фича никогда не зависит от другой фичи.** Если двум фичам нужен общий код, перенеси его в `platform/core`
   (логика) или `platform/uikit` (UI).
 - От фич зависит только `shared`: он собирает их в приложение.
@@ -75,6 +78,8 @@ plugins {
 }
 
 kotlin {
+    jvm("desktop")
+
     js {
         browser()
     }

@@ -128,6 +128,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `NavGroup(title, icon) { NavItem(...) }` | боковая навигация по разделам страницы |
 | `SectionHeader(title, description, warning)` | заголовок блока настроек или параметров |
 | `DescriptionText`, `WarningText`, `ValueText` | пояснение, предупреждение, крупное золотое значение |
+| `LinkText(text, url)` | ссылка на внешний адрес (скачать файл, открыть страницу): подчёркнутый бежевый текст, при наведении светлеет до `textPrimary`. Открывает `url` через `LocalUriHandler` — в вебе новая вкладка, на Desktop системный браузер |
 | `SectionDivider` | разделитель между секциями |
 | `LabelBadge(text, kind)` | NEW / HOT (`LabelBadgeKind.New` / `Hot`) |
 | `OptionGroup(options, selected, onSelect, label)` | выбор одного из 2–4 вариантов |

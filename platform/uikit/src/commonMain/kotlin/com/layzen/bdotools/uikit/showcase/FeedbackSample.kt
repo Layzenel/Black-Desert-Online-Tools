@@ -13,11 +13,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.GameWindow
+import com.layzen.bdotools.uikit.components.LinkText
 import com.layzen.bdotools.uikit.components.Skeleton
 import com.layzen.bdotools.uikit.components.Tile
 import com.layzen.bdotools.uikit.components.Toast
 import com.layzen.bdotools.uikit.resources.Res
 import com.layzen.bdotools.uikit.resources.showcase_feedback_error
+import com.layzen.bdotools.uikit.resources.showcase_feedback_link
 import com.layzen.bdotools.uikit.resources.showcase_feedback_message
 import com.layzen.bdotools.uikit.resources.showcase_feedback_show
 import com.layzen.bdotools.uikit.resources.showcase_feedback_show_error
@@ -26,8 +28,9 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 private const val SKELETON_TILES = 4
+private const val SAMPLE_LINK_URL = "https://github.com/Layzenel/Black-Desert-Online-Tools"
 
-/** Пример ожидания и обратной связи: плитки-скелетоны и всплывающее сообщение. */
+/** Пример ожидания и обратной связи: плитки-скелетоны, ссылка и всплывающее сообщение. */
 @Composable
 internal fun FeedbackSample(modifier: Modifier) {
     var toast by remember { mutableStateOf<Boolean?>(null) }
@@ -39,12 +42,16 @@ internal fun FeedbackSample(modifier: Modifier) {
             ActionButton(stringResource(Res.string.showcase_feedback_show), onClick = { toast = false })
         },
     ) {
-        Column(Modifier.padding(AppTheme.dimens.spaceM)) {
+        Column(
+            Modifier.padding(AppTheme.dimens.spaceM),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
+        ) {
             Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
                 repeat(SKELETON_TILES) {
                     Tile(Modifier.size(ShowcaseDimens.tileSize)) { Skeleton(Modifier.matchParentSize()) }
                 }
             }
+            LinkText(stringResource(Res.string.showcase_feedback_link), SAMPLE_LINK_URL)
         }
     }
     val isError = toast == true
