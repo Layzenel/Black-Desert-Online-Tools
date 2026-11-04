@@ -8,6 +8,7 @@ import com.layzen.bdotools.feature.slots.data.SlotsRepository
 import com.layzen.bdotools.feature.slots.data.SlotsStorage
 import com.layzen.bdotools.feature.slots.presentation.controller.EditorController
 import com.layzen.bdotools.feature.slots.presentation.controller.GameController
+import com.layzen.bdotools.feature.slots.presentation.controller.LayoutFilesController
 import com.layzen.bdotools.feature.slots.presentation.controller.PresetsController
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
@@ -22,7 +23,8 @@ class SlotsViewModel(
 
     private val context = SlotsContext(viewModelScope)
     private val editor = EditorController(context)
-    private val presets = PresetsController(context, repository, device)
+    private val presets = PresetsController(context, repository)
+    private val files = LayoutFilesController(context, repository, device)
     private val game = GameController(context, storage, repository, device)
 
     val state: StateFlow<SlotsState> = context.state
@@ -41,9 +43,11 @@ class SlotsViewModel(
             SlotsEvent.RequestPermission -> grantAccess { storage.requestPermission() }
             is SlotsEvent.SelectAccount -> game.selectAccount(event.account)
             SlotsEvent.Reload -> game.reload()
+            is SlotsEvent.SelectGamePreset -> game.selectGamePreset(event.preset)
 
             is SlotsEvent.Select -> editor.select(event.id, event.additive)
             SlotsEvent.ClearSelection -> editor.clearSelection()
+            is SlotsEvent.SelectArea -> editor.selectArea(event.area, event.additive)
             is SlotsEvent.DragStart -> editor.dragStart(event.id, event.additive)
             is SlotsEvent.DragBy -> editor.dragBy(event.dx, event.dy)
             SlotsEvent.DragEnd -> editor.dragEnd()
@@ -63,13 +67,17 @@ class SlotsViewModel(
             SlotsEvent.ConfirmSaveAs -> presets.confirmSaveAs()
             is SlotsEvent.RequestDelete -> presets.requestDelete(event.name)
             SlotsEvent.ConfirmDelete -> presets.confirmDelete()
-            SlotsEvent.OpenImport -> presets.openImport()
-            is SlotsEvent.ImportTextChanged -> presets.changeImportText(event.text)
-            SlotsEvent.ImportFromFile -> presets.importFromFile()
-            SlotsEvent.ConfirmImport -> presets.confirmImport()
-            SlotsEvent.Export -> presets.export()
+            SlotsEvent.OpenImport -> files.openImport()
+            is SlotsEvent.ImportTextChanged -> files.changeImportText(event.text)
+            SlotsEvent.ImportFromFile -> files.importFromFile()
+            SlotsEvent.ConfirmImport -> files.confirmImport()
+            SlotsEvent.Export -> files.export()
+            is SlotsEvent.PreviewInclude -> files.include(event.ids, event.include)
+            is SlotsEvent.PreviewScreen -> files.setPreviewScreen(event.screen)
+            SlotsEvent.ConfirmPreview -> files.confirmPreview()
 
             SlotsEvent.OpenApply -> game.openApply()
+            is SlotsEvent.SelectApplyTarget -> game.selectApplyTarget(event.preset)
             SlotsEvent.ConfirmApply -> game.confirmApply()
             SlotsEvent.PickBackground -> game.pickBackground()
             SlotsEvent.ClearBackground -> game.clearBackground()

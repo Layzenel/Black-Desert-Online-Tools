@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.slots.presentation.controller
 
+import com.layzen.bdotools.feature.slots.domain.ScreenArea
 import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.domain.SlotLayout
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
@@ -25,6 +26,15 @@ internal class EditorController(private val context: SlotsContext) {
     fun select(id: SlotId, additive: Boolean) = context.update { it.copy(selection = it.selection.toggled(id, additive)) }
 
     fun clearSelection() = context.update { it.copy(selection = emptySet()) }
+
+    /** Выбирает всё, что задела обводка; с [additive] — вместе с уже выбранным. */
+    fun selectArea(area: ScreenArea, additive: Boolean) {
+        val screen = context.current.loaded?.game?.screen ?: return
+        context.update { state ->
+            val touched = state.slots.filterTo(mutableSetOf()) { id -> state.layout[id]?.let { area.touches(id, it, screen) } == true }
+            state.copy(selection = if (additive) state.selection + touched else touched)
+        }
+    }
 
     /** Схватить слот: без Shift выбранная группа двигается целиком, невыбранный слот выбирается один. */
     fun dragStart(id: SlotId, additive: Boolean) {

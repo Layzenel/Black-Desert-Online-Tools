@@ -36,6 +36,8 @@ internal fun SlotsSidebar(state: SlotsState, onEvent: (SlotsEvent) -> Unit, modi
             DropdownSelect(account, state.accounts, { onEvent(SlotsEvent.SelectAccount(it)) }, { it })
             SectionDivider()
         }
+        GamePresetSettings(state, onEvent)
+        SectionDivider()
         PresetList(state, onEvent)
         SectionDivider()
         GridSettings(state, onEvent)

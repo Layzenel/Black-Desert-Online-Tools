@@ -15,7 +15,7 @@ import com.layzen.bdotools.feature.slots.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.slots.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.slots.resources.Res
 import com.layzen.bdotools.feature.slots.resources.slots_cancel
-import com.layzen.bdotools.feature.slots.resources.slots_import_confirm
+import com.layzen.bdotools.feature.slots.resources.slots_import_next
 import com.layzen.bdotools.feature.slots.resources.slots_import_description
 import com.layzen.bdotools.feature.slots.resources.slots_import_file
 import com.layzen.bdotools.feature.slots.resources.slots_import_not_json
@@ -47,7 +47,7 @@ internal fun ImportDialog(dialog: SlotsDialog.Import, onEvent: (SlotsEvent) -> U
             Spacer(Modifier.weight(1f))
             ActionButton(stringResource(Res.string.slots_cancel), onClick = close)
             ActionButton(
-                stringResource(Res.string.slots_import_confirm),
+                stringResource(Res.string.slots_import_next),
                 onClick = { onEvent(SlotsEvent.ConfirmImport) },
                 enabled = dialog.text.isNotBlank(),
             )

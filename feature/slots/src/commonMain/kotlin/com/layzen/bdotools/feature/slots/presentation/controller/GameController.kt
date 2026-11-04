@@ -5,6 +5,7 @@ import com.layzen.bdotools.feature.slots.data.SlotsError
 import com.layzen.bdotools.feature.slots.data.SlotsException
 import com.layzen.bdotools.feature.slots.data.SlotsRepository
 import com.layzen.bdotools.feature.slots.data.SlotsStorage
+import com.layzen.bdotools.feature.slots.domain.GamePreset
 import com.layzen.bdotools.feature.slots.presentation.SlotsContext
 import com.layzen.bdotools.feature.slots.presentation.state.PresetRef
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsDialog
@@ -36,21 +37,38 @@ internal class GameController(
         context.launch(busy = true) { load(account) }
     }
 
-    fun openApply() = context.update { it.copy(dialog = SlotsDialog.ConfirmApply) }
+    /** Другой набор позиций игры в редактор: общий или «Пресет 1–3». Прежнюю раскладку вернёт «Отменить». */
+    fun selectGamePreset(preset: GamePreset) {
+        val loaded = context.current.loaded?.takeIf { preset in it.presets } ?: return
+        val switched = loaded.copy(edited = preset)
+        context.update { it.copy(loaded = switched) }
+        context.editLayout(PresetRef.Game) { switched.game.layout }
+    }
+
+    /** По умолчанию раскладка пишется в тот набор, который открыт в редакторе. */
+    fun openApply() {
+        val edited = context.current.loaded?.edited ?: return
+        context.update { it.copy(dialog = SlotsDialog.ConfirmApply(edited)) }
+    }
+
+    fun selectApplyTarget(preset: GamePreset) = context.update {
+        if (it.dialog is SlotsDialog.ConfirmApply) it.copy(dialog = SlotsDialog.ConfirmApply(preset)) else it
+    }
 
     /**
-     * Записывает раскладку. Если игра успела переписать файл, ничего не пишется: перечитываем файл,
-     * но оставляем раскладку в редакторе — её можно применить ещё раз, закрыв игру.
+     * Записывает раскладку в выбранный набор, после записи он и открыт в редакторе. Если игра успела переписать
+     * файл, ничего не пишется: перечитываем файл, но оставляем раскладку — её можно применить ещё раз, закрыв игру.
      */
     fun confirmApply() = context.launch(busy = true) {
         val loaded = context.current.loaded ?: return@launch
+        val target = (context.current.dialog as? SlotsDialog.ConfirmApply)?.target ?: return@launch
         context.update { it.copy(dialog = null) }
         try {
-            val backup = repository.apply(loaded, context.current.layout)
-            refresh(loaded.account)
+            val backup = repository.apply(loaded, context.current.layout, target)
+            refresh(loaded.account, target)
             context.update { it.copy(activePreset = PresetRef.Game, notice = SlotsNotice.Applied(backup)) }
         } catch (e: SlotsException) {
-            if (e.error == SlotsError.FileChanged) refresh(loaded.account)
+            if (e.error == SlotsError.FileChanged) refresh(loaded.account, loaded.edited)
             throw e
         }
     }
@@ -67,16 +85,17 @@ internal class GameController(
         context.update { it.copy(background = null) }
     }
 
+    /** Читает файл аккаунта; открытым остаётся тот же набор позиций, если он есть в файле. */
     private suspend fun load(account: String) {
-        val loaded = repository.load(account)
+        val loaded = repository.load(account, context.current.loaded?.edited ?: GamePreset.General)
         context.update {
             it.copy(loaded = loaded, layout = loaded.game.layout, history = emptyList(), selection = emptySet(), activePreset = PresetRef.Game)
         }
     }
 
-    /** Перечитывает файл, не трогая раскладку в редакторе. */
-    private suspend fun refresh(account: String) {
-        val loaded = repository.load(account)
+    /** Перечитывает файл, не трогая раскладку в редакторе; в редакторе — набор [edited]. */
+    private suspend fun refresh(account: String, edited: GamePreset) {
+        val loaded = repository.load(account, edited)
         context.update { it.copy(loaded = loaded) }
     }
 

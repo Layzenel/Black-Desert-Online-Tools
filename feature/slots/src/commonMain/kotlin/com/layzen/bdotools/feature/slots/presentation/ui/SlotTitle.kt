@@ -12,6 +12,10 @@ import com.layzen.bdotools.feature.slots.resources.slots_element_pvp
 import com.layzen.bdotools.feature.slots.resources.slots_element_rare_item_history
 import com.layzen.bdotools.feature.slots.resources.slots_element_skill_history
 import com.layzen.bdotools.feature.slots.resources.slots_element_stamina
+import com.layzen.bdotools.feature.slots.resources.slots_group_class_resource
+import com.layzen.bdotools.feature.slots.resources.slots_group_cooldown
+import com.layzen.bdotools.feature.slots.resources.slots_group_hotbar
+import com.layzen.bdotools.feature.slots.resources.slots_group_interface
 import com.layzen.bdotools.feature.slots.resources.slots_slot_class_resource
 import com.layzen.bdotools.feature.slots.resources.slots_slot_cooldown
 import com.layzen.bdotools.feature.slots.resources.slots_slot_hotbar
@@ -26,6 +30,17 @@ internal fun slotTitle(id: SlotId): String = when (id.group) {
     SlotGroup.ClassResource -> stringResource(Res.string.slots_slot_class_resource)
     SlotGroup.Interface -> stringResource(requireNotNull(id.interfaceElement).title)
 }
+
+/** Название группы целиком: в списке элементов превью. */
+@Composable
+internal fun groupTitle(group: SlotGroup): String = stringResource(
+    when (group) {
+        SlotGroup.Cooldown -> Res.string.slots_group_cooldown
+        SlotGroup.Hotbar -> Res.string.slots_group_hotbar
+        SlotGroup.ClassResource -> Res.string.slots_group_class_resource
+        SlotGroup.Interface -> Res.string.slots_group_interface
+    },
+)
 
 private val InterfaceElement.title: StringResource
     get() = when (this) {
