@@ -16,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.terrakok.navigation3.browser.ChronologicalBrowserNavigation
 import com.layzen.bdotools.feature.portraits.di.portraitsModule
 import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsRoute
+import com.layzen.bdotools.feature.slots.di.slotsModule
+import com.layzen.bdotools.feature.slots.presentation.ui.SlotsRoute
 import com.layzen.bdotools.navigation.AppTab
 import com.layzen.bdotools.navigation.Destination
 import com.layzen.bdotools.navigation.PlaceholderScreen
@@ -33,6 +35,7 @@ import org.koin.dsl.koinConfiguration
 /** Koin-модули всех фич. Новая фича добавляет сюда свой модуль. */
 private val featureModules = listOf(
     portraitsModule,
+    slotsModule,
 )
 
 @Composable
@@ -84,6 +87,7 @@ private fun AppContent() {
 private fun TabContent(tab: AppTab) {
     when (tab) {
         AppTab.Portraits -> PortraitsRoute()
-        AppTab.Tab2, AppTab.Tab3, AppTab.Tab4, AppTab.Tab5 -> PlaceholderScreen(stringResource(tab.title))
+        AppTab.Slots -> SlotsRoute()
+        AppTab.Tab3, AppTab.Tab4, AppTab.Tab5 -> PlaceholderScreen(stringResource(tab.title))
     }
 }

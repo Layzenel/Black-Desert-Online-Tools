@@ -17,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
  * Поле ввода (поиск, числа в калькуляторах). Тёмная подложка, бежевая подсказка.
  * [leading] и [trailing] — иконки или кнопки слева и справа от текста.
+ * [minLines] больше 1 — многострочное поле, например для вставки текста файла.
  */
 @Composable
 fun InputField(
@@ -33,13 +35,15 @@ fun InputField(
     trailing: (@Composable () -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     textAlign: TextAlign = TextAlign.Start,
+    minLines: Int = 1,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        singleLine = true,
+        singleLine = minLines == 1,
+        minLines = minLines,
         textStyle = AppTheme.typography.bodyBold.copy(color = colors.textPrimary, textAlign = textAlign),
         cursorBrush = SolidColor(colors.accentGold),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -50,8 +54,8 @@ fun InputField(
                     .heightIn(min = dimens.inputHeight)
                     .background(colors.backgroundInput)
                     .border(dimens.borderWidth, colors.border)
-                    .padding(horizontal = dimens.spaceS),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(horizontal = dimens.spaceS, vertical = if (minLines == 1) 0.dp else dimens.spaceS),
+                verticalAlignment = if (minLines == 1) Alignment.CenterVertically else Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(dimens.spaceS),
             ) {
                 if (leading != null) leading()

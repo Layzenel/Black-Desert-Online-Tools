@@ -137,7 +137,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `Modifier.verticalScrollbar(scrollState)` | тонкая полоса прокрутки у правого края; ставится перед `verticalScroll(scrollState)` |
 | `ValueSlider(value, onValueChange, range)` | целое число в диапазоне, где важна наглядность |
 | `NumberField(value, onValueChange, range)` | точный ввод числа (фейлстак, цена, количество) |
-| `InputField(value, onValueChange, placeholder, leading, trailing)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями |
+| `InputField(value, onValueChange, placeholder, leading, trailing, minLines)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями. `minLines` больше 1 — многострочное поле (вставка текста файла) |
 | `ToggleSwitch(checked, onCheckedChange, label, description)` | включить или выключить опцию |
 | `CheckBox(checked, onCheckedChange)` | отметка элементов списка для массового действия (например, удаления). Внутри строки `MenuItem` передавай его в слот `icon` |
 | `Tile(selected, onClick) { }` | плитка в сетке: предметы, классы, персонажи |

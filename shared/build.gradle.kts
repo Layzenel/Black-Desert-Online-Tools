@@ -21,6 +21,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":platform:composable"))
             implementation(project(":feature:portraits"))
+            implementation(project(":feature:slots"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
