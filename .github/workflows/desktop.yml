@@ -1,0 +1,78 @@
+name: Desktop
+
+# Собирает настольную версию для Windows после каждого влития в main и выкладывает её
+# в релиз desktop-latest. Постоянные ссылки на файлы (на них ссылается сайт):
+#   https://github.com/Layzenel/Black-Desert-Online-Tools/releases/download/desktop-latest/BDO-Tools.msi
+#   https://github.com/Layzenel/Black-Desert-Online-Tools/releases/download/desktop-latest/BDO-Tools-portable.zip
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "desktop-release"
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: desktop-latest
+  MSI_NAME: BDO-Tools.msi
+  ZIP_NAME: BDO-Tools-portable.zip
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Номер сборки попадает в версию MSI: новая версия заменяет старую установку, а не ставится рядом
+      - name: Build MSI and portable app
+        shell: bash
+        run: ./gradlew :desktopApp:packageMsi :desktopApp:createDistributable -PdesktopVersion=1.0.${{ github.run_number }}
+
+      - name: Collect files with stable names
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $msi = Get-ChildItem desktopApp/build/compose/binaries/main/msi/*.msi | Select-Object -First 1
+          Copy-Item $msi.FullName "dist/$env:MSI_NAME"
+          Compress-Archive -Path "desktopApp/build/compose/binaries/main/app/BDO Tools" -DestinationPath "dist/$env:ZIP_NAME"
+          Get-ChildItem dist
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdo-tools-windows
+          path: dist/*
+
+      # Тег переносится на текущий коммит, файлы релиза заменяются, а адреса скачивания остаются прежними
+      - name: Update release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="Настольная версия BDO Tools для Windows. Сборка 1.0.${{ github.run_number }} из коммита ${{ github.sha }}.
+
+          - $MSI_NAME — установщик.
+          - $ZIP_NAME — портативная версия: распакуйте архив и запустите «BDO Tools.exe»."
+          git tag -f "$RELEASE_TAG" "${{ github.sha }}"
+          git push -f origin "refs/tags/$RELEASE_TAG"
+          if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release edit "$RELEASE_TAG" --title "BDO Tools для Windows" --notes "$notes" --prerelease=false --latest
+          else
+            gh release create "$RELEASE_TAG" --title "BDO Tools для Windows" --notes "$notes" --latest
+          fi
+          gh release upload "$RELEASE_TAG" "dist/$MSI_NAME" "dist/$ZIP_NAME" --clobber

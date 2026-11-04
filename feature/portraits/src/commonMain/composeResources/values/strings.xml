@@ -5,8 +5,13 @@
     <string name="portraits_checking_access">Проверяю доступ к папке игры…</string>
     <string name="portraits_unsupported_title">Браузер не поддерживается</string>
     <string name="portraits_unsupported_description">Замена портретов работает только в Chrome, Edge, Opera и Яндекс.Браузере: другие браузеры не умеют записывать файлы в папки на компьютере.</string>
+    <string name="portraits_unsupported_brave">В Brave эта возможность выключена по умолчанию. Откройте brave://flags/#file-system-access-api, включите File System Access API, перезапустите браузер и обновите страницу.</string>
+    <string name="portraits_desktop_title">Программа для Windows</string>
+    <string name="portraits_desktop_description">Портреты можно менять и без браузера: программа BDO Tools для Windows умеет всё то же, что и сайт, и работает с папкой игры напрямую.</string>
+    <string name="portraits_desktop_download">Скачать установщик (.msi)</string>
     <string name="portraits_folder_title">Папка игры</string>
     <string name="portraits_folder_description">Выберите папку «Документы\\Black Desert». Сайт прочитает портреты из FaceTexture, порядок персонажей из UserCache и сможет записать новые портреты.</string>
+    <string name="portraits_folder_description_desktop">Выберите папку «Документы\\Black Desert». Программа прочитает портреты из FaceTexture, порядок персонажей из UserCache и сможет записать новые портреты. Папка запомнится до следующего запуска.</string>
     <string name="portraits_folder_select">Выбрать папку</string>
     <string name="portraits_permission_description">Браузер снова спрашивает разрешение на папку «%1$s». Разрешите доступ, чтобы загрузить портреты.</string>
     <string name="portraits_permission_request">Разрешить доступ</string>
@@ -47,6 +52,7 @@
     <string name="portraits_saved">Портреты сохранены. Старые файлы — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
     <string name="portraits_error_not_game_folder">В выбранной папке нет FaceTexture. Выберите «Документы\\Black Desert».</string>
     <string name="portraits_error_permission">Браузер не дал доступ к папке. Попробуйте ещё раз и нажмите «Разрешить».</string>
+    <string name="portraits_error_permission_desktop">Windows не дал доступ к файлам в папке игры. Проверьте, что они не только для чтения, и попробуйте ещё раз.</string>
     <string name="portraits_error_blocked">Сайт с картинкой не разрешает скачивать её с других сайтов. Сохраните картинку на компьютер и загрузите её с устройства.</string>
     <string name="portraits_error_network">Не удалось скачать картинку по ссылке. Проверьте адрес.</string>
     <string name="portraits_error_not_image">Это не изображение или формат не поддерживается.</string>

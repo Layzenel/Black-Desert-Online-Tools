@@ -22,16 +22,12 @@ import com.layzen.bdotools.feature.portraits.presentation.ui.restore.RestoreDial
 import com.layzen.bdotools.feature.portraits.presentation.ui.source.SourceDialog
 import com.layzen.bdotools.feature.portraits.resources.Res
 import com.layzen.bdotools.feature.portraits.resources.portraits_checking_access
-import com.layzen.bdotools.feature.portraits.resources.portraits_folder_description
 import com.layzen.bdotools.feature.portraits.resources.portraits_folder_select
 import com.layzen.bdotools.feature.portraits.resources.portraits_permission_description
 import com.layzen.bdotools.feature.portraits.resources.portraits_permission_request
 import com.layzen.bdotools.feature.portraits.resources.portraits_title
-import com.layzen.bdotools.feature.portraits.resources.portraits_unsupported_description
-import com.layzen.bdotools.feature.portraits.resources.portraits_unsupported_title
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.GameWindow
-import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.Toast
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
@@ -63,12 +59,9 @@ fun PortraitsScreen(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
         ) {
             when (val access = state.access) {
                 null -> DescriptionText(stringResource(Res.string.portraits_checking_access))
-                FolderAccess.Unsupported -> SectionHeader(
-                    stringResource(Res.string.portraits_unsupported_title),
-                    warning = stringResource(Res.string.portraits_unsupported_description),
-                )
+                FolderAccess.Unsupported -> UnsupportedNotice()
                 FolderAccess.NotSelected -> FolderPrompt(
-                    description = stringResource(Res.string.portraits_folder_description),
+                    description = stringResource(folderDescriptionText),
                     button = stringResource(Res.string.portraits_folder_select),
                     onClick = { onEvent(PortraitsEvent.SelectFolder) },
                 )

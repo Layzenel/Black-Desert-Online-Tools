@@ -7,6 +7,8 @@ plugins {
 }
 
 kotlin {
+    jvm("desktop")
+
     js {
         browser()
     }
