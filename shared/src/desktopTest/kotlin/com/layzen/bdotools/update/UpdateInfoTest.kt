@@ -31,14 +31,13 @@ class UpdateInfoTest {
         )!!
 
         assertEquals(AppVersion(listOf(1, 0, 57)), info.version)
-        assertEquals("https://example.com/BDO-Tools.msi", info.msiUrl)
         assertEquals("https://example.com/BDO-Tools-portable.zip", info.zipUrl)
         assertEquals(listOf("Reorder portraits", "Toasts = notices"), info.notes)
     }
 
     @Test
-    fun updateFileWithoutVersionOrInstallerIsIgnored() {
-        assertNull(UpdateInfo.parse("msi=https://example.com/a.msi"))
-        assertNull(UpdateInfo.parse("version=1.0.3"))
+    fun updateFileWithoutVersionOrArchiveIsIgnored() {
+        assertNull(UpdateInfo.parse("zip=https://example.com/a.zip"))
+        assertNull(UpdateInfo.parse("version=1.0.3\nmsi=https://example.com/a.msi"))
     }
 }

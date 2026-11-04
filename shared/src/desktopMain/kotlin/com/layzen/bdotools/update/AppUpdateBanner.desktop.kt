@@ -12,13 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.update_available
-import com.layzen.bdotools.resources.update_available_portable
-import com.layzen.bdotools.resources.update_download_zip
 import com.layzen.bdotools.resources.update_downloading
 import com.layzen.bdotools.resources.update_failed
 import com.layzen.bdotools.resources.update_install
@@ -32,8 +29,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Плашка обновления: версия и кнопки «Что нового», «Обновить» (для портативной копии — «Скачать архив»)
- * и «Позже»; во время скачивания — полоса прогресса, при ошибке — «Повторить».
+ * Плашка обновления: версия и кнопки «Что нового», «Позже» и «Обновить»; во время скачивания —
+ * полоса прогресса, при ошибке — «Повторить».
  */
 @Composable
 internal actual fun AppUpdateBanner() {
@@ -63,28 +60,15 @@ internal actual fun AppUpdateBanner() {
 
 @Composable
 private fun RowScope.AvailableContent(state: UpdateState.Available, viewModel: UpdateViewModel) {
-    val uriHandler = LocalUriHandler.current
-    val version = state.info.version.toString()
     Text(
-        stringResource(if (state.portable) Res.string.update_available_portable else Res.string.update_available, version),
+        stringResource(Res.string.update_available, state.info.version.toString()),
         Modifier.weight(1f),
         style = AppTheme.typography.bodyBold,
         color = AppTheme.colors.accentGold,
     )
     ActionButton(stringResource(Res.string.update_notes), onClick = { viewModel.showNotes(true) })
     ActionButton(stringResource(Res.string.update_later), onClick = viewModel::dismiss)
-    if (state.portable) {
-        ActionButton(
-            stringResource(Res.string.update_download_zip),
-            onClick = {
-                uriHandler.openUri(state.info.zipUrl)
-                viewModel.dismiss()
-            },
-            enabled = state.info.zipUrl.isNotEmpty(),
-        )
-    } else {
-        ActionButton(stringResource(Res.string.update_install), onClick = viewModel::install)
-    }
+    ActionButton(stringResource(Res.string.update_install), onClick = viewModel::install)
 }
 
 @Composable

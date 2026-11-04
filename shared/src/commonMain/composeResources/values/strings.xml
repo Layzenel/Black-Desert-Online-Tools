@@ -14,13 +14,16 @@
 
     <!-- Обновление настольной версии -->
     <string name="update_available">Доступна новая версия %1$s.</string>
-    <string name="update_available_portable">Доступна новая версия %1$s. Скачайте архив и распакуйте его вместо старой папки программы.</string>
     <string name="update_notes">Что нового</string>
     <string name="update_later">Позже</string>
     <string name="update_install">Обновить</string>
-    <string name="update_download_zip">Скачать архив</string>
     <string name="update_downloading">Скачиваю версию %1$s: %2$d%%. После скачивания программа закроется, обновится и запустится снова.</string>
-    <string name="update_failed">Не удалось скачать обновление. Проверьте интернет и попробуйте ещё раз.</string>
+    <string name="update_failed">Не удалось скачать или распаковать обновление. Проверьте интернет и место на диске и попробуйте ещё раз.</string>
+    <!-- Окно консоли, которое заменяет файлы программы: без скобок, &, <, > и |, их cmd считает командами -->
+    <string name="update_script_title">Обновление BDO Tools</string>
+    <string name="update_script_waiting">Жду, пока BDO Tools закроется...</string>
+    <string name="update_script_copying">Заменяю файлы программы новой версией...</string>
+    <string name="update_script_failed">Не удалось заменить файлы. Запускаю прежнюю версию.</string>
     <string name="update_retry">Повторить</string>
     <string name="update_notes_title">Что нового в версии %1$s</string>
     <string name="update_notes_empty">Список изменений для этой версии не указан.</string>

@@ -6,7 +6,8 @@ name: Desktop
 #   https://github.com/Layzenel/Black-Desert-Online-Tools/releases/download/desktop-latest/BDO-Tools-portable.zip
 #   https://github.com/Layzenel/Black-Desert-Online-Tools/releases/download/desktop-latest/update.txt
 # update.txt читает программа при запуске (shared/src/desktopMain/.../update): если версия в нём новее,
-# она предлагает обновиться. Формат — строки version=, msi=, zip= и note= (заголовки влитых PR).
+# она предлагает обновиться и заменяет свои файлы содержимым ZIP. Формат — строки version=, msi=, zip=
+# и note= (заголовки влитых PR); msi= нужна старым версиям программы, которые обновлялись установщиком.
 
 on:
   push:
@@ -57,9 +58,8 @@ jobs:
           New-Item -ItemType Directory -Force dist | Out-Null
           $msi = Get-ChildItem desktopApp/build/compose/binaries/main/msi/*.msi | Select-Object -First 1
           Copy-Item $msi.FullName "dist/$env:MSI_NAME"
-          # метка портативной копии: такая программа обновляется скачиванием нового архива, а не установщиком
+          # этим архивом программа обновляет себя: и портативная копия, и установленная через MSI
           $app = "desktopApp/build/compose/binaries/main/app/BDO Tools"
-          Set-Content -Path "$app/portable.txt" -Value "BDO Tools portable" -Encoding ascii
           Compress-Archive -Path $app -DestinationPath "dist/$env:ZIP_NAME"
           Get-ChildItem dist
 
@@ -93,8 +93,10 @@ jobs:
           changes=$(sed -n 's/^note=/- /p' "dist/$UPDATE_NAME")
           notes="Настольная версия BDO Tools для Windows. Сборка $version из коммита ${{ github.sha }}.
 
-          - $MSI_NAME — установщик. Установленная программа сама предлагает обновиться при запуске.
+          - $MSI_NAME — установщик.
           - $ZIP_NAME — портативная версия: распакуйте архив и запустите «BDO Tools.exe».
+
+          Обе версии сами предлагают обновиться при запуске.
 
           Что нового:
           ${changes:-- без описания}"
