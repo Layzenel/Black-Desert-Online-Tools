@@ -34,6 +34,8 @@ val desktopVersion = providers.gradleProperty("desktopVersion").getOrElse("1.0.0
 compose.desktop {
     application {
         mainClass = "com.layzen.bdotools.desktop.MainKt"
+        // по версии программа понимает, вышло ли обновление (проверка в shared/.../update)
+        jvmArgs("-Dbdotools.version=$desktopVersion")
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi)
