@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.slots.data
 
+import com.layzen.bdotools.core.folder.FolderAccess
+
 /**
  * Файлы в папке `Документы\Black Desert`: настройки игры и файлы тулзы в `BDO Tools\slots`.
  * Все методы, кроме [access], требуют [FolderAccess.Granted].

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.layzen.bdotools.feature.slots.data.FolderAccess
+import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.slots.presentation.SlotsViewModel
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState

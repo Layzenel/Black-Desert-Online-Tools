@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.portraits.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraits.data.FolderAccess
+import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.portraits.domain.BackupInfo
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 

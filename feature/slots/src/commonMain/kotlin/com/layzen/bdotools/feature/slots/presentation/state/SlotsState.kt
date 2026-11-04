@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.slots.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.slots.data.FolderAccess
+import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.slots.data.LoadedGame
 import com.layzen.bdotools.feature.slots.domain.NamedLayout
 import com.layzen.bdotools.feature.slots.domain.SlotId

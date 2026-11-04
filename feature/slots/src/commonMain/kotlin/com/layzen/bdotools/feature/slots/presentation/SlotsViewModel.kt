@@ -3,7 +3,7 @@ package com.layzen.bdotools.feature.slots.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.layzen.bdotools.feature.slots.data.DeviceFiles
-import com.layzen.bdotools.feature.slots.data.FolderAccess
+import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.slots.data.SlotsRepository
 import com.layzen.bdotools.feature.slots.data.SlotsStorage
 import com.layzen.bdotools.feature.slots.presentation.controller.EditorController
