@@ -7,6 +7,8 @@ plugins {
 }
 
 kotlin {
+    jvm("desktop")
+
     js {
         browser()
     }
@@ -19,6 +21,12 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":platform:composable"))
+        }
+        // Системные окна выбора папки и картинки в настольном приложении
+        val desktopMain by getting {
+            dependencies {
+                implementation(libs.file.picker.dialogs)
+            }
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

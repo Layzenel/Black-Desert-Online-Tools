@@ -8,6 +8,8 @@ plugins {
 }
 
 kotlin {
+    jvm("desktop")
+
     js {
         browser()
     }
@@ -21,6 +23,12 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":platform:composable"))
             implementation(libs.kotlinx.serialization.json)
+        }
+        // Системные окна выбора папки и файлов в настольном приложении
+        val desktopMain by getting {
+            dependencies {
+                implementation(libs.file.picker.dialogs)
+            }
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

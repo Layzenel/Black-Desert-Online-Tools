@@ -7,6 +7,8 @@ plugins {
 }
 
 kotlin {
+    jvm("desktop")
+
     js {
         browser()
     }
@@ -25,6 +27,9 @@ kotlin {
             api(libs.androidx.lifecycle.runtimeCompose)
             api(libs.koin.compose)
             api(libs.koin.compose.viewmodel)
+        }
+        // Навигация через историю браузера есть только в вебе
+        webMain.dependencies {
             api(libs.navigation3.browser)
         }
         commonTest.dependencies {

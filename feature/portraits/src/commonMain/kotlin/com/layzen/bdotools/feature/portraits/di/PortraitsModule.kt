@@ -10,7 +10,7 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
-/** Koin-модуль фичи: файлы игры через браузер, репозиторий и ViewModel. */
+/** Koin-модуль фичи: файлы игры (реализация своей платформы, см. [createGameFiles]), репозиторий и ViewModel. */
 val portraitsModule = module {
     single { createGameFiles() } binds arrayOf(PortraitsStorage::class, ImageSource::class)
     singleOf(::PortraitsRepository)

@@ -58,6 +58,7 @@
     <string name="showcase_feedback_show_error">Ошибка</string>
     <string name="showcase_feedback_message">Изменения сохранены.</string>
     <string name="showcase_feedback_error">Не удалось записать файл.</string>
+    <string name="showcase_feedback_link">Исходный код на GitHub</string>
 
     <!-- Классы персонажей -->
     <string name="character_class_agent">Агент</string>

@@ -77,9 +77,9 @@
     <string name="slots_import_confirm">Импортировать</string>
     <string name="slots_import_not_json">Не получилось прочитать JSON.</string>
     <string name="slots_import_wrong_format">Это не файл раскладки BDO Tools.</string>
-    <string name="slots_import_unsupported_version">Файл из более новой версии сайта — обновите страницу.</string>
+    <string name="slots_import_unsupported_version">Файл из более новой версии BDO Tools — обновите сайт или программу.</string>
     <string name="slots_apply_title">Применить в игру</string>
-    <string name="slots_apply_description">Полностью закройте игру: пока она запущена, она перезапишет файл своими значениями. Перед записью сайт сохранит копию gamevariable.xml в «BDO Tools\\slots\\backups».</string>
+    <string name="slots_apply_description">Полностью закройте игру: пока она запущена, она перезапишет файл своими значениями. Перед записью сохранится копия gamevariable.xml в «BDO Tools\\slots\\backups».</string>
     <string name="slots_apply_confirm">Игра закрыта, применить</string>
     <string name="slots_delete_title">Удалить пресет</string>
     <string name="slots_delete_description">Удалить пресет «%1$s»? Файл в папке пресетов будет удалён.</string>

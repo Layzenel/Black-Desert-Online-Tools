@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.github.terrakok.navigation3.browser.ChronologicalBrowserNavigation
 import com.layzen.bdotools.feature.portraits.di.portraitsModule
 import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsRoute
 import com.layzen.bdotools.feature.slots.di.slotsModule
@@ -21,13 +20,13 @@ import com.layzen.bdotools.feature.slots.presentation.ui.SlotsRoute
 import com.layzen.bdotools.navigation.AppTab
 import com.layzen.bdotools.navigation.Destination
 import com.layzen.bdotools.navigation.PlaceholderScreen
-import com.layzen.bdotools.navigation.destinationFromFragment
-import com.layzen.bdotools.navigation.toFragment
+import com.layzen.bdotools.navigation.PlatformNavigation
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.app_title
 import com.layzen.bdotools.uikit.components.TopNavigation
 import com.layzen.bdotools.uikit.showcase.ComponentShowcase
 import com.layzen.bdotools.uikit.theme.AppTheme
+import com.layzen.bdotools.update.AppUpdateBanner
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinApplication
 import org.koin.dsl.koinConfiguration
@@ -51,11 +50,7 @@ fun App() {
 @Composable
 private fun AppContent() {
     val backStack = remember { mutableStateListOf<Destination>(Destination.Tab(AppTab.Portraits)) }
-    ChronologicalBrowserNavigation(
-        backStack = backStack,
-        saveKey = { it.toFragment() },
-        restoreKey = ::destinationFromFragment,
-    )
+    PlatformNavigation(backStack)
     val current = backStack.last()
 
     Column(Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep)) {
@@ -68,6 +63,7 @@ private fun AppContent() {
             label = { stringResource(it.title) },
             title = stringResource(Res.string.app_title),
         )
+        AppUpdateBanner()
         when (current) {
             Destination.Showcase -> ComponentShowcase()
             is Destination.Tab -> Box(
