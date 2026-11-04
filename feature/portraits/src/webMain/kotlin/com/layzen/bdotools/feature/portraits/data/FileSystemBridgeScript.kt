@@ -1,42 +1,15 @@
-@file:OptIn(ExperimentalWasmJsInterop::class)
-
 package com.layzen.bdotools.feature.portraits.data
 
-import kotlin.js.Promise
-import kotlinx.coroutines.await
-
 /**
- * Мост к File System Access API и загрузке картинок. Вся работа с браузером — в JS ниже,
+ * Методы портретов для общего моста к папке `Black Desert` (`FolderBridge` в `platform/core`):
+ * портреты, резервные копии, файлы украшений, избранное и загрузка картинок.
  * Kotlin получает только строки: `OK:<данные>` или `ERR:<код>`. Файлы передаются в base64.
- *
- * Выбранная папка хранится в IndexedDB, поэтому после перезагрузки страницы её не нужно выбирать
- * заново — достаточно подтвердить разрешение.
  */
-internal const val BRIDGE_SOURCE = """(() => {
-    if (globalThis.__bdoPortraits) return;
-    const DB = 'bdo-tools', STORE = 'handles', KEY = 'black-desert';
+internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64, stamp, pickFile }) => {
     const FACES = 'FaceTexture', BACKUP = 'FaceTexture_backup', CACHE = 'UserCache', TOOLS = 'BDO Tools';
     const FAVORITES = 'Favorite FaceTexture';
     const SPLIT = '\n<!--bdo-split-->\n';
 
-    const idb = (mode, action) => new Promise((resolve, reject) => {
-        const open = indexedDB.open(DB, 1);
-        open.onupgradeneeded = () => open.result.createObjectStore(STORE);
-        open.onerror = () => reject(open.error);
-        open.onsuccess = () => {
-            const tx = open.result.transaction(STORE, mode);
-            const request = action(tx.objectStore(STORE));
-            tx.oncomplete = () => resolve(request ? request.result : undefined);
-            tx.onerror = () => reject(tx.error);
-        };
-    });
-    const savedRoot = () => idb('readonly', s => s.get(KEY));
-    const child = async (dir, name) => { try { return await dir.getDirectoryHandle(name); } catch (e) { return null; } };
-    const gameDir = async dir => {
-        if (await child(dir, FACES)) return dir;
-        const nested = await child(dir, 'Black Desert');
-        return nested && await child(nested, FACES) ? nested : null;
-    };
     const faces = async () => (await savedRoot()).getDirectoryHandle(FACES);
     // Black Desert\BDO Tools\portraits — чистые портреты и файлы украшений
     const tools = async create => {
@@ -88,50 +61,8 @@ internal const val BRIDGE_SOURCE = """(() => {
         await writable.close();
         return 'OK:';
     };
-    const toBase64 = blob => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).substring(String(reader.result).indexOf(',') + 1));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(blob);
-    });
-    const fromBase64 = text => {
-        const raw = atob(text);
-        const bytes = new Uint8Array(raw.length);
-        for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-        return bytes;
-    };
-    const stamp = () => {
-        const d = new Date(), p = n => String(n).padStart(2, '0');
-        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '_' +
-            p(d.getHours()) + '-' + p(d.getMinutes()) + '-' + p(d.getSeconds());
-    };
-    const fail = e => 'ERR:' + (e && e.name === 'NotAllowedError' ? 'PERMISSION' : 'UNKNOWN:' + (e && e.message));
 
-    const api = {
-        async status() {
-            const root = await savedRoot();
-            if (!root) return 'OK:none';
-            const permission = await root.queryPermission({ mode: 'readwrite' });
-            return 'OK:' + (permission === 'granted' ? 'granted' : 'prompt') + ':' + root.name;
-        },
-        async request() {
-            const root = await savedRoot();
-            if (!root) return 'ERR:NOT_GAME_FOLDER';
-            const permission = await root.requestPermission({ mode: 'readwrite' });
-            return permission === 'granted' ? 'OK:' + root.name : 'ERR:PERMISSION';
-        },
-        async pick() {
-            let picked;
-            try {
-                picked = await showDirectoryPicker({ id: 'bdo-black-desert', mode: 'readwrite', startIn: 'documents' });
-            } catch (e) {
-                return 'ERR:CANCELLED';
-            }
-            const root = await gameDir(picked);
-            if (!root) return 'ERR:NOT_GAME_FOLDER';
-            await idb('readwrite', s => s.put(root, KEY));
-            return 'OK:' + root.name;
-        },
+    return {
         async list() {
             const names = [];
             for await (const [name, handle] of (await faces()).entries()) {
@@ -225,18 +156,9 @@ internal const val BRIDGE_SOURCE = """(() => {
             }
             return 'OK:';
         },
-        pickImage() {
-            return new Promise(resolve => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = async () => {
-                    const file = input.files && input.files[0];
-                    resolve(file ? 'OK:' + await toBase64(file) : 'ERR:CANCELLED');
-                };
-                input.oncancel = () => resolve('ERR:CANCELLED');
-                input.click();
-            });
+        async pickImage() {
+            const file = await pickFile('image/*');
+            return file ? 'OK:' + await toBase64(file) : 'ERR:CANCELLED';
         },
         async download(url) {
             let response;
@@ -251,8 +173,4 @@ internal const val BRIDGE_SOURCE = """(() => {
             return 'OK:' + await toBase64(blob);
         },
     };
-    globalThis.__bdoPortraits = {};
-    for (const [name, action] of Object.entries(api)) {
-        globalThis.__bdoPortraits[name] = (a, b) => Promise.resolve().then(() => action(a, b)).catch(fail);
-    }
-})();"""
+}"""

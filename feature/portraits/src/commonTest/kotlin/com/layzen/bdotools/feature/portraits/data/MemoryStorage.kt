@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.portraits.data
 
+import com.layzen.bdotools.core.folder.FolderAccess
+
 /** Хранилище в памяти для тестов: файлы игры, папки BDO Tools и избранного — обычные Map, [log] — порядок записей. */
 internal class MemoryStorage : PortraitsStorage {
     val faces = mutableMapOf<String, ByteArray>()

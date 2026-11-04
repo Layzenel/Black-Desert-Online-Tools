@@ -1,35 +1,13 @@
 package com.layzen.bdotools.feature.slots.data
 
 /**
- * Мост к File System Access API. Вся работа с браузером — в JS ниже, Kotlin получает только строки:
- * `OK:<данные>` или `ERR:<код>`. Картинки передаются в base64, тексты — как есть.
- *
- * Папка `Black Desert` хранится в той же записи IndexedDB, что и у страницы портретов,
- * поэтому выбрать её достаточно один раз на весь сайт.
+ * Методы слотов для общего моста к папке `Black Desert` (`FolderBridge` в `platform/core`):
+ * `gamevariable.xml` аккаунтов, пресеты и подложка в `BDO Tools\slots`, файлы с устройства.
+ * Kotlin получает только строки: `OK:<данные>` или `ERR:<код>`. Картинки передаются в base64, тексты — как есть.
  */
-internal const val SLOTS_BRIDGE_SOURCE = """(() => {
-    if (globalThis.__bdoSlots) return;
-    const DB = 'bdo-tools', STORE = 'handles', KEY = 'black-desert';
+internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64, stamp, pickFile }) => {
     const CACHE = 'UserCache', GAME_FILE = 'gamevariable.xml', TOOLS = 'BDO Tools';
 
-    const idb = (mode, action) => new Promise((resolve, reject) => {
-        const open = indexedDB.open(DB, 1);
-        open.onupgradeneeded = () => open.result.createObjectStore(STORE);
-        open.onerror = () => reject(open.error);
-        open.onsuccess = () => {
-            const tx = open.result.transaction(STORE, mode);
-            const request = action(tx.objectStore(STORE));
-            tx.oncomplete = () => resolve(request ? request.result : undefined);
-            tx.onerror = () => reject(tx.error);
-        };
-    });
-    const savedRoot = () => idb('readonly', s => s.get(KEY));
-    const child = async (dir, name, create) => { try { return await dir.getDirectoryHandle(name, { create: !!create }); } catch (e) { return null; } };
-    const gameDir = async dir => {
-        if (await child(dir, CACHE)) return dir;
-        const nested = await child(dir, 'Black Desert');
-        return nested && await child(nested, CACHE) ? nested : null;
-    };
     // Black Desert\BDO Tools\slots\<sub>
     const tools = async (sub, create) => {
         const app = await child(await savedRoot(), TOOLS, create);
@@ -51,53 +29,8 @@ internal const val SLOTS_BRIDGE_SOURCE = """(() => {
         await writable.close();
     };
     const writeTo = async (dir, name, data) => writeHandle(await dir.getFileHandle(name, { create: true }), data);
-    const toBase64 = blob => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).substring(String(reader.result).indexOf(',') + 1));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(blob);
-    });
-    const fromBase64 = text => Uint8Array.from(atob(text), c => c.charCodeAt(0));
-    const stamp = () => {
-        const d = new Date(), p = n => String(n).padStart(2, '0');
-        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '_' +
-            p(d.getHours()) + '-' + p(d.getMinutes()) + '-' + p(d.getSeconds());
-    };
-    const pickFile = accept => new Promise(resolve => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = accept;
-        input.onchange = () => resolve(input.files && input.files[0] ? input.files[0] : null);
-        input.oncancel = () => resolve(null);
-        input.click();
-    });
-    const fail = e => 'ERR:' + (e && e.name === 'NotAllowedError' ? 'PERMISSION' : 'UNKNOWN:' + (e && e.message));
 
-    const api = {
-        async status() {
-            const root = await savedRoot();
-            if (!root) return 'OK:none';
-            const permission = await root.queryPermission({ mode: 'readwrite' });
-            return 'OK:' + (permission === 'granted' ? 'granted' : 'prompt') + ':' + root.name;
-        },
-        async request() {
-            const root = await savedRoot();
-            if (!root) return 'ERR:NOT_GAME_FOLDER';
-            const permission = await root.requestPermission({ mode: 'readwrite' });
-            return permission === 'granted' ? 'OK:' + root.name : 'ERR:PERMISSION';
-        },
-        async pick() {
-            let picked;
-            try {
-                picked = await showDirectoryPicker({ id: 'bdo-black-desert', mode: 'readwrite', startIn: 'documents' });
-            } catch (e) {
-                return 'ERR:CANCELLED';
-            }
-            const root = await gameDir(picked);
-            if (!root) return 'ERR:NOT_GAME_FOLDER';
-            await idb('readwrite', s => s.put(root, KEY));
-            return 'OK:' + root.name;
-        },
+    return {
         // Аккаунты по свежести файла: игра пишет в папку того аккаунта, под которым играли последним
         async accounts() {
             const cache = await child(await savedRoot(), CACHE);
@@ -199,8 +132,4 @@ internal const val SLOTS_BRIDGE_SOURCE = """(() => {
             return 'OK:';
         },
     };
-    globalThis.__bdoSlots = {};
-    for (const [name, action] of Object.entries(api)) {
-        globalThis.__bdoSlots[name] = (a, b) => Promise.resolve().then(() => action(a, b)).catch(fail);
-    }
-})();"""
+}"""
