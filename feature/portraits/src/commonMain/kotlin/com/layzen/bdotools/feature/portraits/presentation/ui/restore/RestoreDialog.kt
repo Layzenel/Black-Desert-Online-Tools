@@ -9,8 +9,12 @@ import com.layzen.bdotools.feature.portraits.presentation.event.PortraitsEvent
 import com.layzen.bdotools.feature.portraits.presentation.state.PortraitItem
 import com.layzen.bdotools.feature.portraits.presentation.state.ReplaceTarget
 import com.layzen.bdotools.feature.portraits.presentation.state.RestoreDialogState
+import com.layzen.bdotools.feature.portraits.presentation.ui.ConfirmationDialog
 import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.feature.portraits.resources.Res
+import com.layzen.bdotools.feature.portraits.resources.portraits_delete_confirm
+import com.layzen.bdotools.feature.portraits.resources.portraits_backups_delete_text
+import com.layzen.bdotools.feature.portraits.resources.portraits_backups_delete_title
 import com.layzen.bdotools.feature.portraits.resources.portraits_cancel
 import com.layzen.bdotools.feature.portraits.resources.portraits_restore_apply
 import com.layzen.bdotools.feature.portraits.resources.portraits_restore_apply_count
@@ -61,5 +65,15 @@ internal fun RestoreDialog(state: RestoreDialogState, portraits: List<PortraitIt
         }
     }
 
-    if (state.confirmDelete) DeleteBackupsConfirmation(state, onEvent)
+    if (state.confirmDelete) {
+        val marked = state.backups.filter { it.name in state.marked }
+        ConfirmationDialog(
+            title = stringResource(Res.string.portraits_backups_delete_title),
+            warning = stringResource(Res.string.portraits_backups_delete_text, marked.size),
+            items = marked.map { it.label },
+            confirm = stringResource(Res.string.portraits_delete_confirm),
+            onCancel = { onEvent(PortraitsEvent.CancelDeleteBackups) },
+            onConfirm = { onEvent(PortraitsEvent.ConfirmDeleteBackups) },
+        )
+    }
 }

@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import com.layzen.bdotools.feature.portraits.domain.PortraitTexture
-import com.layzen.bdotools.uikit.components.RunningGoblin
+import com.layzen.bdotools.uikit.components.Skeleton
 import com.layzen.bdotools.uikit.components.Tile
 import com.layzen.bdotools.uikit.theme.AppTheme
 
@@ -19,7 +19,7 @@ private const val PORTRAIT_RATIO = PortraitTexture.WIDTH.toFloat() / PortraitTex
 private const val DIMMED_ALPHA = 0.35f
 
 /**
- * Портрет в ячейке сетки с пропорциями текстуры игры. Пока [image] не загружен — крутилка.
+ * Портрет в ячейке сетки с пропорциями текстуры игры. Пока [image] не загружен — скелетон.
  * [dimmed] приглушает портрет (например, не отмеченный для восстановления).
  */
 @Composable
@@ -33,7 +33,7 @@ internal fun PortraitTile(
 ) {
     Tile(modifier.fillMaxWidth().aspectRatio(PORTRAIT_RATIO), selected = selected, onClick = onClick) {
         if (image == null) {
-            RunningGoblin(Modifier.align(Alignment.Center))
+            Skeleton(Modifier.matchParentSize())
         } else {
             Image(
                 bitmap = image,

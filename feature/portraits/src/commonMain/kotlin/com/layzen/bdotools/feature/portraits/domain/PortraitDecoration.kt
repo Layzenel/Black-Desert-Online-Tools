@@ -1,16 +1,15 @@
 package com.layzen.bdotools.feature.portraits.domain
 
-/** Надпись и значки, которые рисуются поверх чистого портрета. */
+/** Надпись и значок (класс или занятие), которые рисуются поверх чистого портрета. */
 data class PortraitDecoration(
     val caption: String = "",
-    val badges: Map<BadgeSlot, BadgeIcon> = emptyMap(),
+    val badge: SlotIcon? = null,
 ) {
-    val isEmpty: Boolean get() = caption.isBlank() && badges.isEmpty()
+    val isEmpty: Boolean get() = caption.isBlank() && badge == null
 
     fun withCaption(text: String) = copy(caption = normalizeCaption(text))
 
-    fun withBadge(slot: BadgeSlot, icon: BadgeIcon?) =
-        copy(badges = if (icon == null) badges - slot else badges + (slot to icon))
+    fun withBadge(icon: SlotIcon?) = copy(badge = icon)
 
     companion object {
         const val CAPTION_MAX_LENGTH = 24

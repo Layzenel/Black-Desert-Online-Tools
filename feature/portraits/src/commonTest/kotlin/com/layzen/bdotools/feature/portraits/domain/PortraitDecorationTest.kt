@@ -1,11 +1,17 @@
 package com.layzen.bdotools.feature.portraits.domain
 
+import com.layzen.bdotools.core.game.CharacterClass
+import com.layzen.bdotools.core.game.LifeSkill
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class PortraitDecorationTest {
+
+    private val barter = SlotIcon.Skill(LifeSkill.Barter)
+    private val darkKnight = SlotIcon.Class(CharacterClass.DarkKnight)
 
     @Test
     fun captionIsSingleLineAndLimited() {
@@ -14,40 +20,38 @@ class PortraitDecorationTest {
     }
 
     @Test
-    fun emptyWhenNoCaptionAndNoBadges() {
+    fun emptyWhenNoCaptionAndNoBadge() {
         assertTrue(PortraitDecoration().isEmpty)
         assertTrue(PortraitDecoration().withCaption("   ").isEmpty)
-        assertFalse(PortraitDecoration().withBadge(BadgeSlot.Top, BadgeIcon.Fisher).isEmpty)
-    }
-
-    @Test
-    fun removingBadgeClearsSlot() {
-        val decoration = PortraitDecoration()
-            .withBadge(BadgeSlot.Left, BadgeIcon.Gatherer)
-            .withBadge(BadgeSlot.Left, null)
-
-        assertTrue(decoration.badges.isEmpty())
+        assertFalse(PortraitDecoration().withBadge(barter).isEmpty)
+        assertTrue(PortraitDecoration().withBadge(barter).withBadge(null).isEmpty)
     }
 
     @Test
     fun fileRoundTrip() {
-        val decoration = PortraitDecoration()
-            .withCaption("Твинк артефакта")
-            .withBadge(BadgeSlot.Top, BadgeIcon.Fisher)
-            .withBadge(BadgeSlot.Right, BadgeIcon.HorseBreeder)
+        val decoration = PortraitDecoration().withCaption("Твинк артефакта").withBadge(barter)
 
         val text = encodeDecoration(decoration)
 
-        assertEquals("caption=Твинк артефакта\ntop=fisher\nright=horse-breeder\n", text)
+        assertEquals("caption=Твинк артефакта\nbadge=barter\n", text)
+        assertEquals(decoration, decodeDecoration(text))
+    }
+
+    @Test
+    fun classBadgeRoundTripsWithPrefixedKey() {
+        val decoration = PortraitDecoration().withBadge(darkKnight)
+        val text = encodeDecoration(decoration)
+
+        assertEquals("badge=class-dark-knight\n", text)
         assertEquals(decoration, decodeDecoration(text))
     }
 
     @Test
     fun decodingSkipsUnknownKeysAndIcons() {
-        val decoration = decodeDecoration("caption=Сбор=лут\r\nleft=dragon\nfoo=bar\ntop=gatherer\n")
+        val decoration = decodeDecoration("caption=Сбор=лут\r\nbadge=dragon\nfoo=fisher\n")
 
         assertEquals("Сбор=лут", decoration.caption)
-        assertEquals(mapOf(BadgeSlot.Top to BadgeIcon.Gatherer), decoration.badges)
+        assertNull(decoration.badge)
     }
 
     @Test
@@ -57,41 +61,28 @@ class PortraitDecorationTest {
     }
 
     @Test
-    fun legacyPairedSideKeysKeepUpperBadge() {
-        // версия с двумя значками сбоку: верхний остаётся, нижний используется, только если верхнего нет
-        val decoration = decodeDecoration("left-top=sailor\nleft-bottom=fisher\nright-bottom=barter\n")
-
-        assertEquals(
-            mapOf(
-                BadgeSlot.Left to BadgeIcon.Sailor,
-                BadgeSlot.Right to BadgeIcon.Barter,
-            ),
-            decoration.badges,
-        )
-        assertEquals("left=sailor\nright=barter\n", encodeDecoration(decoration))
+    fun legacyFilesKeepClassFirst() {
+        // версии с несколькими местами: класс важнее, где бы он ни стоял
+        assertEquals(darkKnight, decodeDecoration("left=sailor\ntop=class-dark-knight\nright=barter\n").badge)
     }
 
     @Test
-    fun badgesStayInsideFreeZonesAndAboveCaption() {
-        val r = PortraitOverlayLayout.BADGE_DIAMETER / 2
-        BadgeSlot.entries.forEach { slot ->
-            val x = PortraitOverlayLayout.badgeCenterX(slot)
-            val y = PortraitOverlayLayout.badgeCenterY(slot)
-            assertTrue(x - r >= 0 && x + r <= PortraitTexture.WIDTH, "$slot выходит за край по ширине")
-            assertTrue(y - r >= 0 && y + r <= PortraitOverlayLayout.CAPTION_MIN_TOP, "$slot заходит на надпись")
-        }
+    fun legacyFilesWithoutClassKeepFirstBadge() {
+        assertEquals(SlotIcon.Skill(LifeSkill.Sailing), decodeDecoration("left-top=sailor\nleft-bottom=fisher\nright=barter\n").badge)
     }
 
     @Test
-    fun badgesDoNotOverlap() {
-        val r = PortraitOverlayLayout.BADGE_DIAMETER / 2
-        val slots = BadgeSlot.entries
-        slots.forEachIndexed { i, a ->
-            slots.drop(i + 1).forEach { b ->
-                val dx = PortraitOverlayLayout.badgeCenterX(a) - PortraitOverlayLayout.badgeCenterX(b)
-                val dy = PortraitOverlayLayout.badgeCenterY(a) - PortraitOverlayLayout.badgeCenterY(b)
-                assertTrue(dx * dx + dy * dy >= 4 * r * r, "$a и $b перекрываются")
-            }
-        }
+    fun legacyBadgeKeysMapToLifeSkills() {
+        assertEquals(SlotIcon.Skill(LifeSkill.Training), decodeDecoration("top=horse-breeder\n").badge)
+        assertEquals(SlotIcon.Skill(LifeSkill.Fishing), decodeDecoration("left=fisher\n").badge)
+        assertEquals(SlotIcon.Skill(LifeSkill.Gathering), decodeDecoration("right=gatherer\n").badge)
+    }
+
+    @Test
+    fun badgeIsCenteredBetweenGameStripAndCaption() {
+        val half = PortraitOverlayLayout.BADGE_SIZE / 2
+        assertEquals(PortraitTexture.WIDTH / 2, PortraitOverlayLayout.BADGE_CENTER_X)
+        assertTrue(PortraitOverlayLayout.BADGE_CENTER_X - half >= 0 && PortraitOverlayLayout.BADGE_CENTER_X + half <= PortraitTexture.WIDTH)
+        assertTrue(PortraitOverlayLayout.BADGE_CENTER_Y - half >= PortraitOverlayLayout.GAME_TOP_STRIP_BOTTOM, "значок задевает верхнюю полосу игры")
     }
 }

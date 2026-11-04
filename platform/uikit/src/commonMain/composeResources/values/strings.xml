@@ -53,4 +53,56 @@
     <string name="showcase_modal_header">Модальное окно</string>
     <string name="showcase_modal_description">Закрывается крестиком, клавишей Esc или кликом мимо окна.</string>
     <string name="showcase_modal_close">Закрыть</string>
+    <string name="showcase_feedback_title">Загрузка и сообщения</string>
+    <string name="showcase_feedback_show">Сообщение</string>
+    <string name="showcase_feedback_show_error">Ошибка</string>
+    <string name="showcase_feedback_message">Изменения сохранены.</string>
+    <string name="showcase_feedback_error">Не удалось записать файл.</string>
+
+    <!-- Классы персонажей -->
+    <string name="character_class_agent">Агент</string>
+    <string name="character_class_valkyrie">Валькирия</string>
+    <string name="character_class_berserker">Варвар</string>
+    <string name="character_class_warrior">Воин</string>
+    <string name="character_class_wizard">Волшебник</string>
+    <string name="character_class_sorceress">Волшебница</string>
+    <string name="character_class_wukong">Вуконг</string>
+    <string name="character_class_drakania">Драканиа</string>
+    <string name="character_class_witch">Колдунья</string>
+    <string name="character_class_corsair">Корсар</string>
+    <string name="character_class_kunoichi">Куноичи</string>
+    <string name="character_class_lahn">Лан</string>
+    <string name="character_class_archer">Лучник</string>
+    <string name="character_class_ranger">Лучница</string>
+    <string name="character_class_musa">Мастер меча</string>
+    <string name="character_class_maehwa">Маэва</string>
+    <string name="character_class_deadeye">Мертвый глаз</string>
+    <string name="character_class_mystic">Мистик</string>
+    <string name="character_class_sage">Мудрец</string>
+    <string name="character_class_maegu">Мэгу</string>
+    <string name="character_class_ninja">Ниндзя</string>
+    <string name="character_class_nova">Нова</string>
+    <string name="character_class_seraph">Сераф</string>
+    <string name="character_class_scholar">Скалария</string>
+    <string name="character_class_guardian">Страж</string>
+    <string name="character_class_striker">Страйкер</string>
+    <string name="character_class_dark_knight">Темный рыцарь</string>
+    <string name="character_class_dosa">Тоса</string>
+    <string name="character_class_woosa">Уса</string>
+    <string name="character_class_fury">Фурия</string>
+    <string name="character_class_hashashin">Хассашин</string>
+    <string name="character_class_shai">Шай</string>
+
+    <!-- Жизненные навыки -->
+    <string name="life_skill_title_alchemy">Алхимия</string>
+    <string name="life_skill_title_barter">Бартер</string>
+    <string name="life_skill_title_processing">Изготовление</string>
+    <string name="life_skill_title_cooking">Кулинария</string>
+    <string name="life_skill_title_hunting">Охота</string>
+    <string name="life_skill_title_fishing">Рыбалка</string>
+    <string name="life_skill_title_gathering">Сбор</string>
+    <string name="life_skill_title_sailing">Судоходство</string>
+    <string name="life_skill_title_trading">Торговля</string>
+    <string name="life_skill_title_training">Укрощение</string>
+    <string name="life_skill_title_farming">Урожай</string>
 </resources>

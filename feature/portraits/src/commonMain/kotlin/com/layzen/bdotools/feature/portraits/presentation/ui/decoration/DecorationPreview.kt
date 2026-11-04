@@ -27,18 +27,17 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 private const val GAME_ZONE_ALPHA = 0.55f
-private const val GAME_TOP_STRIP_RATIO = 0.15f
 
 /**
  * Портрет с украшениями и затемнёнными полосами, где игра рисует свои значки и уровень.
  * [overlay] рисуется поверх готового портрета, например места значков и поле надписи.
- * [hideCaption] рисует портрет без надписи — пока её редактируют в поле поверх.
+ * Текст надписи рисует поле ввода поверх, а здесь под [captionGlow] (надписью или подсказкой) — только затемнение.
  */
 @Composable
 internal fun DecorationPreview(
     state: DecorationDialogState,
     decorator: PortraitDecorator,
-    hideCaption: Boolean = false,
+    captionGlow: String,
     overlay: @Composable BoxScope.() -> Unit = {},
 ) {
     val zone = AppTheme.colors.backgroundDeep.copy(alpha = GAME_ZONE_ALPHA)
@@ -54,8 +53,8 @@ internal fun DecorationPreview(
             DescriptionText(stringResource(Res.string.portraits_decoration_loading))
             return@Box
         }
-        val draft = if (hideCaption) state.draft.withCaption("") else state.draft
-        val preview = remember(base, draft, decorator) { decorator.decorate(base, draft) }
+        val draft = state.draft.withCaption(captionGlow)
+        val preview = remember(base, draft, decorator) { decorator.decorate(base, draft, drawCaptionText = false) }
         Image(
             bitmap = preview,
             contentDescription = null,
@@ -65,7 +64,7 @@ internal fun DecorationPreview(
         )
         Canvas(Modifier.matchParentSize()) {
             val bottomTop = size.height * PortraitOverlayLayout.GAME_BOTTOM_STRIP_TOP / PortraitTexture.HEIGHT
-            drawRect(zone, Offset.Zero, Size(size.width, size.height * GAME_TOP_STRIP_RATIO))
+            drawRect(zone, Offset.Zero, Size(size.width, size.height * PortraitOverlayLayout.GAME_TOP_STRIP_BOTTOM / PortraitTexture.HEIGHT))
             drawRect(zone, Offset(0f, bottomTop), Size(size.width, size.height - bottomTop))
         }
         overlay()

@@ -10,12 +10,19 @@ data class PortraitsState(
     /** `null`, пока проверяется доступ к папке. */
     val access: FolderAccess? = null,
     val portraits: List<PortraitItem> = emptyList(),
+    /** Идёт чтение портретов; `null`, когда все прочитаны. */
+    val loading: LoadProgress? = null,
     val decorations: Map<String, PortraitDecoration> = emptyMap(),
     val backups: List<BackupInfo> = emptyList(),
     val sourceDialog: SourceDialogState? = null,
     val editor: EditorState? = null,
     val decorationDialog: DecorationDialogState? = null,
     val restoreDialog: RestoreDialogState? = null,
+    val favoritesDialog: FavoritesDialogState? = null,
+    /** Режим изменения порядка на сетке; `null`, когда он выключен. */
+    val reorder: ReorderState? = null,
+    /** Идущая анимация обмена двух портретов. */
+    val swapAnimation: SwapAnimation? = null,
     val busy: Busy? = null,
     val notice: Notice? = null,
 ) {

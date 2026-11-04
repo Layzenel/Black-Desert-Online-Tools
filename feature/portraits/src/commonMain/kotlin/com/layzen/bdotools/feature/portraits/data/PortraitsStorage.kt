@@ -40,4 +40,18 @@ interface PortraitsStorage {
     suspend fun writeToolFile(name: String, bytes: ByteArray)
 
     suspend fun deleteToolFile(name: String)
+
+    /** Создаёт пустую папку `Favorite FaceTexture\<дата-время>` и возвращает её имя. */
+    suspend fun createFavoriteSet(): String
+
+    /** Список папок `Favorite FaceTexture` в том же формате, что [backupListing]. */
+    suspend fun favoriteListing(): String
+
+    /** Файл из папки избранного [set]; `null`, если файла нет. */
+    suspend fun readFavoriteFile(set: String, name: String): ByteArray?
+
+    suspend fun writeFavoriteFile(set: String, name: String, bytes: ByteArray)
+
+    /** Удаляет папку `Favorite FaceTexture\<set>` целиком. */
+    suspend fun deleteFavoriteSet(set: String)
 }

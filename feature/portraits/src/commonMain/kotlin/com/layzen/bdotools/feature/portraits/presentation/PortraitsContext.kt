@@ -75,7 +75,12 @@ internal class PortraitsContext(
     suspend fun breathe() = delay(FRAME_PAUSE_MS)
 
     /** Записывает портреты с прогрессом и обновляет украшения и список копий. Возвращает путь к копии. */
-    suspend fun save(writes: List<PortraitWrite>): String = withBusy(BusyKind.Saving) {
+    suspend fun save(writes: List<PortraitWrite>): String = withBusy(BusyKind.Saving) { write(writes) }
+
+    /** То же без окна ожидания — для коротких записей, которые идут вместе с анимацией. */
+    suspend fun saveQuietly(writes: List<PortraitWrite>): String = write(writes)
+
+    private suspend fun write(writes: List<PortraitWrite>): String {
         setProgress(0, writes.size)
         val backup = repository.writePortraits(writes) { done, total -> setProgress(done, total) }
         val decorations = current.decorations.toMutableMap()
@@ -84,6 +89,6 @@ internal class PortraitsContext(
         }
         val backups = repository.backups()
         update { it.copy(decorations = decorations, backups = backups) }
-        backup
+        return backup
     }
 }

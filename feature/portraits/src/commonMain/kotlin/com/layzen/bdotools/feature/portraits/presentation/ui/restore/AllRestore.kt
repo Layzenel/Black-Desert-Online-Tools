@@ -18,7 +18,7 @@ import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.feature.portraits.presentation.ui.grid.PortraitGridLayout
 import com.layzen.bdotools.feature.portraits.presentation.ui.grid.PortraitTile
 import com.layzen.bdotools.feature.portraits.resources.Res
-import com.layzen.bdotools.feature.portraits.resources.portraits_backups_delete
+import com.layzen.bdotools.feature.portraits.resources.portraits_delete_marked
 import com.layzen.bdotools.feature.portraits.resources.portraits_restore_backups
 import com.layzen.bdotools.feature.portraits.resources.portraits_restore_check_all
 import com.layzen.bdotools.feature.portraits.resources.portraits_restore_description_all
@@ -72,7 +72,7 @@ internal fun AllRestore(state: RestoreDialogState, onEvent: (PortraitsEvent) -> 
                 ActionButton(stringResource(Res.string.portraits_restore_uncheck_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(false)) })
                 if (state.marked.isNotEmpty()) {
                     ActionButton(
-                        stringResource(Res.string.portraits_backups_delete, state.marked.size),
+                        stringResource(Res.string.portraits_delete_marked, state.marked.size),
                         onClick = { onEvent(PortraitsEvent.RequestDeleteBackups) },
                     )
                 }

@@ -16,6 +16,7 @@ internal const val BRIDGE_SOURCE = """(() => {
     if (globalThis.__bdoPortraits) return;
     const DB = 'bdo-tools', STORE = 'handles', KEY = 'black-desert';
     const FACES = 'FaceTexture', BACKUP = 'FaceTexture_backup', CACHE = 'UserCache', TOOLS = 'BDO Tools';
+    const FAVORITES = 'Favorite FaceTexture';
     const SPLIT = '\n<!--bdo-split-->\n';
 
     const idb = (mode, action) => new Promise((resolve, reject) => {
@@ -45,6 +46,47 @@ internal const val BRIDGE_SOURCE = """(() => {
         } catch (e) {
             return null;
         }
+    };
+    // Новая папка с датой и временем: две папки в одну секунду не должны сливаться в одну
+    const freshFolder = async parent => {
+        let folder = stamp();
+        for (let n = 2; await child(parent, folder); n++) folder = stamp() + '_' + n;
+        return folder;
+    };
+    // Папки резервных копий или избранного — строки «папка<Tab>портрет.bmp,…»; папки может ещё не быть
+    const listFolders = async dir => {
+        if (!dir) return 'OK:';
+        const lines = [];
+        for await (const [folder, handle] of dir.entries()) {
+            if (handle.kind !== 'directory') continue;
+            const files = [];
+            for await (const [name, file] of handle.entries()) {
+                if (file.kind === 'file' && name.toLowerCase().endsWith('.bmp')) files.push(name);
+            }
+            lines.push(folder + '\t' + files.join(','));
+        }
+        return 'OK:' + lines.join('\n');
+    };
+    const favoriteFolder = async folder => child(await child(await savedRoot(), FAVORITES), folder);
+    // Файлы в папке тулзы; папки может ещё не быть
+    const listFiles = async dir => {
+        const names = [];
+        if (dir) for await (const [name, handle] of dir.entries()) if (handle.kind === 'file') names.push(name);
+        return 'OK:' + names.join('\n');
+    };
+    const readFile = async (dir, name) => {
+        if (!dir) return 'OK:0';
+        try {
+            return 'OK:1' + await toBase64(await (await dir.getFileHandle(name)).getFile());
+        } catch (e) {
+            return 'OK:0';
+        }
+    };
+    const writeFile = async (dir, name, base64) => {
+        const writable = await (await dir.getFileHandle(name, { create: true })).createWritable();
+        await writable.write(fromBase64(base64));
+        await writable.close();
+        return 'OK:';
     };
     const toBase64 = blob => new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -125,9 +167,7 @@ internal const val BRIDGE_SOURCE = """(() => {
             const root = await savedRoot();
             const source = await root.getDirectoryHandle(FACES);
             const backups = await root.getDirectoryHandle(BACKUP, { create: true });
-            // две копии в одну секунду не должны сливаться в одну папку
-            let folder = stamp();
-            for (let n = 2; await child(backups, folder); n++) folder = stamp() + '_' + n;
+            const folder = await freshFolder(backups);
             const target = await backups.getDirectoryHandle(folder, { create: true });
             for (const name of names.split('\n')) {
                 const file = await (await source.getFileHandle(name)).getFile();
@@ -137,20 +177,7 @@ internal const val BRIDGE_SOURCE = """(() => {
             }
             return 'OK:' + BACKUP + '\\' + folder;
         },
-        async backups() {
-            const dir = await child(await savedRoot(), BACKUP);
-            if (!dir) return 'OK:';
-            const lines = [];
-            for await (const [folder, handle] of dir.entries()) {
-                if (handle.kind !== 'directory') continue;
-                const files = [];
-                for await (const [name, file] of handle.entries()) {
-                    if (file.kind === 'file' && name.toLowerCase().endsWith('.bmp')) files.push(name);
-                }
-                lines.push(folder + '\t' + files.join(','));
-            }
-            return 'OK:' + lines.join('\n');
-        },
+        backups: async () => listFolders(await child(await savedRoot(), BACKUP)),
         async backupDelete(folder) {
             const dir = await child(await savedRoot(), BACKUP);
             if (dir) {
@@ -169,31 +196,32 @@ internal const val BRIDGE_SOURCE = """(() => {
             await writable.close();
             return 'OK:';
         },
-        async toolList() {
-            const dir = await tools(false);
-            const names = [];
-            if (dir) for await (const [name, handle] of dir.entries()) if (handle.kind === 'file') names.push(name);
-            return 'OK:' + names.join('\n');
-        },
-        async toolRead(name) {
-            const dir = await tools(false);
-            if (!dir) return 'OK:0';
-            try {
-                return 'OK:1' + await toBase64(await (await dir.getFileHandle(name)).getFile());
-            } catch (e) {
-                return 'OK:0';
-            }
-        },
-        async toolWrite(name, base64) {
-            const writable = await (await (await tools(true)).getFileHandle(name, { create: true })).createWritable();
-            await writable.write(fromBase64(base64));
-            await writable.close();
-            return 'OK:';
-        },
+        toolList: async () => listFiles(await tools(false)),
+        toolRead: async name => readFile(await tools(false), name),
+        toolWrite: async (name, base64) => writeFile(await tools(true), name, base64),
         async toolDelete(name) {
             const dir = await tools(false);
             if (dir) {
                 try { await dir.removeEntry(name); } catch (e) { /* файла уже нет */ }
+            }
+            return 'OK:';
+        },
+        // Избранное: Black Desert\Favorite FaceTexture\<дата-время>\ — набор всех портретов
+        async favoriteCreate() {
+            const dir = await (await savedRoot()).getDirectoryHandle(FAVORITES, { create: true });
+            const folder = await freshFolder(dir);
+            await dir.getDirectoryHandle(folder, { create: true });
+            return 'OK:' + folder;
+        },
+        favorites: async () => listFolders(await child(await savedRoot(), FAVORITES)),
+        favoriteRead: async (folder, name) => readFile(await favoriteFolder(folder), name),
+        // мост передаёт два аргумента, поэтому папка и имя файла приходят одной строкой «папка/имя»
+        favoriteWrite: async (path, base64) =>
+            writeFile(await favoriteFolder(path.substring(0, path.indexOf('/'))), path.substring(path.indexOf('/') + 1), base64),
+        async favoriteDelete(folder) {
+            const dir = await child(await savedRoot(), FAVORITES);
+            if (dir) {
+                try { await dir.removeEntry(folder, { recursive: true }); } catch (e) { if (e.name !== 'NotFoundError') throw e; }
             }
             return 'OK:';
         },
