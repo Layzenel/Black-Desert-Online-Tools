@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -19,25 +19,25 @@ import com.layzen.bdotools.feature.slots.presentation.ui.editor.rememberCanvasVi
 import com.layzen.bdotools.feature.slots.presentation.ui.sidebar.SlotsSidebar
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Окно после загрузки файла: настройки слева, холст редактора справа. */
+/** Окно после загрузки файла: настройки слева во всю высоту, холст редактора справа на всё оставшееся место. */
 @Composable
-internal fun SlotsContent(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
+internal fun SlotsContent(state: SlotsState, onEvent: (SlotsEvent) -> Unit, modifier: Modifier = Modifier) {
     val viewport = rememberCanvasViewport()
-    Row {
+    Row(modifier) {
         SlotsSidebar(
             state,
             onEvent,
             Modifier
                 .width(SlotsDimens.sidebarWidth)
-                .heightIn(max = SlotsDimens.sidebarMaxHeight)
+                .fillMaxHeight()
                 .background(AppTheme.colors.backgroundSurface),
         )
         Column(
-            Modifier.weight(1f).padding(AppTheme.dimens.spaceL),
+            Modifier.weight(1f).fillMaxHeight().padding(AppTheme.dimens.spaceL),
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
         ) {
             EditorToolbar(state, onEvent, onFit = viewport::fit)
-            SlotsCanvas(state, viewport, onEvent, Modifier.fillMaxWidth())
+            SlotsCanvas(state, viewport, onEvent, Modifier.weight(1f).fillMaxWidth())
             EditorStatus(state)
         }
     }

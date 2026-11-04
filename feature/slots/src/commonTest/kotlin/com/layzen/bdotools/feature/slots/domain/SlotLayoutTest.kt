@@ -42,6 +42,16 @@ class SlotLayoutTest {
     }
 
     @Test
+    fun interfaceElementsHaveOwnFramesAndUniqueIndices() {
+        val health = SlotId(SlotGroup.Interface, InterfaceElement.Health.ordinal + 1)
+        assertEquals(13, health.uiIndex)
+        assertEquals(385 to 40, health.width to health.height)
+        assertEquals(50 to 65, SlotId(SlotGroup.Hotbar, 1).let { it.width to it.height })
+        val indices = SlotGroup.entries.flatMap { it.uiIndices }
+        assertEquals(indices.size, indices.toSet().size)
+    }
+
+    @Test
     fun builtInLayoutsPlaceAllCooldownSlotsApart() {
         BuiltInLayout.entries.forEach { builtIn ->
             val positions = builtIn.layout.positions

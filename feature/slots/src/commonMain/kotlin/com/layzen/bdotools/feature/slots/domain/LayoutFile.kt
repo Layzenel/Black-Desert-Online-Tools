@@ -18,12 +18,15 @@ data class LayoutFile(
     val cooldown: List<LayoutSlot> = emptyList(),
     val hotbar: List<LayoutSlot> = emptyList(),
     val classResource: List<LayoutSlot> = emptyList(),
+    /** Прочие элементы; `slot` — номер элемента в [InterfaceElement] с единицы. */
+    val interfaceElements: List<LayoutSlot> = emptyList(),
 ) {
     /** Элементы группы [group] из файла. */
     fun slotsOf(group: SlotGroup): List<LayoutSlot> = when (group) {
         SlotGroup.Cooldown -> cooldown
         SlotGroup.Hotbar -> hotbar
         SlotGroup.ClassResource -> classResource
+        SlotGroup.Interface -> interfaceElements
     }
 
     companion object {
