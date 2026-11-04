@@ -24,6 +24,7 @@ import com.layzen.bdotools.resources.app_title
 import com.layzen.bdotools.uikit.components.TopNavigation
 import com.layzen.bdotools.uikit.showcase.ComponentShowcase
 import com.layzen.bdotools.uikit.theme.AppTheme
+import com.layzen.bdotools.update.AppUpdateBanner
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinApplication
 import org.koin.dsl.koinConfiguration
@@ -59,6 +60,7 @@ private fun AppContent() {
             label = { stringResource(it.title) },
             title = stringResource(Res.string.app_title),
         )
+        AppUpdateBanner()
         when (current) {
             Destination.Showcase -> ComponentShowcase()
             is Destination.Tab -> Box(
