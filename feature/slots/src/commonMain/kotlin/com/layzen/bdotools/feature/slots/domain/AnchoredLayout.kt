@@ -19,6 +19,9 @@ data class AnchoredLayout(
 
     fun placeOn(screen: ScreenSpace) = SlotLayout(positions.mapValues { it.value.placeOn(screen) }, hidden)
 
+    /** Только элементы [ids]: так импортируется и экспортируется часть раскладки. */
+    fun only(ids: Set<SlotId>) = AnchoredLayout(positions.filterKeys { it in ids }, hidden intersect ids)
+
     /** Сколько элементов не помещается на экран [screen]. */
     fun offScreenCount(screen: ScreenSpace): Int =
         positions.count { (id, position) -> !screen.fits(id, position.placeOn(screen)) }

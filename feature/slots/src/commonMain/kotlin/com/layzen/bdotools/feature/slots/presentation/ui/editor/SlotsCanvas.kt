@@ -4,10 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
-import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,53 +12,51 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import com.layzen.bdotools.feature.slots.domain.ScreenArea
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
+import com.layzen.bdotools.feature.slots.presentation.ui.SlotsDimens
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
-
-/** Во сколько раз меняется масштаб за один щелчок колеса. */
-private const val WHEEL_ZOOM_STEP = 1.15f
 
 /**
  * Экран игры в масштабе: подложка, сетка от прицела, прицел и элементы интерфейса.
  * Окно холста всегда в пропорциях экрана игры. Колесо мыши меняет масштаб к точке под курсором,
- * зажатая ЛКМ по пустому месту двигает холст, клик по пустому месту снимает выбор.
+ * зажатая ЛКМ по пустому месту двигает холст, с Shift — обводит элементы рамкой; клик по пустому месту и Esc
+ * снимают выбор.
  */
 @Composable
 internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (SlotsEvent) -> Unit, modifier: Modifier = Modifier) {
     val screen = state.loaded?.game?.screen ?: return
     val focus = remember { FocusRequester() }
     val currentOnEvent by rememberUpdatedState(onEvent)
+    var marquee by remember { mutableStateOf<Rect?>(null) }
     BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
         // Самое большое окно в пропорциях экрана игры, которое влезает в отведённое место
         val ratio = (screen.height / screen.width).toFloat()
         val viewportWidth = if (maxHeight == Dp.Infinity) maxWidth else minOf(maxWidth, maxHeight / ratio)
         val viewportHeight = viewportWidth * ratio
+        val zoom = viewport.zoom
+        val scale = with(LocalDensity.current) { (viewportWidth * zoom).toPx() } / screen.width.toFloat()
+        val currentScale by rememberUpdatedState(scale)
         Box(
             Modifier
                 .size(viewportWidth, viewportHeight)
@@ -72,15 +66,21 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
                 .onSizeChanged { viewport.size = Size(it.width.toFloat(), it.height.toFloat()) }
                 .focusRequester(focus)
                 .focusable()
-                .onPreviewKeyEvent { event -> event.handleArrows(currentOnEvent) }
+                .onPreviewKeyEvent { event -> event.handleKeys(currentOnEvent) }
                 .wheelZoom(viewport)
-                .panOrClear(viewport) {
-                    focus.requestFocus()
-                    currentOnEvent(SlotsEvent.ClearSelection)
-                },
+                .canvasGestures(
+                    viewport,
+                    onTap = {
+                        focus.requestFocus()
+                        currentOnEvent(SlotsEvent.ClearSelection)
+                    },
+                    onMarquee = { marquee = it },
+                    onArea = { rect ->
+                        focus.requestFocus()
+                        currentOnEvent(SlotsEvent.SelectArea(rect.toScreenArea(viewport, currentScale), additive = true))
+                    },
+                ),
         ) {
-            val zoom = viewport.zoom
-            val scale = with(LocalDensity.current) { (viewportWidth * zoom).toPx() } / screen.width.toFloat()
             // Содержимое больше окна: снимаем ограничение родителя, иначе size() ужмёт его до размера окна
             Box(
                 Modifier
@@ -90,6 +90,7 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
             ) {
                 CanvasContent(state, screen, scale, onEvent, onPress = { focus.requestFocus() })
             }
+            marquee?.let { MarqueeFrame(it) }
         }
     }
 }
@@ -116,53 +117,23 @@ private fun CanvasContent(state: SlotsState, screen: ScreenSpace, scale: Float, 
     }
 }
 
-/** Колесо мыши: вверх — ближе, вниз — дальше, к точке под курсором. */
-private fun Modifier.wheelZoom(viewport: CanvasViewport): Modifier = pointerInput(viewport) {
-    awaitPointerEventScope {
-        while (true) {
-            val event = awaitPointerEvent()
-            if (event.type != PointerEventType.Scroll) continue
-            val change = event.changes.first()
-            val factor = if (change.scrollDelta.y < 0) WHEEL_ZOOM_STEP else 1 / WHEEL_ZOOM_STEP
-            viewport.zoomAt(change.position, factor)
-            change.consume()
-        }
-    }
+/** Рамка обводки, пока её тянут; [rect] — в пикселях окна холста. */
+@Composable
+private fun MarqueeFrame(rect: Rect) {
+    val density = LocalDensity.current
+    Box(
+        Modifier
+            .offset { IntOffset(rect.left.roundToInt(), rect.top.roundToInt()) }
+            .size(with(density) { rect.width.toDp() }, with(density) { rect.height.toDp() })
+            .background(AppTheme.colors.accentGold.copy(alpha = SlotsDimens.MARQUEE_FILL_ALPHA))
+            .border(SlotsDimens.marqueeBorder, AppTheme.colors.accentGold),
+    )
 }
 
-/**
- * Нажатие на пустое место: без сдвига — [onTap], со сдвигом — перетаскивание холста.
- * Нажатия на элементы сюда не доходят: элементы их поглощают.
- */
-private fun Modifier.panOrClear(viewport: CanvasViewport, onTap: () -> Unit): Modifier = pointerInput(viewport) {
-    awaitEachGesture {
-        val down = awaitFirstDown()
-        var dragged = false
-        val dragStart = awaitTouchSlopOrCancellation(down.id) { change, over ->
-            change.consume()
-            dragged = true
-            viewport.panBy(over)
-        }
-        if (dragStart == null) {
-            if (!dragged) onTap()
-            return@awaitEachGesture
-        }
-        drag(dragStart.id) { change ->
-            viewport.panBy(change.positionChange())
-            change.consume()
-        }
-    }
-}
-
-/** Стрелки двигают выбранные элементы: на 1 UI-px, с Shift — на шаг привязки. */
-private fun KeyEvent.handleArrows(onEvent: (SlotsEvent) -> Unit): Boolean {
-    val direction = when (key) {
-        Key.DirectionLeft -> -1 to 0
-        Key.DirectionRight -> 1 to 0
-        Key.DirectionUp -> 0 to -1
-        Key.DirectionDown -> 0 to 1
-        else -> return false
-    }
-    if (type == KeyEventType.KeyDown) onEvent(SlotsEvent.Nudge(direction.first, direction.second, byGrid = isShiftPressed))
-    return true
-}
+/** Прямоугольник в пикселях окна → UI-px экрана игры: убираем сдвиг холста и делим на масштаб. */
+private fun Rect.toScreenArea(viewport: CanvasViewport, scale: Float) = ScreenArea.between(
+    ((left - viewport.pan.x) / scale).toDouble(),
+    ((top - viewport.pan.y) / scale).toDouble(),
+    ((right - viewport.pan.x) / scale).toDouble(),
+    ((bottom - viewport.pan.y) / scale).toDouble(),
+)

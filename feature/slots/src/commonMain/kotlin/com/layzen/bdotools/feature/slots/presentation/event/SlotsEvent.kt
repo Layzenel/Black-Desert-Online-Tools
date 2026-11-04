@@ -1,6 +1,9 @@
 package com.layzen.bdotools.feature.slots.presentation.event
 
 import com.layzen.bdotools.feature.slots.domain.BuiltInLayout
+import com.layzen.bdotools.feature.slots.domain.GamePreset
+import com.layzen.bdotools.feature.slots.domain.ScreenArea
+import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
 import com.layzen.bdotools.feature.slots.presentation.state.GridStep
@@ -12,10 +15,14 @@ sealed interface SlotsEvent {
     data object RequestPermission : SlotsEvent
     data class SelectAccount(val account: String) : SlotsEvent
     data object Reload : SlotsEvent
+    data class SelectGamePreset(val preset: GamePreset) : SlotsEvent
 
     // Редактор
     data class Select(val id: SlotId, val additive: Boolean) : SlotsEvent
     data object ClearSelection : SlotsEvent
+
+    /** Обводка рамкой: выбрать всё, что она задела; [additive] — добавить к уже выбранному. */
+    data class SelectArea(val area: ScreenArea, val additive: Boolean) : SlotsEvent
     data class DragStart(val id: SlotId, val additive: Boolean) : SlotsEvent
     data class DragBy(val dx: Float, val dy: Float) : SlotsEvent
     data object DragEnd : SlotsEvent
@@ -42,8 +49,14 @@ sealed interface SlotsEvent {
     data object ConfirmImport : SlotsEvent
     data object Export : SlotsEvent
 
+    // Превью импорта и экспорта
+    data class PreviewInclude(val ids: Set<SlotId>, val include: Boolean) : SlotsEvent
+    data class PreviewScreen(val screen: ScreenSpace) : SlotsEvent
+    data object ConfirmPreview : SlotsEvent
+
     // Запись в игру и подложка
     data object OpenApply : SlotsEvent
+    data class SelectApplyTarget(val preset: GamePreset) : SlotsEvent
     data object ConfirmApply : SlotsEvent
     data object PickBackground : SlotsEvent
     data object ClearBackground : SlotsEvent

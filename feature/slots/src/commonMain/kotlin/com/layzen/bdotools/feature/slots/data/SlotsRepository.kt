@@ -1,10 +1,11 @@
 package com.layzen.bdotools.feature.slots.data
 
+import com.layzen.bdotools.feature.slots.domain.GamePreset
 import com.layzen.bdotools.feature.slots.domain.LayoutCodec
 import com.layzen.bdotools.feature.slots.domain.LayoutFormatException
 import com.layzen.bdotools.feature.slots.domain.NamedLayout
 import com.layzen.bdotools.feature.slots.domain.SlotLayout
-import com.layzen.bdotools.feature.slots.domain.parseGameVariable
+import com.layzen.bdotools.feature.slots.domain.parseGamePresets
 import com.layzen.bdotools.feature.slots.domain.writeUiData
 import com.layzen.bdotools.feature.slots.domain.writeVisibility
 
@@ -16,25 +17,30 @@ class SlotsRepository(private val storage: SlotsStorage) {
 
     suspend fun accounts(): List<String> = storage.accounts().ifEmpty { throw SlotsException(SlotsError.NoGameVariable) }
 
-    suspend fun load(account: String): LoadedGame {
+    /** Читает файл аккаунта; в редакторе будет набор [edited], если он есть в файле, иначе общий. */
+    suspend fun load(account: String, edited: GamePreset = GamePreset.General): LoadedGame {
         val file = storage.readGameVariable(account)
-        val game = try {
-            parseGameVariable(file.text)
+        val presets = try {
+            parseGamePresets(file.text)
         } catch (e: IllegalArgumentException) {
             throw SlotsException(SlotsError.NoGameVariable, e.message)
         }
-        return LoadedGame(account, game, file)
+        return LoadedGame(account, presets, file, edited.takeIf { it in presets } ?: GamePreset.General)
     }
 
     /**
-     * Записывает [layout] в файл аккаунта. Если поменялась видимость, она записывается и в файлы всех
-     * персонажей: игра хранит `IsShow` у каждого персонажа отдельно. Возвращает путь резервной копии.
+     * Записывает [layout] в набор [target] файла аккаунта. Видимость общего набора игра хранит ещё и у каждого
+     * персонажа, поэтому для него поменявшийся `IsShow` записывается и в файлы персонажей; у пресетов 1–3
+     * видимость лежит в самих записях. Возвращает путь резервной копии.
      */
-    suspend fun apply(loaded: LoadedGame, layout: SlotLayout): String {
-        val entries = loaded.game.changedEntries(layout)
-        val backup = storage.writeGameVariable(loaded.account, writeUiData(loaded.file.text, entries), loaded.file.modified)
+    suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String {
+        val game = loaded.presets.getValue(target)
+        val entries = game.changedEntries(layout)
+        val text = writeUiData(loaded.file.text, entries, target)
+        val backup = storage.writeGameVariable(loaded.account, text, loaded.file.modified)
+        if (target != GamePreset.General) return backup
         val visibility = entries
-            .filter { it.isShow != loaded.game.uiData.getValue(it.index).isShow }
+            .filter { it.isShow != game.uiData.getValue(it.index).isShow }
             .associate { it.index to it.isShow }
         if (visibility.isNotEmpty()) applyVisibility(loaded.account, visibility)
         return backup
