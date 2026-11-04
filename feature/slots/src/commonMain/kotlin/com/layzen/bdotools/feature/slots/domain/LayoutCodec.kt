@@ -23,6 +23,7 @@ object LayoutCodec {
             cooldown = layout.layout.slotsOf(SlotGroup.Cooldown),
             hotbar = layout.layout.slotsOf(SlotGroup.Hotbar),
             classResource = layout.layout.slotsOf(SlotGroup.ClassResource),
+            interfaceElements = layout.layout.slotsOf(SlotGroup.Interface),
         ),
     )
 

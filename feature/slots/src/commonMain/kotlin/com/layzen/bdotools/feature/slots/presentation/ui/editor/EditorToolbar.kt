@@ -19,6 +19,7 @@ import com.layzen.bdotools.feature.slots.resources.slots_fit
 import com.layzen.bdotools.feature.slots.resources.slots_legend_class_resource
 import com.layzen.bdotools.feature.slots.resources.slots_legend_cooldown
 import com.layzen.bdotools.feature.slots.resources.slots_legend_hotbar
+import com.layzen.bdotools.feature.slots.resources.slots_legend_interface
 import com.layzen.bdotools.feature.slots.resources.slots_legend_off_screen
 import com.layzen.bdotools.feature.slots.resources.slots_mirror
 import com.layzen.bdotools.feature.slots.resources.slots_reload
@@ -34,6 +35,7 @@ internal fun EditorToolbar(state: SlotsState, onEvent: (SlotsEvent) -> Unit, onF
         LegendItem(SlotGroup.Cooldown.frameColor(), stringResource(Res.string.slots_legend_cooldown))
         LegendItem(SlotGroup.Hotbar.frameColor(), stringResource(Res.string.slots_legend_hotbar))
         LegendItem(SlotGroup.ClassResource.frameColor(), stringResource(Res.string.slots_legend_class_resource))
+        LegendItem(SlotGroup.Interface.frameColor(), stringResource(Res.string.slots_legend_interface))
         LegendItem(AppTheme.colors.danger, stringResource(Res.string.slots_legend_off_screen))
     }
     Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {

@@ -18,14 +18,14 @@ data class ScreenSpace(val resolutionWidth: Int, val resolutionHeight: Int, val 
     val crosshair: SlotPosition get() = SlotPosition(0, ((CROSSHAIR_HEIGHT_SHARE - 0.5) * height).roundToInt())
 
     /** Левый край иконки с центром в [position]. */
-    fun iconLeft(group: SlotGroup, position: SlotPosition): Double = width / 2 + position.x - group.width / 2.0
+    fun iconLeft(id: SlotId, position: SlotPosition): Double = width / 2 + position.x - id.width / 2.0
 
-    fun iconTop(group: SlotGroup, position: SlotPosition): Double = height / 2 + position.y - group.height / 2.0
+    fun iconTop(id: SlotId, position: SlotPosition): Double = height / 2 + position.y - id.height / 2.0
 
     /** Помещается ли иконка на экран целиком. */
     fun fits(id: SlotId, position: SlotPosition): Boolean {
-        val left = iconLeft(id.group, position)
-        val top = iconTop(id.group, position)
-        return left >= 0 && top >= 0 && left + id.group.width <= width && top + id.group.height <= height
+        val left = iconLeft(id, position)
+        val top = iconTop(id, position)
+        return left >= 0 && top >= 0 && left + id.width <= width && top + id.height <= height
     }
 }

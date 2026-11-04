@@ -3,9 +3,7 @@ package com.layzen.bdotools.feature.slots.presentation.ui
 import androidx.compose.ui.unit.dp
 
 internal object SlotsDimens {
-    val windowMaxWidth = 1440.dp
     val sidebarWidth = 280.dp
-    val sidebarMaxHeight = 760.dp
     val coordinateFieldWidth = 96.dp
     val dialogWidth = 520.dp
     val importTextHeight = 220.dp

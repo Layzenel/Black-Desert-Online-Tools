@@ -69,7 +69,7 @@ private fun AppContent() {
             is Destination.Tab -> Box(
                 Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .then(if (current.tab.fillsScreen) Modifier else Modifier.verticalScroll(rememberScrollState()))
                     .padding(AppTheme.dimens.spaceXl),
                 contentAlignment = Alignment.TopCenter,
             ) {

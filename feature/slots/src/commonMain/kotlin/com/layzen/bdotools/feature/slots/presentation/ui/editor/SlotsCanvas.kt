@@ -37,6 +37,7 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
@@ -57,9 +58,11 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
     val screen = state.loaded?.game?.screen ?: return
     val focus = remember { FocusRequester() }
     val currentOnEvent by rememberUpdatedState(onEvent)
-    BoxWithConstraints(modifier) {
-        val viewportWidth = maxWidth
-        val viewportHeight = maxWidth * (screen.height / screen.width).toFloat()
+    BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
+        // Самое большое окно в пропорциях экрана игры, которое влезает в отведённое место
+        val ratio = (screen.height / screen.width).toFloat()
+        val viewportWidth = if (maxHeight == Dp.Infinity) maxWidth else minOf(maxWidth, maxHeight / ratio)
+        val viewportHeight = viewportWidth * ratio
         Box(
             Modifier
                 .size(viewportWidth, viewportHeight)

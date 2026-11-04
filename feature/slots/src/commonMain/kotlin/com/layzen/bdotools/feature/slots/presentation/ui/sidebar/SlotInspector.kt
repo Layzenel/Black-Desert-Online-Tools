@@ -8,19 +8,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.layzen.bdotools.feature.slots.domain.SlotGroup
 import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
 import com.layzen.bdotools.feature.slots.presentation.ui.SlotsDimens
+import com.layzen.bdotools.feature.slots.presentation.ui.slotTitle
 import com.layzen.bdotools.feature.slots.resources.Res
 import com.layzen.bdotools.feature.slots.resources.slots_selection
 import com.layzen.bdotools.feature.slots.resources.slots_selection_hint
 import com.layzen.bdotools.feature.slots.resources.slots_selection_many
-import com.layzen.bdotools.feature.slots.resources.slots_slot_class_resource
-import com.layzen.bdotools.feature.slots.resources.slots_slot_cooldown
-import com.layzen.bdotools.feature.slots.resources.slots_slot_hotbar
 import com.layzen.bdotools.feature.slots.resources.slots_slot_index
 import com.layzen.bdotools.feature.slots.resources.slots_slot_x
 import com.layzen.bdotools.feature.slots.resources.slots_slot_y
@@ -61,13 +58,6 @@ private fun SlotCoordinates(id: SlotId, position: SlotPosition, crosshair: SlotP
     CoordinateRow(stringResource(Res.string.slots_slot_y), position.y - crosshair.y) {
         onEvent(SlotsEvent.SetPosition(id, position.copy(y = it + crosshair.y)))
     }
-}
-
-@Composable
-private fun slotTitle(id: SlotId): String = when (id.group) {
-    SlotGroup.Cooldown -> stringResource(Res.string.slots_slot_cooldown, id.number)
-    SlotGroup.Hotbar -> stringResource(Res.string.slots_slot_hotbar, id.number)
-    SlotGroup.ClassResource -> stringResource(Res.string.slots_slot_class_resource)
 }
 
 @Composable

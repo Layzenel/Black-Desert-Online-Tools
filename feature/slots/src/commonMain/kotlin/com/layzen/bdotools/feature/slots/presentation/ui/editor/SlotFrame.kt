@@ -23,6 +23,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
@@ -31,6 +32,7 @@ import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.ui.SlotsDimens
+import com.layzen.bdotools.feature.slots.presentation.ui.slotTitle
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 
@@ -54,17 +56,18 @@ internal fun SlotFrame(
     // За краем экрана — красная заливка; рамка остаётся цветом группы, чтобы было видно, что это за элемент
     val fill = if (screen.fits(id, position)) AppTheme.colors.backgroundDeep else AppTheme.colors.danger
     val density = LocalDensity.current
-    val iconWidth = with(density) { (id.group.width * scale).toDp() }
-    val eyeSize = iconWidth * SlotsDimens.EYE_SHARE
+    val iconWidth = with(density) { (id.width * scale).toDp() }
+    // У больших окон глазик в игре такой же, как у слота, а не во всю ширину
+    val eyeSize = with(density) { (minOf(id.width, id.height, SlotGroup.Cooldown.width) * scale).toDp() } * SlotsDimens.EYE_SHARE
     Box(
         Modifier
             .offset {
                 IntOffset(
-                    (screen.iconLeft(id.group, position) * scale).roundToInt(),
-                    (screen.iconTop(id.group, position) * scale).roundToInt(),
+                    (screen.iconLeft(id, position) * scale).roundToInt(),
+                    (screen.iconTop(id, position) * scale).roundToInt(),
                 )
             }
-            .size(iconWidth, with(density) { (id.group.height * scale).toDp() }),
+            .size(iconWidth, with(density) { (id.height * scale).toDp() }),
     ) {
         Box(
             Modifier
@@ -76,12 +79,18 @@ internal fun SlotFrame(
                 .slotGestures(id, scale, onEvent, onPress),
             contentAlignment = Alignment.Center,
         ) {
-            if (id.group != SlotGroup.ClassResource && iconWidth >= SlotsDimens.labelMinIconWidth) {
+            val label = when (id.group) {
+                SlotGroup.ClassResource -> null
+                SlotGroup.Interface -> slotTitle(id)
+                else -> id.number.toString()
+            }
+            if (label != null && iconWidth >= SlotsDimens.labelMinIconWidth) {
                 Text(
-                    id.number.toString(),
+                    label,
                     style = AppTheme.typography.caption,
                     color = AppTheme.colors.textPrimary,
-                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
                     overflow = TextOverflow.Clip,
                 )
             }
