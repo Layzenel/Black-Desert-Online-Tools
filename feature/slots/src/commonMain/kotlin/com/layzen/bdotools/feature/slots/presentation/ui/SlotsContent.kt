@@ -15,12 +15,14 @@ import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.EditorStatus
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.EditorToolbar
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.SlotsCanvas
+import com.layzen.bdotools.feature.slots.presentation.ui.editor.rememberCanvasViewport
 import com.layzen.bdotools.feature.slots.presentation.ui.sidebar.SlotsSidebar
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /** Окно после загрузки файла: настройки слева, холст редактора справа. */
 @Composable
 internal fun SlotsContent(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
+    val viewport = rememberCanvasViewport()
     Row {
         SlotsSidebar(
             state,
@@ -34,8 +36,8 @@ internal fun SlotsContent(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             Modifier.weight(1f).padding(AppTheme.dimens.spaceL),
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
         ) {
-            EditorToolbar(state, onEvent)
-            SlotsCanvas(state, onEvent, Modifier.fillMaxWidth())
+            EditorToolbar(state, onEvent, onFit = viewport::fit)
+            SlotsCanvas(state, viewport, onEvent, Modifier.fillMaxWidth())
             EditorStatus(state)
         }
     }

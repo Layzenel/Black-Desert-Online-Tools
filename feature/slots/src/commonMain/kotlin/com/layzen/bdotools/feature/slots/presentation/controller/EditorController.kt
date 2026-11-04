@@ -5,10 +5,11 @@ import com.layzen.bdotools.feature.slots.domain.SlotLayout
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
 import com.layzen.bdotools.feature.slots.presentation.SlotsContext
 import com.layzen.bdotools.feature.slots.presentation.state.GridStep
+import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
 import kotlin.math.roundToInt
 
-/** Шаг стрелки с Shift, если сетка выключена. */
-private const val NUDGE_WITHOUT_GRID = 10
+/** Шаг стрелки с Shift, если шаг привязки — 0. */
+private const val NUDGE_WITHOUT_SNAP = 10
 
 /** Выбор и перемещение слотов, отмена, сетка. */
 internal class EditorController(private val context: SlotsContext) {
@@ -44,7 +45,8 @@ internal class EditorController(private val context: SlotsContext) {
         session.dx += dx
         session.dy += dy
         val lead = session.origin[session.lead] ?: return
-        val target = SlotPosition(snapped(lead.x + session.dx), snapped(lead.y + session.dy))
+        val origin = context.current.loaded?.game?.screen?.crosshair ?: SlotPosition(0, 0)
+        val target = SlotPosition(snapped(lead.x + session.dx, origin.x), snapped(lead.y + session.dy, origin.y))
         val moved = session.origin.moved(context.current.selection, target.x - lead.x, target.y - lead.y)
         context.update { it.copy(layout = moved) }
     }
@@ -56,7 +58,7 @@ internal class EditorController(private val context: SlotsContext) {
     }
 
     fun nudge(dx: Int, dy: Int, byGrid: Boolean) {
-        val step = if (byGrid) context.current.grid.size.takeIf { it > 0 } ?: NUDGE_WITHOUT_GRID else 1
+        val step = if (byGrid) context.current.snapStep.takeIf { it > 0 } ?: NUDGE_WITHOUT_SNAP else 1
         val selection = context.current.selection
         context.editLayout { it.moved(selection, dx * step, dy * step) }
     }
@@ -75,12 +77,15 @@ internal class EditorController(private val context: SlotsContext) {
 
     fun setGrid(step: GridStep) = context.update { it.copy(grid = step) }
 
-    fun setSnap(enabled: Boolean) = context.update { it.copy(snap = enabled) }
+    fun setSnapStep(step: Int) = context.update { it.copy(snapStep = step) }
 
-    private fun snapped(value: Float): Int {
-        val state = context.current
-        val step = state.grid.size
-        return if (state.snap && step > 0) (value / step).roundToInt() * step else value.roundToInt()
+    /** Глазик на иконке: скрыть или показать элемент в игре. */
+    fun toggleVisibility(id: SlotId) = context.editLayout { it.withVisibility(id, !it.isVisible(id)) }
+
+    /** Привязка к узлам с шагом [SlotsState.snapStep], отсчитанным от прицела [origin]; шаг 0 — без привязки. */
+    private fun snapped(value: Float, origin: Int): Int {
+        val step = context.current.snapStep
+        return if (step > 0) origin + ((value - origin) / step).roundToInt() * step else value.roundToInt()
     }
 
     private fun Set<SlotId>.toggled(id: SlotId, additive: Boolean): Set<SlotId> = when {

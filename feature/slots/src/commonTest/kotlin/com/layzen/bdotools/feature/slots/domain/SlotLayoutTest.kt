@@ -26,6 +26,13 @@ class SlotLayoutTest {
     }
 
     @Test
+    fun overlayTakesVisibilityOnlyForItsSlots() {
+        val base = layout.withVisibility(first, false).withVisibility(second, false)
+        val other = SlotLayout(mapOf(second to SlotPosition(0, 0)))
+        assertEquals(setOf(first), base.overlaidWith(other).hidden)
+    }
+
+    @Test
     fun slotIndicesFollowGameNumbering() {
         assertEquals(128, SlotId(SlotGroup.Cooldown, 1).uiIndex)
         assertEquals(148, SlotId(SlotGroup.Cooldown, 11).uiIndex)

@@ -18,6 +18,7 @@ import com.layzen.bdotools.feature.slots.resources.Res
 import com.layzen.bdotools.feature.slots.resources.slots_selection
 import com.layzen.bdotools.feature.slots.resources.slots_selection_hint
 import com.layzen.bdotools.feature.slots.resources.slots_selection_many
+import com.layzen.bdotools.feature.slots.resources.slots_slot_class_resource
 import com.layzen.bdotools.feature.slots.resources.slots_slot_cooldown
 import com.layzen.bdotools.feature.slots.resources.slots_slot_hotbar
 import com.layzen.bdotools.feature.slots.resources.slots_slot_index
@@ -40,21 +41,33 @@ internal fun SlotInspector(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
         SectionHeader(stringResource(Res.string.slots_selection))
         val selected = state.selection.singleOrNull()
         val position = selected?.let { state.layout[it] }
+        val crosshair = state.loaded?.game?.screen?.crosshair
         when {
-            selected != null && position != null -> SlotCoordinates(selected, position, onEvent)
+            selected != null && position != null && crosshair != null -> SlotCoordinates(selected, position, crosshair, onEvent)
             state.selection.size > 1 -> DescriptionText(stringResource(Res.string.slots_selection_many, state.selection.size))
             else -> DescriptionText(stringResource(Res.string.slots_selection_hint))
         }
     }
 }
 
+/** Координаты показываются от прицела — на него игрок ориентируется в игре; хранятся от центра экрана. */
 @Composable
-private fun SlotCoordinates(id: SlotId, position: SlotPosition, onEvent: (SlotsEvent) -> Unit) {
-    val title = if (id.group == SlotGroup.Cooldown) Res.string.slots_slot_cooldown else Res.string.slots_slot_hotbar
-    ValueText(stringResource(title, id.number))
+private fun SlotCoordinates(id: SlotId, position: SlotPosition, crosshair: SlotPosition, onEvent: (SlotsEvent) -> Unit) {
+    ValueText(slotTitle(id))
     DescriptionText(stringResource(Res.string.slots_slot_index, id.uiIndex))
-    CoordinateRow(stringResource(Res.string.slots_slot_x), position.x) { onEvent(SlotsEvent.SetPosition(id, position.copy(x = it))) }
-    CoordinateRow(stringResource(Res.string.slots_slot_y), position.y) { onEvent(SlotsEvent.SetPosition(id, position.copy(y = it))) }
+    CoordinateRow(stringResource(Res.string.slots_slot_x), position.x - crosshair.x) {
+        onEvent(SlotsEvent.SetPosition(id, position.copy(x = it + crosshair.x)))
+    }
+    CoordinateRow(stringResource(Res.string.slots_slot_y), position.y - crosshair.y) {
+        onEvent(SlotsEvent.SetPosition(id, position.copy(y = it + crosshair.y)))
+    }
+}
+
+@Composable
+private fun slotTitle(id: SlotId): String = when (id.group) {
+    SlotGroup.Cooldown -> stringResource(Res.string.slots_slot_cooldown, id.number)
+    SlotGroup.Hotbar -> stringResource(Res.string.slots_slot_hotbar, id.number)
+    SlotGroup.ClassResource -> stringResource(Res.string.slots_slot_class_resource)
 }
 
 @Composable

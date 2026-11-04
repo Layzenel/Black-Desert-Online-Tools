@@ -36,7 +36,13 @@ internal const val SLOTS_BRIDGE_SOURCE = """(() => {
         const slots = app && await child(app, 'slots', create);
         return sub ? slots && await child(slots, sub, create) : slots;
     };
-    const gameFile = async account => (await (await (await savedRoot()).getDirectoryHandle(CACHE)).getDirectoryHandle(account)).getFileHandle(GAME_FILE);
+    const accountDir = async account => (await (await savedRoot()).getDirectoryHandle(CACHE)).getDirectoryHandle(account);
+    const gameFile = async account => (await accountDir(account)).getFileHandle(GAME_FILE);
+    // path — «11/<персонаж>/<имя файла>» от папки аккаунта
+    const characterFile = async (account, path) => {
+        const [server, id, name] = path.split('/');
+        return (await (await (await accountDir(account)).getDirectoryHandle(server)).getDirectoryHandle(id)).getFileHandle(name);
+    };
     // ignoreBOM: метка порядка байтов, если она есть, остаётся в тексте и вернётся в файл при записи
     const readText = async file => new TextDecoder('utf-8', { ignoreBOM: true }).decode(await file.arrayBuffer());
     const writeHandle = async (handle, data) => {
@@ -120,6 +126,27 @@ internal const val SLOTS_BRIDGE_SOURCE = """(() => {
             await writeTo(backups, backupName, current);
             await writeHandle(handle, new TextEncoder().encode(text));
             return 'OK:' + TOOLS + '\\slots\\backups\\' + backupName;
+        },
+        // Настройки персонажей: UserCache\<аккаунт>\11\<персонаж>\gamevariable.xml (регистр имени файла бывает разный)
+        async characters(account) {
+            const servers = await child(await accountDir(account), '11');
+            const paths = [];
+            if (servers) for await (const [id, dir] of servers.entries()) {
+                if (dir.kind !== 'directory') continue;
+                for await (const [name, file] of dir.entries()) {
+                    if (file.kind === 'file' && name.toLowerCase() === GAME_FILE) paths.push('11/' + id + '/' + name);
+                }
+            }
+            return 'OK:' + paths.join('\n');
+        },
+        characterRead: async (account, path) => 'OK:' + await readText(await (await characterFile(account, path)).getFile()),
+        async characterWrite(account, payload) {
+            const path = payload.substring(0, payload.indexOf('\n'));
+            const handle = await characterFile(account, path);
+            const backupName = 'gamevariable_' + account + '_' + path.split('/')[1] + '_' + stamp() + '.xml';
+            await writeTo(await tools('backups', true), backupName, await handle.getFile());
+            await writeHandle(handle, new TextEncoder().encode(payload.substring(payload.indexOf('\n') + 1)));
+            return 'OK:';
         },
         async presets() {
             const dir = await tools('presets', false);

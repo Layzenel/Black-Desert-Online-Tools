@@ -2,10 +2,12 @@ package com.layzen.bdotools.feature.slots.presentation.controller
 
 import com.layzen.bdotools.feature.slots.data.DeviceFiles
 import com.layzen.bdotools.feature.slots.data.SlotsRepository
+import com.layzen.bdotools.feature.slots.domain.AnchoredLayout
 import com.layzen.bdotools.feature.slots.domain.BuiltInLayout
 import com.layzen.bdotools.feature.slots.domain.LayoutCodec
 import com.layzen.bdotools.feature.slots.domain.LayoutFormatException
 import com.layzen.bdotools.feature.slots.domain.NamedLayout
+import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.presentation.SlotsContext
 import com.layzen.bdotools.feature.slots.presentation.state.PresetRef
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsDialog
@@ -28,9 +30,11 @@ internal class PresetsController(
 
     fun useBuiltIn(layout: BuiltInLayout) = context.editLayout(PresetRef.BuiltIn(layout)) { it.overlaidWith(layout.layout) }
 
+    /** Пресет ставится на текущий экран от своих якорей. */
     fun useUserPreset(name: String) {
         val preset = context.current.presets.firstOrNull { it.name == name } ?: return
-        context.editLayout(PresetRef.User(name)) { it.overlaidWith(preset.layout) }
+        val screen = screen() ?: return
+        context.editLayout(PresetRef.User(name)) { it.overlaidWith(preset.layout.placeOn(screen)) }
     }
 
     fun openSaveAs() = context.update { it.copy(dialog = SlotsDialog.SaveAs(activeUserPreset().orEmpty())) }
@@ -40,9 +44,10 @@ internal class PresetsController(
     /** Сохраняет раскладку; пресет с тем же названием перезаписывается. */
     fun confirmSaveAs() {
         val name = (context.current.dialog as? SlotsDialog.SaveAs)?.name?.trim().orEmpty()
-        if (name.isEmpty()) return
+        val screen = screen()
+        if (name.isEmpty() || screen == null) return
         context.launch(busy = true) {
-            repository.savePreset(NamedLayout(name, context.current.layout))
+            repository.savePreset(NamedLayout(name, AnchoredLayout.of(context.current.layout, screen)))
             val presets = repository.presets()
             context.update {
                 it.copy(presets = presets, activePreset = PresetRef.User(name), dialog = null, notice = SlotsNotice.PresetSaved(name))
@@ -79,21 +84,31 @@ internal class PresetsController(
     }
 
     fun export() = context.launch {
+        val screen = screen() ?: return@launch
         val name = activeUserPreset() ?: DEFAULT_EXPORT_NAME
-        device.download(repository.fileName(name), LayoutCodec.encode(NamedLayout(name, context.current.layout)))
+        val layout = NamedLayout(name, AnchoredLayout.of(context.current.layout, screen))
+        device.download(repository.fileName(name), LayoutCodec.encode(layout))
     }
 
-    /** Импортированная раскладка ложится поверх текущей: группы, которых нет в файле, не меняются. */
+    /**
+     * Импортированная раскладка ставится на этот экран от своих якорей и ложится поверх текущей: группы,
+     * которых нет в файле, не меняются. Если что-то не влезло, сообщение подскажет масштаб интерфейса.
+     */
     private fun import(text: String) {
+        val screen = screen() ?: return
         val imported = try {
             LayoutCodec.decode(text)
         } catch (e: LayoutFormatException) {
             context.update { it.copy(dialog = SlotsDialog.Import(text, e.error)) }
             return
         }
-        context.editLayout { it.overlaidWith(imported.layout) }
-        context.update { it.copy(dialog = null, notice = SlotsNotice.Imported(imported.name)) }
+        context.editLayout { it.overlaidWith(imported.layout.placeOn(screen)) }
+        val offScreen = imported.layout.offScreenCount(screen)
+        val notice = SlotsNotice.Imported(imported.name, offScreen, imported.layout.suggestedUiScale(screen))
+        context.update { it.copy(dialog = null, notice = notice) }
     }
+
+    private fun screen(): ScreenSpace? = context.current.loaded?.game?.screen
 
     private fun activeUserPreset(): String? = (context.current.activePreset as? PresetRef.User)?.name
 }

@@ -15,7 +15,7 @@ private val SLOT_INDICES = SlotGroup.entries.flatMap { it.uiIndices }.toSet()
 fun parseGameVariable(text: String): GameVariable {
     val resolution = requireNotNull(RESOLUTION.find(text)) { "Resolution not found" }.groupValues
     val uiScale = UI_SCALE.find(text)?.groupValues?.get(1)?.toDoubleOrNull() ?: 1.0
-    val screen = ScreenSpace.of(resolution[1].toInt(), resolution[2].toInt(), uiScale)
+    val screen = ScreenSpace(resolution[1].toInt(), resolution[2].toInt(), uiScale)
     val uiData = UI_DATA_TAG.findAll(text)
         .mapNotNull { parseUiData(it.value) }
         .filter { it.index in SLOT_INDICES }

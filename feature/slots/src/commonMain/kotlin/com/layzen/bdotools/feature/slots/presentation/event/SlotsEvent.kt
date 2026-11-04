@@ -24,7 +24,8 @@ sealed interface SlotsEvent {
     data object Mirror : SlotsEvent
     data object Undo : SlotsEvent
     data class SetGrid(val step: GridStep) : SlotsEvent
-    data class SetSnap(val enabled: Boolean) : SlotsEvent
+    data class SetSnapStep(val step: Int) : SlotsEvent
+    data class ToggleVisibility(val id: SlotId) : SlotsEvent
 
     // Пресеты
     data object UseGameLayout : SlotsEvent

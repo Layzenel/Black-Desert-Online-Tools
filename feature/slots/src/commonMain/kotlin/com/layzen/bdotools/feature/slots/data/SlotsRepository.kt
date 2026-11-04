@@ -6,6 +6,7 @@ import com.layzen.bdotools.feature.slots.domain.NamedLayout
 import com.layzen.bdotools.feature.slots.domain.SlotLayout
 import com.layzen.bdotools.feature.slots.domain.parseGameVariable
 import com.layzen.bdotools.feature.slots.domain.writeUiData
+import com.layzen.bdotools.feature.slots.domain.writeVisibility
 
 private const val PRESET_EXTENSION = ".json"
 private val UNSAFE_FILE_CHARS = Regex("""[\\/:*?"<>|]""")
@@ -25,10 +26,26 @@ class SlotsRepository(private val storage: SlotsStorage) {
         return LoadedGame(account, game, file)
     }
 
-    /** Записывает [layout] в файл игры. Возвращает путь резервной копии. */
+    /**
+     * Записывает [layout] в файл аккаунта. Если поменялась видимость, она записывается и в файлы всех
+     * персонажей: игра хранит `IsShow` у каждого персонажа отдельно. Возвращает путь резервной копии.
+     */
     suspend fun apply(loaded: LoadedGame, layout: SlotLayout): String {
-        val text = writeUiData(loaded.file.text, loaded.game.changedEntries(layout))
-        return storage.writeGameVariable(loaded.account, text, loaded.file.modified)
+        val entries = loaded.game.changedEntries(layout)
+        val backup = storage.writeGameVariable(loaded.account, writeUiData(loaded.file.text, entries), loaded.file.modified)
+        val visibility = entries
+            .filter { it.isShow != loaded.game.uiData.getValue(it.index).isShow }
+            .associate { it.index to it.isShow }
+        if (visibility.isNotEmpty()) applyVisibility(loaded.account, visibility)
+        return backup
+    }
+
+    private suspend fun applyVisibility(account: String, visibility: Map<Int, Boolean>) {
+        storage.characterFiles(account).forEach { path ->
+            val text = storage.readCharacterFile(account, path)
+            val changed = writeVisibility(text, visibility)
+            if (changed != text) storage.writeCharacterFile(account, path, changed)
+        }
     }
 
     /** Пресеты из папки; файлы, которые не удалось прочитать, пропускаются. */

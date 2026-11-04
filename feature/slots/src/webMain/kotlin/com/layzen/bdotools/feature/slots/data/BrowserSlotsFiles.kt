@@ -29,6 +29,16 @@ internal class BrowserSlotsFiles : SlotsFiles {
     override suspend fun writeGameVariable(account: String, text: String, expectedModified: Long): String =
         SlotsBridge.call("write", account, "$expectedModified\n$text")
 
+    override suspend fun characterFiles(account: String): List<String> =
+        SlotsBridge.call("characters", account).lines().filter { it.isNotEmpty() }
+
+    override suspend fun readCharacterFile(account: String, path: String): String =
+        SlotsBridge.call("characterRead", account, path)
+
+    override suspend fun writeCharacterFile(account: String, path: String, text: String) {
+        SlotsBridge.call("characterWrite", account, "$path\n$text")
+    }
+
     override suspend fun presetFiles(): List<String> = SlotsBridge.call("presets").lines().filter { it.isNotEmpty() }
 
     override suspend fun readPreset(fileName: String): String = SlotsBridge.call("presetRead", fileName)

@@ -24,6 +24,14 @@ interface SlotsStorage {
      */
     suspend fun writeGameVariable(account: String, text: String, expectedModified: Long): String
 
+    /** Файлы настроек персонажей `UserCache\<аккаунт>\11\<персонаж>\gamevariable.xml`, пути от папки аккаунта. */
+    suspend fun characterFiles(account: String): List<String>
+
+    suspend fun readCharacterFile(account: String, path: String): String
+
+    /** Копирует файл персонажа в `BDO Tools\slots\backups` и записывает [text]. */
+    suspend fun writeCharacterFile(account: String, path: String, text: String)
+
     /** Файлы `*.json` в `BDO Tools\slots\presets`. */
     suspend fun presetFiles(): List<String>
 

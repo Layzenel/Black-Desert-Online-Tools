@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,14 +16,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
+import com.layzen.bdotools.feature.slots.domain.SlotGroup
 import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
@@ -31,8 +35,9 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 
 /**
- * Рамка слота на холсте, как в режиме правки интерфейса игры: номер в центре.
- * Клик выбирает слот, Shift+клик добавляет к выбору, перетаскивание двигает все выбранные.
+ * Рамка элемента на холсте в настоящем размере, как в режиме правки интерфейса игры: глазик сверху, номер в центре.
+ * Клик выбирает элемент, Shift+клик добавляет к выбору, перетаскивание двигает все выбранные.
+ * Скрытый в игре элемент нарисован приглушённым.
  */
 @Composable
 internal fun SlotFrame(
@@ -41,39 +46,57 @@ internal fun SlotFrame(
     screen: ScreenSpace,
     scale: Float,
     selected: Boolean,
+    visible: Boolean,
     onEvent: (SlotsEvent) -> Unit,
     onPress: () -> Unit,
 ) {
-    val fits = screen.fits(id, position)
-    val border = when {
-        selected -> AppTheme.colors.accentGold
-        !fits -> AppTheme.colors.danger
-        else -> id.group.frameColor()
-    }
+    val border = if (selected) AppTheme.colors.textPrimary else id.group.frameColor()
+    // За краем экрана — красная заливка; рамка остаётся цветом группы, чтобы было видно, что это за элемент
+    val fill = if (screen.fits(id, position)) AppTheme.colors.backgroundDeep else AppTheme.colors.danger
     val density = LocalDensity.current
+    val iconWidth = with(density) { (id.group.width * scale).toDp() }
+    val eyeSize = iconWidth * SlotsDimens.EYE_SHARE
     Box(
         Modifier
             .offset {
                 IntOffset(
-                    (screen.frameLeft(id.group, position) * scale).roundToInt(),
-                    (screen.frameTop(id.group, position) * scale).roundToInt(),
+                    (screen.iconLeft(id.group, position) * scale).roundToInt(),
+                    (screen.iconTop(id.group, position) * scale).roundToInt(),
                 )
             }
-            .size(with(density) { (id.group.width * scale).toDp() }, with(density) { (id.group.height * scale).toDp() })
-            .background(AppTheme.colors.backgroundDeep.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
-            .border(if (selected) SlotsDimens.selectedSlotBorder else SlotsDimens.slotBorder, border)
-            .pointerHoverIcon(PointerIcon.Hand)
-            .slotGestures(id, scale, onEvent, onPress),
-        contentAlignment = Alignment.Center,
+            .size(iconWidth, with(density) { (id.group.height * scale).toDp() }),
     ) {
-        Text(id.number.toString(), style = AppTheme.typography.caption, color = AppTheme.colors.textPrimary)
+        Box(
+            Modifier
+                .matchParentSize()
+                .alpha(if (visible) 1f else SlotsDimens.HIDDEN_ALPHA)
+                .background(fill.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
+                .border(if (selected) SlotsDimens.selectedSlotBorder else SlotsDimens.slotBorder, border)
+                .pointerHoverIcon(PointerIcon.Hand)
+                .slotGestures(id, scale, onEvent, onPress),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (id.group != SlotGroup.ClassResource && iconWidth >= SlotsDimens.labelMinIconWidth) {
+                Text(
+                    id.number.toString(),
+                    style = AppTheme.typography.caption,
+                    color = AppTheme.colors.textPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
+                )
+            }
+        }
+        // Глаз внутри рамки сверху по центру, как в режиме правки интерфейса игры
+        EyeToggle(
+            visible = visible,
+            eyeSize = eyeSize,
+            onToggle = { onEvent(SlotsEvent.ToggleVisibility(id)) },
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = eyeSize * SlotsDimens.EYE_TOP_SHARE),
+        )
     }
 }
 
-/**
- * Нажатие без сдвига — выбор, со сдвигом больше порога — перетаскивание. Нажатие поглощается,
- * чтобы холст под слотом не снял выбор.
- */
+/** Нажатие без сдвига — выбор, со сдвигом больше порога — перетаскивание. Нажатие поглощается. */
 @Composable
 private fun Modifier.slotGestures(id: SlotId, scale: Float, onEvent: (SlotsEvent) -> Unit, onPress: () -> Unit): Modifier {
     val currentScale by rememberUpdatedState(scale)
@@ -82,7 +105,6 @@ private fun Modifier.slotGestures(id: SlotId, scale: Float, onEvent: (SlotsEvent
         awaitEachGesture {
             val down = awaitFirstDown()
             down.consume()
-            onPress()
             val additive = currentEvent.keyboardModifiers.isShiftPressed
             var started = false
             val dragChange = awaitTouchSlopOrCancellation(down.id) { change, over ->
@@ -93,14 +115,17 @@ private fun Modifier.slotGestures(id: SlotId, scale: Float, onEvent: (SlotsEvent
             }
             if (dragChange == null) {
                 currentOnEvent(if (started) SlotsEvent.DragEnd else SlotsEvent.Select(id, additive))
-                return@awaitEachGesture
+            } else {
+                drag(dragChange.id) { change ->
+                    val delta = change.positionChange()
+                    change.consume()
+                    currentOnEvent(SlotsEvent.DragBy(delta.x / currentScale, delta.y / currentScale))
+                }
+                currentOnEvent(SlotsEvent.DragEnd)
             }
-            drag(dragChange.id) { change ->
-                val delta = change.positionChange()
-                change.consume()
-                currentOnEvent(SlotsEvent.DragBy(delta.x / currentScale, delta.y / currentScale))
-            }
-            currentOnEvent(SlotsEvent.DragEnd)
+            // Фокус для стрелок — только после жеста: перевод фокуса во время нажатия прокручивал страницу к холсту
+            // и сбивал первое перетаскивание
+            onPress()
         }
     }
 }

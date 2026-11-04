@@ -32,6 +32,20 @@ class GameVariableWritingTest {
     }
 
     @Test
+    fun writesVisibility() {
+        val hidden = UiData(128, false, "LeftBottom", 1061, 425, 0.3393749893, 0.5774569511)
+        val written = writeUiData(GAME_VARIABLE_SAMPLE, listOf(hidden))
+        assertEquals(1, written.lines().count { it.contains("""<UIData Index="128" IsShow="false"""") })
+    }
+
+    @Test
+    fun characterFileGetsOnlyVisibility() {
+        val text = "<UIData Index=\"89\" IsShow=\"true\"/>\r\n<UIData Index=\"128\" IsShow=\"true\"/>\r\n"
+        val expected = "<UIData Index=\"89\" IsShow=\"false\"/>\r\n<UIData Index=\"128\" IsShow=\"true\"/>\r\n"
+        assertEquals(expected, writeVisibility(text, mapOf(89 to false, 100 to false)))
+    }
+
+    @Test
     fun fixedFormatHasNoExponent() {
         assertEquals("0.0000001000", 1e-7.toFixed(10))
         assertEquals("-0.2500000000", (-0.25).toFixed(10))

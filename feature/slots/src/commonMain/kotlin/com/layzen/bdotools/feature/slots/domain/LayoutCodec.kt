@@ -22,14 +22,24 @@ object LayoutCodec {
             name = layout.name,
             cooldown = layout.layout.slotsOf(SlotGroup.Cooldown),
             hotbar = layout.layout.slotsOf(SlotGroup.Hotbar),
+            classResource = layout.layout.slotsOf(SlotGroup.ClassResource),
         ),
     )
 
-    /** Читает файл раскладки. Слоты с номерами вне 1–20 пропускаются. Ошибка — [LayoutFormatException]. */
+    /**
+     * Читает файл раскладки. Элементы с номерами вне группы пропускаются. Ошибка — [LayoutFormatException];
+     * неизвестный якорь — [LayoutError.WrongFormat].
+     */
     fun decode(text: String): NamedLayout {
         val file = parse(text)
-        val positions = file.cooldown.toPositions(SlotGroup.Cooldown) + file.hotbar.toPositions(SlotGroup.Hotbar)
-        return NamedLayout(file.name, SlotLayout(positions))
+        val slots = SlotGroup.entries.flatMap { group ->
+            file.slotsOf(group).filter { it.slot in 1..group.uiIndices.size }.map { SlotId(group, it.slot) to it }
+        }
+        val layout = AnchoredLayout(
+            positions = slots.associate { (id, slot) -> id to AnchoredPosition(slot.anchorOrFail(), slot.x, slot.y) },
+            hidden = slots.filter { (_, slot) -> !slot.visible }.mapTo(mutableSetOf()) { it.first },
+        )
+        return NamedLayout(file.name, layout)
     }
 
     private fun parse(text: String): LayoutFile {
@@ -41,7 +51,7 @@ object LayoutCodec {
             throw LayoutFormatException(LayoutError.NotJson, e.message)
         }
         if (format != LayoutFile.FORMAT) throw LayoutFormatException(LayoutError.WrongFormat)
-        if (version != LayoutFile.VERSION) throw LayoutFormatException(LayoutError.UnsupportedVersion)
+        if (version == null || version !in LayoutFile.SUPPORTED_VERSIONS) throw LayoutFormatException(LayoutError.UnsupportedVersion)
         return try {
             json.decodeFromString(LayoutFile.serializer(), text)
         } catch (e: SerializationException) {
@@ -49,10 +59,10 @@ object LayoutCodec {
         }
     }
 
-    private fun SlotLayout.slotsOf(group: SlotGroup): List<LayoutSlot> =
-        group.slots.mapNotNull { id -> this[id]?.let { LayoutSlot(id.number, it.x, it.y) } }
+    private fun LayoutSlot.anchorOrFail(): SlotAnchor =
+        SlotAnchor.byId(anchor) ?: throw LayoutFormatException(LayoutError.WrongFormat, "Unknown anchor $anchor")
 
-    private fun List<LayoutSlot>.toPositions(group: SlotGroup): Map<SlotId, SlotPosition> =
-        filter { it.slot in 1..group.uiIndices.size }
-            .associate { SlotId(group, it.slot) to SlotPosition(it.x, it.y) }
+    private fun AnchoredLayout.slotsOf(group: SlotGroup): List<LayoutSlot> = group.slots.mapNotNull { id ->
+        positions[id]?.let { LayoutSlot(id.number, it.anchor.id, it.x, it.y, id !in hidden) }
+    }
 }

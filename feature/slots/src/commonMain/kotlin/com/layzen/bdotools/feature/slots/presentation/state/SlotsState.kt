@@ -25,7 +25,7 @@ data class SlotsState(
     val presets: List<NamedLayout> = emptyList(),
     val activePreset: PresetRef? = PresetRef.Game,
     val grid: GridStep = GridStep.Game,
-    val snap: Boolean = true,
+    val snapStep: Int = DEFAULT_SNAP_STEP,
     val background: ImageBitmap? = null,
     val dialog: SlotsDialog? = null,
     val busy: Boolean = false,
@@ -34,6 +34,11 @@ data class SlotsState(
     /** Есть ли в редакторе изменения, которых ещё нет в файле игры. */
     val hasChanges: Boolean get() = loaded?.game?.changedEntries(layout)?.isNotEmpty() == true
 
-    /** Слоты, которые игра показывает: только их видно в редакторе. */
-    val visibleSlots: List<SlotId> get() = loaded?.game?.visibleSlots.orEmpty()
+    /** Элементы, которые есть в файле игры: их показывает редактор, скрытые — приглушёнными. */
+    val slots: List<SlotId> get() = loaded?.game?.slots.orEmpty()
+
+    companion object {
+        /** Шаг привязки по умолчанию, UI-px. */
+        const val DEFAULT_SNAP_STEP = 10
+    }
 }

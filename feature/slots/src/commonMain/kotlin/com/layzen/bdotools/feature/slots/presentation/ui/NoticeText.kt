@@ -13,8 +13,19 @@ import com.layzen.bdotools.feature.slots.resources.slots_error_unknown
 import com.layzen.bdotools.feature.slots.resources.slots_notice_applied
 import com.layzen.bdotools.feature.slots.resources.slots_notice_deleted
 import com.layzen.bdotools.feature.slots.resources.slots_notice_imported
+import com.layzen.bdotools.feature.slots.resources.slots_notice_imported_off_screen
+import com.layzen.bdotools.feature.slots.resources.slots_notice_imported_scale
 import com.layzen.bdotools.feature.slots.resources.slots_notice_saved
 import org.jetbrains.compose.resources.stringResource
+
+/** Об импорте: всё ли влезло на экран и при каком масштабе интерфейса влезет. */
+@Composable
+private fun importedText(notice: SlotsNotice.Imported): String = when {
+    notice.offScreen == 0 -> stringResource(Res.string.slots_notice_imported, notice.name)
+    notice.suggestedUiScale != null ->
+        stringResource(Res.string.slots_notice_imported_scale, notice.name, notice.offScreen, notice.suggestedUiScale.toString())
+    else -> stringResource(Res.string.slots_notice_imported_off_screen, notice.name, notice.offScreen)
+}
 
 /** Текст всплывающего сообщения. */
 @Composable
@@ -22,7 +33,7 @@ internal fun noticeText(notice: SlotsNotice): String = when (notice) {
     is SlotsNotice.Applied -> stringResource(Res.string.slots_notice_applied, notice.backupPath)
     is SlotsNotice.PresetSaved -> stringResource(Res.string.slots_notice_saved, notice.name)
     is SlotsNotice.PresetDeleted -> stringResource(Res.string.slots_notice_deleted, notice.name)
-    is SlotsNotice.Imported -> stringResource(Res.string.slots_notice_imported, notice.name)
+    is SlotsNotice.Imported -> importedText(notice)
     is SlotsNotice.Failed -> stringResource(
         when (notice.error) {
             SlotsError.NotGameFolder -> Res.string.slots_error_not_game_folder

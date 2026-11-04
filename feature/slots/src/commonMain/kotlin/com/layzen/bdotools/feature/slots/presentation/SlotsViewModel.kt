@@ -52,7 +52,8 @@ class SlotsViewModel(
             SlotsEvent.Mirror -> editor.mirror()
             SlotsEvent.Undo -> editor.undo()
             is SlotsEvent.SetGrid -> editor.setGrid(event.step)
-            is SlotsEvent.SetSnap -> editor.setSnap(event.enabled)
+            is SlotsEvent.SetSnapStep -> editor.setSnapStep(event.step)
+            is SlotsEvent.ToggleVisibility -> editor.toggleVisibility(event.id)
 
             SlotsEvent.UseGameLayout -> presets.useGameLayout()
             is SlotsEvent.UseBuiltIn -> presets.useBuiltIn(event.layout)

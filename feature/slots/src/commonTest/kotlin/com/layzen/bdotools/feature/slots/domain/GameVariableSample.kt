@@ -9,5 +9,6 @@ internal val GAME_VARIABLE_SAMPLE = listOf(
     """	<UIData Index="129" IsShow="true" PendingType="RightBottom" PosX="1249" PosY="425" RelativePosX="0.4174999893" RelativePosY="0.5774569511"/>""",
     """	<UIData Index="130" IsShow="false" PendingType="LeftBottom" PosX="1236" PosY="375" RelativePosX="0.3940624893" RelativePosY="0.6052193046"/>""",
     """	<UIData Index="100" IsShow="true" PendingType="RightBottom" PosX="1082" PosY="9" RelativePosX="0.4696874917" RelativePosY="0.8126041293" IsPinHold="false"/>""",
+    """	<UIData Index="89" IsShow="true" PendingType="RightBottom" PosX="985" PosY="191" RelativePosX="0.5012500286" RelativePosY="0.7101610303"/>""",
     """	<UIData Index="13" IsShow="true" PendingType="RightBottom" PosX="1148" PosY="48" RelativePosX="0.5014062524" RelativePosY="0.7840088606"/>""",
 ).joinToString("\r\n", postfix = "\r\n")
