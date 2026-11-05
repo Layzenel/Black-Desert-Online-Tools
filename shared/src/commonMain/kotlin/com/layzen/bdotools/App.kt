@@ -33,6 +33,7 @@ import com.layzen.bdotools.uikit.components.TopNavigation
 import com.layzen.bdotools.uikit.showcase.ComponentShowcase
 import com.layzen.bdotools.uikit.theme.AppTheme
 import com.layzen.bdotools.update.AppUpdateBanner
+import com.layzen.bdotools.update.AppVersionInfo
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
@@ -74,6 +75,7 @@ private fun AppContent() {
             label = { stringResource(it.title) },
             title = stringResource(Res.string.app_title),
             trailing = {
+                AppVersionInfo()
                 if (accountsState.accounts.size > 1 && selectedAccount != null) {
                     AccountSwitcher(selectedAccount, accountsState.accounts, accounts::select)
                 }

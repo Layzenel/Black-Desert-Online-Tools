@@ -6,6 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,10 +19,11 @@ private const val ZIP_NAME = "BDO-Tools-portable.zip"
 private const val EXTRACT_DIR = "app"
 
 /**
- * Обновление настольной программы: при запуске один раз сверяет свою версию с последней сборкой на GitHub и,
- * если та новее, предлагает её. И установленную, и портативную копию обновляет одинаково: скачивает портативный
- * архив и заменяет им файлы программы, без установщика.
- * Ошибка сети при проверке просто прячет плашку: программа работает и без обновлений.
+ * Обновление настольной программы: при запуске и затем раз в [UPDATE_CHECK_INTERVAL] сверяет свою версию
+ * с последней сборкой на GitHub и, если та новее, предлагает её. Проверить можно и вручную ([checkNow]).
+ * И установленную, и портативную копию обновляет одинаково: скачивает портативный архив и заменяет им файлы
+ * программы, без установщика. Ошибка сети при автоматической проверке ничего не показывает: программа
+ * работает и без обновлений.
  */
 class UpdateViewModel(
     private val app: InstalledApp? = InstalledApp.current(),
@@ -31,21 +33,46 @@ class UpdateViewModel(
     private val _state = MutableStateFlow<UpdateState>(UpdateState.Hidden)
     val state: StateFlow<UpdateState> = _state.asStateFlow()
 
+    private val _checkStatus = MutableStateFlow(UpdateCheckStatus.Idle)
+    val checkStatus: StateFlow<UpdateCheckStatus> = _checkStatus.asStateFlow()
+
+    /** Версия запущенной программы; `null`, если она запущена не из пакета и обновлять её нечем. */
+    val version: AppVersion? get() = app?.version
+
     init {
-        val current = app
-        if (current != null) {
+        if (app != null) {
             viewModelScope.launch {
-                val latest = runCatchingIo { source.latest() } ?: return@launch
-                if (latest.version > current.version) _state.value = UpdateState.Available(latest)
+                while (true) {
+                    refresh()
+                    delay(UPDATE_CHECK_INTERVAL)
+                }
             }
         }
     }
 
+    /** Ручная проверка: если новая версия есть, сразу открывает предложение обновиться, иначе пишет итог. */
+    fun checkNow() {
+        if (_checkStatus.value == UpdateCheckStatus.Checking) return
+        _checkStatus.value = UpdateCheckStatus.Checking
+        viewModelScope.launch {
+            val found = refresh()
+            _checkStatus.value = when (found) {
+                null -> UpdateCheckStatus.Failed
+                false -> UpdateCheckStatus.UpToDate
+                true -> UpdateCheckStatus.Idle
+            }
+            if (found == true) showNotes(true)
+        }
+    }
+
+    fun clearCheckStatus() {
+        _checkStatus.value = UpdateCheckStatus.Idle
+    }
+
     fun showNotes(open: Boolean) = _state.update { if (it is UpdateState.Available) it.copy(notesOpen = open) else it }
 
-    fun dismiss() {
-        _state.value = UpdateState.Hidden
-    }
+    /** Убирает ошибку обновления; кнопка «Обновить до …» в навигации остаётся. */
+    fun postpone() = _state.update { if (it is UpdateState.Failed) UpdateState.Available(it.info) else it }
 
     /**
      * Скачивает и распаковывает архив новой версии и запускает замену файлов; программа при этом закроется
@@ -72,6 +99,24 @@ class UpdateViewModel(
             }
             if (ok == null) _state.value = UpdateState.Failed(info)
         }
+    }
+
+    /**
+     * Читает последнюю сборку: `true` — есть новее, `false` — нет, `null` — не удалось узнать.
+     * Идущее скачивание и его ошибку не трогает; уже предложенную версию заменяет только более новой.
+     */
+    private suspend fun refresh(): Boolean? {
+        val current = app ?: return null
+        val latest = runCatchingIo { source.latest() } ?: return null
+        if (latest.version <= current.version) return false
+        _state.update {
+            when {
+                it == UpdateState.Hidden -> UpdateState.Available(latest)
+                it is UpdateState.Available && it.info.version < latest.version -> it.copy(info = latest)
+                else -> it
+            }
+        }
+        return true
     }
 
     /** Можно ли создать файл в [folder]: программу, поставленную в защищённую папку, так не обновить. */

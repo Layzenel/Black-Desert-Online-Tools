@@ -33,8 +33,12 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # Версия вшивается в сайт и лежит в version.txt: открытая страница раз в полчаса сравнивает их
+      # и предлагает обновиться (shared/src/webMain/.../update)
       - name: Build with Gradle (Wasm)
-        run: ./gradlew wasmJsBrowserDistribution
+        run: |
+          ./gradlew wasmJsBrowserDistribution -PwebVersion=1.0.${{ github.run_number }}
+          echo "1.0.${{ github.run_number }}" > webApp/build/dist/wasmJs/productionExecutable/version.txt
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
