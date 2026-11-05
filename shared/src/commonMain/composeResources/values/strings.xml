@@ -29,9 +29,20 @@
     <string name="account_switcher_label">Аккаунт</string>
     <string name="account_option">%1$s · %2$d перс.</string>
 
+    <!-- Версия в верхней навигации -->
+    <string name="app_version">v%1$s</string>
+    <string name="app_version_dev">dev</string>
+
+    <!-- Обновление сайта -->
+    <string name="web_update_available">Вышла новая версия сайта %1$s. Обновите страницу, чтобы получить изменения.</string>
+    <string name="web_update_reload">Обновить страницу</string>
+
     <!-- Обновление настольной версии -->
-    <string name="update_available">Доступна новая версия %1$s.</string>
-    <string name="update_notes">Что нового</string>
+    <string name="update_check">Проверить обновления</string>
+    <string name="update_checking">Проверяю…</string>
+    <string name="update_up_to_date">Установлена последняя версия.</string>
+    <string name="update_check_failed">Не удалось проверить обновления. Проверьте интернет.</string>
+    <string name="update_install_version">Обновить до %1$s</string>
     <string name="update_later">Позже</string>
     <string name="update_install">Обновить</string>
     <string name="update_downloading">Скачиваю версию %1$s: %2$d%%. После скачивания программа закроется, обновится и запустится снова.</string>
@@ -44,5 +55,4 @@
     <string name="update_retry">Повторить</string>
     <string name="update_notes_title">Что нового в версии %1$s</string>
     <string name="update_notes_empty">Список изменений для этой версии не указан.</string>
-    <string name="update_close">Закрыть</string>
 </resources>
