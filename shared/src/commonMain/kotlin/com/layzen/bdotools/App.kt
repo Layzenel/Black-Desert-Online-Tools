@@ -107,6 +107,5 @@ private fun TabContent(tab: AppTab) {
     when (tab) {
         AppTab.Portraits -> PortraitsRoute()
         AppTab.Slots -> SlotsRoute()
-        AppTab.Tab3, AppTab.Tab4, AppTab.Tab5 -> PlaceholderScreen(stringResource(tab.title))
     }
 }
