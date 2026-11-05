@@ -30,6 +30,8 @@
     <string name="slots_background_pick">Выбрать</string>
     <string name="slots_background_hide">Спрятать</string>
     <string name="slots_background_show">Показать</string>
+    <string name="slots_background_hide_preview">Спрятать подложку</string>
+    <string name="slots_background_show_preview">Показать подложку</string>
 
     <!-- Выбранный слот -->
     <string name="slots_selection">Выбранный слот</string>
@@ -118,7 +120,7 @@
     <string name="slots_preview_elements">Элементы</string>
     <string name="slots_preview_include_all">Выбрать всё</string>
     <string name="slots_preview_exclude_all">Снять всё</string>
-    <string name="slots_preview_hint">Клик по элементу — отметить или снять, Shift и протянуть — обвести рамкой: отметит задетые, а если все они уже отмечены — снимет. Ctrl+Z — отменить. Тусклые элементы не попадут в файл.</string>
+    <string name="slots_preview_hint">Колесо мыши — масштаб. Клик по элементу — отметить или снять, зажатая ЛКМ по пустому месту — обвести рамкой: отметит задетые, а если все они уже отмечены — снимет. Shift или Пробел + ЛКМ либо средняя кнопка мыши — сдвиг. Ctrl+Z — отменить. Тусклые элементы не попадут в файл.</string>
     <string name="slots_group_cooldown">Перезарядка</string>
     <string name="slots_group_hotbar">Хотбар</string>
     <string name="slots_group_class_resource">Классовый ресурс</string>

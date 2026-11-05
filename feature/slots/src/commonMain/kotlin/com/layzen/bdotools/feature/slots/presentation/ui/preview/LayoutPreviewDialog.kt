@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
@@ -34,11 +35,18 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Превью импорта или экспорта почти на всё окно: слева выбор элементов и под ним все кнопки,
  * справа — как раскладка ляжет на экран. При экспорте над элементами — монитор для просмотра (по умолчанию
- * экран игры [gameScreen]). Импортируются или экспортируются только отмеченные элементы.
+ * экран игры [gameScreen]). Импортируются или экспортируются только отмеченные элементы. [background] — подложка
+ * из редактора, [backgroundShown] — включена ли она; переключатель стоит среди кнопок слева.
  * Ctrl+Z отменяет последнюю отметку, Ctrl+Shift+Z и Ctrl+Y повторяют её.
  */
 @Composable
-internal fun LayoutPreviewDialog(dialog: SlotsDialog.Preview, gameScreen: ScreenSpace, onEvent: (SlotsEvent) -> Unit) {
+internal fun LayoutPreviewDialog(
+    dialog: SlotsDialog.Preview,
+    gameScreen: ScreenSpace,
+    background: ImageBitmap?,
+    backgroundShown: Boolean,
+    onEvent: (SlotsEvent) -> Unit,
+) {
     val focus = remember { FocusRequester() }
     LaunchedEffect(focus) { focus.requestFocus() }
     ModalWindow(
@@ -62,10 +70,17 @@ internal fun LayoutPreviewDialog(dialog: SlotsDialog.Preview, gameScreen: Screen
                 }
                 PreviewElementList(dialog.layout.layout.positions.keys, dialog.included, onEvent)
             },
-            sidebarFooter = { PreviewActions(dialog, onEvent) },
+            sidebarFooter = { PreviewActions(dialog, hasBackground = background != null, backgroundShown, onEvent) },
         ) {
             Column(Modifier.fillMaxSize().padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-                PreviewCanvas(dialog.layout.layout, dialog.included, dialog.screen, onEvent, Modifier.weight(1f).fillMaxWidth())
+                PreviewCanvas(
+                    dialog.layout.layout,
+                    dialog.included,
+                    dialog.screen,
+                    background.takeIf { backgroundShown },
+                    onEvent,
+                    Modifier.weight(1f).fillMaxWidth(),
+                )
                 DescriptionText(stringResource(Res.string.slots_preview_hint))
             }
         }

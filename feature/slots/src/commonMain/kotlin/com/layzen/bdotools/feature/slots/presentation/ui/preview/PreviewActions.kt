@@ -11,11 +11,15 @@ import com.layzen.bdotools.feature.slots.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.slots.resources.Res
 import com.layzen.bdotools.feature.slots.resources.menu_cancel
 import com.layzen.bdotools.feature.slots.resources.menu_export
+import com.layzen.bdotools.feature.slots.resources.menu_hide
 import com.layzen.bdotools.feature.slots.resources.menu_import
 import com.layzen.bdotools.feature.slots.resources.menu_redo
 import com.layzen.bdotools.feature.slots.resources.menu_select_all
 import com.layzen.bdotools.feature.slots.resources.menu_select_none
+import com.layzen.bdotools.feature.slots.resources.menu_show
 import com.layzen.bdotools.feature.slots.resources.menu_undo
+import com.layzen.bdotools.feature.slots.resources.slots_background_hide_preview
+import com.layzen.bdotools.feature.slots.resources.slots_background_show_preview
 import com.layzen.bdotools.feature.slots.resources.slots_cancel
 import com.layzen.bdotools.feature.slots.resources.slots_import_confirm
 import com.layzen.bdotools.feature.slots.resources.slots_preview_exclude_all
@@ -34,10 +38,10 @@ import kotlin.math.roundToInt
 
 /**
  * Низ левой колонки превью: отмена и повтор отметок, «Выбрать всё» и «Снять всё», сколько выбрано
- * и сколько не влезет на экран, и последними — «Отмена» и главное действие.
+ * и сколько не влезет на экран, и последними — «Отмена» и главное действие. При наличии подложки — её переключатель.
  */
 @Composable
-internal fun PreviewActions(dialog: SlotsDialog.Preview, onEvent: (SlotsEvent) -> Unit) {
+internal fun PreviewActions(dialog: SlotsDialog.Preview, hasBackground: Boolean, backgroundShown: Boolean, onEvent: (SlotsEvent) -> Unit) {
     val all = dialog.layout.layout.positions.keys
     ButtonRow {
         MenuAction(stringResource(Res.string.slots_undo), { onEvent(SlotsEvent.PreviewUndo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_undo), enabled = dialog.past.isNotEmpty())
@@ -58,6 +62,16 @@ internal fun PreviewActions(dialog: SlotsDialog.Preview, onEvent: (SlotsEvent) -
             painterResource(Res.drawable.menu_select_none),
             enabled = dialog.included.isNotEmpty(),
         )
+    }
+    if (hasBackground) {
+        ButtonRow {
+            MenuAction(
+                stringResource(if (backgroundShown) Res.string.slots_background_hide_preview else Res.string.slots_background_show_preview),
+                { onEvent(SlotsEvent.ToggleBackground) },
+                Modifier.weight(1f),
+                painterResource(if (backgroundShown) Res.drawable.menu_hide else Res.drawable.menu_show),
+            )
+        }
     }
     DescriptionText(summary(dialog))
     ButtonRow {
