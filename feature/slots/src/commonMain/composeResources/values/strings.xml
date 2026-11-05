@@ -11,8 +11,6 @@
     <string name="slots_loading">Читаем настройки игры…</string>
 
     <!-- Боковая панель -->
-    <string name="slots_account">Аккаунт</string>
-    <string name="slots_account_description">Папка в UserCache. Первым стоит аккаунт, под которым играли последним.</string>
     <string name="slots_presets">Пресеты</string>
     <string name="slots_presets_description">Готовые раскладки меняют только слоты перезарядки.</string>
     <string name="slots_preset_game">Как сейчас в игре</string>

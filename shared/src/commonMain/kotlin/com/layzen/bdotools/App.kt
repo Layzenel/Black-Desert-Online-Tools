@@ -8,11 +8,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.layzen.bdotools.account.AccountPicker
+import com.layzen.bdotools.account.AccountSwitcher
+import com.layzen.bdotools.core.account.GameAccounts
+import com.layzen.bdotools.core.account.accountsModule
 import com.layzen.bdotools.feature.portraits.di.portraitsModule
 import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsRoute
 import com.layzen.bdotools.feature.slots.di.slotsModule
@@ -29,10 +35,12 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import com.layzen.bdotools.update.AppUpdateBanner
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinApplication
+import org.koin.compose.koinInject
 import org.koin.dsl.koinConfiguration
 
-/** Koin-модули всех фич. Новая фича добавляет сюда свой модуль. */
+/** Koin-модули: общий список аккаунтов и все фичи. Новая фича добавляет сюда свой модуль. */
 private val featureModules = listOf(
+    accountsModule,
     portraitsModule,
     slotsModule,
 )
@@ -52,6 +60,9 @@ private fun AppContent() {
     val backStack = remember { mutableStateListOf<Destination>(Destination.Tab(AppTab.Portraits)) }
     PlatformNavigation(backStack)
     val current = backStack.last()
+    val accounts = koinInject<GameAccounts>()
+    val accountsState by accounts.state.collectAsState()
+    val selectedAccount = accountsState.selected
 
     Column(Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep)) {
         TopNavigation(
@@ -62,7 +73,15 @@ private fun AppContent() {
             },
             label = { stringResource(it.title) },
             title = stringResource(Res.string.app_title),
+            trailing = {
+                if (accountsState.accounts.size > 1 && selectedAccount != null) {
+                    AccountSwitcher(selectedAccount, accountsState.accounts, accounts::select)
+                }
+            },
         )
+        if (accountsState.needsChoice) {
+            AccountPicker(accountsState.accounts, accounts::select, accounts::readPortrait)
+        }
         AppUpdateBanner()
         when (current) {
             Destination.Showcase -> ComponentShowcase()

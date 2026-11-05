@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.slots.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.layzen.bdotools.feature.slots.data.DeviceFiles
+import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.slots.data.SlotsRepository
 import com.layzen.bdotools.feature.slots.data.SlotsStorage
@@ -13,19 +14,24 @@ import com.layzen.bdotools.feature.slots.presentation.controller.PresetsControll
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /** Страница раскладки слотов: сама отвечает за доступ к папке, остальное раздаёт контроллерам. */
 class SlotsViewModel(
     private val storage: SlotsStorage,
     device: DeviceFiles,
     repository: SlotsRepository,
+    private val accounts: GameAccounts,
 ) : ViewModel() {
 
     private val context = SlotsContext(viewModelScope)
     private val editor = EditorController(context)
     private val presets = PresetsController(context, repository)
     private val files = LayoutFilesController(context, repository, device)
-    private val game = GameController(context, storage, repository, device)
+    private val game = GameController(context, storage, repository, device, accounts)
 
     val state: StateFlow<SlotsState> = context.state
 
@@ -35,13 +41,15 @@ class SlotsViewModel(
             context.update { it.copy(access = access) }
             if (access is FolderAccess.Granted) game.loadAll()
         }
+        viewModelScope.launch {
+            accounts.state.map { it.selected?.id }.filterNotNull().distinctUntilChanged().collect(game::selectAccount)
+        }
     }
 
     fun onEvent(event: SlotsEvent) {
         when (event) {
             SlotsEvent.SelectFolder -> grantAccess { storage.selectFolder() }
             SlotsEvent.RequestPermission -> grantAccess { storage.requestPermission() }
-            is SlotsEvent.SelectAccount -> game.selectAccount(event.account)
             SlotsEvent.Reload -> game.reload()
             is SlotsEvent.SelectGamePreset -> game.selectGamePreset(event.preset)
 

@@ -17,9 +17,6 @@ interface PortraitsStorage {
 
     suspend fun readPortrait(characterId: String): ByteArray
 
-    /** Фрагменты `CharacterOrderList` из всех `UserCache\*\gamevariable.xml`. */
-    suspend fun characterOrderCandidates(): List<String>
-
     /** Копирует текущие портреты в `FaceTexture_backup\<дата-время>`. Возвращает путь к копии. */
     suspend fun backupPortraits(characterIds: List<String>): String
 

@@ -6,9 +6,8 @@ package com.layzen.bdotools.feature.portraits.data
  * Kotlin получает только строки: `OK:<данные>` или `ERR:<код>`. Файлы передаются в base64.
  */
 internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64, stamp, pickFile }) => {
-    const FACES = 'FaceTexture', BACKUP = 'FaceTexture_backup', CACHE = 'UserCache', TOOLS = 'BDO Tools';
+    const FACES = 'FaceTexture', BACKUP = 'FaceTexture_backup', TOOLS = 'BDO Tools';
     const FAVORITES = 'Favorite FaceTexture';
-    const SPLIT = '\n<!--bdo-split-->\n';
 
     const faces = async () => (await savedRoot()).getDirectoryHandle(FACES);
     // Black Desert\BDO Tools\portraits — чистые портреты и файлы украшений
@@ -73,26 +72,6 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
         async read(name) {
             const file = await (await (await faces()).getFileHandle(name)).getFile();
             return 'OK:' + await toBase64(file);
-        },
-        async order() {
-            const cache = await child(await savedRoot(), CACHE);
-            if (!cache) return 'OK:';
-            const parts = [];
-            const collect = async dir => {
-                for await (const [name, handle] of dir.entries()) {
-                    if (handle.kind !== 'file' || name.toLowerCase() !== 'gamevariable.xml') continue;
-                    const text = await (await handle.getFile()).text();
-                    const start = text.indexOf('<CharacterOrderList Version');
-                    if (start < 0) continue;
-                    const end = text.indexOf('</CharacterOrderList>', start);
-                    parts.push(text.substring(start, end < 0 ? text.length : end));
-                }
-            };
-            await collect(cache);
-            for await (const [, handle] of cache.entries()) {
-                if (handle.kind === 'directory') await collect(handle);
-            }
-            return 'OK:' + parts.join(SPLIT);
         },
         async backup(names) {
             const root = await savedRoot();

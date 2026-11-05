@@ -14,7 +14,6 @@ import kotlin.io.path.writeBytes
 
 private const val FACES = "FaceTexture"
 private const val BACKUP = "FaceTexture_backup"
-private const val CACHE = "UserCache"
 private const val TOOLS = "BDO Tools"
 private const val TOOL_PORTRAITS = "portraits"
 private const val FAVORITES = "Favorite FaceTexture"
@@ -57,7 +56,6 @@ internal class DesktopPortraitsStorage(
         (root() / FACES / portraitFile(characterId)).readBytes()
     }
 
-    override suspend fun characterOrderCandidates(): List<String> = fileCall { characterOrderFragments(root() / CACHE) }
 
     override suspend fun backupPortraits(characterIds: List<String>): String = fileCall {
         val root = root()

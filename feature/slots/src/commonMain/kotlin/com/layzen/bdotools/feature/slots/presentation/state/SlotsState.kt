@@ -19,7 +19,6 @@ import com.layzen.bdotools.feature.slots.domain.SlotLayout
  */
 data class SlotsState(
     val access: FolderAccess? = null,
-    val accounts: List<String> = emptyList(),
     val loaded: LoadedGame? = null,
     val layout: SlotLayout = SlotLayout(),
     val history: List<SlotLayout> = emptyList(),

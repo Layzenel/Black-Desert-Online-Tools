@@ -12,6 +12,23 @@
     <string name="placeholder_title">Раздел в разработке</string>
     <string name="placeholder_description">Скоро здесь появится новый инструмент.</string>
 
+    <!-- Аккаунты на этом ПК -->
+    <string name="account_picker_title">Выберите аккаунт</string>
+    <string name="account_picker_description">На этом ПК играли с нескольких аккаунтов, а портреты у них лежат в одной папке. Тулзы покажут только выбранный аккаунт, сменить его можно в верхней навигации.</string>
+    <string name="account_picker_apply">Выбрать</string>
+    <string name="account_last_played">Последний</string>
+    <string name="account_details">Последняя игра: %1$s · персонажей: %2$d</string>
+    <string name="account_played_today">сегодня</string>
+    <plurals name="account_played_days_ago">
+        <item quantity="one">%1$d день назад</item>
+        <item quantity="few">%1$d дня назад</item>
+        <item quantity="many">%1$d дней назад</item>
+        <item quantity="other">%1$d дня назад</item>
+    </plurals>
+    <string name="account_more_portraits">+%1$d</string>
+    <string name="account_switcher_label">Аккаунт</string>
+    <string name="account_option">%1$s · %2$d перс.</string>
+
     <!-- Обновление настольной версии -->
     <string name="update_available">Доступна новая версия %1$s.</string>
     <string name="update_notes">Что нового</string>

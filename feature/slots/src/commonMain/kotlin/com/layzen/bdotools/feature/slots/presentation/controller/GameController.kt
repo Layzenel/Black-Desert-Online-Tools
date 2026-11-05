@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.slots.presentation.controller
 
+import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.feature.slots.data.DeviceFiles
 import com.layzen.bdotools.feature.slots.data.SlotsError
 import com.layzen.bdotools.feature.slots.data.SlotsException
@@ -18,19 +19,26 @@ internal class GameController(
     private val storage: SlotsStorage,
     private val repository: SlotsRepository,
     private val device: DeviceFiles,
+    private val accounts: GameAccounts,
 ) {
 
-    /** Всё, что нужно странице после доступа к папке: аккаунты, файл игры, пресеты и подложка. */
+    /**
+     * Всё, что нужно странице после доступа к папке: файл игры, пресеты и подложка. Аккаунт — выбранный в верхней
+     * навигации; пока его не выбрали (или ни в одном файле нет персонажей), — тот, под которым играли последним.
+     */
     suspend fun loadAll() {
-        val accounts = repository.accounts()
-        context.update { it.copy(accounts = accounts) }
-        load(accounts.first())
+        accounts.refresh()
+        load(accounts.state.value.selected?.id ?: repository.accounts().first())
         val presets = repository.presets()
         val background = storage.readBackground()?.let(::decodeOrNull)
         context.update { it.copy(presets = presets, background = background) }
     }
 
-    fun selectAccount(account: String) = context.launch(busy = true) { load(account) }
+    /** Открывает файл другого аккаунта, если страница уже читала папку. */
+    fun selectAccount(account: String) {
+        val loaded = context.current.loaded ?: return
+        if (loaded.account != account) context.launch(busy = true) { load(account) }
+    }
 
     fun reload() {
         val account = context.current.loaded?.account ?: return

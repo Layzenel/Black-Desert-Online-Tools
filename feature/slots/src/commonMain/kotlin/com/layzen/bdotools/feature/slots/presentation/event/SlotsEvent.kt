@@ -13,7 +13,6 @@ sealed interface SlotsEvent {
     // Папка и файл игры
     data object SelectFolder : SlotsEvent
     data object RequestPermission : SlotsEvent
-    data class SelectAccount(val account: String) : SlotsEvent
     data object Reload : SlotsEvent
     data class SelectGamePreset(val preset: GamePreset) : SlotsEvent
 

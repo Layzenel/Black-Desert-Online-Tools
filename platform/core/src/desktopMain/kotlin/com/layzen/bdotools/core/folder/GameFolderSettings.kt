@@ -8,6 +8,7 @@ import java.util.prefs.Preferences
 // забудут выбранную папку
 private const val PREFERENCES_NODE = "com/layzen/bdotools/portraits"
 private const val FOLDER_KEY = "gameFolder"
+private const val ACCOUNT_KEY = "account"
 
 /**
  * Запоминает выбранную папку `Black Desert` между запусками — одну на все тулзы настольной версии,
@@ -22,6 +23,14 @@ class GameFolderSettings(
         get() = preferences.get(FOLDER_KEY, null)?.let(::toPathOrNull)
         set(value) {
             if (value == null) preferences.remove(FOLDER_KEY) else preferences.put(FOLDER_KEY, value.toString())
+            preferences.flush()
+        }
+
+    /** Аккаунт из `UserCache`, с которым работают тулзы, или `null`, если его ещё не выбирали. */
+    var account: String?
+        get() = preferences.get(ACCOUNT_KEY, null)
+        set(value) {
+            if (value == null) preferences.remove(ACCOUNT_KEY) else preferences.put(ACCOUNT_KEY, value)
             preferences.flush()
         }
 
