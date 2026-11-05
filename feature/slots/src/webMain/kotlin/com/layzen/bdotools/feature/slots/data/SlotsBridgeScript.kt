@@ -3,7 +3,8 @@ package com.layzen.bdotools.feature.slots.data
 /**
  * Методы слотов для общего моста к папке `Black Desert` (`FolderBridge` в `platform/core`):
  * `gamevariable.xml` аккаунтов, пресеты и подложка в `BDO Tools\slots`, файлы с устройства.
- * Kotlin получает только строки: `OK:<данные>` или `ERR:<код>`. Картинки передаются в base64, тексты — как есть.
+ * Kotlin получает только строки: `OK:<данные>` или `ERR:<код>`. Картинки передаются в base64, тексты — как есть,
+ * файлы игры — символ на байт (Latin-1), чтобы запись не меняла байты, которых тулза не трогала.
  */
 internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64, stamp, pickFile }) => {
     const CACHE = 'UserCache', GAME_FILE = 'gamevariable.xml', TOOLS = 'BDO Tools';
@@ -23,6 +24,15 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
     };
     // ignoreBOM: метка порядка байтов, если она есть, остаётся в тексте и вернётся в файл при записи
     const readText = async file => new TextDecoder('utf-8', { ignoreBOM: true }).decode(await file.arrayBuffer());
+    // Файлы игры — символ на байт (Latin-1): в них смешаны UTF-8 и Windows-1251, через UTF-8 кириллица портится.
+    // TextDecoder('latin1') не подходит — браузеры понимают его как windows-1252, где 0x80–0x9F не байт в байт.
+    const readGameText = async file => {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        let text = '';
+        for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        return text;
+    };
+    const gameBytes = text => Uint8Array.from(text, c => c.charCodeAt(0));
     const writeHandle = async (handle, data) => {
         const writable = await handle.createWritable();
         await writable.write(data);
@@ -46,7 +56,7 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
         },
         async read(account) {
             const file = await (await gameFile(account)).getFile();
-            return 'OK:' + file.lastModified + '\n' + await readText(file);
+            return 'OK:' + file.lastModified + '\n' + await readGameText(file);
         },
         async write(account, payload) {
             const expected = Number(payload.substring(0, payload.indexOf('\n')));
@@ -57,7 +67,7 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
             const backups = await tools('backups', true);
             const backupName = 'gamevariable_' + account + '_' + stamp() + '.xml';
             await writeTo(backups, backupName, current);
-            await writeHandle(handle, new TextEncoder().encode(text));
+            await writeHandle(handle, gameBytes(text));
             return 'OK:' + TOOLS + '\\slots\\backups\\' + backupName;
         },
         // Настройки персонажей: UserCache\<аккаунт>\11\<персонаж>\gamevariable.xml (регистр имени файла бывает разный)
@@ -72,13 +82,13 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
             }
             return 'OK:' + paths.join('\n');
         },
-        characterRead: async (account, path) => 'OK:' + await readText(await (await characterFile(account, path)).getFile()),
+        characterRead: async (account, path) => 'OK:' + await readGameText(await (await characterFile(account, path)).getFile()),
         async characterWrite(account, payload) {
             const path = payload.substring(0, payload.indexOf('\n'));
             const handle = await characterFile(account, path);
             const backupName = 'gamevariable_' + account + '_' + path.split('/')[1] + '_' + stamp() + '.xml';
             await writeTo(await tools('backups', true), backupName, await handle.getFile());
-            await writeHandle(handle, new TextEncoder().encode(payload.substring(payload.indexOf('\n') + 1)));
+            await writeHandle(handle, gameBytes(payload.substring(payload.indexOf('\n') + 1)));
             return 'OK:';
         },
         async presets() {

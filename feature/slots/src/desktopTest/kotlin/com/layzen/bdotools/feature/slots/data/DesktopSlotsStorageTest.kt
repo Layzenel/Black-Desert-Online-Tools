@@ -14,6 +14,7 @@ import kotlin.io.path.setLastModifiedTime
 import kotlin.io.path.writeBytes
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.runBlocking
@@ -26,11 +27,17 @@ class DesktopSlotsStorageTest {
     private val preferences = Preferences.userRoot().node("com/layzen/bdotools/test/slots/${System.nanoTime()}")
     private val storage = DesktopSlotsStorage(GameFolderSettings(preferences)) { documents }
 
-    private val bom = "﻿"
     private val accountFile: Path = (game / "UserCache" / "3537922").createDirectories() / "gamevariable.xml"
 
+    /** Как у игры: метка BOM, надпись слота в Windows-1251 и подпись склада в UTF-8 в одном файле. */
+    private fun gameBytes(scale: String): ByteArray =
+        byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte()) +
+            "<UiScale Value=\"$scale\"/>\r\n<SkillCoolTimeMemo SkillNo=\"855\" Memo=\"".encodeToByteArray() +
+            "Удар щитом".toByteArray(charset("windows-1251")) +
+            "\"/>\r\n<Warehouse regionKey=\"32\" memo=\"Свалка\"/>\r\n".encodeToByteArray()
+
     init {
-        accountFile.writeBytes("$bom<UiScale Value=\"0.8\"/>\r\n".encodeToByteArray())
+        accountFile.writeBytes(gameBytes("0.8"))
         val character = (game / "UserCache" / "3537922" / "11" / "4000").createDirectories() / "gameVariable.xml"
         character.writeBytes("<UIData Index=\"89\" IsShow=\"true\"/>\r\n".encodeToByteArray())
     }
@@ -53,11 +60,10 @@ class DesktopSlotsStorageTest {
         storage.selectFolder()
         assertEquals(listOf("3537922"), storage.accounts())
         val file = storage.readGameVariable("3537922")
-        assertEquals("$bom<UiScale Value=\"0.8\"/>\r\n", file.text)
 
         val backup = storage.writeGameVariable("3537922", file.text.replace("0.8", "1.0"), file.modified)
 
-        assertEquals("$bom<UiScale Value=\"1.0\"/>\r\n", accountFile.readBytes().decodeToString())
+        assertContentEquals(gameBytes("1.0"), accountFile.readBytes())
         assertEquals("BDO Tools\\slots\\backups\\", backup.substringBeforeLast('\\') + "\\")
         assertEquals(1, (game / "BDO Tools" / "slots" / "backups").listDirectoryEntries().size)
     }

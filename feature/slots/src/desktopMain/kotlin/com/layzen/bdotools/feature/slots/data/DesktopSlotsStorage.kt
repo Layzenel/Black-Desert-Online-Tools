@@ -36,7 +36,9 @@ private val stamp = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
  *
  * Папка выбирается системным окном [pickFolder] и запоминается в [settings] — общих для всех тулз.
  * Разрешений, как в браузере, не бывает: если сохранённая папка пропала или в ней нет `UserCache`,
- * доступ — [FolderAccess.NotSelected]. Тексты читаются и пишутся в UTF-8 байт в байт, метка BOM сохраняется.
+ * доступ — [FolderAccess.NotSelected]. Файлы игры читаются и пишутся в Latin-1, по символу на байт: в них
+ * смешаны UTF-8 и Windows-1251 (надписи слотов перезарядки, заметки), а перекодировка через UTF-8 портит
+ * кириллицу. Свои файлы тулзы (пресеты) — в UTF-8.
  */
 internal class DesktopSlotsStorage(
     private val settings: GameFolderSettings,
@@ -73,7 +75,7 @@ internal class DesktopSlotsStorage(
 
     override suspend fun readGameVariable(account: String): GameFile = fileCall {
         val file = accountFile(account)
-        GameFile(text = file.readBytes().decodeToString(), modified = file.getLastModifiedTime().toMillis())
+        GameFile(text = file.readBytes().toString(Charsets.ISO_8859_1), modified = file.getLastModifiedTime().toMillis())
     }
 
     override suspend fun writeGameVariable(account: String, text: String, expectedModified: Long): String = fileCall {
@@ -81,7 +83,7 @@ internal class DesktopSlotsStorage(
         if (file.getLastModifiedTime().toMillis() != expectedModified) throw SlotsException(SlotsError.FileChanged)
         val backupName = "gamevariable_${account}_${now()}.xml"
         file.copyTo(backups() / backupName)
-        file.writeBytes(text.encodeToByteArray())
+        file.writeBytes(text.toByteArray(Charsets.ISO_8859_1))
         "$TOOLS\\$SLOTS\\$BACKUPS\\$backupName"
     }
 
@@ -94,13 +96,13 @@ internal class DesktopSlotsStorage(
     }
 
     override suspend fun readCharacterFile(account: String, path: String): String = fileCall {
-        characterFile(account, path).readBytes().decodeToString()
+        characterFile(account, path).readBytes().toString(Charsets.ISO_8859_1)
     }
 
     override suspend fun writeCharacterFile(account: String, path: String, text: String) = fileCall {
         val file = characterFile(account, path)
         file.copyTo(backups() / "gamevariable_${account}_${path.split('/')[1]}_${now()}.xml")
-        file.writeBytes(text.encodeToByteArray())
+        file.writeBytes(text.toByteArray(Charsets.ISO_8859_1))
     }
 
     override suspend fun presetFiles(): List<String> = fileCall {
