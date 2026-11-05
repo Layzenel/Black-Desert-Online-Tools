@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
  */
 internal class ReorderController(private val context: PortraitsContext) {
 
-    fun start() = context.update { it.copy(reorder = ReorderState()) }
+    fun start() = context.update { it.copy(reorder = ReorderState(), notice = Notice(NoticeKind.ReorderHint)) }
 
     fun cancel() = context.update { it.copy(reorder = null) }
 

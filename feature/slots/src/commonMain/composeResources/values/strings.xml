@@ -25,11 +25,11 @@
     <string name="slots_grid">Сетка от прицела</string>
     <string name="slots_snap_step">Шаг привязки</string>
     <string name="slots_snap_step_description">0 — без привязки. Узлы отсчитываются от прицела.</string>
-    <string name="slots_grid_off">Нет</string>
+    <string name="slots_grid_off">Х</string>
     <string name="slots_grid_size">%1$d</string>
     <string name="slots_background">Подложка</string>
     <string name="slots_background_description">Свой скриншот из игры — так проще ставить слоты вокруг персонажа.</string>
-    <string name="slots_background_pick">Выбрать картинку</string>
+    <string name="slots_background_pick">Выбрать</string>
     <string name="slots_background_hide">Спрятать</string>
     <string name="slots_background_show">Показать</string>
 
@@ -62,7 +62,6 @@
     <string name="slots_canvas_hint">Колесо мыши — масштаб, зажатая ЛКМ по пустому месту — сдвиг холста, с Shift — обводка. Ctrl+Z — отменить, Ctrl+Shift+Z или Ctrl+Y — повторить.</string>
     <string name="slots_screen">Экран игры: %1$d × %2$d, масштаб интерфейса %3$s. Сетка и координаты — от прицела.</string>
     <string name="slots_off_screen">Слотов за краем экрана: %1$d — в игре они уедут за край.</string>
-    <string name="slots_unsaved">Есть изменения, которых ещё нет в игре.</string>
 
     <!-- Панель действий -->
     <string name="slots_import">Импорт</string>
@@ -100,7 +99,6 @@
     <string name="slots_preview_resolution">Разрешение</string>
     <string name="slots_preview_resolution_value">%1$d × %2$d</string>
     <string name="slots_preview_scale">Масштаб интерфейса</string>
-    <string name="slots_preview_scale_value">%1$d %</string>
     <string name="slots_preview_reset_screen">Мой экран</string>
     <string name="slots_preview_elements">Элементы</string>
     <string name="slots_preview_include_all">Выбрать всё</string>

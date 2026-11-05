@@ -11,6 +11,7 @@ enum class NoticeKind {
     Swapped,
     FavoritesDeleted,
     FavoriteReplaced,
+    ReorderHint,
     NotGameFolder,
     Permission,
     Blocked,

@@ -9,6 +9,13 @@ import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.PreviewMode
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.slots.resources.Res
+import com.layzen.bdotools.feature.slots.resources.menu_cancel
+import com.layzen.bdotools.feature.slots.resources.menu_export
+import com.layzen.bdotools.feature.slots.resources.menu_import
+import com.layzen.bdotools.feature.slots.resources.menu_redo
+import com.layzen.bdotools.feature.slots.resources.menu_select_all
+import com.layzen.bdotools.feature.slots.resources.menu_select_none
+import com.layzen.bdotools.feature.slots.resources.menu_undo
 import com.layzen.bdotools.feature.slots.resources.slots_cancel
 import com.layzen.bdotools.feature.slots.resources.slots_import_confirm
 import com.layzen.bdotools.feature.slots.resources.slots_preview_exclude_all
@@ -18,9 +25,10 @@ import com.layzen.bdotools.feature.slots.resources.slots_preview_summary
 import com.layzen.bdotools.feature.slots.resources.slots_preview_summary_scale
 import com.layzen.bdotools.feature.slots.resources.slots_redo
 import com.layzen.bdotools.feature.slots.resources.slots_undo
-import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.theme.AppTheme
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
 
@@ -32,30 +40,33 @@ import kotlin.math.roundToInt
 internal fun PreviewActions(dialog: SlotsDialog.Preview, onEvent: (SlotsEvent) -> Unit) {
     val all = dialog.layout.layout.positions.keys
     ButtonRow {
-        ActionButton(stringResource(Res.string.slots_undo), { onEvent(SlotsEvent.PreviewUndo) }, Modifier.weight(1f), enabled = dialog.past.isNotEmpty())
-        ActionButton(stringResource(Res.string.slots_redo), { onEvent(SlotsEvent.PreviewRedo) }, Modifier.weight(1f), enabled = dialog.future.isNotEmpty())
+        MenuAction(stringResource(Res.string.slots_undo), { onEvent(SlotsEvent.PreviewUndo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_undo), enabled = dialog.past.isNotEmpty())
+        MenuAction(stringResource(Res.string.slots_redo), { onEvent(SlotsEvent.PreviewRedo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_redo), enabled = dialog.future.isNotEmpty())
     }
     ButtonRow {
-        ActionButton(
+        MenuAction(
             stringResource(Res.string.slots_preview_include_all),
             { onEvent(SlotsEvent.PreviewInclude(all, true)) },
             Modifier.weight(1f),
+            painterResource(Res.drawable.menu_select_all),
             enabled = dialog.included.size < all.size,
         )
-        ActionButton(
+        MenuAction(
             stringResource(Res.string.slots_preview_exclude_all),
             { onEvent(SlotsEvent.PreviewInclude(all, false)) },
             Modifier.weight(1f),
+            painterResource(Res.drawable.menu_select_none),
             enabled = dialog.included.isNotEmpty(),
         )
     }
     DescriptionText(summary(dialog))
     ButtonRow {
-        ActionButton(stringResource(Res.string.slots_cancel), { onEvent(SlotsEvent.CloseDialog) }, Modifier.weight(1f))
-        ActionButton(
+        MenuAction(stringResource(Res.string.slots_cancel), { onEvent(SlotsEvent.CloseDialog) }, Modifier.weight(1f), painterResource(Res.drawable.menu_cancel))
+        MenuAction(
             stringResource(if (dialog.mode == PreviewMode.Import) Res.string.slots_import_confirm else Res.string.slots_preview_export_confirm),
             { onEvent(SlotsEvent.ConfirmPreview) },
             Modifier.weight(1f),
+            painterResource(if (dialog.mode == PreviewMode.Import) Res.drawable.menu_import else Res.drawable.menu_export),
             enabled = dialog.included.isNotEmpty(),
         )
     }
