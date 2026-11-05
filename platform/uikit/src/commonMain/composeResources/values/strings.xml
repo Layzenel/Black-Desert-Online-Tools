@@ -106,4 +106,13 @@
     <string name="life_skill_title_trading">Торговля</string>
     <string name="life_skill_title_training">Укрощение</string>
     <string name="life_skill_title_farming">Урожай</string>
+
+    <string name="showcase_page_menu">Меню страницы</string>
+    <string name="showcase_page_open">Открыть файл</string>
+    <string name="showcase_page_mode">Режим правки</string>
+    <string name="showcase_page_hotkey">Esc</string>
+    <string name="showcase_page_disabled">Недоступно</string>
+    <string name="showcase_page_undo">Отменить</string>
+    <string name="showcase_page_apply">Применить</string>
+    <string name="showcase_page_body">Страница без шапки окна: меню слева во всю высоту, действия — в меню или в панели над содержимым.</string>
 </resources>

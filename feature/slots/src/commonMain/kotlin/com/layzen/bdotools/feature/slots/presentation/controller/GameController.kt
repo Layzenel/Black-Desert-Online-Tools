@@ -77,19 +77,17 @@ internal class GameController(
         val bytes = device.pickImage() ?: return@launch
         val image = decodeOrNull(bytes) ?: throw SlotsException(SlotsError.NotImage)
         storage.writeBackground(bytes)
-        context.update { it.copy(background = image) }
+        context.update { it.copy(background = image, backgroundShown = true) }
     }
 
-    fun clearBackground() = context.launch {
-        storage.writeBackground(null)
-        context.update { it.copy(background = null) }
-    }
+    /** Спрятать подложку или показать снова: картинка остаётся загруженной, выбирать её заново не нужно. */
+    fun toggleBackground() = context.update { it.copy(backgroundShown = !it.backgroundShown) }
 
     /** Читает файл аккаунта; открытым остаётся тот же набор позиций, если он есть в файле. */
     private suspend fun load(account: String) {
         val loaded = repository.load(account, context.current.loaded?.edited ?: GamePreset.General)
         context.update {
-            it.copy(loaded = loaded, layout = loaded.game.layout, history = emptyList(), selection = emptySet(), activePreset = PresetRef.Game)
+            it.copy(loaded = loaded, layout = loaded.game.layout, history = emptyList(), future = emptyList(), selection = emptySet(), activePreset = PresetRef.Game)
         }
     }
 

@@ -6,6 +6,7 @@ import com.layzen.bdotools.feature.slots.domain.AnchoredLayout
 import com.layzen.bdotools.feature.slots.domain.LayoutCodec
 import com.layzen.bdotools.feature.slots.domain.LayoutFormatException
 import com.layzen.bdotools.feature.slots.domain.NamedLayout
+import com.layzen.bdotools.feature.slots.domain.ScreenArea
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.presentation.SlotsContext
@@ -19,7 +20,7 @@ private const val DEFAULT_EXPORT_NAME = "slot-layout"
 
 /**
  * Импорт и экспорт файла раскладки. Перед тем как загрузить раскладку в редактор или сохранить её в файл,
- * открывается превью: в нём видно, как она ляжет на любой монитор, и выбираются элементы.
+ * открывается превью: в нём видно, как она ляжет на экран игры, и выбираются элементы.
  */
 internal class LayoutFilesController(
     private val context: SlotsContext,
@@ -48,13 +49,30 @@ internal class LayoutFilesController(
         openPreview(PreviewMode.Export, layout, screen)
     }
 
-    /** Отметить или снять элементы [ids] в превью — по одному или группой целиком. */
+    /** Отметить или снять элементы [ids] в превью — по одному, группой или все сразу. */
     fun include(ids: Set<SlotId>, include: Boolean) = updatePreview {
-        it.copy(included = if (include) it.included + ids else it.included - ids)
+        it.withIncluded(if (include) it.included + ids else it.included - ids)
     }
 
-    /** Монитор, на котором показывается превью. Только для просмотра: импорт всегда ставит раскладку на экран игры. */
+    /**
+     * Обводка рамкой [area] на мониторе превью: задетые элементы отмечаются, а если все они уже отмечены — снимаются,
+     * как у галочки группы.
+     */
+    fun includeArea(area: ScreenArea) = updatePreview { preview ->
+        val screen = preview.screen
+        val touched = preview.layout.layout.positions
+            .filter { (id, anchored) -> area.touches(id, anchored.placeOn(screen), screen) }
+            .keys
+        if (touched.isEmpty()) preview
+        else preview.withIncluded(if (preview.included.containsAll(touched)) preview.included - touched else preview.included + touched)
+    }
+
+    /** Монитор превью экспорта. Только для просмотра: в файл раскладка попадёт с якорями и у получателя встанет по его экрану. */
     fun setPreviewScreen(screen: ScreenSpace) = updatePreview { it.copy(screen = screen) }
+
+    fun undoPreview() = updatePreview { it.undone() }
+
+    fun redoPreview() = updatePreview { it.redone() }
 
     fun confirmPreview() {
         val preview = context.current.dialog as? SlotsDialog.Preview ?: return

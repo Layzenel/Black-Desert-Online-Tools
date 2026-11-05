@@ -8,4 +8,6 @@ internal object ShowcaseDimens {
     val tilesWindowWidth = 420.dp
     val numberFieldWidth = 80.dp
     val tileSize = 92.dp
+    val toolPageWidth = 640.dp
+    val toolPageHeight = 260.dp
 }

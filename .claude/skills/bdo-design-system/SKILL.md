@@ -49,14 +49,30 @@ description: Дизайн-система сайта BDO Tools в стиле ок
    плашек NEW/HOT и переключателя. `AppShapes.MenuItem` (4dp) — подсветка пункта в меню действий.
 5. **Золото — это сигнал, а не украшение.** `accentGold` используется для активного пункта навигации, текущего
    значения, результата расчёта, «новых» разделов и имени персонажа. Обычный текст бежевый или кремовый.
-6. **Кнопки всегда серые.** Главное действие выделяется не цветом, а местом: оно стоит последним справа
-   в `WindowFooter` (порядок «Применить — Назад — OK»).
+6. **Кнопки всегда серые.** Главное действие выделяется не цветом, а местом: оно стоит последним —
+   справа в строке действий или `WindowFooter` (порядок «Применить — Назад — OK»), внизу в `sidebarFooter` у `ToolPage`.
 7. **Выделение = коричневая подложка + рамка.** Выбранный пункт меню или вариант получает `backgroundSelected` и
    `borderSelected`, выбранная плитка — рамку `accentGoldPale`.
 8. **Жирный шрифт по умолчанию.** Почти весь текст в игре жирный. Обычный вес (`body`) — только для длинных абзацев.
 9. **Без символов-иконок в тексте.** Шрифт web-сборки по умолчанию содержит латиницу и кириллицу, но не
    содержит `✕ ▼ ⚙ ♪` и эмодзи: они показываются пустыми квадратами. Иконки рисуй через `Canvas`/`Path`
-   (пример — стрелка в `DropdownSelect`) или клади векторные XML в `composeResources/drawable`.
+   (пример — стрелка в `DropdownSelect`) или клади SVG в `composeResources/drawable` своего модуля
+   (белый контур `stroke="#FFFFFF"`, `viewBox 0 0 24 24`; пример — `menu_*.svg` в `feature/portraits`).
+10. **У страниц тулз нет шапки окна.** Бронзовая шапка `GameWindow` с крестиком остаётся только у модальных окон
+    (`ModalWindow`). Страница бывает двух видов:
+    - **редактору нужно всё место** (холст слотов) — `ToolPage` на всё окно (вкладка с `fillsScreen = true`
+      в `AppTab`): параметры в меню слева, главные действия внизу меню (`sidebarFooter`), правка — в `ActionBar`;
+    - **содержимое своего размера** (сетка портретов) — колонка по центру страницы с ограниченной шириной
+      (`widthIn(max = …)`) на подложке `ContentFrame`: заголовок секции, содержимое и строка `MenuAction` под ним,
+      каждому `Modifier.weight(1f)`,
+      главное действие последним справа.
+11. **Подписи пунктов меню и кнопок — в одну строку.** Если подпись не влезает, её сокращают («Загрузить»
+    вместо «Загрузить изображение»), а не переносят. `MenuAction` обрезает лишнее многоточием.
+    Подробности действия — в описании секции (`SectionHeader(description = …)`).
+
+Расположение частей редактора берём с garmoth.com (сайт тулз для BDO): без шапки, меню слева, инструменты
+над рабочей областью, рабочая область на всё оставшееся место. Цвета и стиль — свои, из этой системы.
+Скриншоты страниц garmoth лежат локально в `.claude/references/ui/garmoth/` (в Git не попадают).
 
 ## Палитра
 
@@ -111,7 +127,11 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | Компонент | Когда использовать |
 |---|---|
 | `TopNavigation(tabs, selected, onSelect, label, title)` | верхняя навигация сайта; используется один раз, в `shared/App.kt` |
-| `GameWindow(title, actions, footer) { }` | основной контейнер каждой тулзы: шапка, тело и необязательный футер |
+| `ToolPage(sidebar, sidebarWidth, sidebarFooter) { }` | страница тулзы без шапки: меню слева во всю высоту (`backgroundSurface`, прокручивается само, отступ `spaceL`, между частями `spaceM`) и содержимое справа на всё свободное место. `sidebarFooter` прижат к низу меню и не прокручивается — для главных действий. Годится и внутри большого `ModalWindow` (превью импорта в слотах) |
+| `ActionBar { }` | строка инструментов правки над содержимым `ToolPage` (отменить, повторить). Работа с файлами и главное действие — внизу меню, в `sidebarFooter` |
+| `MenuAction(text, onClick, icon, hotkey, selected, enabled)` | действие-пункт: иконка (`Painter`, белый силуэт), подпись в одну строку с многоточием, горячая клавиша справа. В меню `ToolPage` — столбиком, под содержимым страницы — строкой (`Modifier.weight(1f)` каждому, как в портретах). `selected` — включённый режим (золотой текст), его пункт выключает режим |
+| `ContentFrame { }` | подложка содержимого страницы без шапки: графитовое тело окна (`backgroundSurface`), чёрная рамка и золотая кромка `titleBarHighlight` сверху; внутри колонка с отступом `spaceL` и промежутками `spaceM`. Для страницы «по центру» (портреты): заголовок, сетка и строка `MenuAction` — внутри |
+| `GameWindow(title, actions, footer) { }` | окно с бронзовой шапкой: основа `ModalWindow` и примеров каталога. Для страниц тулз — `ToolPage` |
 | `WindowTitleBar`, `WindowFooter`, `Panel` | части окна, если нужна нестандартная компоновка |
 | `ModalWindow(title, onDismissRequest, dismissible, footer) { }` | модальное окно поверх страницы: выбор, подтверждение, редактор. Пока идёт долгая операция, передавай `dismissible = false` |
 | `CloseButton(onClick)` | крестик (нарисован линиями): в шапке окна и для очистки поля |
@@ -146,42 +166,40 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 
 ## Как собрать страницу тулзы
 
-Корень приложения обёрнут в `AppTheme { }`. Типовая страница-калькулятор:
+Корень приложения обёрнут в `AppTheme { }`. Вкладка без `fillsScreen` получает страницу с прокруткой и отступом
+`spaceXl`, содержимое стоит по центру. Типовая страница-калькулятор — содержимое своего размера:
 
 ```kotlin
 @Composable
 fun EnhancementScreen(state: EnhancementState, onEvent: (EnhancementEvent) -> Unit) {
-    GameWindow(
-        title = stringResource(Res.string.enhancement_title),
-        modifier = Modifier.widthIn(max = AppTheme.dimens.contentMaxWidth),
-        footer = {
-            ActionButton(stringResource(Res.string.enhancement_reset), onClick = { onEvent(EnhancementEvent.Reset) })
-            ActionButton(stringResource(Res.string.enhancement_calculate), onClick = { onEvent(EnhancementEvent.Calculate) })
-        },
+    Column(
+        Modifier.widthIn(max = AppTheme.dimens.contentMaxWidth),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
     ) {
-        Column(
-            Modifier.padding(AppTheme.dimens.spaceL),
-            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
-        ) {
-            SectionHeader(
-                stringResource(Res.string.enhancement_item),
-                description = stringResource(Res.string.enhancement_item_description),
-            )
-            DropdownSelect(state.item, state.items, { onEvent(EnhancementEvent.SelectItem(it)) }, { it.name })
-            SectionDivider()
-            SectionHeader(stringResource(Res.string.enhancement_failstack))
-            NumberField(state.failstack, { onEvent(EnhancementEvent.Failstack(it)) }, range = 0..400)
-            SectionDivider()
-            SectionHeader(stringResource(Res.string.enhancement_chance))
-            ValueText(stringResource(Res.string.enhancement_chance_value, state.chance))
+        SectionHeader(
+            stringResource(Res.string.enhancement_item),
+            description = stringResource(Res.string.enhancement_item_description),
+        )
+        DropdownSelect(state.item, state.items, { onEvent(EnhancementEvent.SelectItem(it)) }, { it.name })
+        SectionDivider()
+        SectionHeader(stringResource(Res.string.enhancement_failstack))
+        NumberField(state.failstack, { onEvent(EnhancementEvent.Failstack(it)) }, range = 0..400)
+        SectionDivider()
+        ValueText(stringResource(Res.string.enhancement_chance_value, state.chance))
+        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+            MenuAction(stringResource(Res.string.enhancement_reset), { onEvent(EnhancementEvent.Reset) }, Modifier.weight(1f))
+            MenuAction(stringResource(Res.string.enhancement_calculate), { onEvent(EnhancementEvent.Calculate) }, Modifier.weight(1f))
         }
     }
 }
 ```
 
-Компоновка как в окне настроек игры: слева `NavGroup` шириной `AppTheme.dimens.sidebarWidth` на
-`backgroundSurface`, справа контент с отступом `spaceL`, секции разделены `SectionDivider`.
-Между элементами внутри секции — `spaceM`.
+Редактор, которому нужно всё место (как слоты), — вкладка с `fillsScreen = true` и `ToolPage(modifier = Modifier.fillMaxSize())`:
+слева меню на `backgroundSurface` — параметры, секции разделены `SectionDivider`; в `sidebarFooter` — работа
+с файлами и последним главное действие, кнопки на всю ширину меню. Справа `ActionBar` с правкой и под ним рабочая
+область с отступом `spaceL` на всё оставшееся место. Расположение частей взято с garmoth.com.
+Пока у фичи нет доступа к данным (выбор папки), показывай подсказку без `ToolPage`, в колонке шириной
+`contentMaxWidth`; на вкладке с `fillsScreen` добавь ей отступ `spaceXl` сам.
 
 ## Как добавить или изменить компонент
 

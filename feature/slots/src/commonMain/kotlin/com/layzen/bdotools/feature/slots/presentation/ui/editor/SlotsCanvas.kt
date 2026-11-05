@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,8 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
     val focus = remember { FocusRequester() }
     val currentOnEvent by rememberUpdatedState(onEvent)
     var marquee by remember { mutableStateOf<Rect?>(null) }
+    // Фокус сразу на холсте: Ctrl+Z и стрелки работают без клика по нему
+    LaunchedEffect(focus) { focus.requestFocus() }
     BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
         // Самое большое окно в пропорциях экрана игры, которое влезает в отведённое место
         val ratio = (screen.height / screen.width).toFloat()
@@ -97,7 +100,7 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
 
 @Composable
 private fun CanvasContent(state: SlotsState, screen: ScreenSpace, scale: Float, onEvent: (SlotsEvent) -> Unit, onPress: () -> Unit) {
-    state.background?.let {
+    state.background?.takeIf { state.backgroundShown }?.let {
         Image(it, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
     }
     GridLayer(state.grid, screen, scale, Modifier.fillMaxSize())
@@ -115,19 +118,6 @@ private fun CanvasContent(state: SlotsState, screen: ScreenSpace, scale: Float, 
             onPress = onPress,
         )
     }
-}
-
-/** Рамка обводки, пока её тянут; [rect] — в пикселях окна холста. */
-@Composable
-private fun MarqueeFrame(rect: Rect) {
-    val density = LocalDensity.current
-    Box(
-        Modifier
-            .offset { IntOffset(rect.left.roundToInt(), rect.top.roundToInt()) }
-            .size(with(density) { rect.width.toDp() }, with(density) { rect.height.toDp() })
-            .background(AppTheme.colors.accentGold.copy(alpha = SlotsDimens.MARQUEE_FILL_ALPHA))
-            .border(SlotsDimens.marqueeBorder, AppTheme.colors.accentGold),
-    )
 }
 
 /** Прямоугольник в пикселях окна → UI-px экрана игры: убираем сдвиг холста и делим на масштаб. */

@@ -8,9 +8,10 @@ import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
 import com.layzen.bdotools.feature.slots.resources.Res
 import com.layzen.bdotools.feature.slots.resources.slots_background
-import com.layzen.bdotools.feature.slots.resources.slots_background_clear
 import com.layzen.bdotools.feature.slots.resources.slots_background_description
+import com.layzen.bdotools.feature.slots.resources.slots_background_hide
 import com.layzen.bdotools.feature.slots.resources.slots_background_pick
+import com.layzen.bdotools.feature.slots.resources.slots_background_show
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -27,7 +28,10 @@ internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
             ActionButton(stringResource(Res.string.slots_background_pick), onClick = { onEvent(SlotsEvent.PickBackground) })
             if (state.background != null) {
-                ActionButton(stringResource(Res.string.slots_background_clear), onClick = { onEvent(SlotsEvent.ClearBackground) })
+                ActionButton(
+                    stringResource(if (state.backgroundShown) Res.string.slots_background_hide else Res.string.slots_background_show),
+                    onClick = { onEvent(SlotsEvent.ToggleBackground) },
+                )
             }
         }
     }

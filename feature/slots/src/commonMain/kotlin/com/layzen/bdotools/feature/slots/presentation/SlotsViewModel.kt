@@ -53,8 +53,8 @@ class SlotsViewModel(
             SlotsEvent.DragEnd -> editor.dragEnd()
             is SlotsEvent.Nudge -> editor.nudge(event.dx, event.dy, event.byGrid)
             is SlotsEvent.SetPosition -> editor.setPosition(event.id, event.position)
-            SlotsEvent.Mirror -> editor.mirror()
             SlotsEvent.Undo -> editor.undo()
+            SlotsEvent.Redo -> editor.redo()
             is SlotsEvent.SetGrid -> editor.setGrid(event.step)
             is SlotsEvent.SetSnapStep -> editor.setSnapStep(event.step)
             is SlotsEvent.ToggleVisibility -> editor.toggleVisibility(event.id)
@@ -73,14 +73,17 @@ class SlotsViewModel(
             SlotsEvent.ConfirmImport -> files.confirmImport()
             SlotsEvent.Export -> files.export()
             is SlotsEvent.PreviewInclude -> files.include(event.ids, event.include)
+            is SlotsEvent.PreviewArea -> files.includeArea(event.area)
             is SlotsEvent.PreviewScreen -> files.setPreviewScreen(event.screen)
+            SlotsEvent.PreviewUndo -> files.undoPreview()
+            SlotsEvent.PreviewRedo -> files.redoPreview()
             SlotsEvent.ConfirmPreview -> files.confirmPreview()
 
             SlotsEvent.OpenApply -> game.openApply()
             is SlotsEvent.SelectApplyTarget -> game.selectApplyTarget(event.preset)
             SlotsEvent.ConfirmApply -> game.confirmApply()
             SlotsEvent.PickBackground -> game.pickBackground()
-            SlotsEvent.ClearBackground -> game.clearBackground()
+            SlotsEvent.ToggleBackground -> game.toggleBackground()
 
             SlotsEvent.CloseDialog -> context.update { it.copy(dialog = null) }
             SlotsEvent.DismissNotice -> context.update { it.copy(notice = null) }

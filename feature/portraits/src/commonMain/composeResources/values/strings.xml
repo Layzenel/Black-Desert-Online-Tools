@@ -1,5 +1,4 @@
 <resources>
-    <string name="portraits_title">Портреты</string>
 
     <!-- Доступ к папке игры -->
     <string name="portraits_checking_access">Проверяю доступ к папке игры…</string>
@@ -21,8 +20,8 @@
     <string name="portraits_loading">Загружаю портреты…</string>
     <string name="portraits_empty">В папке FaceTexture нет портретов.</string>
     <string name="portraits_grid_title">Персонажи: %1$d</string>
-    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Наведите курсор на портрет, чтобы заменить его или редактировать.\nПеред загрузкой или редактированием портретов закройте окно выбора персонажа в игре.</string>
-    <string name="portraits_upload">Загрузить изображение</string>
+    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Наведите курсор на портрет, чтобы заменить его или редактировать. Перед правкой закройте окно выбора персонажа в игре.</string>
+    <string name="portraits_upload">Загрузить</string>
     <string name="portraits_reload">Обновить</string>
 
     <!-- Выбор источника -->
@@ -106,8 +105,10 @@
     <string name="portraits_favorite_replaced">Набор «%1$s» заменён текущими портретами.</string>
 
     <!-- Резервные копии -->
-    <string name="portraits_reorder_button">Изменение порядка</string>
-    <string name="portraits_reorder_cancel">Отменить изменение порядка</string>
+    <string name="portraits_reorder_button">Порядок</string>
+    <string name="portraits_reorder_cancel">Отменить</string>
+    <string name="portraits_reorder_hotkey">Esc</string>
+    <string name="portraits_reorder_banner">Выберите два портрета, чтобы поменять их местами. Esc — выйти.</string>
     <string name="portraits_reorder_description">Выберите два портрета — они сразу обменяются картинками вместе с надписями и значками. Пригодится, если в окне выбора персонажа поменять персонажей местами и картинка, нарезанная на портреты, разъехалась. Перед заменой оба портрета попадут в резервную копию.</string>
     <string name="portraits_swapped">Портреты поменялись местами. Файлы, которые были до этого, сохранены в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
     <string name="portraits_restore_button">Резервные копии</string>

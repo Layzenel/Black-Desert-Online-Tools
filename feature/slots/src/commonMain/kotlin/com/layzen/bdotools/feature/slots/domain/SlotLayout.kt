@@ -28,8 +28,6 @@ data class SlotLayout(
 
     fun moved(ids: Set<SlotId>, dx: Int, dy: Int) = transform(ids) { it.movedBy(dx, dy) }
 
-    fun mirrored(ids: Set<SlotId>) = transform(ids, SlotPosition::mirrored)
-
     private fun transform(ids: Set<SlotId>, change: (SlotPosition) -> SlotPosition) =
         copy(positions = positions.mapValues { (id, position) -> if (id in ids) change(position) else position })
 }

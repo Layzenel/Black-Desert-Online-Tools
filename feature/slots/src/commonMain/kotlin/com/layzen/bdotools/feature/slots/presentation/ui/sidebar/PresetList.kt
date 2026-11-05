@@ -2,10 +2,7 @@ package com.layzen.bdotools.feature.slots.presentation.ui.sidebar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.slots.domain.BuiltInLayout
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.PresetRef
@@ -50,15 +47,13 @@ internal fun PresetList(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
         SectionHeader(stringResource(Res.string.slots_user_presets))
         if (state.presets.isEmpty()) DescriptionText(stringResource(Res.string.slots_user_presets_empty))
         state.presets.forEach { preset ->
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-                MenuItem(
-                    preset.name,
-                    onClick = { onEvent(SlotsEvent.UseUserPreset(preset.name)) },
-                    modifier = Modifier.weight(1f),
-                    selected = state.activePreset == PresetRef.User(preset.name),
-                )
-                CloseButton(onClick = { onEvent(SlotsEvent.RequestDelete(preset.name)) })
-            }
+            // Крестик удаления — внутри пункта, справа, на месте плашки
+            MenuItem(
+                preset.name,
+                onClick = { onEvent(SlotsEvent.UseUserPreset(preset.name)) },
+                selected = state.activePreset == PresetRef.User(preset.name),
+                badge = { CloseButton(onClick = { onEvent(SlotsEvent.RequestDelete(preset.name)) }) },
+            )
         }
     }
 }

@@ -1,6 +1,4 @@
 <resources>
-    <string name="slots_title">Раскладка слотов</string>
-
     <!-- Доступ к папке -->
     <string name="slots_checking_access">Проверяем доступ к папке игры…</string>
     <string name="slots_unsupported_title">Браузер не поддерживается</string>
@@ -32,7 +30,8 @@
     <string name="slots_background">Подложка</string>
     <string name="slots_background_description">Свой скриншот из игры — так проще ставить слоты вокруг персонажа.</string>
     <string name="slots_background_pick">Выбрать картинку</string>
-    <string name="slots_background_clear">Убрать</string>
+    <string name="slots_background_hide">Спрятать</string>
+    <string name="slots_background_show">Показать</string>
 
     <!-- Выбранный слот -->
     <string name="slots_selection">Выбранный слот</string>
@@ -55,19 +54,17 @@
     <string name="slots_element_pvp">PVP</string>
     <string name="slots_element_black_spirit_rage">Гнев Черного духа</string>
     <string name="slots_element_buffs">Список усилений</string>
-    <string name="slots_element_skill_history">История испол. навыков</string>
     <string name="slots_element_rare_item_history">История получения редких предметов</string>
     <string name="slots_legend_off_screen">за краем экрана</string>
-    <string name="slots_mirror">Отразить</string>
     <string name="slots_undo">Отменить</string>
+    <string name="slots_redo">Повторить</string>
     <string name="slots_reload">Перечитать файл</string>
-    <string name="slots_fit">Весь экран</string>
-    <string name="slots_canvas_hint">Колесо мыши — масштаб, зажатая ЛКМ по пустому месту — сдвиг холста, с Shift — обводка.</string>
+    <string name="slots_canvas_hint">Колесо мыши — масштаб, зажатая ЛКМ по пустому месту — сдвиг холста, с Shift — обводка. Ctrl+Z — отменить, Ctrl+Shift+Z или Ctrl+Y — повторить.</string>
     <string name="slots_screen">Экран игры: %1$d × %2$d, масштаб интерфейса %3$s. Сетка и координаты — от прицела.</string>
     <string name="slots_off_screen">Слотов за краем экрана: %1$d — в игре они уедут за край.</string>
     <string name="slots_unsaved">Есть изменения, которых ещё нет в игре.</string>
 
-    <!-- Футер -->
+    <!-- Панель действий -->
     <string name="slots_import">Импорт</string>
     <string name="slots_export">Экспорт</string>
     <string name="slots_save_as">Сохранить как пресет</string>
@@ -99,13 +96,16 @@
     <string name="slots_preview_export_title">Превью экспорта</string>
     <string name="slots_preview_export_confirm">Экспортировать</string>
     <string name="slots_preview_screen">Монитор для просмотра</string>
-    <string name="slots_preview_screen_description">Только для просмотра: так раскладка ляжет на другой монитор. Импорт всё равно поставит её на ваш экран из gamevariable.xml.</string>
+    <string name="slots_preview_screen_description">Только для просмотра: так раскладка ляжет на чужой монитор. В файл она попадёт с якорями и у получателя встанет по его экрану.</string>
     <string name="slots_preview_resolution">Разрешение</string>
     <string name="slots_preview_resolution_value">%1$d × %2$d</string>
     <string name="slots_preview_scale">Масштаб интерфейса</string>
     <string name="slots_preview_scale_value">%1$d %</string>
     <string name="slots_preview_reset_screen">Мой экран</string>
     <string name="slots_preview_elements">Элементы</string>
+    <string name="slots_preview_include_all">Выбрать всё</string>
+    <string name="slots_preview_exclude_all">Снять всё</string>
+    <string name="slots_preview_hint">Клик по элементу — отметить или снять, Shift и протянуть — обвести рамкой: отметит задетые, а если все они уже отмечены — снимет. Ctrl+Z — отменить. Тусклые элементы не попадут в файл.</string>
     <string name="slots_group_cooldown">Перезарядка</string>
     <string name="slots_group_hotbar">Хотбар</string>
     <string name="slots_group_class_resource">Классовый ресурс</string>

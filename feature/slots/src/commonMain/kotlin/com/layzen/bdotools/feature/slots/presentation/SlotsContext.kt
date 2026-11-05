@@ -27,19 +27,24 @@ internal class SlotsContext(private val scope: CoroutineScope) {
     fun update(change: (SlotsState) -> SlotsState) = _state.update(change)
 
     /**
-     * Меняет раскладку и запоминает прежнюю для «Отменить». [preset] — откуда взята новая раскладка;
+     * Меняет раскладку и запоминает прежнюю для «Отменить»; отменённое до этого уже не повторить. [preset] — откуда взята новая раскладка;
      * `null` — правка руками.
      */
     fun editLayout(preset: PresetRef? = null, change: (SlotLayout) -> SlotLayout) = update {
         val changed = change(it.layout)
         if (changed == it.layout) return@update it.copy(activePreset = preset ?: it.activePreset)
-        it.copy(layout = changed, history = (it.history + it.layout).takeLast(HISTORY_LIMIT), activePreset = preset)
+        it.copy(
+            layout = changed,
+            history = (it.history + it.layout).takeLast(HISTORY_LIMIT),
+            future = emptyList(),
+            activePreset = preset,
+        )
     }
 
     /** Запоминает [previous] для «Отменить» после правки, которая шла по шагам (перетаскивание). */
     fun commitEdit(previous: SlotLayout) = update {
         if (it.layout == previous) it
-        else it.copy(history = (it.history + previous).takeLast(HISTORY_LIMIT), activePreset = null)
+        else it.copy(history = (it.history + previous).takeLast(HISTORY_LIMIT), future = emptyList(), activePreset = null)
     }
 
     /** Запускает задачу; ошибку файлов показывает сообщением. Отмена выбора файла — не ошибка. */

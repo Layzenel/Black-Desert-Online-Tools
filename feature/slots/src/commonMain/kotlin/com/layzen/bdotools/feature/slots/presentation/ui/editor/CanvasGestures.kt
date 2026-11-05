@@ -18,6 +18,7 @@ import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
+import com.layzen.bdotools.feature.slots.presentation.ui.handleHistoryKeys
 import kotlin.math.max
 import kotlin.math.min
 
@@ -55,7 +56,7 @@ internal fun Modifier.canvasGestures(
         var last = down.position
         val move = { change: Offset, delta: Offset ->
             last = change
-            if (marquee) onMarquee(between(down.position, change)) else viewport.panBy(delta)
+            if (marquee) onMarquee(rectBetween(down.position, change)) else viewport.panBy(delta)
         }
         var dragged = false
         val dragStart = awaitTouchSlopOrCancellation(down.id) { change, over ->
@@ -72,13 +73,17 @@ internal fun Modifier.canvasGestures(
             move(change.position, change.positionChange())
             change.consume()
         }
-        if (marquee) onArea(between(down.position, last))
+        if (marquee) onArea(rectBetween(down.position, last))
         onMarquee(null)
     }
 }
 
-/** Стрелки двигают выбранные элементы: на 1 UI-px, с Shift — на шаг привязки. Esc снимает выбор. */
+/**
+ * Стрелки двигают выбранные элементы: на 1 UI-px, с Shift — на шаг привязки. Esc снимает выбор.
+ * Ctrl+Z отменяет правку, Ctrl+Shift+Z и Ctrl+Y повторяют её.
+ */
 internal fun KeyEvent.handleKeys(onEvent: (SlotsEvent) -> Unit): Boolean {
+    if (handleHistoryKeys(onUndo = { onEvent(SlotsEvent.Undo) }, onRedo = { onEvent(SlotsEvent.Redo) })) return true
     if (key == Key.Escape) {
         if (type == KeyEventType.KeyDown) onEvent(SlotsEvent.ClearSelection)
         return true
@@ -94,4 +99,5 @@ internal fun KeyEvent.handleKeys(onEvent: (SlotsEvent) -> Unit): Boolean {
     return true
 }
 
-private fun between(a: Offset, b: Offset) = Rect(Offset(min(a.x, b.x), min(a.y, b.y)), Offset(max(a.x, b.x), max(a.y, b.y)))
+/** Прямоугольник между двумя точками в любом порядке: рамку можно тянуть в любую сторону. */
+internal fun rectBetween(a: Offset, b: Offset) = Rect(Offset(min(a.x, b.x), min(a.y, b.y)), Offset(max(a.x, b.x), max(a.y, b.y)))

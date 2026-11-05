@@ -2,14 +2,14 @@ package com.layzen.bdotools.feature.slots.presentation.ui.preview
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import com.layzen.bdotools.feature.slots.domain.SlotGroup
 import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
@@ -24,24 +24,26 @@ import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
+/** Сколько номеров слотов в строке таблицы: ряды перезарядки и хотбара — по 5 в строке, как 1–5, 6–10. */
+private const val NUMBER_COLUMNS = 5
+
 /**
  * Что импортировать или экспортировать: галочка у группы отмечает или снимает её целиком, под ней — элементы
- * по одному. Слоты рядов показаны номерами, прочие элементы — названиями.
+ * по одному. Слоты рядов показаны номерами в ровной таблице, прочие элементы — названиями списком.
  */
 @Composable
 internal fun PreviewElementList(ids: Set<SlotId>, included: Set<SlotId>, onEvent: (SlotsEvent) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
-        SectionHeader(stringResource(Res.string.slots_preview_elements))
-        SlotGroup.entries.forEach { group ->
-            val members = group.slots.filter { it in ids }
-            if (members.isNotEmpty()) GroupItems(group, members, included, onEvent)
-        }
+    SectionHeader(stringResource(Res.string.slots_preview_elements))
+    SlotGroup.entries.forEach { group ->
+        val members = group.slots.filter { it in ids }
+        if (members.isNotEmpty()) GroupItems(group, members, included, onEvent)
     }
 }
 
 @Composable
 private fun GroupItems(group: SlotGroup, members: List<SlotId>, included: Set<SlotId>, onEvent: (SlotsEvent) -> Unit) {
     val chosen = members.count { it in included }
+    val toggle = { id: SlotId -> { checked: Boolean -> onEvent(SlotsEvent.PreviewInclude(setOf(id), checked)) } }
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
         CheckRow(
             text = stringResource(Res.string.slots_preview_group_count, groupTitle(group), chosen, members.size),
@@ -49,37 +51,47 @@ private fun GroupItems(group: SlotGroup, members: List<SlotId>, included: Set<Sl
             onCheckedChange = { onEvent(SlotsEvent.PreviewInclude(members.toSet(), it)) },
             bold = true,
         )
-        if (members.size > 1) ItemChecks(group, members, included, onEvent)
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun ItemChecks(group: SlotGroup, members: List<SlotId>, included: Set<SlotId>, onEvent: (SlotsEvent) -> Unit) {
-    val toggle = { id: SlotId -> { checked: Boolean -> onEvent(SlotsEvent.PreviewInclude(setOf(id), checked)) } }
-    if (group == SlotGroup.Interface) {
-        Column(Modifier.padding(start = SlotsDimens.previewItemIndent), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-            members.forEach { CheckRow(slotTitle(it), it in included, toggle(it)) }
-        }
-    } else {
-        FlowRow(
-            Modifier.padding(start = SlotsDimens.previewItemIndent),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
-            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs),
-        ) {
-            members.forEach { CheckRow(it.number.toString(), it in included, toggle(it)) }
+        val items = Modifier.padding(start = SlotsDimens.previewItemIndent)
+        when {
+            members.size == 1 -> Unit
+            group == SlotGroup.Interface -> Column(items, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+                members.forEach { CheckRow(slotTitle(it), it in included, toggle(it)) }
+            }
+            else -> NumberTable(members, included, toggle, items)
         }
     }
 }
 
+/** Номера слотов таблицей с колонками одной ширины: «1» и «10» стоят ровно друг под другом. */
 @Composable
-private fun CheckRow(text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, bold: Boolean = false) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+private fun NumberTable(members: List<SlotId>, included: Set<SlotId>, toggle: (SlotId) -> (Boolean) -> Unit, modifier: Modifier) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+        members.chunked(NUMBER_COLUMNS).forEach { row ->
+            Row {
+                row.forEach { id ->
+                    CheckRow(id.number.toString(), id in included, toggle(id), Modifier.width(SlotsDimens.previewNumberCellWidth))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CheckRow(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    bold: Boolean = false,
+) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
         CheckBox(checked, onCheckedChange)
         Text(
             text,
             style = if (bold) AppTheme.typography.bodyBold else AppTheme.typography.caption,
             color = if (bold) AppTheme.colors.textBeige else AppTheme.colors.textPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

@@ -15,11 +15,6 @@ class SlotLayoutTest {
     }
 
     @Test
-    fun mirrorsAroundVerticalAxis() {
-        assertEquals(SlotPosition(100, 50), layout.mirrored(setOf(first))[first])
-    }
-
-    @Test
     fun overlayKeepsSlotsMissingInOther() {
         val other = SlotLayout(mapOf(second to SlotPosition(0, 0)))
         assertEquals(SlotLayout(mapOf(first to SlotPosition(-100, 50), second to SlotPosition(0, 0))), layout.overlaidWith(other))
