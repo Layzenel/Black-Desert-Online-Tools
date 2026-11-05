@@ -13,8 +13,8 @@ import org.jetbrains.compose.resources.stringResource
 internal fun VersionText(version: String?) {
     Text(
         version?.let { stringResource(Res.string.app_version, it) } ?: stringResource(Res.string.app_version_dev),
-        style = AppTheme.typography.caption,
-        color = AppTheme.colors.textMuted,
+        style = AppTheme.typography.bodyBold,
+        color = AppTheme.colors.textBeige,
         maxLines = 1,
     )
 }

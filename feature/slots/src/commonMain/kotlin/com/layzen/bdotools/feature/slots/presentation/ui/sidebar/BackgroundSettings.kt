@@ -22,7 +22,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Своя картинка под редактором — например, скриншот из игры с персонажем. */
+/** Своя картинка под редактором — например, скриншот из игры с персонажем — и её затенение. */
 @Composable
 internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
@@ -46,5 +46,6 @@ internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit
                 )
             }
         }
+        if (state.background != null && state.backgroundShown) BackgroundDimSlider(state.backgroundDim, onEvent)
     }
 }

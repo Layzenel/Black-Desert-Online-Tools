@@ -12,11 +12,14 @@ import com.layzen.bdotools.resources.update_install_version
 import com.layzen.bdotools.resources.update_up_to_date
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.Toast
+import com.layzen.bdotools.uikit.components.ToolbarButton
+import com.layzen.bdotools.resources.menu_reload
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
  * Версия программы и кнопка обновления: «Обновить до …», если вышла новая версия (открывает «Что нового»
- * с кнопкой «Обновить»), иначе «Проверить обновления». Итог ручной проверки показывает всплывающее сообщение.
+ * с кнопкой «Обновить»), иначе иконка «Проверить обновления» (круговая стрелка, подпись — в подсказке). Итог ручной проверки показывает всплывающее сообщение.
  * У программы, запущенной не из пакета, обновлять нечего: кнопки нет.
  */
 @Composable
@@ -24,24 +27,27 @@ internal actual fun AppVersionInfo() {
     val viewModel = viewModel { UpdateViewModel() }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val checkStatus by viewModel.checkStatus.collectAsStateWithLifecycle()
-    VersionText(viewModel.version?.toString())
-    if (viewModel.version == null) return
     val current = state
-    if (current is UpdateState.Available) {
-        ActionButton(
-            stringResource(Res.string.update_install_version, current.info.version.toString()),
-            onClick = { viewModel.showNotes(true) },
-        )
-        if (current.notesOpen) {
-            UpdateNotesDialog(current.info, onClose = { viewModel.showNotes(false) }, onInstall = viewModel::install)
+    VersionPanel {
+        VersionText(viewModel.version?.toString())
+        if (viewModel.version == null) return@VersionPanel
+        if (current is UpdateState.Available) {
+            ActionButton(
+                stringResource(Res.string.update_install_version, current.info.version.toString()),
+                onClick = { viewModel.showNotes(true) },
+            )
+        } else {
+            val checking = checkStatus == UpdateCheckStatus.Checking
+            ToolbarButton(
+                painterResource(Res.drawable.menu_reload),
+                stringResource(if (checking) Res.string.update_checking else Res.string.update_check),
+                onClick = viewModel::checkNow,
+                enabled = !checking && current == UpdateState.Hidden,
+            )
         }
-    } else {
-        val checking = checkStatus == UpdateCheckStatus.Checking
-        ActionButton(
-            stringResource(if (checking) Res.string.update_checking else Res.string.update_check),
-            onClick = viewModel::checkNow,
-            enabled = !checking && current == UpdateState.Hidden,
-        )
+    }
+    if (current is UpdateState.Available && current.notesOpen) {
+        UpdateNotesDialog(current.info, onClose = { viewModel.showNotes(false) }, onInstall = viewModel::install)
     }
     CheckResultToast(checkStatus, onDismiss = viewModel::clearCheckStatus)
 }

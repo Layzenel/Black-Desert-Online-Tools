@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.key.Key
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.slots.domain.ScreenArea
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.uikit.components.PanCursor
+import com.layzen.bdotools.uikit.components.onSecondaryClick
 import com.layzen.bdotools.uikit.components.panCursor
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
@@ -50,7 +52,7 @@ import kotlin.math.roundToInt
  * [onArea] получает рамку в UI-px экрана и признак «добавить» (Ctrl); Shift, Пробел или средняя кнопка двигают
  * холст, пока они зажаты, курсор — рука; клик по пустому месту — [onTap]. Клавиши, кроме Shift и Пробела, отдаются [onKey].
  * [content] получает масштаб: UI-px × масштаб = dp; [overlay] рисуется поверх окна, не сдвигаясь вместе с холстом.
- * [windowModifier] — дополнительные жесты окна (например, правый клик).
+ * [onSecondaryClick] — правый клик: точка в пикселях окна (для меню) и она же в UI-px экрана (пустая рамка в этой точке).
  */
 @Composable
 internal fun ScreenCanvas(
@@ -61,11 +63,12 @@ internal fun ScreenCanvas(
     onTap: () -> Unit,
     onArea: (ScreenArea, additive: Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    windowModifier: Modifier = Modifier,
+    onSecondaryClick: ((Offset, ScreenArea) -> Unit)? = null,
     overlay: @Composable BoxScope.() -> Unit = {},
     content: @Composable BoxScope.(scale: Float) -> Unit,
 ) {
     val currentOnKey by rememberUpdatedState(onKey)
+    val currentOnSecondaryClick by rememberUpdatedState(onSecondaryClick)
     var marquee by remember { mutableStateOf<Rect?>(null) }
     // Shift или Пробел зажаты: ЛКМ двигает холст, курсор — рука
     var spaceHeld by remember { mutableStateOf(false) }
@@ -108,7 +111,10 @@ internal fun ScreenCanvas(
                 }
                 .hoverable(pointerOver)
                 .panCursor(cursor)
-                .then(windowModifier)
+                .then(
+                    if (onSecondaryClick == null) Modifier
+                    else Modifier.onSecondaryClick { at -> currentOnSecondaryClick?.invoke(at, Rect(at, at).toScreenArea(viewport, currentScale)) },
+                )
                 .middleButtonPan(viewport) { panning = it }
                 .wheelZoom(viewport)
                 .canvasGestures(

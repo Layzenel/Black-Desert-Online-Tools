@@ -1,6 +1,5 @@
 package com.layzen.bdotools.feature.slots.presentation.ui.editor
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -14,17 +13,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
+import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
-import com.layzen.bdotools.uikit.components.onSecondaryClick
 import kotlin.math.roundToInt
 
 /**
  * Редактор слотов на экране игры ([ScreenCanvas]): подложка, сетка от прицела, прицел и элементы интерфейса.
- * Клик по пустому месту и Esc снимают выбор, обводка выбирает элементы, стрелки их двигают, ПКМ открывает меню.
+ * Клик по пустому месту и Esc снимают выбор, обводка выбирает элементы, стрелки их двигают, ПКМ открывает меню:
+ * по невыбранному элементу — выбрав его, по выбранному — сделав его опорой выравнивания.
  */
 @Composable
 internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (SlotsEvent) -> Unit, modifier: Modifier = Modifier) {
@@ -32,6 +31,7 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
     val focus = remember { FocusRequester() }
     val currentOnEvent by rememberUpdatedState(onEvent)
     var menuAt by remember { mutableStateOf<Offset?>(null) }
+    var menuAnchor by remember { mutableStateOf<SlotId?>(null) }
     // Фокус сразу на холсте: Ctrl+Z и стрелки работают без клика по нему
     LaunchedEffect(focus) { focus.requestFocus() }
     ScreenCanvas(
@@ -42,25 +42,36 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
         onTap = { currentOnEvent(SlotsEvent.ClearSelection) },
         onArea = { area, additive -> currentOnEvent(SlotsEvent.SelectArea(area, additive)) },
         modifier = modifier,
-        windowModifier = Modifier.onSecondaryClick { menuAt = it },
+        onSecondaryClick = { at, point ->
+            // Как в графических редакторах: ПКМ по невыбранному элементу выбирает его, по выбранному — делает опорой
+            val hit = state.slots.lastOrNull { id -> state.layout[id]?.let { point.touches(id, it, screen) } == true }
+            if (hit != null && hit !in state.selection) currentOnEvent(SlotsEvent.Select(hit, additive = false))
+            menuAnchor = hit
+            menuAt = at
+        },
         overlay = {
             // Пустой Box в точке клика: меню раскрывается от его угла
             menuAt?.let { at ->
                 Box(Modifier.offset { IntOffset(at.x.roundToInt(), at.y.roundToInt()) }) {
-                    CanvasContextMenu(state, onDismiss = { menuAt = null }, onEvent = onEvent)
+                    CanvasContextMenu(state, menuAnchor, onDismiss = { menuAt = null }, onEvent = onEvent)
                 }
             }
         },
     ) { scale ->
-        CanvasContent(state, screen, scale, onEvent, onPress = { focus.requestFocus() })
+        CanvasContent(state, menuAnchor.takeIf { menuAt != null }, screen, scale, onEvent, onPress = { focus.requestFocus() })
     }
 }
 
 @Composable
-private fun CanvasContent(state: SlotsState, screen: ScreenSpace, scale: Float, onEvent: (SlotsEvent) -> Unit, onPress: () -> Unit) {
-    state.background?.takeIf { state.backgroundShown }?.let {
-        Image(it, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-    }
+private fun CanvasContent(
+    state: SlotsState,
+    anchor: SlotId?,
+    screen: ScreenSpace,
+    scale: Float,
+    onEvent: (SlotsEvent) -> Unit,
+    onPress: () -> Unit,
+) {
+    state.background?.takeIf { state.backgroundShown }?.let { BackgroundImage(it, state.backgroundDim) }
     GridLayer(state.grid, screen, scale, Modifier.fillMaxSize())
     CrosshairLayer(screen, scale, Modifier.fillMaxSize())
     state.slots.forEach { id ->
@@ -71,6 +82,7 @@ private fun CanvasContent(state: SlotsState, screen: ScreenSpace, scale: Float, 
             screen = screen,
             scale = scale,
             selected = id in state.selection,
+            anchor = id == anchor,
             visible = state.layout.isVisible(id),
             onEvent = onEvent,
             onPress = onPress,

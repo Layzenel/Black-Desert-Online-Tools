@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.PreviewMode
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsDialog
+import com.layzen.bdotools.feature.slots.presentation.ui.sidebar.BackgroundDimSlider
 import com.layzen.bdotools.feature.slots.resources.Res
 import com.layzen.bdotools.feature.slots.resources.menu_cancel
 import com.layzen.bdotools.feature.slots.resources.menu_export
@@ -38,10 +39,16 @@ import kotlin.math.roundToInt
 
 /**
  * Низ левой колонки превью: отмена и повтор отметок, «Выбрать всё» и «Снять всё», сколько выбрано
- * и сколько не влезет на экран, и последними — «Отмена» и главное действие. При наличии подложки — её переключатель.
+ * и сколько не влезет на экран, и последними — «Отмена» и главное действие. При наличии подложки — её переключатель и затенение.
  */
 @Composable
-internal fun PreviewActions(dialog: SlotsDialog.Preview, hasBackground: Boolean, backgroundShown: Boolean, onEvent: (SlotsEvent) -> Unit) {
+internal fun PreviewActions(
+    dialog: SlotsDialog.Preview,
+    hasBackground: Boolean,
+    backgroundShown: Boolean,
+    backgroundDim: Int,
+    onEvent: (SlotsEvent) -> Unit,
+) {
     val all = dialog.layout.layout.positions.keys
     ButtonRow {
         MenuAction(stringResource(Res.string.slots_undo), { onEvent(SlotsEvent.PreviewUndo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_undo), enabled = dialog.past.isNotEmpty())
@@ -72,6 +79,7 @@ internal fun PreviewActions(dialog: SlotsDialog.Preview, hasBackground: Boolean,
                 painterResource(if (backgroundShown) Res.drawable.menu_hide else Res.drawable.menu_show),
             )
         }
+        if (backgroundShown) BackgroundDimSlider(backgroundDim, onEvent)
     }
     DescriptionText(summary(dialog))
     ButtonRow {

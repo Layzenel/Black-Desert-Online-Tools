@@ -36,16 +36,45 @@ class SlotArrangementTest {
     }
 
     @Test
-    fun distributeEvensGapsAndKeepsEnds() {
-        // Рамки 50 шириной: от -125 до 275, внутри 400 − 150 = 250 пустоты, промежуток 125, центр среднего: -125 + 50 + 125 + 25 = 75
-        val result = layout.distributed(all, horizontal = true)
-        assertEquals(listOf(-100, 75, 250), all.map { result[it]!!.x })
+    fun alignToAnchorKeepsAnchorInPlace() {
+        // Опора — b: a и c встают верхом на её верх, сама b не двигается
+        val result = layout.aligned(all, AlignEdge.Top, anchor = b)
+        assertEquals(listOf(40, 40, 40), all.map { result[it]!!.y })
+        assertEquals(layout[b], result[b])
+    }
+
+    @Test
+    fun anchorOutsideSelectionFallsBackToGroup() {
+        val result = layout.aligned(all, AlignEdge.Left, anchor = outsider)
+        assertEquals(listOf(-100, -100, -100), all.map { result[it]!!.x })
+    }
+
+    @Test
+    fun distributePutsGivenGapAndKeepsFirst() {
+        // Рамки 50 шириной, первая (a) на месте: левые края -125, -65, -5 — центры -100, -40, 20
+        val result = layout.distributed(all, horizontal = true, gap = 10)
+        assertEquals(listOf(-100, -40, 20), all.map { result[it]!!.x })
         assertEquals(40, result[b]!!.y)
     }
 
     @Test
-    fun distributeNeedsThreeElements() {
-        assertEquals(layout, layout.distributed(setOf(a, b), horizontal = true))
+    fun distributeMovesColumnsOfGridTogether() {
+        // Два ряда по три слота, средняя колонка сдвинута вправо: колонки выравниваются, ряды не перемешиваются
+        val top = (1..3).map { SlotId(SlotGroup.Cooldown, it) }
+        val bottom = (4..6).map { SlotId(SlotGroup.Cooldown, it) }
+        val xs = listOf(0, 80, 200)
+        val grid = SlotLayout((top.zip(xs) + bottom.zip(xs)).associate { (id, x) -> id to SlotPosition(x, if (id in top) 0 else 50) })
+        val result = grid.distributed((top + bottom).toSet(), horizontal = true, gap = 25)
+        assertEquals(listOf(0, 75, 150), top.map { result[it]!!.x })
+        assertEquals(listOf(0, 75, 150), bottom.map { result[it]!!.x })
+        assertEquals(listOf(50, 50, 50), bottom.map { result[it]!!.y })
+    }
+
+    @Test
+    fun distributeNeedsTwoColumns() {
+        assertEquals(layout, layout.distributed(setOf(a), horizontal = true, gap = 0))
+        // Два элемента вплотную: b встаёт сразу справа от a
+        assertEquals(SlotPosition(-50, 40), layout.distributed(setOf(a, b), horizontal = true, gap = 0)[b])
     }
 
     @Test

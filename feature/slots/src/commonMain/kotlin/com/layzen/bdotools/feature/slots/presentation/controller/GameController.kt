@@ -91,6 +91,8 @@ internal class GameController(
     /** Спрятать подложку или показать снова: картинка остаётся загруженной, выбирать её заново не нужно. */
     fun toggleBackground() = context.update { it.copy(backgroundShown = !it.backgroundShown) }
 
+    fun setBackgroundDim(percent: Int) = context.update { it.copy(backgroundDim = percent) }
+
     /** Читает файл аккаунта; открытым остаётся тот же набор позиций, если он есть в файле. */
     private suspend fun load(account: String) {
         val loaded = repository.load(account, context.current.loaded?.edited ?: GamePreset.General)

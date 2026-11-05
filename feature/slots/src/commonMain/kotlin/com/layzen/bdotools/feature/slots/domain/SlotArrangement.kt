@@ -2,39 +2,50 @@ package com.layzen.bdotools.feature.slots.domain
 
 import kotlin.math.roundToInt
 
-/** Выровненные по [edge] элементы [ids]: края или середины встают на границу рамки всей группы. */
-fun SlotLayout.aligned(ids: Set<SlotId>, edge: AlignEdge): SlotLayout {
-    val box = boundsOf(ids) ?: return this
+/**
+ * Выровненные по [edge] элементы [ids]: края или середины встают на край или середину опорной рамки.
+ * Опора — элемент [anchor], если он среди [ids] (он сам не двигается), иначе рамка всей группы.
+ */
+fun SlotLayout.aligned(ids: Set<SlotId>, edge: AlignEdge, anchor: SlotId? = null): SlotLayout {
+    val box = anchor?.takeIf { it in ids }?.let { boundsOf(setOf(it)) } ?: boundsOf(ids) ?: return this
     return movedEach(ids) { _, bounds ->
         when (edge) {
-            AlignEdge.Left -> (box.left - bounds.left) to 0.0
-            AlignEdge.CenterX -> (box.centerX - bounds.centerX) to 0.0
-            AlignEdge.Right -> (box.right - bounds.right) to 0.0
             AlignEdge.Top -> 0.0 to (box.top - bounds.top)
-            AlignEdge.CenterY -> 0.0 to (box.centerY - bounds.centerY)
             AlignEdge.Bottom -> 0.0 to (box.bottom - bounds.bottom)
+            AlignEdge.Left -> (box.left - bounds.left) to 0.0
+            AlignEdge.Right -> (box.right - bounds.right) to 0.0
+            AlignEdge.CenterX -> (box.centerX - bounds.centerX) to 0.0
+            AlignEdge.CenterY -> 0.0 to (box.centerY - bounds.centerY)
         }
     }
 }
 
 /**
- * Элементы [ids] с равными промежутками между рамками по горизонтали ([horizontal]) или по вертикали.
- * Крайние остаются на месте. Меньше трёх элементов — раскладка не меняется.
+ * Элементы [ids] друг за другом по горизонтали ([horizontal]) или по вертикали с промежутком [gap] UI-px между рамками.
+ * Элементы, стоящие друг над другом (одна колонка) при распределении по горизонтали — или в одном ряду
+ * при распределении по вертикали, — двигаются вместе как одна рамка: так сетка из нескольких рядов не рассыпается.
+ * Первая колонка (ряд) — самая левая (верхняя) — остаётся на месте. Меньше двух колонок (рядов) — раскладка не меняется.
  */
-fun SlotLayout.distributed(ids: Set<SlotId>, horizontal: Boolean): SlotLayout {
+fun SlotLayout.distributed(ids: Set<SlotId>, horizontal: Boolean, gap: Int): SlotLayout {
     val items = ids.mapNotNull { id -> this[id]?.let { id to SlotBounds.of(id, it) } }
-    if (items.size < 3) return this
     fun start(bounds: SlotBounds) = if (horizontal) bounds.left else bounds.top
     fun size(bounds: SlotBounds) = if (horizontal) bounds.width else bounds.height
-    val sorted = items.sortedBy { start(it.second) }
-    val first = start(sorted.first().second)
-    val last = sorted.last().second.let { start(it) + size(it) }
-    val gap = (last - first - sorted.sumOf { size(it.second) }) / (sorted.size - 1)
-    var cursor = first
-    val shifts = sorted.associate { (id, bounds) ->
-        val shift = cursor - start(bounds)
-        cursor += size(bounds) + gap
-        id to shift
+    fun center(bounds: SlotBounds) = start(bounds) + size(bounds) / 2
+    // Колонка — элементы, чьи середины ближе половины размера элемента к середине первого в ней
+    val lines = mutableListOf<MutableList<Pair<SlotId, SlotBounds>>>()
+    items.sortedBy { center(it.second) }.forEach { item ->
+        val line = lines.lastOrNull()
+        if (line != null && center(item.second) - center(line.first().second) < size(item.second) / 2) line += item
+        else lines += mutableListOf(item)
+    }
+    if (lines.size < 2) return this
+    val boxes = lines.map { line -> requireNotNull(SlotBounds.union(line.map { it.second })) }
+    var cursor = start(boxes.first())
+    val shifts = mutableMapOf<SlotId, Double>()
+    lines.zip(boxes).forEach { (line, box) ->
+        val shift = cursor - start(box)
+        line.forEach { (id, _) -> shifts[id] = shift }
+        cursor += size(box) + gap
     }
     return movedEach(ids) { id, _ -> shifts.getValue(id).let { if (horizontal) it to 0.0 else 0.0 to it } }
 }
