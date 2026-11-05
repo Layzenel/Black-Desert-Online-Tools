@@ -53,6 +53,8 @@ compose.desktop {
                 menu = true
                 dirChooser = true
                 perUserInstall = true
+                // Иконка exe, ярлыков и установщика; рисунок тот же, что app_icon.svg
+                iconFile.set(project.file("icon.ico"))
                 // Постоянный код продукта: новая версия MSI заменяет старую, а не ставится рядом
                 upgradeUuid = "6f1d1c52-7d0e-4b8a-9a52-3f0b6f6e2c41"
             }
