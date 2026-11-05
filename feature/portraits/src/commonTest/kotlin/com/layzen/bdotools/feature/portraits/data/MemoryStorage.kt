@@ -64,6 +64,25 @@ internal class MemoryStorage : PortraitsStorage {
         favorites.keys.removeAll { it.startsWith("$set/") }
     }
 
+    /** `gameVariable_lobby.xml` по аккаунтам и копии: `<аккаунт>/<имя>`. */
+    val lobby = mutableMapOf<String, ByteArray>()
+    val lobbyBackups = mutableMapOf<String, ByteArray>()
+
+    override suspend fun readLobbyVariables(account: String) = lobby[account]
+    override suspend fun writeLobbyVariables(account: String, bytes: ByteArray) {
+        lobby[account] = bytes
+    }
+
+    override suspend fun backupLobbyVariables(account: String, bytes: ByteArray): String {
+        val path = "$account/${lobbyBackups.size + 1}.xml"
+        lobbyBackups[path] = bytes
+        return path
+    }
+
+    var gameRunning: Boolean? = null
+
+    override suspend fun isGameRunning() = gameRunning
+
     private fun listing(files: Map<String, ByteArray>) =
         files.keys.groupBy({ it.substringBefore('/') }, { it.substringAfter('/') })
             .entries.joinToString("\n") { (folder, names) -> folder + "\t" + names.joinToString(",") }

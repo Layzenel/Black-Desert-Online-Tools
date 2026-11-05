@@ -40,6 +40,8 @@ data class AppColors(
     val textMuted: Color,
     val textDisabled: Color,
     val textButton: Color,
+    /** Заметка персонажа, как оранжевая подпись в окне «Персонажи аккаунта» игры. */
+    val textNote: Color,
 
     // Акценты
     val accentGold: Color,
@@ -84,6 +86,7 @@ val DefaultAppColors = AppColors(
     textMuted = Color(0xFFA89068),
     textDisabled = Color(0xFF686868),
     textButton = Color(0xFFE8E8E8),
+    textNote = Color(0xFFE0783C),
 
     accentGold = Color(0xFFF8C038),
     accentGoldPale = Color(0xFFD8B080),

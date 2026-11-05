@@ -22,5 +22,10 @@ internal object PortraitsDimens {
     val restoreContentMaxHeight = 520.dp
     val confirmDialogWidth = 460.dp
     val confirmListMaxHeight = 320.dp
+    val notesDialogWidth = 560.dp
+    val notesListMaxHeight = 300.dp
+    val noteThumbWidth = 34.dp
+    val gameButtonSize = 24.dp
+    val gameButtonIconSize = 16.dp
     const val RESTORE_ONE_COLUMNS = 4
 }

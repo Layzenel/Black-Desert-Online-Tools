@@ -8,6 +8,7 @@ package com.layzen.bdotools.feature.portraits.data
 internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64, stamp, pickFile }) => {
     const FACES = 'FaceTexture', BACKUP = 'FaceTexture_backup', TOOLS = 'BDO Tools';
     const FAVORITES = 'Favorite FaceTexture';
+    const USER_CACHE = 'UserCache', LOBBY = 'gameVariable_lobby.xml';
 
     const faces = async () => (await savedRoot()).getDirectoryHandle(FACES);
     // Black Desert\BDO Tools\portraits — чистые портреты и файлы украшений
@@ -128,6 +129,23 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
                 try { await dir.removeEntry(folder, { recursive: true }); } catch (e) { if (e.name !== 'NotFoundError') throw e; }
             }
             return 'OK:';
+        },
+        // Заметки персонажей: Black Desert\UserCache\<аккаунт>\gameVariable_lobby.xml
+        lobbyRead: async account => readFile(await child(await child(await savedRoot(), USER_CACHE), account), LOBBY),
+        async lobbyWrite(account, base64) {
+            const dir = await (await (await savedRoot()).getDirectoryHandle(USER_CACHE)).getDirectoryHandle(account);
+            return writeFile(dir, LOBBY, base64);
+        },
+        // Копия перед записью: Black Desert\BDO Tools\lobby_backup\<аккаунт>\<дата-время>.xml
+        async lobbyBackup(account, base64) {
+            const app = await (await savedRoot()).getDirectoryHandle(TOOLS, { create: true });
+            const backups = await app.getDirectoryHandle('lobby_backup', { create: true });
+            const dir = await backups.getDirectoryHandle(account, { create: true });
+            const exists = async name => { try { await dir.getFileHandle(name); return true; } catch (e) { return false; } };
+            let name = stamp() + '.xml';
+            for (let n = 2; await exists(name); n++) name = stamp() + '_' + n + '.xml';
+            await writeFile(dir, name, base64);
+            return 'OK:' + TOOLS + '\\lobby_backup\\' + account + '\\' + name;
         },
         async pickImage() {
             const file = await pickFile('image/*');

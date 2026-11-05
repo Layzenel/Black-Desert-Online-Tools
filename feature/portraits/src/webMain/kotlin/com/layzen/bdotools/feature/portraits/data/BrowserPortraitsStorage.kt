@@ -77,6 +77,21 @@ internal class BrowserPortraitsStorage : GameFiles {
         fileSystemBridge.call("favoriteDelete", set)
     }
 
+    override suspend fun readLobbyVariables(account: String): ByteArray? {
+        val result = fileSystemBridge.call("lobbyRead", account)
+        return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
+    }
+
+    override suspend fun writeLobbyVariables(account: String, bytes: ByteArray) {
+        fileSystemBridge.call("lobbyWrite", account, Base64.encode(bytes))
+    }
+
+    override suspend fun backupLobbyVariables(account: String, bytes: ByteArray): String =
+        fileSystemBridge.call("lobbyBackup", account, Base64.encode(bytes))
+
+    /** Браузер не видит процессы, поэтому закрыта ли игра, подтверждает пользователь. */
+    override suspend fun isGameRunning(): Boolean? = null
+
     override suspend fun pickFromDevice(): ByteArray? =
         try {
             Base64.decode(fileSystemBridge.call("pickImage"))

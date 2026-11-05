@@ -8,6 +8,9 @@ import com.layzen.bdotools.feature.portraits.resources.Res
 import com.layzen.bdotools.feature.portraits.resources.portraits_backups_deleted
 import com.layzen.bdotools.feature.portraits.resources.portraits_decoration_saved
 import com.layzen.bdotools.feature.portraits.resources.portraits_error_blocked
+import com.layzen.bdotools.feature.portraits.resources.portraits_error_lobby_not_found
+import com.layzen.bdotools.feature.portraits.resources.portraits_error_game_running
+import com.layzen.bdotools.feature.portraits.resources.portraits_notes_synced
 import com.layzen.bdotools.feature.portraits.resources.portraits_error_network
 import com.layzen.bdotools.feature.portraits.resources.portraits_error_not_game_folder
 import com.layzen.bdotools.feature.portraits.resources.portraits_error_not_image
@@ -34,6 +37,9 @@ internal fun noticeText(notice: Notice): String = when (notice.kind) {
     NoticeKind.FavoritesDeleted -> stringResource(Res.string.portraits_favorites_deleted, notice.argument.toInt())
     NoticeKind.FavoriteReplaced -> stringResource(Res.string.portraits_favorite_replaced, notice.argument)
     NoticeKind.ReorderHint -> stringResource(Res.string.portraits_reorder_banner)
+    NoticeKind.NotesSynced -> stringResource(Res.string.portraits_notes_synced, notice.argument)
+    NoticeKind.LobbyNotFound -> stringResource(Res.string.portraits_error_lobby_not_found)
+    NoticeKind.GameRunning -> stringResource(Res.string.portraits_error_game_running)
     NoticeKind.NotGameFolder -> stringResource(Res.string.portraits_error_not_game_folder)
     NoticeKind.Permission -> stringResource(permissionErrorText)
     NoticeKind.Blocked -> stringResource(Res.string.portraits_error_blocked)

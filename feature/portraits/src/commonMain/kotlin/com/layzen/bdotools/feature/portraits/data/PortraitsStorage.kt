@@ -56,4 +56,18 @@ interface PortraitsStorage {
 
     /** Удаляет папку `Favorite FaceTexture\<set>` целиком. */
     suspend fun deleteFavoriteSet(set: String)
+
+    /** `UserCache\<account>\gameVariable_lobby.xml`; `null`, если файла нет. */
+    suspend fun readLobbyVariables(account: String): ByteArray?
+
+    suspend fun writeLobbyVariables(account: String, bytes: ByteArray)
+
+    /** Сохраняет [bytes] в `BDO Tools\lobby_backup\<account>\<дата-время>.xml` и возвращает путь к копии. */
+    suspend fun backupLobbyVariables(account: String, bytes: ByteArray): String
+
+    /**
+     * Запущена ли игра: пока она работает, её файлы настроек перезапишутся данными из её памяти при смене персонажа, телепорте или выходе.
+     * `null` — платформа проверить не может (браузер не видит процессы).
+     */
+    suspend fun isGameRunning(): Boolean?
 }

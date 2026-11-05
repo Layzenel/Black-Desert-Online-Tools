@@ -66,4 +66,10 @@ sealed interface PortraitsEvent {
     data object RequestReplaceFavorite : PortraitsEvent
     data object CancelReplaceFavorite : PortraitsEvent
     data object ConfirmReplaceFavorite : PortraitsEvent
+
+    /** Открывает окно синхронизации или проверяет заново заметки и то, закрыта ли игра. */
+    data object OpenNotesSync : PortraitsEvent
+    data class ConfirmGameClosed(val checked: Boolean) : PortraitsEvent
+    data object CloseNotesSync : PortraitsEvent
+    data object ApplyNotesSync : PortraitsEvent
 }
