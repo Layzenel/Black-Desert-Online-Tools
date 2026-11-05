@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +33,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Верхняя навигация сайта: бронзовая полоса в стиле шапки окна, название слева и вкладки.
  * Выбранная вкладка — тёмная подложка, золотой текст и золотая черта снизу.
  * На узком экране вкладки прокручиваются по горизонтали.
- * [selected] равен `null`, когда открыт экран вне вкладок.
+ * [selected] равен `null`, когда открыт экран вне вкладок. [trailing] — элементы у правого края полосы,
+ * например выбор аккаунта.
  */
 @Composable
 fun <T> TopNavigation(
@@ -42,6 +44,7 @@ fun <T> TopNavigation(
     label: @Composable (T) -> String,
     modifier: Modifier = Modifier,
     title: String? = null,
+    trailing: @Composable RowScope.() -> Unit = {},
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -76,6 +79,12 @@ fun <T> TopNavigation(
                 )
             }
         }
+        Row(
+            Modifier.padding(end = dimens.spaceL),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimens.spaceS),
+            content = trailing,
+        )
     }
 }
 

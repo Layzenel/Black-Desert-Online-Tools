@@ -2,6 +2,7 @@ package com.layzen.bdotools.feature.portraits.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.portraits.data.ImageSource
 import com.layzen.bdotools.feature.portraits.data.PortraitsRepository
@@ -17,6 +18,10 @@ import com.layzen.bdotools.feature.portraits.presentation.state.LoadProgress
 import com.layzen.bdotools.feature.portraits.presentation.state.PortraitItem
 import com.layzen.bdotools.feature.portraits.presentation.state.PortraitsState
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * Страница портретов. Сама отвечает только за доступ к папке и загрузку портретов,
@@ -26,6 +31,7 @@ class PortraitsViewModel(
     private val storage: PortraitsStorage,
     imageSource: ImageSource,
     repository: PortraitsRepository,
+    private val accounts: GameAccounts,
 ) : ViewModel() {
 
     private val context = PortraitsContext(viewModelScope, repository, PortraitImages())
@@ -42,6 +48,11 @@ class PortraitsViewModel(
             val access = storage.access()
             context.update { it.copy(access = access) }
             if (access is FolderAccess.Granted) loadPortraits()
+        }
+        viewModelScope.launch {
+            accounts.state.map { it.selectedId }.distinctUntilChanged().drop(1).collect {
+                if (context.current.access is FolderAccess.Granted) context.launch { loadPortraits() }
+            }
         }
     }
 
@@ -109,12 +120,15 @@ class PortraitsViewModel(
     /**
      * Сразу показывает сетку из скелетонов в порядке окна выбора персонажа, а затем читает портреты
      * по одному и подставляет их по мере готовности. Пока чтение идёт, кнопки и действия недоступны.
+     * Портреты только выбранного аккаунта; пока аккаунт не выбран в окне выбора, сетка пустая.
      */
     private suspend fun loadPortraits() {
         val repository = context.repository
         context.update { it.copy(loading = LoadProgress(), reorder = null) }
         try {
-            val ids = repository.portraitOrder()
+            accounts.refresh()
+            val choice = accounts.state.value
+            val ids = if (choice.needsChoice) emptyList() else repository.portraitOrder(choice.selected)
             context.update { it.copy(portraits = ids.map { id -> PortraitItem(id, null) }, loading = LoadProgress(0, ids.size)) }
             ids.forEachIndexed { index, id ->
                 val image = context.images.decode(repository.readPortrait(id))

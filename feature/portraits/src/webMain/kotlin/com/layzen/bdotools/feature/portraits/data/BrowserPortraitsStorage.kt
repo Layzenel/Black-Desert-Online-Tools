@@ -23,9 +23,6 @@ internal class BrowserPortraitsStorage : GameFiles {
     override suspend fun readPortrait(characterId: String): ByteArray =
         Base64.decode(fileSystemBridge.call("read", characterId + BMP_EXTENSION))
 
-    override suspend fun characterOrderCandidates(): List<String> =
-        fileSystemBridge.call("order").split(ORDER_SEPARATOR).filter { it.isNotBlank() }
-
     override suspend fun backupPortraits(characterIds: List<String>): String =
         fileSystemBridge.call("backup", characterIds.joinToString("\n") { it + BMP_EXTENSION })
 

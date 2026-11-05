@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.portraits.data
 
+import com.layzen.bdotools.core.account.GameAccount
 import com.layzen.bdotools.core.game.LifeSkill
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 import com.layzen.bdotools.feature.portraits.domain.SlotIcon
@@ -92,11 +93,20 @@ class PortraitsRepositoryTest {
     }
 
     @Test
+    fun portraitOrderKeepsOnlyCharactersOfAccount() = runTest {
+        val storage = MemoryStorage().apply { listOf("10", "20", "30", "40").forEach { faces[it] = byteArrayOf(1) } }
+        val account = GameAccount("3537922", mapOf("30" to 0, "10" to 1, "50" to 2), lastPlayed = 0)
+
+        assertEquals(listOf("30", "10"), PortraitsRepository(storage).portraitOrder(account))
+        assertEquals(listOf("10", "20", "30", "40"), PortraitsRepository(storage).portraitOrder(null))
+    }
+
+    @Test
     fun favoriteSetsCanBeRenamedAndDeleted() = runTest {
         val storage = MemoryStorage().apply { faces["1"] = byteArrayOf(2) }
         val repository = PortraitsRepository(storage)
-        val first = repository.saveFavoriteSet(emptyMap())
-        val second = repository.saveFavoriteSet(emptyMap())
+        val first = repository.saveFavoriteSet(listOf("1"), emptyMap())
+        val second = repository.saveFavoriteSet(listOf("1"), emptyMap())
 
         repository.renameFavoriteSet(first, "  Летний \n набор ")
         assertEquals("Летний набор", repository.favoriteSets().first { it.name == first }.label)
@@ -111,11 +121,11 @@ class PortraitsRepositoryTest {
     fun replacedFavoriteSetKeepsTitleAndTakesCurrentPortraits() = runTest {
         val storage = MemoryStorage().apply { faces["1"] = byteArrayOf(2) }
         val repository = PortraitsRepository(storage)
-        val old = repository.saveFavoriteSet(emptyMap())
+        val old = repository.saveFavoriteSet(listOf("1"), emptyMap())
         repository.renameFavoriteSet(old, "Летний набор")
         storage.faces["1"] = byteArrayOf(7)
 
-        val replacement = repository.replaceFavoriteSet(old, emptyMap())
+        val replacement = repository.replaceFavoriteSet(old, listOf("1"), emptyMap())
 
         val sets = repository.favoriteSets()
         assertEquals(listOf(replacement), sets.map { it.name })
@@ -132,7 +142,7 @@ class PortraitsRepositoryTest {
         }
         val repository = PortraitsRepository(storage)
 
-        val set = repository.saveFavoriteSet(mapOf("1" to decorated))
+        val set = repository.saveFavoriteSet(listOf("1", "2"), mapOf("1" to decorated))
         storage.faces["1"] = byteArrayOf(9)
         val restored = repository.favoriteWrite(set, "1")
         val plain = repository.favoriteWrite(set, "2")

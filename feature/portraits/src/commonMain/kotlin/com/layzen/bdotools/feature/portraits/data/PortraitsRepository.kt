@@ -1,12 +1,12 @@
 package com.layzen.bdotools.feature.portraits.data
 
+import com.layzen.bdotools.core.account.GameAccount
 import com.layzen.bdotools.feature.portraits.domain.BackupInfo
 import com.layzen.bdotools.feature.portraits.domain.FavoriteSet
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 import com.layzen.bdotools.feature.portraits.domain.decodeDecoration
 import com.layzen.bdotools.feature.portraits.domain.encodeDecoration
 import com.layzen.bdotools.feature.portraits.domain.parseBackupList
-import com.layzen.bdotools.feature.portraits.domain.pickCharacterOrder
 import com.layzen.bdotools.feature.portraits.domain.sortByCharacterOrder
 
 private const val BMP_EXTENSION = ".bmp"
@@ -19,11 +19,15 @@ private const val FAVORITE_TITLE_FILE = "name.txt"
 /** Порядок портретов как в окне выбора персонажа и запись новых портретов с резервной копией. */
 class PortraitsRepository(private val storage: PortraitsStorage) {
 
-    /** ID персонажей в порядке окна выбора персонажа. Сами портреты читаются по одному через [readPortrait]. */
-    suspend fun portraitOrder(): List<String> {
+    /**
+     * ID персонажей [account] в порядке окна выбора персонажа: портреты других аккаунтов в `FaceTexture`
+     * пропускаются. Без аккаунта (в `UserCache` нет списка персонажей) — все портреты по ID.
+     * Сами портреты читаются по одному через [readPortrait].
+     */
+    suspend fun portraitOrder(account: GameAccount?): List<String> {
         val ids = storage.portraitIds()
-        val order = pickCharacterOrder(storage.characterOrderCandidates(), ids)
-        return sortByCharacterOrder(ids, order)
+        if (account == null) return sortByCharacterOrder(ids, emptyMap())
+        return sortByCharacterOrder(ids.filter { it in account.characterOrder }, account.characterOrder)
     }
 
     suspend fun readPortrait(characterId: String): ByteArray = storage.readPortrait(characterId)
@@ -79,11 +83,12 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
      */
     suspend fun replaceFavoriteSet(
         set: String,
+        characterIds: List<String>,
         decorations: Map<String, PortraitDecoration>,
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): String {
         val title = storage.readFavoriteFile(set, FAVORITE_TITLE_FILE)
-        val replacement = saveFavoriteSet(decorations, onProgress)
+        val replacement = saveFavoriteSet(characterIds, decorations, onProgress)
         if (title != null) storage.writeFavoriteFile(replacement, FAVORITE_TITLE_FILE, title)
         storage.deleteFavoriteSet(set)
         return replacement
@@ -105,14 +110,14 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         storage.readFavoriteFile(set, characterId + BMP_EXTENSION) ?: throw PortraitsException(PortraitsError.Unknown)
 
     /**
-     * Сохраняет все текущие портреты в новый набор избранного. У портретов с надписью или значками рядом
-     * лежат чистая основа и украшение, чтобы после применения их можно было менять. Возвращает имя набора.
+     * Сохраняет портреты персонажей [ids] (всех на странице) в новый набор избранного. У портретов с надписью или
+     * значками рядом лежат чистая основа и украшение, чтобы после применения их можно было менять. Возвращает имя набора.
      */
     suspend fun saveFavoriteSet(
+        ids: List<String>,
         decorations: Map<String, PortraitDecoration>,
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): String {
-        val ids = storage.portraitIds()
         val set = storage.createFavoriteSet()
         ids.forEachIndexed { index, id ->
             storage.writeFavoriteFile(set, id + BMP_EXTENSION, storage.readPortrait(id))

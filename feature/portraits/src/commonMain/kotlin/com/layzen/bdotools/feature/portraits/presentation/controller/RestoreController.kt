@@ -23,7 +23,7 @@ internal class RestoreController(private val context: PortraitsContext) {
     private var previewJob: Job? = null
 
     fun open(target: ReplaceTarget) {
-        val all = context.current.backups
+        val all = forPage(context.current.backups)
         when (target) {
             ReplaceTarget.All -> {
                 context.update { it.copy(restoreDialog = RestoreDialogState(target, all, selected = null)) }
@@ -42,9 +42,8 @@ internal class RestoreController(private val context: PortraitsContext) {
         val dialog = context.current.restoreDialog ?: return
         val backup = dialog.backups.firstOrNull { it.name == name } ?: return
         if (dialog.target is ReplaceTarget.One) return updateDialog { it.copy(selected = name) }
-        val current = context.current.portraits.map { it.characterId }
-        val ids = current.filter { it in backup.characterIds } + backup.characterIds.filterNot { it in current }.sorted()
-        updateDialog { it.copy(selected = name, checked = backup.characterIds.intersect(current.toSet())) }
+        val ids = context.current.portraits.map { it.characterId }.filter { it in backup.characterIds }
+        updateDialog { it.copy(selected = name, checked = backup.characterIds) }
         loadPreviews(ids.map { name to it })
     }
 
@@ -99,16 +98,23 @@ internal class RestoreController(private val context: PortraitsContext) {
                 context.setProgress(0, names.size)
                 context.repository.deleteBackups(names) { done, total -> context.setProgress(done, total) }
             }
-            val selected = dialog.selected?.takeIf { name -> left.any { it.name == name } }
+            val visible = forPage(left)
+            val selected = dialog.selected?.takeIf { name -> visible.any { it.name == name } }
             context.update {
                 it.copy(
                     backups = left,
-                    restoreDialog = it.restoreDialog?.afterDeletion(left, names, selected),
+                    restoreDialog = it.restoreDialog?.afterDeletion(visible, names, selected),
                     notice = Notice(NoticeKind.BackupsDeleted, names.size.toString()),
                 )
             }
-            if (selected == null) left.firstOrNull()?.let { select(it.name) }
+            if (selected == null) visible.firstOrNull()?.let { select(it.name) }
         }
+    }
+
+    /** В копиях могут лежать портреты других аккаунтов: окно показывает только персонажей на странице. */
+    private fun forPage(backups: List<BackupInfo>): List<BackupInfo> {
+        val current = context.current.portraits.map { it.characterId }.toSet()
+        return backups.map { it.copy(characterIds = it.characterIds intersect current) }.filter { it.characterIds.isNotEmpty() }
     }
 
     /** Превью грузятся по одному в фоне: окно открывается сразу, портреты появляются по мере чтения. */

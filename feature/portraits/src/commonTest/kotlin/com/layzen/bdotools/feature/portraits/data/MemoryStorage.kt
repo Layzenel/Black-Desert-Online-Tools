@@ -15,7 +15,6 @@ internal class MemoryStorage : PortraitsStorage {
     override suspend fun requestPermission() = FolderAccess.Granted("Black Desert")
     override suspend fun portraitIds() = faces.keys.toList()
     override suspend fun readPortrait(characterId: String) = faces.getValue(characterId)
-    override suspend fun characterOrderCandidates() = emptyList<String>()
 
     override suspend fun backupPortraits(characterIds: List<String>): String {
         log += "backup:${characterIds.joinToString()}"

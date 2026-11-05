@@ -92,7 +92,7 @@ internal class FavoritesController(private val context: PortraitsContext) {
         cancelReplace()
         context.launch {
             val replacement = context.withBusy(BusyKind.SavingFavorites) {
-                context.repository.replaceFavoriteSet(set.name, context.current.decorations) { done, total ->
+                context.repository.replaceFavoriteSet(set.name, currentIds(), context.current.decorations) { done, total ->
                     context.setProgress(done, total)
                 }
             }
@@ -105,12 +105,17 @@ internal class FavoritesController(private val context: PortraitsContext) {
     fun saveAll() {
         context.launch {
             val set = context.withBusy(BusyKind.SavingFavorites) {
-                context.repository.saveFavoriteSet(context.current.decorations) { done, total -> context.setProgress(done, total) }
+                context.repository.saveFavoriteSet(currentIds(), context.current.decorations) { done, total ->
+                    context.setProgress(done, total)
+                }
             }
             context.showNotice(Notice(NoticeKind.FavoriteAdded, set))
             reload(select = set)
         }
     }
+
+    /** Портреты на странице — только персонажи выбранного аккаунта. */
+    private fun currentIds() = context.current.portraits.map { it.characterId }
 
     fun apply() {
         val set = context.current.favoritesDialog?.selectedSet ?: return

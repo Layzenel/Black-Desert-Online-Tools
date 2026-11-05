@@ -97,14 +97,4 @@ class DesktopPortraitsStorageTest {
         storage.deleteFavoriteSet(set)
         assertFalse((game / "Favorite FaceTexture" / set).exists())
     }
-
-    @Test
-    fun characterOrderFromAllAccounts() = runTest {
-        storage.selectFolder()
-        val order = "<CharacterOrderList Version=\"1\"><Character Id=\"101\"/>"
-        (game / "UserCache" / "account").createDirectories()
-        (game / "UserCache" / "account" / "gamevariable.xml").writeText("<Root>$order</CharacterOrderList></Root>")
-        (game / "UserCache" / "gamevariable.xml").writeText("<Root/>")
-        assertEquals(listOf(order), storage.characterOrderCandidates())
-    }
 }
