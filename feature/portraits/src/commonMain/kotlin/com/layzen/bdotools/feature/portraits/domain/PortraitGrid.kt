@@ -34,6 +34,17 @@ data class PortraitGrid(
         )
     }
 
+    /** Номер ячейки под точкой ([x], [y]) в пикселях текстуры; `null` — точка в отступе или за сеткой. */
+    fun cellAt(x: Float, y: Float): Int? {
+        if (x < 0 || y < 0) return null
+        val column = (x / (cellWidth + gap)).toInt()
+        val row = (y / (cellHeight + gap)).toInt()
+        val index = row * columns + column
+        if (column >= columns || index >= count) return null
+        val cell = cell(index)
+        return index.takeIf { x < cell.x + cell.width && y < cell.y + cell.height }
+    }
+
     companion object {
         /** Маска для замены одного портрета. */
         fun single() = PortraitGrid(count = 1)

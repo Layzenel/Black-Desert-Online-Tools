@@ -73,6 +73,7 @@ class PortraitsViewModel(
             is PortraitsEvent.ZoomImage -> replacement.updatePlacement { it.zoomedTo(event.scale) }
             is PortraitsEvent.RotateImage -> replacement.updatePlacement { it.rotatedTo(event.degrees) }
             PortraitsEvent.ResetPlacement -> replacement.resetPlacement()
+            is PortraitsEvent.ToggleMaskCell -> replacement.toggleCell(event.index)
             PortraitsEvent.CloseEditor -> replacement.closeEditor()
             PortraitsEvent.Apply -> replacement.apply()
 

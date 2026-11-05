@@ -4,6 +4,7 @@ import com.layzen.bdotools.core.account.GameAccount
 import com.layzen.bdotools.feature.portraits.domain.BackupInfo
 import com.layzen.bdotools.feature.portraits.domain.FavoriteSet
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
+import com.layzen.bdotools.feature.portraits.domain.containing
 import com.layzen.bdotools.feature.portraits.domain.decodeDecoration
 import com.layzen.bdotools.feature.portraits.domain.encodeDecoration
 import com.layzen.bdotools.feature.portraits.domain.parseBackupList
@@ -11,13 +12,20 @@ import com.layzen.bdotools.feature.portraits.domain.sortByCharacterOrder
 
 private const val BMP_EXTENSION = ".bmp"
 private const val DECORATION_EXTENSION = ".txt"
-// не .bmp, чтобы список портретов набора не принял чистую основу за портрет
-private const val FAVORITE_BASE_EXTENSION = ".base"
+private const val BACKUP_FOLDER = "FaceTexture_backup"
+// в наборах прошлых версий .bmp — портрет с украшениями, а чистая основа лежит в этом файле
+private const val LEGACY_FAVORITE_BASE_EXTENSION = ".base"
 /** Название набора избранного, которое задал пользователь. */
 private const val FAVORITE_TITLE_FILE = "name.txt"
 
-/** Порядок портретов как в окне выбора персонажа и запись новых портретов с резервной копией. */
+/**
+ * Порядок портретов как в окне выбора персонажа и запись новых портретов с резервной копией.
+ * Избранное и копии хранят портреты как [StoredPortrait]: чистая основа и украшение отдельно.
+ */
 class PortraitsRepository(private val storage: PortraitsStorage) {
+
+    /** Отпечатки портретов в копиях: `<копия>/<ID>` → [StoredPortrait.fingerprint]. Копии после записи не меняются. */
+    private val backupFingerprints = mutableMapOf<String, Int>()
 
     /**
      * ID персонажей [account] в порядке окна выбора персонажа: портреты других аккаунтов в `FaceTexture`
@@ -35,8 +43,9 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
     /** Резервные копии от новых к старым. */
     suspend fun backups(): List<BackupInfo> = parseBackupList(storage.backupListing())
 
-    suspend fun readBackupPortrait(backup: String, characterId: String): ByteArray =
-        storage.readBackupPortrait(backup, characterId)
+    /** Портрет из копии. В копиях прошлых версий лежит только готовый портрет — он читается без украшения. */
+    suspend fun readBackupPortrait(backup: String, characterId: String): StoredPortrait =
+        StoredPortrait.read(characterId) { storage.readBackupFile(backup, it) }
 
     /** Удаляет копии по одной и возвращает обновлённый список. */
     suspend fun deleteBackups(
@@ -64,6 +73,12 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
     suspend fun readCleanBase(characterId: String): ByteArray =
         storage.readToolFile(characterId + BMP_EXTENSION) ?: storage.readPortrait(characterId)
 
+    /** Текущий портрет персонажа: чистая основа и украшение из `BDO Tools\portraits`. */
+    suspend fun currentPortrait(characterId: String): StoredPortrait {
+        val decoration = storage.readToolFile(characterId + DECORATION_EXTENSION)?.let { decodeDecoration(it.decodeToString()) }
+        return StoredPortrait(readCleanBase(characterId), decoration ?: PortraitDecoration())
+    }
+
     /** Наборы в `Favorite FaceTexture` с названиями, от новых к старым. */
     suspend fun favoriteSets(): List<FavoriteSet> =
         parseBackupList(storage.favoriteListing()).map { set ->
@@ -84,11 +99,10 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
     suspend fun replaceFavoriteSet(
         set: String,
         characterIds: List<String>,
-        decorations: Map<String, PortraitDecoration>,
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): String {
         val title = storage.readFavoriteFile(set, FAVORITE_TITLE_FILE)
-        val replacement = saveFavoriteSet(characterIds, decorations, onProgress)
+        val replacement = saveFavoriteSet(characterIds, onProgress)
         if (title != null) storage.writeFavoriteFile(replacement, FAVORITE_TITLE_FILE, title)
         storage.deleteFavoriteSet(set)
         return replacement
@@ -106,67 +120,32 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         return favoriteSets()
     }
 
-    suspend fun readFavoritePortrait(set: String, characterId: String): ByteArray =
-        storage.readFavoriteFile(set, characterId + BMP_EXTENSION) ?: throw PortraitsException(PortraitsError.Unknown)
+    /** Портрет из набора [set]. В наборах прошлых версий чистая основа лежала отдельно от готового портрета. */
+    suspend fun readFavoritePortrait(set: String, characterId: String): StoredPortrait {
+        val stored = StoredPortrait.read(characterId) { storage.readFavoriteFile(set, it) }
+        val legacyBase = storage.readFavoriteFile(set, characterId + LEGACY_FAVORITE_BASE_EXTENSION) ?: return stored
+        return StoredPortrait(legacyBase, stored.decoration)
+    }
 
-    /**
-     * Сохраняет портреты персонажей [ids] (всех на странице) в новый набор избранного. У портретов с надписью или
-     * значками рядом лежат чистая основа и украшение, чтобы после применения их можно было менять. Возвращает имя набора.
-     */
+    /** Сохраняет текущие портреты персонажей [ids] (всех на странице) в новый набор избранного. Возвращает имя набора. */
     suspend fun saveFavoriteSet(
         ids: List<String>,
-        decorations: Map<String, PortraitDecoration>,
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): String {
         val set = storage.createFavoriteSet()
         ids.forEachIndexed { index, id ->
-            storage.writeFavoriteFile(set, id + BMP_EXTENSION, storage.readPortrait(id))
-            val decoration = decorations[id]
-            if (decoration != null && !decoration.isEmpty) {
-                storage.writeFavoriteFile(set, id + FAVORITE_BASE_EXTENSION, readCleanBase(id))
-                storage.writeFavoriteFile(set, id + DECORATION_EXTENSION, encodeDecoration(decoration).encodeToByteArray())
-            }
+            currentPortrait(id).writeTo(id) { name, bytes -> storage.writeFavoriteFile(set, name, bytes) }
             onProgress(index + 1, ids.size)
         }
         return set
     }
 
-    /** Что записать персонажу, чтобы вернуть ему портрет из набора [set] вместе с надписью и значками. */
-    suspend fun favoriteWrite(set: String, characterId: String): PortraitWrite {
-        val face = readFavoritePortrait(set, characterId)
-        val decoration = storage.readFavoriteFile(set, characterId + DECORATION_EXTENSION)
-            ?.let { decodeDecoration(it.decodeToString()) }
-            ?: PortraitDecoration()
-        val base = storage.readFavoriteFile(set, characterId + FAVORITE_BASE_EXTENSION) ?: face
-        return PortraitWrite(characterId, face, base, decoration)
-    }
-
-    /**
-     * Что записать, чтобы персонажи [first] и [second] обменялись портретами — вместе с чистой основой, надписью
-     * и значками. Нужно, когда в игре персонажей переставили и нарезанная на портреты картинка разъехалась.
-     */
-    suspend fun swapWrites(first: String, second: String, decorations: Map<String, PortraitDecoration>): List<PortraitWrite> {
-        val a = currentWrite(first, decorations)
-        val b = currentWrite(second, decorations)
-        return listOf(
-            PortraitWrite(first, b.face, b.cleanBase, b.decoration),
-            PortraitWrite(second, a.face, a.cleanBase, a.decoration),
-        )
-    }
-
-    private suspend fun currentWrite(characterId: String, decorations: Map<String, PortraitDecoration>) = PortraitWrite(
-        characterId,
-        face = storage.readPortrait(characterId),
-        cleanBase = readCleanBase(characterId),
-        decoration = decorations[characterId] ?: PortraitDecoration(),
-    )
-
-    /** Сохраняет копию старых файлов `FaceTexture` и записывает новые. Возвращает путь к резервной копии. */
+    /** Сохраняет текущие портреты в резервную копию и записывает новые. Возвращает путь к копии. */
     suspend fun writePortraits(
         writes: List<PortraitWrite>,
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): String {
-        val backup = storage.backupPortraits(writes.map { it.characterId })
+        val backup = backupCurrent(writes.map { it.characterId })
         writes.forEachIndexed { index, write ->
             val id = write.characterId
             if (write.decoration.isEmpty) {
@@ -181,4 +160,38 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         }
         return backup
     }
+
+    /**
+     * Сохраняет текущие портреты [ids] в новую копию, кроме тех, что уже лежат в какой-то копии без изменений.
+     * Папка создаётся, только если есть что в неё положить. Возвращает путь к новой копии, а если новых портретов
+     * нет — к копии, где уже лежит первый из них.
+     */
+    private suspend fun backupCurrent(ids: List<String>): String {
+        val existing = backups()
+        var created: String? = null
+        var duplicateIn: String? = null
+        for (id in ids) {
+            val portrait = currentPortrait(id)
+            val copy = findBackupCopy(id, portrait, existing)
+            if (copy != null) {
+                duplicateIn = duplicateIn ?: copy
+                continue
+            }
+            val folder = created ?: storage.createBackup().also { created = it }
+            portrait.writeTo(id) { name, bytes -> storage.writeBackupFile(folder, name, bytes) }
+            backupFingerprints["$folder/$id"] = portrait.fingerprint
+        }
+        return BACKUP_FOLDER + "\\" + (created ?: duplicateIn.orEmpty())
+    }
+
+    /** Копия из [backups], где уже лежит такой же [portrait] персонажа, или `null`. */
+    private suspend fun findBackupCopy(id: String, portrait: StoredPortrait, backups: List<BackupInfo>): String? =
+        backups.containing(id).firstOrNull { backup ->
+            val key = "${backup.name}/$id"
+            val known = backupFingerprints[key]
+            if (known != null && known != portrait.fingerprint) return@firstOrNull false
+            val stored = readBackupPortrait(backup.name, id)
+            backupFingerprints[key] = stored.fingerprint
+            stored.sameAs(portrait)
+        }?.name
 }

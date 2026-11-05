@@ -1,9 +1,7 @@
 package com.layzen.bdotools.feature.portraits.presentation.controller
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraits.data.PortraitWrite
 import com.layzen.bdotools.feature.portraits.domain.BackupInfo
-import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 import com.layzen.bdotools.feature.portraits.domain.containing
 import com.layzen.bdotools.feature.portraits.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraits.presentation.state.BusyKind
@@ -16,7 +14,7 @@ import kotlinx.coroutines.Job
 
 /**
  * Окно резервных копий: превью, восстановление выбранных портретов и удаление копий.
- * Восстановленный портрет становится чистой основой, надпись и значки персонажа сбрасываются.
+ * Портрет восстанавливается вместе с надписью и значком из копии; в копиях прошлых версий их нет — они сбрасываются.
  */
 internal class RestoreController(private val context: PortraitsContext) {
 
@@ -77,9 +75,9 @@ internal class RestoreController(private val context: PortraitsContext) {
             val writes = context.withBusy(BusyKind.Restoring) {
                 ids.mapIndexed { index, id ->
                     context.setProgress(index, ids.size)
-                    val bytes = context.repository.readBackupPortrait(backup, id)
-                    faces[id] = context.images.decode(bytes)
-                    PortraitWrite(id, face = bytes, cleanBase = bytes, decoration = PortraitDecoration())
+                    val (face, write) = context.compose(id, context.repository.readBackupPortrait(backup, id))
+                    faces[id] = face
+                    write
                 }
             }
             val copy = context.save(writes)
@@ -126,7 +124,7 @@ internal class RestoreController(private val context: PortraitsContext) {
                 items.forEach { (backup, id) ->
                     val key = previewKey(backup, id)
                     if (context.current.restoreDialog?.previews?.containsKey(key) == true) return@forEach
-                    val image = context.images.decode(context.repository.readBackupPortrait(backup, id))
+                    val image = context.images.render(context.repository.readBackupPortrait(backup, id))
                     updateDialog { it.copy(previews = it.previews + (key to image)) }
                     context.breathe()
                 }

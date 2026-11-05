@@ -25,6 +25,8 @@ sealed interface PortraitsEvent {
     data class ZoomImage(val scale: Float) : PortraitsEvent
     data class RotateImage(val degrees: Float) : PortraitsEvent
     data object ResetPlacement : PortraitsEvent
+    /** Включает или выключает ячейку маски с номером [index]. */
+    data class ToggleMaskCell(val index: Int) : PortraitsEvent
     data object CloseEditor : PortraitsEvent
     data object Apply : PortraitsEvent
 

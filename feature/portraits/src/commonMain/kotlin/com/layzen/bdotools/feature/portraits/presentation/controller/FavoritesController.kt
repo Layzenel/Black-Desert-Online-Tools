@@ -30,7 +30,7 @@ internal class FavoritesController(private val context: PortraitsContext) {
         previewJob = context.launch {
             orderedIds(set.characterIds).forEach { id ->
                 context.breathe()
-                val image = context.images.decode(context.repository.readFavoritePortrait(name, id))
+                val image = context.images.render(context.repository.readFavoritePortrait(name, id))
                 updateDialog { if (it.selected == name) it.copy(previews = it.previews + (id to image)) else it }
             }
         }
@@ -92,7 +92,7 @@ internal class FavoritesController(private val context: PortraitsContext) {
         cancelReplace()
         context.launch {
             val replacement = context.withBusy(BusyKind.SavingFavorites) {
-                context.repository.replaceFavoriteSet(set.name, currentIds(), context.current.decorations) { done, total ->
+                context.repository.replaceFavoriteSet(set.name, currentIds()) { done, total ->
                     context.setProgress(done, total)
                 }
             }
@@ -105,7 +105,7 @@ internal class FavoritesController(private val context: PortraitsContext) {
     fun saveAll() {
         context.launch {
             val set = context.withBusy(BusyKind.SavingFavorites) {
-                context.repository.saveFavoriteSet(currentIds(), context.current.decorations) { done, total ->
+                context.repository.saveFavoriteSet(currentIds()) { done, total ->
                     context.setProgress(done, total)
                 }
             }
@@ -127,7 +127,9 @@ internal class FavoritesController(private val context: PortraitsContext) {
             val writes = context.withBusy(BusyKind.ReadingFavorites) {
                 ids.mapIndexed { index, id ->
                     context.setProgress(index, ids.size)
-                    context.repository.favoriteWrite(set.name, id).also { faces[id] = context.images.decode(it.face) }
+                    val (face, write) = context.compose(id, context.repository.readFavoritePortrait(set.name, id))
+                    faces[id] = face
+                    write
                 }
             }
             val backup = context.save(writes)

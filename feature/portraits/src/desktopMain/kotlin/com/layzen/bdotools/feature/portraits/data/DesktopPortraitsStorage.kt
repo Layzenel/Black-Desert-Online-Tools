@@ -3,7 +3,6 @@ package com.layzen.bdotools.feature.portraits.data
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.core.folder.GameFolderSettings
 import java.nio.file.Path
-import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.div
@@ -56,14 +55,11 @@ internal class DesktopPortraitsStorage(
         (root() / FACES / portraitFile(characterId)).readBytes()
     }
 
-
-    override suspend fun backupPortraits(characterIds: List<String>): String = fileCall {
-        val root = root()
-        val backups = (root / BACKUP).createDirectories()
+    override suspend fun createBackup(): String = fileCall {
+        val backups = (root() / BACKUP).createDirectories()
         val folder = freshFolderName(backups)
-        val target = (backups / folder).createDirectories()
-        characterIds.map(::portraitFile).forEach { name -> (root / FACES / name).copyTo(target / name) }
-        "$BACKUP\\$folder"
+        (backups / folder).createDirectories()
+        folder
     }
 
     override suspend fun writePortrait(characterId: String, bmp: ByteArray) = fileCall {
@@ -72,8 +68,12 @@ internal class DesktopPortraitsStorage(
 
     override suspend fun backupListing(): String = fileCall { folderListing(root() / BACKUP) }
 
-    override suspend fun readBackupPortrait(backup: String, characterId: String): ByteArray = fileCall {
-        (root() / BACKUP / backup / portraitFile(characterId)).readBytes()
+    override suspend fun readBackupFile(backup: String, name: String): ByteArray? = fileCall {
+        readOrNull(root() / BACKUP / backup / name)
+    }
+
+    override suspend fun writeBackupFile(backup: String, name: String, bytes: ByteArray) = fileCall {
+        ((root() / BACKUP / backup).createDirectories() / name).writeBytes(bytes)
     }
 
     override suspend fun deleteBackup(backup: String) = fileCall { deleteFolder(root() / BACKUP / backup) }

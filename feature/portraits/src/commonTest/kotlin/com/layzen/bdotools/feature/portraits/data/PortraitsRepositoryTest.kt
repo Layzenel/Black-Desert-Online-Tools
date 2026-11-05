@@ -4,6 +4,7 @@ import com.layzen.bdotools.core.account.GameAccount
 import com.layzen.bdotools.core.game.LifeSkill
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 import com.layzen.bdotools.feature.portraits.domain.SlotIcon
+import com.layzen.bdotools.feature.portraits.domain.encodeDecoration
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -13,6 +14,15 @@ import kotlinx.coroutines.test.runTest
 class PortraitsRepositoryTest {
 
     private val decorated = PortraitDecoration().withCaption("Рыбак").withBadge(SlotIcon.Skill(LifeSkill.Barter))
+
+    /** Персонаж «1» с чистой основой 1, готовым портретом 2 и украшением [decorated]. */
+    private fun decoratedStorage() = MemoryStorage().apply {
+        faces["1"] = byteArrayOf(2)
+        tools["1.bmp"] = byteArrayOf(1)
+        tools["1.txt"] = encodeDecoration(decorated).encodeToByteArray()
+    }
+
+    private fun plainWrite(id: String, bytes: ByteArray) = PortraitWrite(id, bytes, bytes, PortraitDecoration())
 
     @Test
     fun cleanBaseFallsBackToCurrentPortrait() = runTest {
@@ -32,8 +42,8 @@ class PortraitsRepositoryTest {
 
         val backup = repository.writePortraits(listOf(PortraitWrite("1", face = byteArrayOf(2), cleanBase = byteArrayOf(1), decoration = decorated)))
 
-        assertEquals("FaceTexture_backup\\test", backup)
-        assertEquals(listOf("backup:1", "face:1"), storage.log)
+        assertEquals("FaceTexture_backup\\2026-11-05_10-00-01", backup)
+        assertEquals(listOf("backup:2026-11-05_10-00-01", "backupFile:2026-11-05_10-00-01/1.bmp", "face:1"), storage.log)
         assertContentEquals(byteArrayOf(2), storage.faces["1"])
         assertContentEquals(byteArrayOf(1), storage.tools["1.bmp"])
         assertEquals(mapOf("1" to decorated), repository.loadDecorations())
@@ -41,14 +51,10 @@ class PortraitsRepositoryTest {
 
     @Test
     fun emptyDecorationRemovesStoredFiles() = runTest {
-        val storage = MemoryStorage().apply {
-            faces["1"] = byteArrayOf(2)
-            tools["1.bmp"] = byteArrayOf(1)
-            tools["1.txt"] = "caption=Рыбак\n".encodeToByteArray()
-        }
+        val storage = decoratedStorage()
         val repository = PortraitsRepository(storage)
 
-        repository.writePortraits(listOf(PortraitWrite("1", face = byteArrayOf(1), cleanBase = byteArrayOf(1), decoration = PortraitDecoration())))
+        repository.writePortraits(listOf(plainWrite("1", byteArrayOf(1))))
 
         assertNull(storage.tools["1.bmp"])
         assertNull(storage.tools["1.txt"])
@@ -57,11 +63,53 @@ class PortraitsRepositoryTest {
     }
 
     @Test
+    fun backupKeepsCleanBaseAndDecoration() = runTest {
+        val storage = decoratedStorage()
+        val repository = PortraitsRepository(storage)
+
+        repository.writePortraits(listOf(plainWrite("1", byteArrayOf(5))))
+        val stored = repository.readBackupPortrait(repository.backups().single().name, "1")
+
+        assertContentEquals(byteArrayOf(1), stored.clean)
+        assertEquals(decorated, stored.decoration)
+    }
+
+    @Test
+    fun backupSkipsPortraitsAlreadyBackedUp() = runTest {
+        val storage = MemoryStorage().apply {
+            faces["1"] = byteArrayOf(1)
+            faces["2"] = byteArrayOf(2)
+        }
+        val repository = PortraitsRepository(storage)
+
+        val first = repository.writePortraits(listOf(plainWrite("1", byteArrayOf(7)), plainWrite("2", byteArrayOf(8))))
+        // возвращаем прежние портреты: в копию идут только 7 и 8, которых там ещё нет
+        repository.writePortraits(listOf(plainWrite("1", byteArrayOf(1)), plainWrite("2", byteArrayOf(2))))
+        // и снова 7 и 8: текущие 1 и 2 уже лежат в первой копии, новая не нужна
+        val third = repository.writePortraits(listOf(plainWrite("1", byteArrayOf(7)), plainWrite("2", byteArrayOf(8))))
+
+        assertEquals(2, repository.backups().size)
+        assertEquals(first, third)
+    }
+
+    @Test
+    fun backupDistinguishesSameBaseWithOtherDecoration() = runTest {
+        val storage = decoratedStorage()
+        val repository = PortraitsRepository(storage)
+
+        repository.writePortraits(listOf(plainWrite("1", byteArrayOf(1))))
+        repository.writePortraits(listOf(plainWrite("1", byteArrayOf(9))))
+
+        assertEquals(2, repository.backups().size)
+    }
+
+    @Test
     fun deletesBackupsAndReturnsRest() = runTest {
         val storage = MemoryStorage().apply {
-            backups["2026-11-01_10-00-00"] = listOf("1", "2")
-            backups["2026-11-02_10-00-00"] = listOf("1")
-            backups["2026-11-03_10-00-00"] = listOf("2")
+            backups["2026-11-01_10-00-00/1.bmp"] = byteArrayOf(1)
+            backups["2026-11-01_10-00-00/2.bmp"] = byteArrayOf(1)
+            backups["2026-11-02_10-00-00/1.bmp"] = byteArrayOf(1)
+            backups["2026-11-03_10-00-00/2.bmp"] = byteArrayOf(1)
         }
         val progress = mutableListOf<Int>()
 
@@ -69,27 +117,6 @@ class PortraitsRepositoryTest {
 
         assertEquals(listOf("2026-11-02_10-00-00"), left.map { it.name })
         assertEquals(listOf(1, 2), progress)
-    }
-
-    @Test
-    fun swapExchangesPortraitsWithCleanBaseAndDecoration() = runTest {
-        val storage = MemoryStorage().apply {
-            faces["1"] = byteArrayOf(2)
-            faces["2"] = byteArrayOf(5)
-            tools["1.bmp"] = byteArrayOf(1)
-            tools["1.txt"] = "caption=Рыбак\n".encodeToByteArray()
-        }
-        val repository = PortraitsRepository(storage)
-
-        val writes = repository.swapWrites("1", "2", mapOf("1" to decorated))
-        repository.writePortraits(writes)
-
-        assertEquals(listOf("backup:1, 2", "face:1", "face:2"), storage.log)
-        assertContentEquals(byteArrayOf(5), storage.faces["1"])
-        assertContentEquals(byteArrayOf(2), storage.faces["2"])
-        assertContentEquals(byteArrayOf(1), storage.tools["2.bmp"])
-        assertNull(storage.tools["1.bmp"])
-        assertEquals(mapOf("2" to decorated), repository.loadDecorations())
     }
 
     @Test
@@ -105,8 +132,8 @@ class PortraitsRepositoryTest {
     fun favoriteSetsCanBeRenamedAndDeleted() = runTest {
         val storage = MemoryStorage().apply { faces["1"] = byteArrayOf(2) }
         val repository = PortraitsRepository(storage)
-        val first = repository.saveFavoriteSet(listOf("1"), emptyMap())
-        val second = repository.saveFavoriteSet(listOf("1"), emptyMap())
+        val first = repository.saveFavoriteSet(listOf("1"))
+        val second = repository.saveFavoriteSet(listOf("1"))
 
         repository.renameFavoriteSet(first, "  Летний \n набор ")
         assertEquals("Летний набор", repository.favoriteSets().first { it.name == first }.label)
@@ -121,37 +148,46 @@ class PortraitsRepositoryTest {
     fun replacedFavoriteSetKeepsTitleAndTakesCurrentPortraits() = runTest {
         val storage = MemoryStorage().apply { faces["1"] = byteArrayOf(2) }
         val repository = PortraitsRepository(storage)
-        val old = repository.saveFavoriteSet(listOf("1"), emptyMap())
+        val old = repository.saveFavoriteSet(listOf("1"))
         repository.renameFavoriteSet(old, "Летний набор")
         storage.faces["1"] = byteArrayOf(7)
 
-        val replacement = repository.replaceFavoriteSet(old, listOf("1"), emptyMap())
+        val replacement = repository.replaceFavoriteSet(old, listOf("1"))
 
         val sets = repository.favoriteSets()
         assertEquals(listOf(replacement), sets.map { it.name })
         assertEquals("Летний набор", sets.single().title)
-        assertContentEquals(byteArrayOf(7), repository.readFavoritePortrait(replacement, "1"))
+        assertContentEquals(byteArrayOf(7), repository.readFavoritePortrait(replacement, "1").clean)
     }
 
     @Test
-    fun favoriteSetKeepsAllPortraitsWithDecorations() = runTest {
-        val storage = MemoryStorage().apply {
-            faces["1"] = byteArrayOf(2)
-            faces["2"] = byteArrayOf(3)
-            tools["1.bmp"] = byteArrayOf(1)
-        }
+    fun favoriteSetKeepsCleanPortraitsAndDecorations() = runTest {
+        val storage = decoratedStorage().apply { faces["2"] = byteArrayOf(3) }
         val repository = PortraitsRepository(storage)
 
-        val set = repository.saveFavoriteSet(listOf("1", "2"), mapOf("1" to decorated))
-        storage.faces["1"] = byteArrayOf(9)
-        val restored = repository.favoriteWrite(set, "1")
-        val plain = repository.favoriteWrite(set, "2")
+        val set = repository.saveFavoriteSet(listOf("1", "2"))
+        val restored = repository.readFavoritePortrait(set, "1")
+        val plain = repository.readFavoritePortrait(set, "2")
 
         assertEquals(listOf(setOf("1", "2")), repository.favoriteSets().map { it.characterIds })
-        assertContentEquals(byteArrayOf(2), restored.face)
-        assertContentEquals(byteArrayOf(1), restored.cleanBase)
+        assertContentEquals(byteArrayOf(1), restored.clean)
         assertEquals(decorated, restored.decoration)
-        assertContentEquals(byteArrayOf(3), plain.cleanBase)
+        assertContentEquals(byteArrayOf(3), plain.clean)
         assertEquals(PortraitDecoration(), plain.decoration)
+        assertNull(storage.favorites["$set/2.txt"])
+    }
+
+    @Test
+    fun legacyFavoriteSetReadsCleanBaseFromSeparateFile() = runTest {
+        val storage = MemoryStorage().apply {
+            favorites["old/1.bmp"] = byteArrayOf(2)
+            favorites["old/1.base"] = byteArrayOf(1)
+            favorites["old/1.txt"] = encodeDecoration(decorated).encodeToByteArray()
+        }
+
+        val stored = PortraitsRepository(storage).readFavoritePortrait("old", "1")
+
+        assertContentEquals(byteArrayOf(1), stored.clean)
+        assertEquals(decorated, stored.decoration)
     }
 }

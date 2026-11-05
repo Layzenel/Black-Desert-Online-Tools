@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.portraits.presentation.render
 import androidx.compose.ui.graphics.ImageBitmap
 import com.layzen.bdotools.feature.portraits.data.PortraitsError
 import com.layzen.bdotools.feature.portraits.data.PortraitsException
+import com.layzen.bdotools.feature.portraits.data.StoredPortrait
 import com.layzen.bdotools.feature.portraits.domain.PortraitDecoration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -28,6 +29,9 @@ internal class PortraitImages {
         } catch (e: Exception) {
             throw PortraitsException(PortraitsError.NotImage, e.message)
         }
+
+    /** Готовый портрет из сохранённых чистой основы и украшения. */
+    suspend fun render(stored: StoredPortrait): ImageBitmap = decorate(decode(stored.clean), stored.decoration)
 
     /** Рисует украшения поверх чистого портрета. Ждёт, пока загрузятся SVG-значки. */
     suspend fun decorate(clean: ImageBitmap, decoration: PortraitDecoration): ImageBitmap {

@@ -41,6 +41,7 @@
     <string name="portraits_editor_title_all">Подгонка изображения</string>
     <string name="portraits_editor_title_one">Подгонка портрета</string>
     <string name="portraits_editor_hint">Перетаскивайте изображение мышью, колесо меняет масштаб. Отступы между ячейками в игру не попадут.</string>
+    <string name="portraits_editor_hint_cells">Щелчок по ячейке выключает её: портрет этого персонажа останется прежним. Повторный щелчок включает ячейку.</string>
     <string name="portraits_editor_zoom">Масштаб, %</string>
     <string name="portraits_editor_rotation">Поворот, °</string>
     <string name="portraits_editor_reset">Сбросить</string>
