@@ -146,4 +146,26 @@
     <string name="portraits_busy_deleting">Удаляю резервные копии</string>
     <string name="portraits_busy_saving_favorites">Сохраняю портреты в избранное</string>
     <string name="portraits_busy_reading_favorites">Читаю избранное</string>
+
+    <string name="portraits_notes_button">Синхр. с заметками</string>
+    <string name="portraits_notes_title">Синхронизация с заметками</string>
+    <string name="portraits_notes_description">Надписи с портретов запишутся в заметки персонажей в окне «Просмотр персонажей аккаунта». У персонажей без надписи заметки в игре останутся прежними.</string>
+    <string name="portraits_notes_where_open">В игре:</string>
+    <string name="portraits_notes_where_key">M</string>
+    <string name="portraits_notes_where_map">карта</string>
+    <string name="portraits_notes_where_window">«Просмотр персонажей аккаунта»</string>
+    <string name="portraits_notes_warning">Закройте игру перед синхронизацией: пока она запущена, при смене персонажа, телепорте или выходе она перезапишет файл заметками из своей памяти. Сайт не может проверить, запущена ли игра.</string>
+    <string name="portraits_notes_game_closed">Игра закрыта</string>
+    <string name="portraits_notes_game_running">Игра запущена. Закройте её и нажмите «Проверить снова»: пока она работает, при смене персонажа, телепорте или выходе она перезапишет файл заметками из своей памяти.</string>
+    <string name="portraits_notes_recheck">Проверить снова</string>
+    <string name="portraits_error_game_running">Игра запущена, заметки не записаны. Закройте игру и синхронизируйте снова.</string>
+    <string name="portraits_notes_changes">Изменятся заметки (%1$d)</string>
+    <string name="portraits_notes_added">новая заметка</string>
+    <string name="portraits_notes_none">Заметки в файле игры уже совпадают с надписями на портретах.</string>
+    <string name="portraits_notes_none_hint">Если вы синхронизировали, пока игра была запущена, она вернёт прежние заметки при смене персонажа, телепорте или выходе. Тогда закройте игру и откройте это окно снова.</string>
+    <string name="portraits_notes_loading">Читаю заметки…</string>
+    <string name="portraits_notes_backup">Перед записью копия gameVariable_lobby.xml сохранится в «BDO Tools\\lobby_backup».</string>
+    <string name="portraits_notes_apply">Синхронизировать</string>
+    <string name="portraits_notes_synced">Заметки записаны. Прежний файл — в «%1$s». Запустите игру, чтобы увидеть их.</string>
+    <string name="portraits_error_lobby_not_found">Не найден файл заметок gameVariable_lobby.xml этого аккаунта. Зайдите в игру на этом аккаунте и выйдите — файл появится.</string>
 </resources>

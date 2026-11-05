@@ -13,5 +13,7 @@ internal fun Exception.toNotice(): Notice? = when ((this as? PortraitsException)
     PortraitsError.Blocked -> Notice(NoticeKind.Blocked)
     PortraitsError.Network -> Notice(NoticeKind.Network)
     PortraitsError.NotImage -> Notice(NoticeKind.NotImage)
+    PortraitsError.LobbyNotFound -> Notice(NoticeKind.LobbyNotFound)
+    PortraitsError.GameRunning -> Notice(NoticeKind.GameRunning)
     PortraitsError.Unknown, null -> Notice(NoticeKind.Unknown, message.orEmpty())
 }

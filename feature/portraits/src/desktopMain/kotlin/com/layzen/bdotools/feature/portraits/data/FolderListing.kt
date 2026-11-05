@@ -35,14 +35,14 @@ internal fun folderListing(dir: Path): String {
 }
 
 /**
- * Имя новой папки внутри [parent] по текущим дате и времени: `2026-11-04_18-30-05`.
- * Если такая уже есть (две записи в одну секунду), добавляется номер: `…_2`, `…_3`.
+ * Имя новой папки (или файла с расширением [extension]) внутри [parent] по текущим дате и времени: `2026-11-04_18-30-05`.
+ * Если такое уже есть (две записи в одну секунду), добавляется номер: `…_2`, `…_3`. Расширение в имя не входит.
  */
-internal fun freshFolderName(parent: Path): String {
+internal fun freshFolderName(parent: Path, extension: String = ""): String {
     val stamp = LocalDateTime.now().format(folderStamp)
     var folder = stamp
     var number = 2
-    while (parent.resolve(folder).exists()) folder = stamp + "_" + number++
+    while (parent.resolve(folder + extension).exists()) folder = stamp + "_" + number++
     return folder
 }
 

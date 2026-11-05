@@ -17,7 +17,10 @@ private const val TOOLS = "BDO Tools"
 private const val TOOL_PORTRAITS = "portraits"
 private const val FAVORITES = "Favorite FaceTexture"
 private const val GAME_FOLDER = "Black Desert"
-
+private const val USER_CACHE = "UserCache"
+private const val LOBBY_FILE = "gameVariable_lobby.xml"
+private const val LOBBY_BACKUP = "lobby_backup"
+private const val LOBBY_BACKUP_EXTENSION = ".xml"
 /**
  * Файлы игры на диске через `java.nio.file` для настольной версии. Папки, имена копий и форматы списков те же,
  * что у моста File System Access API в браузере, поэтому [PortraitsRepository] работает одинаково.
@@ -109,6 +112,23 @@ internal class DesktopPortraitsStorage(
     }
 
     override suspend fun deleteFavoriteSet(set: String) = fileCall { deleteFolder(root() / FAVORITES / set) }
+
+    override suspend fun readLobbyVariables(account: String): ByteArray? = fileCall {
+        readOrNull(root() / USER_CACHE / account / LOBBY_FILE)
+    }
+
+    override suspend fun writeLobbyVariables(account: String, bytes: ByteArray) = fileCall {
+        (root() / USER_CACHE / account / LOBBY_FILE).writeBytes(bytes)
+    }
+
+    override suspend fun backupLobbyVariables(account: String, bytes: ByteArray): String = fileCall {
+        val folder = (root() / TOOLS / LOBBY_BACKUP / account).createDirectories()
+        val name = freshFolderName(folder, LOBBY_BACKUP_EXTENSION) + LOBBY_BACKUP_EXTENSION
+        (folder / name).writeBytes(bytes)
+        "$TOOLS\\$LOBBY_BACKUP\\$account\\$name"
+    }
+
+    override suspend fun isGameRunning(): Boolean = fileCall { isGameProcessRunning() }
 
     /** Сохранённая папка `Black Desert`; без неё работать с файлами нельзя. */
     private fun root(): Path =

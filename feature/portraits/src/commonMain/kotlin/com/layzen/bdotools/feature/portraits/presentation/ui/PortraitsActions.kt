@@ -13,11 +13,13 @@ import com.layzen.bdotools.feature.portraits.resources.Res
 import com.layzen.bdotools.feature.portraits.resources.menu_backups
 import com.layzen.bdotools.feature.portraits.resources.menu_favorites
 import com.layzen.bdotools.feature.portraits.resources.menu_folder
+import com.layzen.bdotools.feature.portraits.resources.menu_notes
 import com.layzen.bdotools.feature.portraits.resources.menu_reload
 import com.layzen.bdotools.feature.portraits.resources.menu_reorder
 import com.layzen.bdotools.feature.portraits.resources.menu_upload
 import com.layzen.bdotools.feature.portraits.resources.portraits_favorites_button
 import com.layzen.bdotools.feature.portraits.resources.portraits_folder_change
+import com.layzen.bdotools.feature.portraits.resources.portraits_notes_button
 import com.layzen.bdotools.feature.portraits.resources.portraits_reload
 import com.layzen.bdotools.feature.portraits.resources.portraits_reorder_button
 import com.layzen.bdotools.feature.portraits.resources.portraits_reorder_cancel
@@ -76,6 +78,13 @@ internal fun PortraitsActions(state: PortraitsState, onEvent: (PortraitsEvent) -
             modifier = item,
             icon = painterResource(Res.drawable.menu_favorites),
             enabled = hasPortraits,
+        )
+        MenuAction(
+            stringResource(Res.string.portraits_notes_button),
+            onClick = { onEvent(PortraitsEvent.OpenNotesSync) },
+            modifier = item,
+            icon = painterResource(Res.drawable.menu_notes),
+            enabled = hasPortraits && state.accountId != null,
         )
         MenuAction(
             stringResource(Res.string.portraits_upload),

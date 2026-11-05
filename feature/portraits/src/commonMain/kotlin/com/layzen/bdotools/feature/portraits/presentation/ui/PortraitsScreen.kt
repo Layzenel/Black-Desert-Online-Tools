@@ -16,6 +16,7 @@ import com.layzen.bdotools.feature.portraits.presentation.state.PortraitsState
 import com.layzen.bdotools.feature.portraits.presentation.ui.decoration.DecorationDialog
 import com.layzen.bdotools.feature.portraits.presentation.ui.editor.MaskEditor
 import com.layzen.bdotools.feature.portraits.presentation.ui.favorites.FavoritesDialog
+import com.layzen.bdotools.feature.portraits.presentation.ui.notes.NotesSyncDialog
 import com.layzen.bdotools.feature.portraits.presentation.ui.notice.noticeText
 import com.layzen.bdotools.feature.portraits.presentation.ui.restore.RestoreDialog
 import com.layzen.bdotools.feature.portraits.presentation.ui.source.SourceDialog
@@ -57,6 +58,7 @@ fun PortraitsScreen(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
     state.decorationDialog?.let { DecorationDialog(it, decorator, onEvent) }
     state.restoreDialog?.let { RestoreDialog(it, state.portraits, onEvent) }
     state.favoritesDialog?.let { FavoritesDialog(it, onEvent) }
+    state.notesSyncDialog?.let { NotesSyncDialog(it, state.portraits, onEvent) }
     state.busy?.let { BusyIndicator(it) }
     val notice = state.notice
     Toast(

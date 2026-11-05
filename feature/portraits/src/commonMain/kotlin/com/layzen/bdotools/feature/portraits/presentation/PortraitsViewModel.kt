@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.folder.FolderAccess
+import com.layzen.bdotools.feature.portraits.data.CharacterMemosRepository
 import com.layzen.bdotools.feature.portraits.data.ImageSource
 import com.layzen.bdotools.feature.portraits.data.PortraitsRepository
 import com.layzen.bdotools.feature.portraits.data.PortraitsStorage
 import com.layzen.bdotools.feature.portraits.presentation.controller.DecorationController
 import com.layzen.bdotools.feature.portraits.presentation.controller.FavoritesController
+import com.layzen.bdotools.feature.portraits.presentation.controller.NotesSyncController
 import com.layzen.bdotools.feature.portraits.presentation.controller.ReorderController
 import com.layzen.bdotools.feature.portraits.presentation.controller.ReplacementController
 import com.layzen.bdotools.feature.portraits.presentation.controller.RestoreController
@@ -31,6 +33,7 @@ class PortraitsViewModel(
     private val storage: PortraitsStorage,
     imageSource: ImageSource,
     repository: PortraitsRepository,
+    memos: CharacterMemosRepository,
     private val accounts: GameAccounts,
 ) : ViewModel() {
 
@@ -40,6 +43,7 @@ class PortraitsViewModel(
     private val restore = RestoreController(context)
     private val favorites = FavoritesController(context)
     private val reorder = ReorderController(context)
+    private val notesSync = NotesSyncController(context, memos)
 
     val state: StateFlow<PortraitsState> = context.state
 
@@ -110,6 +114,10 @@ class PortraitsViewModel(
             PortraitsEvent.RequestReplaceFavorite -> favorites.requestReplace()
             PortraitsEvent.CancelReplaceFavorite -> favorites.cancelReplace()
             PortraitsEvent.ConfirmReplaceFavorite -> favorites.replaceSelected()
+            PortraitsEvent.OpenNotesSync -> notesSync.open()
+            is PortraitsEvent.ConfirmGameClosed -> notesSync.confirmGameClosed(event.checked)
+            PortraitsEvent.CloseNotesSync -> notesSync.close()
+            PortraitsEvent.ApplyNotesSync -> notesSync.apply()
         }
     }
 
@@ -130,7 +138,13 @@ class PortraitsViewModel(
             accounts.refresh()
             val choice = accounts.state.value
             val ids = if (choice.needsChoice) emptyList() else repository.portraitOrder(choice.selected)
-            context.update { it.copy(portraits = ids.map { id -> PortraitItem(id, null) }, loading = LoadProgress(0, ids.size)) }
+            context.update {
+                it.copy(
+                    portraits = ids.map { id -> PortraitItem(id, null) },
+                    accountId = choice.selected?.id,
+                    loading = LoadProgress(0, ids.size),
+                )
+            }
             ids.forEachIndexed { index, id ->
                 val image = context.images.decode(repository.readPortrait(id))
                 context.update { it.withPortraitImages(mapOf(id to image)).copy(loading = LoadProgress(index + 1, ids.size)) }

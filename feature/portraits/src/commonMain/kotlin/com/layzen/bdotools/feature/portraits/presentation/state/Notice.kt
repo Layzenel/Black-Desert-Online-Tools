@@ -8,7 +8,7 @@ data class Notice(val kind: NoticeKind, val argument: String = "") {
         val SUCCESS_KINDS = setOf(
             NoticeKind.Saved, NoticeKind.DecorationSaved, NoticeKind.Restored, NoticeKind.BackupsDeleted,
             NoticeKind.FavoriteAdded, NoticeKind.FavoriteApplied, NoticeKind.Swapped,
-            NoticeKind.FavoritesDeleted, NoticeKind.FavoriteReplaced, NoticeKind.ReorderHint,
+            NoticeKind.FavoritesDeleted, NoticeKind.FavoriteReplaced, NoticeKind.ReorderHint, NoticeKind.NotesSynced,
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.portraits.di
 
+import com.layzen.bdotools.feature.portraits.data.CharacterMemosRepository
 import com.layzen.bdotools.feature.portraits.data.ImageSource
 import com.layzen.bdotools.feature.portraits.data.PortraitsRepository
 import com.layzen.bdotools.feature.portraits.data.PortraitsStorage
@@ -14,5 +15,6 @@ import org.koin.dsl.module
 val portraitsModule = module {
     single { createGameFiles() } binds arrayOf(PortraitsStorage::class, ImageSource::class)
     singleOf(::PortraitsRepository)
+    singleOf(::CharacterMemosRepository)
     viewModelOf(::PortraitsViewModel)
 }

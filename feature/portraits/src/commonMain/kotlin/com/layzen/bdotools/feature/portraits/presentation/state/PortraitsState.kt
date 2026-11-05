@@ -10,6 +10,8 @@ data class PortraitsState(
     /** `null`, пока проверяется доступ к папке. */
     val access: FolderAccess? = null,
     val portraits: List<PortraitItem> = emptyList(),
+    /** Аккаунт, чьи портреты на странице; `null`, если аккаунт не определён (тогда заметки игры недоступны). */
+    val accountId: String? = null,
     /** Идёт чтение портретов; `null`, когда все прочитаны. */
     val loading: LoadProgress? = null,
     val decorations: Map<String, PortraitDecoration> = emptyMap(),
@@ -19,6 +21,7 @@ data class PortraitsState(
     val decorationDialog: DecorationDialogState? = null,
     val restoreDialog: RestoreDialogState? = null,
     val favoritesDialog: FavoritesDialogState? = null,
+    val notesSyncDialog: NotesSyncDialogState? = null,
     /** Режим изменения порядка на сетке; `null`, когда он выключен. */
     val reorder: ReorderState? = null,
     /** Идущая анимация обмена двух портретов. */
