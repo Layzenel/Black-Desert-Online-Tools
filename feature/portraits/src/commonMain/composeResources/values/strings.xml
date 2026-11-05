@@ -20,7 +20,7 @@
     <string name="portraits_loading">Загружаю портреты…</string>
     <string name="portraits_empty">В папке FaceTexture нет портретов.</string>
     <string name="portraits_grid_title">Персонажи: %1$d</string>
-    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Наведите курсор на портрет, чтобы заменить его или редактировать. Перед правкой закройте окно выбора персонажа в игре.</string>
+    <string name="portraits_grid_description">Порядок как в окне выбора персонажа. Наведите курсор на портрет, чтобы заменить его или редактировать.\nПеред правкой закройте окно выбора персонажа в игре.</string>
     <string name="portraits_upload">Загрузить</string>
     <string name="portraits_reload">Обновить</string>
 

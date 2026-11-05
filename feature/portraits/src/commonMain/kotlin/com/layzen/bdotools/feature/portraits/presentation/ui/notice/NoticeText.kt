@@ -16,6 +16,7 @@ import com.layzen.bdotools.feature.portraits.resources.portraits_favorite_added
 import com.layzen.bdotools.feature.portraits.resources.portraits_favorite_applied
 import com.layzen.bdotools.feature.portraits.resources.portraits_favorite_replaced
 import com.layzen.bdotools.feature.portraits.resources.portraits_favorites_deleted
+import com.layzen.bdotools.feature.portraits.resources.portraits_reorder_banner
 import com.layzen.bdotools.feature.portraits.resources.portraits_restored
 import com.layzen.bdotools.feature.portraits.resources.portraits_saved
 import com.layzen.bdotools.feature.portraits.resources.portraits_swapped
@@ -32,6 +33,7 @@ internal fun noticeText(notice: Notice): String = when (notice.kind) {
     NoticeKind.Swapped -> stringResource(Res.string.portraits_swapped, notice.argument)
     NoticeKind.FavoritesDeleted -> stringResource(Res.string.portraits_favorites_deleted, notice.argument.toInt())
     NoticeKind.FavoriteReplaced -> stringResource(Res.string.portraits_favorite_replaced, notice.argument)
+    NoticeKind.ReorderHint -> stringResource(Res.string.portraits_reorder_banner)
     NoticeKind.NotGameFolder -> stringResource(Res.string.portraits_error_not_game_folder)
     NoticeKind.Permission -> stringResource(permissionErrorText)
     NoticeKind.Blocked -> stringResource(Res.string.portraits_error_blocked)

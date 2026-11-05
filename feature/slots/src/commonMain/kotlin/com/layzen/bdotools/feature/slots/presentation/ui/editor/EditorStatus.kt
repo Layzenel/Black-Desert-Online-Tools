@@ -6,12 +6,11 @@ import com.layzen.bdotools.feature.slots.resources.Res
 import com.layzen.bdotools.feature.slots.resources.slots_canvas_hint
 import com.layzen.bdotools.feature.slots.resources.slots_off_screen
 import com.layzen.bdotools.feature.slots.resources.slots_screen
-import com.layzen.bdotools.feature.slots.resources.slots_unsaved
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.WarningText
 import org.jetbrains.compose.resources.stringResource
 
-/** Под холстом: разрешение монитора и масштаб интерфейса, элементы за краем и несохранённые изменения. */
+/** Под холстом: разрешение монитора, масштаб интерфейса и элементы за краем. */
 @Composable
 internal fun EditorStatus(state: SlotsState) {
     val screen = state.loaded?.game?.screen ?: return
@@ -21,5 +20,4 @@ internal fun EditorStatus(state: SlotsState) {
     )
     val offScreen = state.slots.count { id -> state.layout[id]?.let { !screen.fits(id, it) } == true }
     if (offScreen > 0) WarningText(stringResource(Res.string.slots_off_screen, offScreen))
-    if (state.hasChanges) DescriptionText(stringResource(Res.string.slots_unsaved))
 }
