@@ -64,7 +64,7 @@
     <string name="slots_snap_to_slots">Связка слотов</string>
     <string name="slots_snap_distance">Порог</string>
     <string name="slots_snap_distance_value">%1$d px</string>
-    <string name="slots_label">Надпись</string>
+    <string name="slots_label">Заметка</string>
     <string name="slots_label_chars">%1$d симв.</string>
     <string name="slots_label_hint">Ширина надписи под слотом в символах. В игре — до %1$d символов.</string>
     <string name="slots_align">Выровнять</string>
