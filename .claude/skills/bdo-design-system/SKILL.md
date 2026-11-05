@@ -126,7 +126,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 
 | Компонент | Когда использовать |
 |---|---|
-| `TopNavigation(tabs, selected, onSelect, label, title, trailing)` | верхняя навигация сайта; используется один раз, в `shared/App.kt`. `trailing` — элементы у правого края (выбор аккаунта) |
+| `TopNavigation(tabs, selected, onSelect, label, title, trailing)` | верхняя навигация сайта; используется один раз, в `shared/App.kt`. Подпись вкладки — до двух строк по центру (перенос `\n` в строке ресурса). `trailing` — элементы у правого края (выбор аккаунта) |
 | `ToolPage(sidebar, sidebarWidth, sidebarFooter) { }` | страница тулзы без шапки: меню слева во всю высоту (`backgroundSurface`, прокручивается само, отступ `spaceL`, между частями `spaceM`) и содержимое справа на всё свободное место. `sidebarFooter` прижат к низу меню и не прокручивается — для главных действий. Годится и внутри большого `ModalWindow` (превью импорта в слотах) |
 | `ActionBar { }` | строка инструментов правки над содержимым `ToolPage` (отменить, повторить). Работа с файлами и главное действие — внизу меню, в `sidebarFooter` |
 | `ToolbarButton(icon, description, onClick, enabled, selected)`, `ToolbarDivider()` | панель инструментов в `ActionBar`: кнопка-иконка (белый силуэт, цвет задаёт кнопка) с подсказкой `description` при наведении; `selected` — включённый режим (золотая иконка). `ToolbarDivider` отделяет группы кнопок. Подпись у иконки только в подсказке, поэтому она обязательна |
