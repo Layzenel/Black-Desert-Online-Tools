@@ -64,11 +64,13 @@ class SlotsViewModel(
             SlotsEvent.Undo -> editor.undo()
             SlotsEvent.Redo -> editor.redo()
             is SlotsEvent.SetGrid -> editor.setGrid(event.step)
+            is SlotsEvent.SetSnapToGrid -> editor.setSnapToGrid(event.enabled)
             is SlotsEvent.SetSnapStep -> editor.setSnapStep(event.step)
             is SlotsEvent.SetSnapToSlots -> editor.setSnapToSlots(event.enabled)
             is SlotsEvent.SetSnapDistance -> editor.setSnapDistance(event.distance)
-            is SlotsEvent.Align -> editor.align(event.edge)
+            is SlotsEvent.Align -> editor.align(event.edge, event.anchor)
             is SlotsEvent.Distribute -> editor.distribute(event.horizontal)
+            is SlotsEvent.SetDistributeGap -> editor.setDistributeGap(event.gap)
             SlotsEvent.CenterOnCrosshair -> editor.centerOnCrosshair()
             SlotsEvent.Mirror -> editor.mirror()
             is SlotsEvent.ToggleVisibility -> editor.toggleVisibility(event.id)
@@ -98,6 +100,7 @@ class SlotsViewModel(
             SlotsEvent.ConfirmApply -> game.confirmApply()
             SlotsEvent.PickBackground -> game.pickBackground()
             SlotsEvent.ToggleBackground -> game.toggleBackground()
+            is SlotsEvent.SetBackgroundDim -> game.setBackgroundDim(event.percent)
 
             SlotsEvent.CloseDialog -> context.update { it.copy(dialog = null) }
             SlotsEvent.DismissNotice -> context.update { it.copy(notice = null) }

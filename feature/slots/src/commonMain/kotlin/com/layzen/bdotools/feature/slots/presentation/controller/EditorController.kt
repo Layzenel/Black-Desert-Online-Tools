@@ -17,7 +17,7 @@ import com.layzen.bdotools.feature.slots.presentation.state.GridStep
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
 import kotlin.math.roundToInt
 
-/** Шаг стрелки с Shift, если шаг привязки — 0. */
+/** Шаг стрелки с Shift, если привязка к сетке выключена. */
 private const val NUDGE_WITHOUT_SNAP = 10
 
 /** Выбор и перемещение слотов, отмена, сетка. */
@@ -99,7 +99,7 @@ internal class EditorController(private val context: SlotsContext) {
     }
 
     fun nudge(dx: Int, dy: Int, byGrid: Boolean) {
-        val step = if (byGrid) context.current.snapStep.takeIf { it > 0 } ?: NUDGE_WITHOUT_SNAP else 1
+        val step = if (byGrid) context.current.gridSnapStep.takeIf { it > 0 } ?: NUDGE_WITHOUT_SNAP else 1
         val selection = context.current.selection
         context.editLayout { it.moved(selection, dx * step, dy * step) }
     }
@@ -118,15 +118,22 @@ internal class EditorController(private val context: SlotsContext) {
 
     fun setGrid(step: GridStep) = context.update { it.copy(grid = step) }
 
+    fun setSnapToGrid(enabled: Boolean) = context.update { it.copy(snapToGrid = enabled) }
+
     fun setSnapStep(step: Int) = context.update { it.copy(snapStep = step) }
 
     fun setSnapToSlots(enabled: Boolean) = context.update { it.copy(snapToSlots = enabled) }
 
     fun setSnapDistance(distance: Int) = context.update { it.copy(snapDistance = distance) }
 
-    fun align(edge: AlignEdge) = editSelection { layout, selection -> layout.aligned(selection, edge) }
+    fun align(edge: AlignEdge, anchor: SlotId?) = editSelection { layout, selection -> layout.aligned(selection, edge, anchor) }
 
-    fun distribute(horizontal: Boolean) = editSelection { layout, selection -> layout.distributed(selection, horizontal) }
+    fun distribute(horizontal: Boolean) {
+        val gap = context.current.distributeGap
+        editSelection { layout, selection -> layout.distributed(selection, horizontal, gap) }
+    }
+
+    fun setDistributeGap(gap: Int) = context.update { it.copy(distributeGap = gap) }
 
     /** Середина рамки выбранных встаёт на прицел. */
     fun centerOnCrosshair() {
@@ -148,9 +155,9 @@ internal class EditorController(private val context: SlotsContext) {
     /** Глазик на иконке: скрыть или показать элемент в игре. */
     fun toggleVisibility(id: SlotId) = context.editLayout { it.withVisibility(id, !it.isVisible(id)) }
 
-    /** Привязка к узлам с шагом [SlotsState.snapStep], отсчитанным от прицела [origin]; шаг 0 — без привязки. */
+    /** Привязка к узлам с шагом [SlotsState.gridSnapStep], отсчитанным от прицела [origin]; выключена — без привязки. */
     private fun snapped(value: Float, origin: Int): Int {
-        val step = context.current.snapStep
+        val step = context.current.gridSnapStep
         return if (step > 0) origin + ((value - origin) / step).roundToInt() * step else value.roundToInt()
     }
 

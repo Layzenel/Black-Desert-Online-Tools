@@ -31,11 +31,14 @@ sealed interface SlotsEvent {
     data object Undo : SlotsEvent
     data object Redo : SlotsEvent
     data class SetGrid(val step: GridStep) : SlotsEvent
+    data class SetSnapToGrid(val enabled: Boolean) : SlotsEvent
     data class SetSnapStep(val step: Int) : SlotsEvent
     data class SetSnapToSlots(val enabled: Boolean) : SlotsEvent
     data class SetSnapDistance(val distance: Int) : SlotsEvent
-    data class Align(val edge: AlignEdge) : SlotsEvent
+    /** [anchor] — опорный элемент (по нему открыли меню), остальные встают по нему; `null` — по рамке всех выбранных. */
+    data class Align(val edge: AlignEdge, val anchor: SlotId? = null) : SlotsEvent
     data class Distribute(val horizontal: Boolean) : SlotsEvent
+    data class SetDistributeGap(val gap: Int) : SlotsEvent
     data object CenterOnCrosshair : SlotsEvent
     data object Mirror : SlotsEvent
     data class ToggleVisibility(val id: SlotId) : SlotsEvent
@@ -70,6 +73,9 @@ sealed interface SlotsEvent {
     data object ConfirmApply : SlotsEvent
     data object PickBackground : SlotsEvent
     data object ToggleBackground : SlotsEvent
+
+    /** Затенение подложки в процентах: 0 — картинка как есть. */
+    data class SetBackgroundDim(val percent: Int) : SlotsEvent
 
     data object CloseDialog : SlotsEvent
     data object DismissNotice : SlotsEvent

@@ -1,6 +1,5 @@
 package com.layzen.bdotools.feature.slots.presentation.ui.preview
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,7 +20,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,6 +31,7 @@ import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.ui.SlotsDimens
+import com.layzen.bdotools.feature.slots.presentation.ui.editor.BackgroundImage
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.CrosshairLayer
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.ScreenCanvas
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.frameColor
@@ -45,7 +44,7 @@ import kotlin.math.roundToInt
 /**
  * Раскладка [layout] на экране игры [screen] ([ScreenCanvas]: зум колесом, сдвиг, обводка, как в редакторе). Невыбранные
  * элементы приглушены, не влезающие на экран — с красной заливкой. Клик по рамке отмечает элемент или снимает отметку,
- * обводка отмечает задетые элементы, а если все они уже отмечены — снимает. [background] — подложка под рамками.
+ * обводка отмечает задетые элементы, а если все они уже отмечены — снимает. [background] — подложка под рамками, затенённая на [backgroundDim] %.
  * Ctrl+Z и Ctrl+Shift+Z (или Ctrl+Y) отменяют и повторяют отметки.
  */
 @Composable
@@ -54,6 +53,7 @@ internal fun PreviewCanvas(
     included: Set<SlotId>,
     screen: ScreenSpace,
     background: ImageBitmap?,
+    backgroundDim: Int,
     onEvent: (SlotsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,7 +70,7 @@ internal fun PreviewCanvas(
         onArea = { area, _ -> currentOnEvent(SlotsEvent.PreviewArea(area)) },
         modifier = modifier,
     ) { scale ->
-        background?.let { Image(it, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
+        background?.let { BackgroundImage(it, backgroundDim) }
         CrosshairLayer(screen, scale, Modifier.fillMaxSize())
         layout.positions.forEach { (id, anchored) ->
             PreviewFrame(id, anchored.placeOn(screen), screen, scale, id in included) {

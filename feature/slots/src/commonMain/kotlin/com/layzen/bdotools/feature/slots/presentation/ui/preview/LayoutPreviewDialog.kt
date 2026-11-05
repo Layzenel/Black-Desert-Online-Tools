@@ -36,7 +36,7 @@ import org.jetbrains.compose.resources.stringResource
  * Превью импорта или экспорта почти на всё окно: слева выбор элементов и под ним все кнопки,
  * справа — как раскладка ляжет на экран. При экспорте над элементами — монитор для просмотра (по умолчанию
  * экран игры [gameScreen]). Импортируются или экспортируются только отмеченные элементы. [background] — подложка
- * из редактора, [backgroundShown] — включена ли она; переключатель стоит среди кнопок слева.
+ * из редактора, [backgroundShown] — включена ли она, [backgroundDim] — её затенение в процентах; переключатель стоит среди кнопок слева.
  * Ctrl+Z отменяет последнюю отметку, Ctrl+Shift+Z и Ctrl+Y повторяют её.
  */
 @Composable
@@ -45,6 +45,7 @@ internal fun LayoutPreviewDialog(
     gameScreen: ScreenSpace,
     background: ImageBitmap?,
     backgroundShown: Boolean,
+    backgroundDim: Int,
     onEvent: (SlotsEvent) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
@@ -70,7 +71,7 @@ internal fun LayoutPreviewDialog(
                 }
                 PreviewElementList(dialog.layout.layout.positions.keys, dialog.included, onEvent)
             },
-            sidebarFooter = { PreviewActions(dialog, hasBackground = background != null, backgroundShown, onEvent) },
+            sidebarFooter = { PreviewActions(dialog, hasBackground = background != null, backgroundShown, backgroundDim, onEvent) },
         ) {
             Column(Modifier.fillMaxSize().padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
                 PreviewCanvas(
@@ -78,6 +79,7 @@ internal fun LayoutPreviewDialog(
                     dialog.included,
                     dialog.screen,
                     background.takeIf { backgroundShown },
+                    backgroundDim,
                     onEvent,
                     Modifier.weight(1f).fillMaxWidth(),
                 )

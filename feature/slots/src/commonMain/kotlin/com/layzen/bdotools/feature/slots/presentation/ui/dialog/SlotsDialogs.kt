@@ -20,7 +20,7 @@ internal fun SlotsDialogs(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
         is SlotsDialog.SaveAs -> SaveAsDialog(dialog, onEvent)
         is SlotsDialog.Import -> ImportDialog(dialog, onEvent)
         is SlotsDialog.Preview -> state.loaded?.game?.screen?.let {
-            LayoutPreviewDialog(dialog, it, state.background, state.backgroundShown, onEvent)
+            LayoutPreviewDialog(dialog, it, state.background, state.backgroundShown, state.backgroundDim, onEvent)
         }
         is SlotsDialog.ConfirmApply -> ApplyDialog(dialog, state.loaded?.presets?.keys?.sorted().orEmpty(), onEvent)
         is SlotsDialog.ConfirmDelete -> ConfirmDialog(

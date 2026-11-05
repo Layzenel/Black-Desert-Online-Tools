@@ -41,7 +41,7 @@ import kotlin.math.roundToInt
 /**
  * Рамка элемента на холсте в настоящем размере, как в режиме правки интерфейса игры: глазик сверху, номер в центре.
  * Клик выбирает элемент, Shift+клик добавляет к выбору, перетаскивание двигает все выбранные.
- * Скрытый в игре элемент нарисован приглушённым.
+ * Скрытый в игре элемент нарисован приглушённым. [anchor] — опора выравнивания, пока открыто меню: золотая рамка.
  */
 @Composable
 internal fun SlotFrame(
@@ -50,11 +50,16 @@ internal fun SlotFrame(
     screen: ScreenSpace,
     scale: Float,
     selected: Boolean,
+    anchor: Boolean,
     visible: Boolean,
     onEvent: (SlotsEvent) -> Unit,
     onPress: () -> Unit,
 ) {
-    val border = if (selected) AppTheme.colors.textPrimary else id.group.frameColor()
+    val border = when {
+        anchor -> AppTheme.colors.accentGold
+        selected -> AppTheme.colors.textPrimary
+        else -> id.group.frameColor()
+    }
     // За краем экрана — красная заливка; рамка остаётся цветом группы, чтобы было видно, что это за элемент
     val fill = if (screen.fits(id, position)) AppTheme.colors.backgroundDeep else AppTheme.colors.danger
     val density = LocalDensity.current

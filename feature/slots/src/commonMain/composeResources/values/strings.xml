@@ -22,7 +22,7 @@
     <string name="slots_user_presets_empty">Пока пусто. Сохранённые раскладки лежат в «Black Desert\\BDO Tools\\slots\\presets».</string>
     <string name="slots_grid">Сетка от прицела</string>
     <string name="slots_snap_step">Шаг привязки</string>
-    <string name="slots_snap_step_description">0 — без привязки. Узлы отсчитываются от прицела.</string>
+    <string name="slots_snap_step_caption">Шаг</string>
     <string name="slots_grid_off">Х</string>
     <string name="slots_grid_size">%1$d</string>
     <string name="slots_background">Подложка</string>
@@ -32,6 +32,7 @@
     <string name="slots_background_show">Показать</string>
     <string name="slots_background_hide_preview">Спрятать подложку</string>
     <string name="slots_background_show_preview">Показать подложку</string>
+    <string name="slots_background_dim">Затенение, %</string>
 
     <!-- Выбранный слот -->
     <string name="slots_selection">Выбранный слот</string>
@@ -64,6 +65,10 @@
     <string name="slots_snap_distance">Порог</string>
     <string name="slots_snap_distance_value">%1$d px</string>
     <string name="slots_align">Выровнять</string>
+    <string name="slots_align_by_slot">по слоту</string>
+    <string name="slots_align_by_group">по группе</string>
+    <string name="slots_align_anchor_hint">Опора — %1$s (золотая рамка): он стоит на месте, остальные встают по нему.</string>
+    <string name="slots_align_group_hint">Опора — рамка всех выбранных. Чтобы выровнять по одному слоту, откройте меню правым кликом по нему.</string>
     <string name="slots_align_left">Выровнять по левому краю</string>
     <string name="slots_align_center_x">Выровнять по центру по горизонтали</string>
     <string name="slots_align_right">Выровнять по правому краю</string>
