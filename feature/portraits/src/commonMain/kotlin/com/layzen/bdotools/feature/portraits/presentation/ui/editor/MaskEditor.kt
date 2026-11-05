@@ -16,6 +16,7 @@ import com.layzen.bdotools.feature.portraits.resources.Res
 import com.layzen.bdotools.feature.portraits.resources.portraits_cancel
 import com.layzen.bdotools.feature.portraits.resources.portraits_editor_apply
 import com.layzen.bdotools.feature.portraits.resources.portraits_editor_hint
+import com.layzen.bdotools.feature.portraits.resources.portraits_editor_hint_cells
 import com.layzen.bdotools.feature.portraits.resources.portraits_editor_reset
 import com.layzen.bdotools.feature.portraits.resources.portraits_editor_rotation
 import com.layzen.bdotools.feature.portraits.resources.portraits_editor_title_all
@@ -58,6 +59,7 @@ internal fun MaskEditor(state: EditorState, onEvent: (PortraitsEvent) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
         ) {
             DescriptionText(stringResource(Res.string.portraits_editor_hint))
+            if (state.target is ReplaceTarget.All) DescriptionText(stringResource(Res.string.portraits_editor_hint_cells))
             MaskViewport(state, onEvent)
             Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXl)) {
                 val zoomPercent = (state.placement.scale / state.initialPlacement.scale * 100).roundToInt()

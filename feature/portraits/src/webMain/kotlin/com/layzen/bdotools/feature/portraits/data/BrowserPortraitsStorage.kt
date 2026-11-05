@@ -23,8 +23,7 @@ internal class BrowserPortraitsStorage : GameFiles {
     override suspend fun readPortrait(characterId: String): ByteArray =
         Base64.decode(fileSystemBridge.call("read", characterId + BMP_EXTENSION))
 
-    override suspend fun backupPortraits(characterIds: List<String>): String =
-        fileSystemBridge.call("backup", characterIds.joinToString("\n") { it + BMP_EXTENSION })
+    override suspend fun createBackup(): String = fileSystemBridge.call("backupCreate")
 
     override suspend fun writePortrait(characterId: String, bmp: ByteArray) {
         fileSystemBridge.call("write", characterId + BMP_EXTENSION, Base64.encode(bmp))
@@ -32,8 +31,14 @@ internal class BrowserPortraitsStorage : GameFiles {
 
     override suspend fun backupListing(): String = fileSystemBridge.call("backups")
 
-    override suspend fun readBackupPortrait(backup: String, characterId: String): ByteArray =
-        Base64.decode(fileSystemBridge.call("backupRead", backup, characterId + BMP_EXTENSION))
+    override suspend fun readBackupFile(backup: String, name: String): ByteArray? {
+        val result = fileSystemBridge.call("backupRead", backup, name)
+        return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
+    }
+
+    override suspend fun writeBackupFile(backup: String, name: String, bytes: ByteArray) {
+        fileSystemBridge.call("backupWrite", "$backup/$name", Base64.encode(bytes))
+    }
 
     override suspend fun deleteBackup(backup: String) {
         fileSystemBridge.call("backupDelete", backup)

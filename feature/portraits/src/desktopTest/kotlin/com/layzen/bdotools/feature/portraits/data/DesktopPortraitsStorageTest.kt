@@ -22,7 +22,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 
 @OptIn(ExperimentalPathApi::class)
@@ -57,22 +56,25 @@ class DesktopPortraitsStorageTest {
     }
 
     @Test
-    fun backupCopiesPortraitsAndIsListed() = runTest {
+    fun backupKeepsFilesAndIsListed() = runTest {
         storage.selectFolder()
         (game / "FaceTexture" / "101.bmp").writeBytes(byteArrayOf(1))
         (game / "FaceTexture" / "102.BMP").writeBytes(byteArrayOf(2))
         (game / "FaceTexture" / "notes.txt").writeText("x")
         assertEquals(setOf("101", "102"), storage.portraitIds().toSet())
 
-        val first = storage.backupPortraits(listOf("101"))
-        val second = storage.backupPortraits(listOf("101"))
-        assertTrue(first.startsWith("FaceTexture_backup\\"))
+        val first = storage.createBackup()
+        val second = storage.createBackup()
         assertNotEquals(first, second)
+        storage.writeBackupFile(first, "101.bmp", byteArrayOf(1))
+        storage.writeBackupFile(first, "101.txt", byteArrayOf(3))
+        storage.writeBackupFile(second, "101.bmp", byteArrayOf(1))
 
         val backups = parseBackupList(storage.backupListing())
         assertEquals(2, backups.size)
         assertEquals(setOf("101"), backups.first().characterIds)
-        assertContentEquals(byteArrayOf(1), storage.readBackupPortrait(backups.first().name, "101"))
+        assertContentEquals(byteArrayOf(3), storage.readBackupFile(first, "101.txt"))
+        assertNull(storage.readBackupFile(second, "101.txt"))
 
         storage.deleteBackup(backups.first().name)
         assertEquals(1, parseBackupList(storage.backupListing()).size)

@@ -11,6 +11,10 @@ internal object PortraitsDimens {
     val urlButtonMinWidth = 110.dp
     val decorationDialogWidth = 360.dp
     val badgeLineWidth = 3.dp
+    val swapGlowEdgeWidth = 2.dp
+    val swapGlowDepth = 12.dp
+    val swapSparkRadius = 1.5.dp
+    val swapSparkRise = 32.dp
 
     val restoreDialogWidth = 1040.dp
     val restoreOneDialogWidth = 640.dp

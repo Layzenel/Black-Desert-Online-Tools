@@ -17,15 +17,18 @@ interface PortraitsStorage {
 
     suspend fun readPortrait(characterId: String): ByteArray
 
-    /** Копирует текущие портреты в `FaceTexture_backup\<дата-время>`. Возвращает путь к копии. */
-    suspend fun backupPortraits(characterIds: List<String>): String
+    /** Создаёт пустую папку `FaceTexture_backup\<дата-время>` и возвращает её имя. */
+    suspend fun createBackup(): String
 
     suspend fun writePortrait(characterId: String, bmp: ByteArray)
 
     /** Список папок `FaceTexture_backup` в формате [com.layzen.bdotools.feature.portraits.domain.parseBackupList]. */
     suspend fun backupListing(): String
 
-    suspend fun readBackupPortrait(backup: String, characterId: String): ByteArray
+    /** Файл из резервной копии [backup]; `null`, если файла нет. */
+    suspend fun readBackupFile(backup: String, name: String): ByteArray?
+
+    suspend fun writeBackupFile(backup: String, name: String, bytes: ByteArray)
 
     /** Удаляет папку `FaceTexture_backup\<backup>` целиком. */
     suspend fun deleteBackup(backup: String)

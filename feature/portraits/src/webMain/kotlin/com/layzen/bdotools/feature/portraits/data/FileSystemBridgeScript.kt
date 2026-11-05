@@ -40,6 +40,7 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
         return 'OK:' + lines.join('\n');
     };
     const favoriteFolder = async folder => child(await child(await savedRoot(), FAVORITES), folder);
+    const backupFolder = async folder => child(await child(await savedRoot(), BACKUP), folder);
     // Файлы в папке тулзы; папки может ещё не быть
     const listFiles = async dir => {
         const names = [];
@@ -73,19 +74,12 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
             const file = await (await (await faces()).getFileHandle(name)).getFile();
             return 'OK:' + await toBase64(file);
         },
-        async backup(names) {
-            const root = await savedRoot();
-            const source = await root.getDirectoryHandle(FACES);
-            const backups = await root.getDirectoryHandle(BACKUP, { create: true });
-            const folder = await freshFolder(backups);
-            const target = await backups.getDirectoryHandle(folder, { create: true });
-            for (const name of names.split('\n')) {
-                const file = await (await source.getFileHandle(name)).getFile();
-                const writable = await (await target.getFileHandle(name, { create: true })).createWritable();
-                await writable.write(file);
-                await writable.close();
-            }
-            return 'OK:' + BACKUP + '\\' + folder;
+        // Резервная копия: Black Desert\FaceTexture_backup\<дата-время>\ — чистые портреты и украшения
+        async backupCreate() {
+            const dir = await (await savedRoot()).getDirectoryHandle(BACKUP, { create: true });
+            const folder = await freshFolder(dir);
+            await dir.getDirectoryHandle(folder, { create: true });
+            return 'OK:' + folder;
         },
         backups: async () => listFolders(await child(await savedRoot(), BACKUP)),
         async backupDelete(folder) {
@@ -95,10 +89,10 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
             }
             return 'OK:';
         },
-        async backupRead(folder, name) {
-            const dir = await (await (await savedRoot()).getDirectoryHandle(BACKUP)).getDirectoryHandle(folder);
-            return 'OK:' + await toBase64(await (await dir.getFileHandle(name)).getFile());
-        },
+        backupRead: async (folder, name) => readFile(await backupFolder(folder), name),
+        // мост передаёт два аргумента, поэтому папка и имя файла приходят одной строкой «папка/имя»
+        backupWrite: async (path, base64) =>
+            writeFile(await backupFolder(path.substring(0, path.indexOf('/'))), path.substring(path.indexOf('/') + 1), base64),
         async write(name, base64) {
             const handle = await (await faces()).getFileHandle(name, { create: true });
             const writable = await handle.createWritable();

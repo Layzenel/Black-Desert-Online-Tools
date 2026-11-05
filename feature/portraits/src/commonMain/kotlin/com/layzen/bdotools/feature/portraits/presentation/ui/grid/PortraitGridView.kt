@@ -4,14 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.portraits.presentation.event.PortraitsEvent
 import com.layzen.bdotools.feature.portraits.presentation.state.PortraitsState
-import com.layzen.bdotools.feature.portraits.presentation.state.SwapAnimation
 import com.layzen.bdotools.uikit.components.HoverActionsBox
 
 /**
  * Портреты на странице. При наведении на портрет поверх него появляются действия [PortraitMenu];
  * сам портрет на клик не реагирует. Пока портреты читаются, на месте непрочитанных — скелетоны, а действий нет.
  * В режиме изменения порядка действий тоже нет: портреты затемнены, клик выбирает портрет, выбранный подсвечен.
- * Два обменянных портрета гаснут и проявляются заново.
+ * Два обменянных портрета вспыхивают золотом с искрами, как в окне выбора персонажа игры.
  */
 @Composable
 internal fun PortraitGridView(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
@@ -36,12 +35,7 @@ internal fun PortraitGridView(state: PortraitsState, onEvent: (PortraitsEvent) -
                 HoverActionsBox(
                     actions = { PortraitMenu(id, hasBackups = state.hasBackups(id), onEvent = onEvent) },
                 ) {
-                    PortraitTile(
-                        portrait.image,
-                        modifier = Modifier.swapAnimation(swapPhase),
-                        contentDescription = id,
-                        selected = swapPhase == SwapAnimation.Phase.In,
-                    )
+                    PortraitTile(portrait.image, modifier = Modifier.swapGlow(swapPhase), contentDescription = id)
                 }
             }
         }

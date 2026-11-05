@@ -1,8 +1,11 @@
 package com.layzen.bdotools.feature.portraits.presentation
 
 import com.layzen.bdotools.feature.portraits.data.PortraitWrite
+import androidx.compose.ui.graphics.ImageBitmap
 import com.layzen.bdotools.feature.portraits.data.PortraitsRepository
+import com.layzen.bdotools.feature.portraits.data.StoredPortrait
 import com.layzen.bdotools.feature.portraits.presentation.render.PortraitImages
+import com.layzen.bdotools.feature.portraits.presentation.render.toBmp
 import com.layzen.bdotools.feature.portraits.presentation.state.Busy
 import com.layzen.bdotools.feature.portraits.presentation.state.BusyKind
 import com.layzen.bdotools.feature.portraits.presentation.state.Notice
@@ -73,6 +76,13 @@ internal class PortraitsContext(
 
     /** Даёт браузеру перерисовать страницу между тяжёлыми шагами. */
     suspend fun breathe() = delay(FRAME_PAUSE_MS)
+
+    /** Портрет персонажа [characterId] из сохранённых основы и украшения: картинка для сетки и запись для файлов. */
+    suspend fun compose(characterId: String, stored: StoredPortrait): Pair<ImageBitmap, PortraitWrite> {
+        val face = images.render(stored)
+        val faceBytes = if (stored.decoration.isEmpty) stored.clean else face.toBmp()
+        return face to PortraitWrite(characterId, faceBytes, stored.clean, stored.decoration)
+    }
 
     /** Записывает портреты с прогрессом и обновляет украшения и список копий. Возвращает путь к копии. */
     suspend fun save(writes: List<PortraitWrite>): String = withBusy(BusyKind.Saving) { write(writes) }

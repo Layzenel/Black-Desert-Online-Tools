@@ -42,6 +42,8 @@ internal class ReplacementController(
 
     fun resetPlacement() = updateEditor { it.copy(placement = it.initialPlacement) }
 
+    fun toggleCell(index: Int) = updateEditor { it.toggledCell(index) }
+
     fun closeEditor() = context.update { it.copy(editor = null) }
 
     fun apply() {
@@ -50,13 +52,17 @@ internal class ReplacementController(
             ReplaceTarget.All -> context.current.portraits.map { it.characterId }
             is ReplaceTarget.One -> listOf(editor.target.characterId)
         }
+        // номер ячейки маски совпадает с местом персонажа на странице
+        val cells = ids.indices.filter { it !in editor.disabledCells }
         context.launch {
             closeEditor()
+            if (cells.isEmpty()) return@launch
             val faces = mutableMapOf<String, ImageBitmap>()
             val writes = context.withBusy(BusyKind.Rendering) {
-                ids.mapIndexed { index, id ->
-                    context.setProgress(index, ids.size)
-                    renderPortrait(editor, index, id).also { (face, _) -> faces[id] = face }.second
+                cells.mapIndexed { done, cell ->
+                    context.setProgress(done, cells.size)
+                    val id = ids[cell]
+                    renderPortrait(editor, cell, id).also { (face, _) -> faces[id] = face }.second
                 }
             }
             val backup = context.save(writes)

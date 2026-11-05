@@ -1,20 +1,21 @@
 package com.layzen.bdotools.feature.portraits.presentation.controller
 
+import androidx.compose.ui.graphics.ImageBitmap
+import com.layzen.bdotools.feature.portraits.data.PortraitWrite
+import com.layzen.bdotools.feature.portraits.data.StoredPortrait
 import com.layzen.bdotools.feature.portraits.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraits.presentation.state.Notice
 import com.layzen.bdotools.feature.portraits.presentation.state.NoticeKind
 import com.layzen.bdotools.feature.portraits.presentation.state.ReorderState
 import com.layzen.bdotools.feature.portraits.presentation.state.SwapAnimation
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 
 /**
  * Изменение порядка прямо на сетке: портреты затемняются, пользователь выбирает два — и они сразу
- * обмениваются картинками вместе с надписью и значками. Нужно, когда в окне выбора персонажа игры
+ * обмениваются картинками, а надпись и значок остаются на своих местах. Нужно, когда в окне выбора персонажа игры
  * персонажей переставили и общая картинка на портретах разъехалась. Старые портреты уходят в резервную копию.
- * Запись идёт без окна ожидания, одновременно с анимацией: файлов всего два.
+ * Запись идёт без окна ожидания сразу после анимации: файлов всего два.
  */
 internal class ReorderController(private val context: PortraitsContext) {
 
@@ -30,27 +31,27 @@ internal class ReorderController(private val context: PortraitsContext) {
 
     private fun swap(first: String, second: String) {
         cancel()
+        val previous = context.current.portraits
+            .filter { it.characterId == first || it.characterId == second }
+            .mapNotNull { item -> item.image?.let { item.characterId to it } }
+            .toMap()
         context.launch {
-            var imagesSwapped = false
+            val (faces, writes) = swappedPortraits(first, second)
             try {
-                coroutineScope {
-                    val backup = async {
-                        context.saveQuietly(context.repository.swapWrites(first, second, context.current.decorations))
-                    }
-                    setPhase(SwapAnimation(first, second, SwapAnimation.Phase.Out))
-                    delay(SwapAnimation.OUT_MS.toLong())
-                    swapImages(first, second)
-                    imagesSwapped = true
-                    setPhase(SwapAnimation(first, second, SwapAnimation.Phase.In))
-                    delay(SwapAnimation.IN_MS.toLong())
-                    setPhase(null)
-                    context.showNotice(Notice(NoticeKind.Swapped, backup.await()))
-                }
+                setPhase(SwapAnimation(first, second, SwapAnimation.Phase.Out))
+                delay(SwapAnimation.OUT_MS.toLong())
+                context.update { it.withPortraitImages(faces) }
+                setPhase(SwapAnimation(first, second, SwapAnimation.Phase.In))
+                delay(SwapAnimation.IN_MS.toLong())
+                setPhase(null)
+                // файлы пишутся только после анимации: на сайте всё идёт в одном потоке, и чтение с записью
+                // портретов по полтора мегабайта отнимали бы у неё кадры
+                context.showNotice(Notice(NoticeKind.Swapped, context.saveQuietly(writes)))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 // файлы не записаны — картинки на странице возвращаются на свои места
-                if (imagesSwapped) swapImages(first, second)
+                context.update { it.withPortraitImages(previous) }
                 throw e
             } finally {
                 setPhase(null)
@@ -58,13 +59,14 @@ internal class ReorderController(private val context: PortraitsContext) {
         }
     }
 
-    private fun setPhase(animation: SwapAnimation?) = context.update { it.copy(swapAnimation = animation) }
-
-    private fun swapImages(first: String, second: String) = context.update { state ->
-        val images = state.portraits.associate { it.characterId to it.image }
-        val a = images[first]
-        val b = images[second]
-        // обмен доступен только после загрузки всех портретов, так что обе картинки уже есть
-        if (a == null || b == null) state else state.withPortraitImages(mapOf(first to b, second to a))
+    /** Персонажи обмениваются чистыми основами, а надпись и значок каждого остаются на его портрете. */
+    private suspend fun swappedPortraits(first: String, second: String): Pair<Map<String, ImageBitmap>, List<PortraitWrite>> {
+        val a = context.repository.currentPortrait(first)
+        val b = context.repository.currentPortrait(second)
+        val (faceA, writeA) = context.compose(first, StoredPortrait(b.clean, a.decoration))
+        val (faceB, writeB) = context.compose(second, StoredPortrait(a.clean, b.decoration))
+        return mapOf(first to faceA, second to faceB) to listOf(writeA, writeB)
     }
+
+    private fun setPhase(animation: SwapAnimation?) = context.update { it.copy(swapAnimation = animation) }
 }

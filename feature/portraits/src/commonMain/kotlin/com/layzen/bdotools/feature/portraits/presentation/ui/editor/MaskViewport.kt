@@ -2,6 +2,7 @@ package com.layzen.bdotools.feature.portraits.presentation.ui.editor
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,6 +58,12 @@ internal fun MaskViewport(state: EditorState, onEvent: (PortraitsEvent) -> Unit)
                 .size(viewportSize)
                 .clipToBounds()
                 .pointerHoverIcon(PointerIcon.Hand)
+                .pointerInput(grid) {
+                    detectTapGestures { tap ->
+                        val cell = grid.cellAt(tap.x / currentK - margin, tap.y / currentK - margin)
+                        if (cell != null) currentOnEvent(PortraitsEvent.ToggleMaskCell(cell))
+                    }
+                }
                 .pointerInput(Unit) {
                     detectDragGestures { change, drag ->
                         change.consume()
@@ -92,7 +99,7 @@ internal fun MaskViewport(state: EditorState, onEvent: (PortraitsEvent) -> Unit)
                     }
                 }
             }
-            MaskOverlay(grid, margin, k, Modifier.matchParentSize())
+            MaskOverlay(grid, state.disabledCells, margin, k, Modifier.matchParentSize())
         }
     }
 }

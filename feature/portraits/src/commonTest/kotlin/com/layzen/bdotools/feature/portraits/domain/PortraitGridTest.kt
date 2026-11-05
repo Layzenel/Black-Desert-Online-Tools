@@ -49,6 +49,19 @@ class PortraitGridTest {
     }
 
     @Test
+    fun findsCellUnderPoint() {
+        val grid = PortraitGrid(count = 5, maxColumns = 3, cellWidth = 10, cellHeight = 20, gap = 2)
+
+        assertEquals(0, grid.cellAt(0f, 0f))
+        assertEquals(1, grid.cellAt(13f, 5f))
+        assertEquals(4, grid.cellAt(13f, 25f))
+        assertEquals(null, grid.cellAt(11f, 5f), "отступ между ячейками")
+        assertEquals(null, grid.cellAt(25f, 25f), "место шестой ячейки пустое")
+        assertEquals(null, grid.cellAt(-1f, 5f))
+        assertEquals(null, grid.cellAt(40f, 5f))
+    }
+
+    @Test
     fun coverPlacementFillsWholeGrid() {
         val grid = PortraitGrid(count = 7)
         val placement = ImagePlacement.cover(imageWidth = 1000, imageHeight = 1000, grid = grid)
