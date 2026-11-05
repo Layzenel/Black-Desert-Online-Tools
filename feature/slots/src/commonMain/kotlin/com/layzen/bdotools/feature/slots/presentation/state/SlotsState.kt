@@ -13,7 +13,9 @@ import com.layzen.bdotools.feature.slots.domain.SlotLayout
  * @property loaded прочитанный `gamevariable.xml`; `null`, пока файл не прочитан.
  * @property layout раскладка в редакторе — её и запишет «Применить в игру».
  * @property history предыдущие раскладки для «Отменить», последняя — в конце.
+ * @property future отменённые раскладки для «Повторить», ближайшая — в конце; новая правка их забывает.
  * @property activePreset пресет, из которого взята раскладка; `null` после правки руками.
+ * @property backgroundShown видна ли подложка [background] на холсте: её можно спрятать, не убирая картинку.
  */
 data class SlotsState(
     val access: FolderAccess? = null,
@@ -21,12 +23,14 @@ data class SlotsState(
     val loaded: LoadedGame? = null,
     val layout: SlotLayout = SlotLayout(),
     val history: List<SlotLayout> = emptyList(),
+    val future: List<SlotLayout> = emptyList(),
     val selection: Set<SlotId> = emptySet(),
     val presets: List<NamedLayout> = emptyList(),
     val activePreset: PresetRef? = PresetRef.Game,
     val grid: GridStep = GridStep.Game,
     val snapStep: Int = DEFAULT_SNAP_STEP,
     val background: ImageBitmap? = null,
+    val backgroundShown: Boolean = true,
     val dialog: SlotsDialog? = null,
     val busy: Boolean = false,
     val notice: SlotsNotice? = null,

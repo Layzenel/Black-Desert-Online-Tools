@@ -7,9 +7,9 @@ internal object SlotsDimens {
     val coordinateFieldWidth = 96.dp
     val dialogWidth = 520.dp
     val importTextHeight = 220.dp
-    val previewWidth = 1200.dp
-    val previewHeight = 620.dp
-    val previewItemIndent = 24.dp
+    val previewSidebarWidth = 300.dp
+    val previewNumberCellWidth = 48.dp
+    val previewItemIndent = 16.dp
     val marqueeBorder = 1.dp
     val legendSwatch = 10.dp
     val slotBorder = 1.dp
@@ -25,6 +25,10 @@ internal object SlotsDimens {
     const val SLOT_FILL_ALPHA = 0.55f
     const val HIDDEN_ALPHA = 0.35f
     const val MARQUEE_FILL_ALPHA = 0.12f
+
+    /** Какую долю окна приложения занимает превью импорта и экспорта. */
+    const val PREVIEW_WIDTH_SHARE = 0.94f
+    const val PREVIEW_HEIGHT_SHARE = 0.92f
 
     /** Размер глазика — доля ширины иконки: он растёт вместе с увеличением холста. */
     const val EYE_SHARE = 0.32f

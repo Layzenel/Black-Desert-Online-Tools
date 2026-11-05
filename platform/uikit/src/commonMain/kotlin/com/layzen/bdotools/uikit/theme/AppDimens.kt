@@ -35,6 +35,8 @@ data class AppDimens(
     val menuItemHeight: Dp = 44.dp,
     val menuIconBoxSize: Dp = 24.dp,
     val navItemHeight: Dp = 34.dp,
+    val menuActionHeight: Dp = 32.dp,
+    val menuActionIconSize: Dp = 16.dp,
     val iconSize: Dp = 20.dp,
     val infoTipMaxWidth: Dp = 260.dp,
 

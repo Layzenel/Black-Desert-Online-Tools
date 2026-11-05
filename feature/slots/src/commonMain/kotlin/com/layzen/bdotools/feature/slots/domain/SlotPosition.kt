@@ -6,7 +6,4 @@ package com.layzen.bdotools.feature.slots.domain
  */
 data class SlotPosition(val x: Int, val y: Int) {
     fun movedBy(dx: Int, dy: Int) = SlotPosition(x + dx, y + dy)
-
-    /** Отражение относительно вертикальной оси через центр экрана. */
-    fun mirrored() = SlotPosition(-x, y)
 }

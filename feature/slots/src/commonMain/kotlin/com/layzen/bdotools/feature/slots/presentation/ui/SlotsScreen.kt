@@ -2,8 +2,8 @@ package com.layzen.bdotools.feature.slots.presentation.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -21,16 +21,13 @@ import com.layzen.bdotools.feature.slots.resources.slots_folder_select
 import com.layzen.bdotools.feature.slots.resources.slots_loading
 import com.layzen.bdotools.feature.slots.resources.slots_permission_description
 import com.layzen.bdotools.feature.slots.resources.slots_permission_request
-import com.layzen.bdotools.feature.slots.resources.slots_title
 import com.layzen.bdotools.feature.slots.resources.slots_unsupported_description
 import com.layzen.bdotools.feature.slots.resources.slots_unsupported_title
 import com.layzen.bdotools.uikit.components.BusyOverlay
 import com.layzen.bdotools.uikit.components.DescriptionText
-import com.layzen.bdotools.uikit.components.GameWindow
 import com.layzen.bdotools.uikit.components.LoadingRow
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.Toast
-import com.layzen.bdotools.uikit.components.WindowFooter
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -44,19 +41,10 @@ fun SlotsRoute(viewModel: SlotsViewModel = koinViewModel()) {
 @Composable
 fun SlotsScreen(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     val ready = state.loaded != null
-    // Футер внутри содержимого, а не в слоте GameWindow: иначе растянутый по высоте холст вытеснит его за окно
-    GameWindow(
-        title = stringResource(Res.string.slots_title),
-        modifier = if (ready) Modifier.fillMaxSize() else Modifier.fillMaxWidth(),
-    ) {
-        if (ready) {
-            Column(Modifier.fillMaxSize()) {
-                SlotsContent(state, onEvent, Modifier.weight(1f))
-                WindowFooter { SlotsFooter(state, onEvent) }
-            }
-        } else {
-            Column(Modifier.padding(AppTheme.dimens.spaceL)) { AccessContent(state, onEvent) }
-        }
+    if (ready) {
+        SlotsContent(state, onEvent, Modifier.fillMaxSize())
+    } else {
+        Column(Modifier.widthIn(max = AppTheme.dimens.contentMaxWidth).padding(AppTheme.dimens.spaceXl)) { AccessContent(state, onEvent) }
     }
 
     SlotsDialogs(state, onEvent)

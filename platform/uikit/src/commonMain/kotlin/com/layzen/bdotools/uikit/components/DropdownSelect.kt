@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Выпадающий список: тёмное поле со значением по центру и треугольником справа. */
+/** Выпадающий список: тёмное поле со значением по центру и треугольником справа. Повторный клик по полю закрывает список. */
 @Composable
 fun <T> DropdownSelect(
     selected: T,
@@ -43,6 +44,8 @@ fun <T> DropdownSelect(
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
     var expanded by remember { mutableStateOf(false) }
+    val interaction = remember { MutableInteractionSource() }
+    val anchorHovered by interaction.collectIsHoveredAsState()
     var anchorWidth by remember { mutableStateOf(Dp.Unspecified) }
     val density = LocalDensity.current
     Box(modifier) {
@@ -52,7 +55,7 @@ fun <T> DropdownSelect(
                 .onSizeChanged { anchorWidth = with(density) { it.width.toDp() } }
                 .heightIn(min = dimens.inputHeight)
                 .pointerHoverIcon(PointerIcon.Hand)
-                .clickable(remember { MutableInteractionSource() }, null, role = Role.DropdownList) { expanded = true }
+                .clickable(interaction, null, role = Role.DropdownList) { expanded = !expanded }
                 .background(colors.backgroundItem)
                 .border(dimens.borderWidth, colors.border)
                 .padding(horizontal = dimens.spaceM),
@@ -80,7 +83,9 @@ fun <T> DropdownSelect(
         }
         OptionsMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
+            // Клик по самому полю закрывает список через clickable, а не через «клик мимо»: иначе список закрылся бы
+            // и тут же открылся снова
+            onDismissRequest = { if (!anchorHovered) expanded = false },
             options = options,
             selected = selected,
             onSelect = onSelect,

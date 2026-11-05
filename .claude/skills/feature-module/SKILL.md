@@ -159,7 +159,8 @@ fun SampleRoute(viewModel: SampleViewModel = koinViewModel()) {
 
 @Composable
 fun SampleScreen(state: SampleState, onEvent: (SampleEvent) -> Unit) {
-    GameWindow(title = stringResource(Res.string.sample_title)) { /* ... */ }
+    // Страница без шапки (скилл bdo-design-system): колонка по центру или, если нужно всё место, ToolPage с fillsScreen = true
+    Column(Modifier.widthIn(max = AppTheme.dimens.contentMaxWidth)) { /* ... */ }
 }
 ```
 
@@ -184,7 +185,7 @@ val sampleToolModule = module {
 
 1. `shared/build.gradle.kts` → `commonMain.dependencies`: добавь `implementation(project(":feature:<имя>"))`.
 2. `shared/.../App.kt` → список `featureModules`: добавь `<имя>Module`.
-3. `shared/.../navigation/Destination.kt` → `enum class AppTab`: добавь вкладку или переименуй
+3. `shared/.../navigation/AppTab.kt` → `enum class AppTab`: добавь вкладку (редактору на всё окно — `fillsScreen = true`) или переименуй
    свободную заглушку (`Tab2`…`Tab5`). `route` пиши в kebab-case, после релиза его не меняй: он попадает в ссылки.
    Название вкладки — строка в `shared/src/commonMain/composeResources/values/strings.xml` (`tab_<имя>`).
 4. `shared/.../App.kt` → `TabContent`: в ветке своей вкладки вызови `<Имя>Route()` вместо `PlaceholderScreen`.

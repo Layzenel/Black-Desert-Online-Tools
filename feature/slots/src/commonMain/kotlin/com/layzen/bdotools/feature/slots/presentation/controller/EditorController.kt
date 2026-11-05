@@ -75,14 +75,14 @@ internal class EditorController(private val context: SlotsContext) {
 
     fun setPosition(id: SlotId, position: SlotPosition) = context.editLayout { it.withPosition(id, position) }
 
-    fun mirror() {
-        val selection = context.current.selection
-        context.editLayout { it.mirrored(selection) }
-    }
-
     fun undo() = context.update {
         val previous = it.history.lastOrNull() ?: return@update it
-        it.copy(layout = previous, history = it.history.dropLast(1), activePreset = null)
+        it.copy(layout = previous, history = it.history.dropLast(1), future = it.future + it.layout, activePreset = null)
+    }
+
+    fun redo() = context.update {
+        val next = it.future.lastOrNull() ?: return@update it
+        it.copy(layout = next, history = it.history + it.layout, future = it.future.dropLast(1), activePreset = null)
     }
 
     fun setGrid(step: GridStep) = context.update { it.copy(grid = step) }

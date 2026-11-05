@@ -10,7 +10,6 @@ import com.layzen.bdotools.feature.slots.resources.slots_element_buffs
 import com.layzen.bdotools.feature.slots.resources.slots_element_health
 import com.layzen.bdotools.feature.slots.resources.slots_element_pvp
 import com.layzen.bdotools.feature.slots.resources.slots_element_rare_item_history
-import com.layzen.bdotools.feature.slots.resources.slots_element_skill_history
 import com.layzen.bdotools.feature.slots.resources.slots_element_stamina
 import com.layzen.bdotools.feature.slots.resources.slots_group_class_resource
 import com.layzen.bdotools.feature.slots.resources.slots_group_cooldown
@@ -49,6 +48,5 @@ private val InterfaceElement.title: StringResource
         InterfaceElement.Pvp -> Res.string.slots_element_pvp
         InterfaceElement.BlackSpiritRage -> Res.string.slots_element_black_spirit_rage
         InterfaceElement.Buffs -> Res.string.slots_element_buffs
-        InterfaceElement.SkillHistory -> Res.string.slots_element_skill_history
         InterfaceElement.RareItemHistory -> Res.string.slots_element_rare_item_history
     }

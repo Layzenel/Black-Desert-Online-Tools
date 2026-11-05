@@ -11,7 +11,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -24,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.slots.domain.AnchoredLayout
+import com.layzen.bdotools.feature.slots.domain.ScreenArea
 import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.domain.SlotGroup
 import com.layzen.bdotools.feature.slots.domain.SlotId
@@ -31,14 +37,15 @@ import com.layzen.bdotools.feature.slots.domain.SlotPosition
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.CrosshairLayer
+import com.layzen.bdotools.feature.slots.presentation.ui.editor.MarqueeFrame
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.frameColor
 import com.layzen.bdotools.feature.slots.presentation.ui.slotTitle
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 
 /**
- * Раскладка [layout] на экране [screen] — как её увидит игрок с этим монитором. Невыбранные элементы приглушены,
- * не влезающие на экран — с красной заливкой. Клик по рамке отмечает элемент или снимает отметку.
+ * Раскладка [layout] на экране игры [screen]. Невыбранные элементы приглушены, не влезающие на экран — с красной
+ * заливкой. Клик по рамке отмечает элемент или снимает отметку, Shift и протянуть — обводка рамкой.
  */
 @Composable
 internal fun PreviewCanvas(
@@ -48,16 +55,23 @@ internal fun PreviewCanvas(
     onEvent: (SlotsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val currentOnEvent by rememberUpdatedState(onEvent)
+    var marquee by remember { mutableStateOf<Rect?>(null) }
     BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
         val ratio = (screen.height / screen.width).toFloat()
         val width = if (maxHeight == Dp.Infinity) maxWidth else minOf(maxWidth, maxHeight / ratio)
         val scale = with(LocalDensity.current) { width.toPx() } / screen.width.toFloat()
+        val currentScale by rememberUpdatedState(scale)
         Box(
             Modifier
                 .size(width, width * ratio)
                 .clipToBounds()
                 .background(AppTheme.colors.track)
-                .border(AppTheme.dimens.borderWidth, AppTheme.colors.border),
+                .border(AppTheme.dimens.borderWidth, AppTheme.colors.border)
+                .marqueeGesture(
+                    onMarquee = { marquee = it },
+                    onArea = { currentOnEvent(SlotsEvent.PreviewArea(it.toScreenArea(currentScale))) },
+                ),
         ) {
             CrosshairLayer(screen, scale, Modifier.fillMaxSize())
             layout.positions.forEach { (id, anchored) ->
@@ -65,9 +79,14 @@ internal fun PreviewCanvas(
                     onEvent(SlotsEvent.PreviewInclude(setOf(id), id !in included))
                 }
             }
+            marquee?.let { MarqueeFrame(it) }
         }
     }
 }
+
+/** Прямоугольник в пикселях превью → UI-px экрана игры. */
+private fun Rect.toScreenArea(scale: Float) =
+    ScreenArea.between((left / scale).toDouble(), (top / scale).toDouble(), (right / scale).toDouble(), (bottom / scale).toDouble())
 
 @Composable
 private fun PreviewFrame(id: SlotId, position: SlotPosition, screen: ScreenSpace, scale: Float, included: Boolean, onToggle: () -> Unit) {

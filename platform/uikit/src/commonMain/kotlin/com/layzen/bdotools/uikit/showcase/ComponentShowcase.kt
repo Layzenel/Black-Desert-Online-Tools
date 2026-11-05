@@ -35,6 +35,8 @@ fun ComponentShowcase(modifier: Modifier = Modifier) {
             SettingsSample(Modifier.widthIn(max = dimens.contentMaxWidth))
             TilesSample(Modifier.width(ShowcaseDimens.tilesWindowWidth))
             FeedbackSample(Modifier.width(ShowcaseDimens.tilesWindowWidth))
+            ToolPageSample(Modifier.width(ShowcaseDimens.toolPageWidth))
+            ContentFrameSample(Modifier.width(ShowcaseDimens.tilesWindowWidth))
         }
     }
 }

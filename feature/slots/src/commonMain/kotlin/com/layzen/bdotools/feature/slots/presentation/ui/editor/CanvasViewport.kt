@@ -40,11 +40,6 @@ internal class CanvasViewport {
         pan = clamped(pan + delta)
     }
 
-    fun fit() {
-        zoom = MIN_ZOOM
-        pan = Offset.Zero
-    }
-
     private fun clamped(value: Offset) = Offset(
         value.x.coerceIn(size.width * (1 - zoom), 0f),
         value.y.coerceIn(size.height * (1 - zoom), 0f),

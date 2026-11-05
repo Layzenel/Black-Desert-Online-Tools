@@ -10,7 +10,8 @@ import org.jetbrains.compose.resources.StringResource
 
 /**
  * Вкладки верхней навигации. [route] попадает в адрес страницы: `#portraits`.
- * [fillsScreen] — вкладка занимает всё окно под навигацией и прокручивает свои части сама, а не страницей.
+ * [fillsScreen] — вкладка занимает всё окно под навигацией без внешних отступов (редактор с меню слева)
+ * и прокручивает свои части сама, а не страницей.
  */
 enum class AppTab(val route: String, val title: StringResource, val fillsScreen: Boolean = false) {
     Portraits("portraits", Res.string.tab_portraits),

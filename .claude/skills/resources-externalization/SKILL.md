@@ -59,7 +59,7 @@ compose.resources {
 В `@Composable`:
 
 ```kotlin
-GameWindow(title = stringResource(Res.string.portraits_title)) { ... }
+SectionHeader(stringResource(Res.string.portraits_grid_title, state.portraits.size))
 ValueText(stringResource(Res.string.portraits_level, state.level, state.name))
 ```
 
