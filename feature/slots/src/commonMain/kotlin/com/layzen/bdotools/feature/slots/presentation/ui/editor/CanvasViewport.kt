@@ -36,6 +36,12 @@ internal class CanvasViewport {
         pan = clamped(focus - (focus - pan) * ratio)
     }
 
+    /** Весь экран игры в окне: масштаб 1, без сдвига. */
+    fun reset() {
+        zoom = MIN_ZOOM
+        pan = Offset.Zero
+    }
+
     fun panBy(delta: Offset) {
         pan = clamped(pan + delta)
     }

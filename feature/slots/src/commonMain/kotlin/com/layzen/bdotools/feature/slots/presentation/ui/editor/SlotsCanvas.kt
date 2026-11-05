@@ -22,9 +22,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -35,13 +46,17 @@ import com.layzen.bdotools.feature.slots.domain.ScreenSpace
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
 import com.layzen.bdotools.feature.slots.presentation.ui.SlotsDimens
+import com.layzen.bdotools.uikit.components.PanCursor
+import com.layzen.bdotools.uikit.components.onSecondaryClick
+import com.layzen.bdotools.uikit.components.panCursor
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 
 /**
  * Экран игры в масштабе: подложка, сетка от прицела, прицел и элементы интерфейса.
  * Окно холста всегда в пропорциях экрана игры. Колесо мыши меняет масштаб к точке под курсором,
- * зажатая ЛКМ по пустому месту двигает холст, с Shift — обводит элементы рамкой; клик по пустому месту и Esc
+ * зажатая ЛКМ по пустому месту обводит элементы рамкой (с Ctrl — добавляет к выбору), с Shift или Пробелом двигает холст,
+ * ПКМ открывает меню; клик по пустому месту и Esc
  * снимают выбор.
  */
 @Composable
@@ -50,6 +65,19 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
     val focus = remember { FocusRequester() }
     val currentOnEvent by rememberUpdatedState(onEvent)
     var marquee by remember { mutableStateOf<Rect?>(null) }
+    var menuAt by remember { mutableStateOf<Offset?>(null) }
+    // Shift или Пробел зажаты: ЛКМ двигает холст, курсор — рука
+    var spaceHeld by remember { mutableStateOf(false) }
+    var panKeyHeld by remember { mutableStateOf(false) }
+    var panning by remember { mutableStateOf(false) }
+    val pointerOver = remember { MutableInteractionSource() }
+    val pointerIsOver by pointerOver.collectIsHoveredAsState()
+    val cursor = when {
+        !pointerIsOver -> PanCursor.None
+        panning -> PanCursor.Grabbing
+        panKeyHeld -> PanCursor.Open
+        else -> PanCursor.None
+    }
     // Фокус сразу на холсте: Ctrl+Z и стрелки работают без клика по нему
     LaunchedEffect(focus) { focus.requestFocus() }
     BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
@@ -68,19 +96,35 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
                 .border(AppTheme.dimens.borderWidth, AppTheme.colors.border)
                 .onSizeChanged { viewport.size = Size(it.width.toFloat(), it.height.toFloat()) }
                 .focusRequester(focus)
+                .onFocusChanged {
+                    if (!it.isFocused) {
+                        spaceHeld = false
+                        panKeyHeld = false
+                    }
+                }
                 .focusable()
-                .onPreviewKeyEvent { event -> event.handleKeys(currentOnEvent) }
+                .onPreviewKeyEvent { event ->
+                    if (event.key == Key.Spacebar) spaceHeld = event.type == KeyEventType.KeyDown
+                    panKeyHeld = spaceHeld || event.isShiftPressed
+                    event.handleKeys(currentOnEvent)
+                }
+                .hoverable(pointerOver)
+                .panCursor(cursor)
+                .onSecondaryClick { menuAt = it }
+                .middleButtonPan(viewport) { panning = it }
                 .wheelZoom(viewport)
                 .canvasGestures(
                     viewport,
+                    panKeyHeld = { panKeyHeld },
+                    onPanning = { panning = it },
                     onTap = {
                         focus.requestFocus()
                         currentOnEvent(SlotsEvent.ClearSelection)
                     },
                     onMarquee = { marquee = it },
-                    onArea = { rect ->
+                    onArea = { rect, additive ->
                         focus.requestFocus()
-                        currentOnEvent(SlotsEvent.SelectArea(rect.toScreenArea(viewport, currentScale), additive = true))
+                        currentOnEvent(SlotsEvent.SelectArea(rect.toScreenArea(viewport, currentScale), additive))
                     },
                 ),
         ) {
@@ -94,6 +138,12 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
                 CanvasContent(state, screen, scale, onEvent, onPress = { focus.requestFocus() })
             }
             marquee?.let { MarqueeFrame(it) }
+            // Пустой Box в точке клика: меню раскрывается от его угла
+            menuAt?.let { at ->
+                Box(Modifier.offset { IntOffset(at.x.roundToInt(), at.y.roundToInt()) }) {
+                    CanvasContextMenu(state, onDismiss = { menuAt = null }, onEvent = onEvent)
+                }
+            }
         }
     }
 }
@@ -118,6 +168,7 @@ private fun CanvasContent(state: SlotsState, screen: ScreenSpace, scale: Float, 
             onPress = onPress,
         )
     }
+    SnapGuidesLayer(state.snapGuides, screen, scale, Modifier.fillMaxSize())
 }
 
 /** Прямоугольник в пикселях окна → UI-px экрана игры: убираем сдвиг холста и делим на масштаб. */

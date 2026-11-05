@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.isCtrlPressed
+import androidx.compose.ui.input.pointer.isMetaPressed
 import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
@@ -114,7 +116,8 @@ private fun Modifier.slotGestures(id: SlotId, scale: Float, onEvent: (SlotsEvent
         awaitEachGesture {
             val down = awaitFirstDown()
             down.consume()
-            val additive = currentEvent.keyboardModifiers.isShiftPressed
+            val modifiers = currentEvent.keyboardModifiers
+            val additive = modifiers.isShiftPressed || modifiers.isCtrlPressed || modifiers.isMetaPressed
             var started = false
             val dragChange = awaitTouchSlopOrCancellation(down.id) { change, over ->
                 change.consume()

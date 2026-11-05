@@ -7,9 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import com.layzen.bdotools.feature.slots.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
-import com.layzen.bdotools.feature.slots.presentation.ui.editor.EditorActionBar
+import com.layzen.bdotools.feature.slots.presentation.ui.editor.EditorToolbar
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.EditorLegend
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.EditorStatus
 import com.layzen.bdotools.feature.slots.presentation.ui.editor.SlotsCanvas
@@ -32,8 +33,13 @@ internal fun SlotsContent(state: SlotsState, onEvent: (SlotsEvent) -> Unit, modi
         sidebarWidth = SlotsDimens.sidebarWidth,
         sidebarFooter = { SlotsFileActions(state, onEvent) },
     ) {
-        Column(Modifier.fillMaxSize()) {
-            EditorActionBar(state, onEvent)
+        // История работает и когда фокус на кнопке панели: после клика по ней холст его уже не держит
+        Column(
+            Modifier.fillMaxSize().onPreviewKeyEvent {
+                it.handleHistoryKeys(onUndo = { onEvent(SlotsEvent.Undo) }, onRedo = { onEvent(SlotsEvent.Redo) })
+            },
+        ) {
+            EditorToolbar(state, viewport, onEvent)
             Column(
                 Modifier.weight(1f).fillMaxWidth().padding(AppTheme.dimens.spaceL),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),

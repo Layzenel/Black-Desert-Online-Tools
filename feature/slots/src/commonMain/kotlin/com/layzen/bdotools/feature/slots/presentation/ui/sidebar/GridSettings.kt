@@ -18,8 +18,6 @@ import com.layzen.bdotools.uikit.components.ValueSlider
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
-/** Шаг привязки, UI-px; 0 — без привязки. */
-private val SNAP_STEP_RANGE = 0..20
 
 /** Шаг линий сетки и шаг привязки — отдельно, чтобы можно было, например, видеть сетку 50 и ставить по 5. */
 @Composable
@@ -36,6 +34,6 @@ internal fun GridSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             stringResource(Res.string.slots_snap_step),
             description = stringResource(Res.string.slots_snap_step_description),
         )
-        ValueSlider(state.snapStep, { onEvent(SlotsEvent.SetSnapStep(it)) }, range = SNAP_STEP_RANGE)
+        ValueSlider(state.snapStep, { onEvent(SlotsEvent.SetSnapStep(it)) }, range = SlotsState.SNAP_STEP_RANGE)
     }
 }

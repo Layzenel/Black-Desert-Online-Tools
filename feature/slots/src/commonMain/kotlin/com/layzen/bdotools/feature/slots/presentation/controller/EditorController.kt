@@ -1,9 +1,17 @@
 package com.layzen.bdotools.feature.slots.presentation.controller
 
+import com.layzen.bdotools.feature.slots.domain.AlignEdge
 import com.layzen.bdotools.feature.slots.domain.ScreenArea
 import com.layzen.bdotools.feature.slots.domain.SlotId
 import com.layzen.bdotools.feature.slots.domain.SlotLayout
 import com.layzen.bdotools.feature.slots.domain.SlotPosition
+import com.layzen.bdotools.feature.slots.domain.SlotBounds
+import com.layzen.bdotools.feature.slots.domain.SnapGuides
+import com.layzen.bdotools.feature.slots.domain.aligned
+import com.layzen.bdotools.feature.slots.domain.centeredAt
+import com.layzen.bdotools.feature.slots.domain.distributed
+import com.layzen.bdotools.feature.slots.domain.mirrored
+import com.layzen.bdotools.feature.slots.domain.snapToLines
 import com.layzen.bdotools.feature.slots.presentation.SlotsContext
 import com.layzen.bdotools.feature.slots.presentation.state.GridStep
 import com.layzen.bdotools.feature.slots.presentation.state.SlotsState
@@ -58,13 +66,36 @@ internal class EditorController(private val context: SlotsContext) {
         val origin = context.current.loaded?.game?.screen?.crosshair ?: SlotPosition(0, 0)
         val target = SlotPosition(snapped(lead.x + session.dx, origin.x), snapped(lead.y + session.dy, origin.y))
         val moved = session.origin.moved(context.current.selection, target.x - lead.x, target.y - lead.y)
-        context.update { it.copy(layout = moved) }
+        val (layout, guides) = snappedToSlots(moved)
+        context.update { it.copy(layout = layout, snapGuides = guides) }
     }
 
     fun dragEnd() {
         val session = drag ?: return
         drag = null
+        context.update { it.copy(snapGuides = SnapGuides.None) }
         context.commitEdit(session.origin)
+    }
+
+    /**
+     * Раскладка [layout] с прилипанием группы выбранных к краям и серединам невыбранных видимых элементов
+     * и к осям прицела; прилипание сильнее привязки к сетке. Выключено — раскладка как есть.
+     */
+    private fun snappedToSlots(layout: SlotLayout): Pair<SlotLayout, SnapGuides> {
+        val state = context.current
+        val moving = layout.boundsOf(state.selection)
+        if (!state.snapToSlots || moving == null) return layout to SnapGuides.None
+        val crosshair = state.loaded?.game?.screen?.crosshair ?: SlotPosition(0, 0)
+        val others = state.slots
+            .filter { it !in state.selection && layout.isVisible(it) }
+            .mapNotNull { id -> layout[id]?.let { SlotBounds.of(id, it) } }
+        val result = snapToLines(
+            moving,
+            xLines = listOf(crosshair.x.toDouble()) + others.flatMap { it.xLines },
+            yLines = listOf(crosshair.y.toDouble()) + others.flatMap { it.yLines },
+            distance = state.snapDistance,
+        )
+        return layout.moved(state.selection, result.dx.roundToInt(), result.dy.roundToInt()) to result.guides
     }
 
     fun nudge(dx: Int, dy: Int, byGrid: Boolean) {
@@ -88,6 +119,31 @@ internal class EditorController(private val context: SlotsContext) {
     fun setGrid(step: GridStep) = context.update { it.copy(grid = step) }
 
     fun setSnapStep(step: Int) = context.update { it.copy(snapStep = step) }
+
+    fun setSnapToSlots(enabled: Boolean) = context.update { it.copy(snapToSlots = enabled) }
+
+    fun setSnapDistance(distance: Int) = context.update { it.copy(snapDistance = distance) }
+
+    fun align(edge: AlignEdge) = editSelection { layout, selection -> layout.aligned(selection, edge) }
+
+    fun distribute(horizontal: Boolean) = editSelection { layout, selection -> layout.distributed(selection, horizontal) }
+
+    /** Середина рамки выбранных встаёт на прицел. */
+    fun centerOnCrosshair() {
+        val crosshair = context.current.loaded?.game?.screen?.crosshair ?: return
+        editSelection { layout, selection -> layout.centeredAt(selection, crosshair) }
+    }
+
+    /** Выбранные отражаются слева направо относительно вертикали через прицел. */
+    fun mirror() {
+        val axis = context.current.loaded?.game?.screen?.crosshair?.x ?: 0
+        editSelection { layout, selection -> layout.mirrored(selection, axis) }
+    }
+
+    private fun editSelection(change: (SlotLayout, Set<SlotId>) -> SlotLayout) {
+        val selection = context.current.selection
+        context.editLayout { change(it, selection) }
+    }
 
     /** Глазик на иконке: скрыть или показать элемент в игре. */
     fun toggleVisibility(id: SlotId) = context.editLayout { it.withVisibility(id, !it.isVisible(id)) }
