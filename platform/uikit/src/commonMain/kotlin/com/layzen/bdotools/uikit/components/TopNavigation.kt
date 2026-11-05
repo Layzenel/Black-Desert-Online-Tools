@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -132,7 +133,8 @@ private fun TopNavigationTab(
                 hovered -> colors.textPrimary
                 else -> colors.textBeige
             },
-            maxLines = 1,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
         )
     }
 }
