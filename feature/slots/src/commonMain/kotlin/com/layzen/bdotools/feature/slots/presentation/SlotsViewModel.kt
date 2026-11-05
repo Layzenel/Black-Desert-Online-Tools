@@ -65,6 +65,12 @@ class SlotsViewModel(
             SlotsEvent.Redo -> editor.redo()
             is SlotsEvent.SetGrid -> editor.setGrid(event.step)
             is SlotsEvent.SetSnapStep -> editor.setSnapStep(event.step)
+            is SlotsEvent.SetSnapToSlots -> editor.setSnapToSlots(event.enabled)
+            is SlotsEvent.SetSnapDistance -> editor.setSnapDistance(event.distance)
+            is SlotsEvent.Align -> editor.align(event.edge)
+            is SlotsEvent.Distribute -> editor.distribute(event.horizontal)
+            SlotsEvent.CenterOnCrosshair -> editor.centerOnCrosshair()
+            SlotsEvent.Mirror -> editor.mirror()
             is SlotsEvent.ToggleVisibility -> editor.toggleVisibility(event.id)
 
             SlotsEvent.UseGameLayout -> presets.useGameLayout()

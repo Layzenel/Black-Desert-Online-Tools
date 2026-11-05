@@ -4,6 +4,8 @@ import androidx.compose.ui.unit.dp
 
 internal object SlotsDimens {
     val sidebarWidth = 280.dp
+    val snapSliderWidth = 70.dp
+    val guideStroke = 1.dp
     val coordinateFieldWidth = 96.dp
     val dialogWidth = 520.dp
     val importTextHeight = 220.dp

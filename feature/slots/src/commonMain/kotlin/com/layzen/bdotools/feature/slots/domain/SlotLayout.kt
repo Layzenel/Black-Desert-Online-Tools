@@ -26,6 +26,10 @@ data class SlotLayout(
 
     fun withVisibility(id: SlotId, visible: Boolean) = copy(hidden = if (visible) hidden - id else hidden + id)
 
+    /** Рамка, охватывающая элементы [ids]; `null`, если ни одного из них нет в раскладке. */
+    fun boundsOf(ids: Set<SlotId>): SlotBounds? =
+        SlotBounds.union(ids.mapNotNull { id -> this[id]?.let { SlotBounds.of(id, it) } })
+
     fun moved(ids: Set<SlotId>, dx: Int, dy: Int) = transform(ids) { it.movedBy(dx, dy) }
 
     private fun transform(ids: Set<SlotId>, change: (SlotPosition) -> SlotPosition) =

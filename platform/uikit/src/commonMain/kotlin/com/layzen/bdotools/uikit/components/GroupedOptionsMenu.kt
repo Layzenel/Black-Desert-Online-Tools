@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Path
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlinx.coroutines.delay
 
-private const val SUBMENU_CLOSE_DELAY_MS = 150L
+internal const val SUBMENU_CLOSE_DELAY_MS = 150L
 
 /**
  * Двухуровневый список: слева группы, при наведении на группу (или клике) справа раскрываются её варианты.

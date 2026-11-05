@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.slots.presentation.event
 
+import com.layzen.bdotools.feature.slots.domain.AlignEdge
 import com.layzen.bdotools.feature.slots.domain.BuiltInLayout
 import com.layzen.bdotools.feature.slots.domain.GamePreset
 import com.layzen.bdotools.feature.slots.domain.ScreenArea
@@ -31,6 +32,12 @@ sealed interface SlotsEvent {
     data object Redo : SlotsEvent
     data class SetGrid(val step: GridStep) : SlotsEvent
     data class SetSnapStep(val step: Int) : SlotsEvent
+    data class SetSnapToSlots(val enabled: Boolean) : SlotsEvent
+    data class SetSnapDistance(val distance: Int) : SlotsEvent
+    data class Align(val edge: AlignEdge) : SlotsEvent
+    data class Distribute(val horizontal: Boolean) : SlotsEvent
+    data object CenterOnCrosshair : SlotsEvent
+    data object Mirror : SlotsEvent
     data class ToggleVisibility(val id: SlotId) : SlotsEvent
 
     // Пресеты

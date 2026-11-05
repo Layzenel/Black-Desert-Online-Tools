@@ -56,8 +56,25 @@
     <string name="slots_legend_off_screen">за краем экрана</string>
     <string name="slots_undo">Отменить</string>
     <string name="slots_redo">Повторить</string>
+
+    <!-- Панель инструментов -->
+    <string name="slots_snap_to_slots">Связка слотов</string>
+    <string name="slots_snap_distance">Порог</string>
+    <string name="slots_snap_distance_value">%1$d px</string>
+    <string name="slots_align">Выровнять</string>
+    <string name="slots_align_left">Выровнять по левому краю</string>
+    <string name="slots_align_center_x">Выровнять по центру по горизонтали</string>
+    <string name="slots_align_right">Выровнять по правому краю</string>
+    <string name="slots_align_top">Выровнять по верхнему краю</string>
+    <string name="slots_align_center_y">Выровнять по центру по вертикали</string>
+    <string name="slots_align_bottom">Выровнять по нижнему краю</string>
+    <string name="slots_distribute_horizontal">Распределить по горизонтали</string>
+    <string name="slots_distribute_vertical">Распределить по вертикали</string>
+    <string name="slots_center_on_crosshair">Поставить по центру прицела</string>
+    <string name="slots_mirror">Отразить слева направо относительно прицела</string>
+    <string name="slots_fit_canvas">Вписать холст в окно</string>
     <string name="slots_reload">Перечитать файл</string>
-    <string name="slots_canvas_hint">Колесо мыши — масштаб, зажатая ЛКМ по пустому месту — сдвиг холста, с Shift — обводка. Ctrl+Z — отменить, Ctrl+Shift+Z или Ctrl+Y — повторить.</string>
+    <string name="slots_canvas_hint">Колесо мыши — масштаб, зажатая ЛКМ по пустому месту — обводка (с Ctrl — добавить к выбору), Shift или Пробел + ЛКМ либо средняя кнопка мыши — сдвиг холста, ПКМ — меню. Ctrl+Z — отменить, Ctrl+Shift+Z или Ctrl+Y — повторить.</string>
     <string name="slots_screen">Экран игры: %1$d × %2$d, масштаб интерфейса %3$s. Сетка и координаты — от прицела.</string>
     <string name="slots_off_screen">Слотов за краем экрана: %1$d — в игре они уедут за край.</string>
 
