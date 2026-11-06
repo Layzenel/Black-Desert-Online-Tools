@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -13,6 +17,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.menu_redo
 import com.layzen.bdotools.feature.uieditor.resources.menu_undo
+import com.layzen.bdotools.feature.uieditor.resources.slots_help_button
 import com.layzen.bdotools.feature.uieditor.resources.slots_redo
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance_value
@@ -21,6 +26,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_snap_step_caption
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_to_slots
 import com.layzen.bdotools.feature.uieditor.resources.slots_undo
 import com.layzen.bdotools.feature.uieditor.resources.tool_grid_step
+import com.layzen.bdotools.feature.uieditor.resources.tool_help
 import com.layzen.bdotools.feature.uieditor.resources.tool_snap
 import com.layzen.bdotools.uikit.components.ActionBar
 import com.layzen.bdotools.uikit.components.DescriptionText
@@ -34,7 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Панель над холстом: история правок, привязка к сетке и прилипание к слотам. Выравнивание — в контекстном
- * меню холста. Работа с файлами — внизу меню слева.
+ * меню холста. Работа с файлами — внизу меню слева. Последней — «?»: окно «Справка».
  */
 @Composable
 internal fun EditorToolbar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
@@ -62,7 +68,16 @@ internal fun EditorToolbar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             range = SlotsState.SNAP_DISTANCE_RANGE,
             onValueChange = { onEvent(SlotsEvent.SetSnapDistance(it)) },
         )
+        ToolbarDivider()
+        HelpTool(state)
     }
+}
+
+@Composable
+private fun HelpTool(state: SlotsState) {
+    var open by remember { mutableStateOf(false) }
+    ToolbarButton(painterResource(Res.drawable.tool_help), stringResource(Res.string.slots_help_button), onClick = { open = true })
+    if (open) HelpDialog(state.loaded?.game?.screen, onDismiss = { open = false })
 }
 
 @Composable

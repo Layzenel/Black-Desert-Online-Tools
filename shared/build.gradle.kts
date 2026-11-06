@@ -22,7 +22,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":platform:composable"))
-            implementation(project(":feature:portraits"))
+            implementation(project(":feature:portraitConstructor"))
             implementation(project(":feature:uiEditor"))
 
             implementation(libs.compose.runtime)

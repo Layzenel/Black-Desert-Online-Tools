@@ -19,41 +19,70 @@ import kotlin.math.roundToInt
 /** Шаг стрелки с Shift, если привязка к сетке выключена. */
 private const val NUDGE_WITHOUT_SNAP = 10
 
-/** Выбор и перемещение слотов, отмена, сетка. */
+/** Выбор и перемещение слотов и окон чата, отмена, сетка. */
 internal class EditorController(private val context: SlotsContext) {
 
-    /** Перетаскивание: раскладка до начала, слот под курсором и накопленный сдвиг в UI-px. */
-    private class DragSession(val origin: SlotLayout, val lead: SlotId) {
+    /**
+     * Перетаскивание: раскладка до начала, точка схваченного под курсором ([lead]: центр слота, у окна чата —
+     * левый нижний угол, как при растягивании) и накопленный сдвиг в UI-px.
+     */
+    private class DragSession(val origin: SlotLayout, val lead: SlotPosition) {
         var dx = 0f
         var dy = 0f
     }
 
     private var drag: DragSession? = null
 
-    fun select(id: SlotId, additive: Boolean) = context.update { it.copy(selection = it.selection.toggled(id, additive)) }
+    fun select(id: SlotId, additive: Boolean) = context.update {
+        it.copy(selection = it.selection.toggled(id, additive), selectedChats = if (additive) it.selectedChats else emptySet())
+    }
 
-    fun clearSelection() = context.update { it.copy(selection = emptySet()) }
+    /** Клик по окну чата: выбрать его одно, с [additive] — добавить к выбору или убрать из него. */
+    fun selectChat(window: Int, additive: Boolean) = context.update {
+        it.copy(selectedChats = it.selectedChats.toggled(window, additive), selection = if (additive) it.selection else emptySet())
+    }
+
+    fun clearSelection() = context.update { it.copy(selection = emptySet(), selectedChats = emptySet()) }
 
     /** Выбирает всё, что задела обводка; с [additive] — вместе с уже выбранным. */
     fun selectArea(area: ScreenArea, additive: Boolean) {
         val screen = context.current.loaded?.game?.screen ?: return
         context.update { state ->
             val touched = state.slots.filterTo(mutableSetOf()) { id -> state.layout[id]?.let { area.touches(id, it, screen) } == true }
-            state.copy(selection = if (additive) state.selection + touched else touched)
+            val chats = state.layout.chats.filter { (window, chat) -> state.layout.isChatShown(window) && area.touches(chat, screen) }.keys
+            state.copy(
+                selection = if (additive) state.selection + touched else touched,
+                selectedChats = if (additive) state.selectedChats + chats else chats,
+            )
         }
     }
 
-    /** Схватить слот: без Shift выбранная группа двигается целиком, невыбранный слот выбирается один. */
+    /** Схватить слот: выбранная группа двигается целиком, невыбранный слот без Ctrl выбирается один. */
     fun dragStart(id: SlotId, additive: Boolean) {
+        val lead = context.current.layout[id] ?: return
+        val grabbed = id in context.current.selection
         context.update { state ->
-            val selection = when {
-                id in state.selection -> state.selection
-                additive -> state.selection + id
-                else -> setOf(id)
+            when {
+                grabbed -> state
+                additive -> state.copy(selection = state.selection + id)
+                else -> state.copy(selection = setOf(id), selectedChats = emptySet())
             }
-            state.copy(selection = selection)
         }
-        drag = DragSession(context.current.layout, id)
+        drag = DragSession(context.current.layout, lead)
+    }
+
+    /** Схватить окно чата — так же, как слот [dragStart]. */
+    fun dragChatStart(window: Int, additive: Boolean) {
+        val bounds = context.current.layout.chats[window]?.bounds ?: return
+        val grabbed = window in context.current.selectedChats
+        context.update { state ->
+            when {
+                grabbed -> state
+                additive -> state.copy(selectedChats = state.selectedChats + window)
+                else -> state.copy(selection = emptySet(), selectedChats = setOf(window))
+            }
+        }
+        drag = DragSession(context.current.layout, SlotPosition(bounds.left.roundToInt(), bounds.bottom.roundToInt()))
     }
 
     /** Сдвиг курсора с прошлого вызова. С привязкой к сетке на узел сетки встаёт слот под курсором. */
@@ -61,10 +90,11 @@ internal class EditorController(private val context: SlotsContext) {
         val session = drag ?: return
         session.dx += dx
         session.dy += dy
-        val lead = session.origin[session.lead] ?: return
+        val lead = session.lead
         val origin = context.current.loaded?.game?.screen?.crosshair ?: SlotPosition(0, 0)
         val target = SlotPosition(snapped(lead.x + session.dx, origin.x), snapped(lead.y + session.dy, origin.y))
-        val moved = session.origin.moved(context.current.selection, target.x - lead.x, target.y - lead.y)
+        val state = context.current
+        val moved = session.origin.moved(state.selection, state.selectedChats, target.x - lead.x, target.y - lead.y)
         val (layout, guides) = snappedToSlots(moved)
         context.update { it.copy(layout = layout, snapGuides = guides) }
     }
@@ -82,18 +112,18 @@ internal class EditorController(private val context: SlotsContext) {
      */
     private fun snappedToSlots(layout: SlotLayout): Pair<SlotLayout, SnapGuides> {
         val state = context.current
-        val moving = layout.boundsOf(state.selection)
+        val moving = layout.boundsOf(state.selection, state.selectedChats)
         if (!state.snapToSlots || moving == null) return layout to SnapGuides.None
         val crosshair = state.loaded?.game?.screen?.crosshair ?: SlotPosition(0, 0)
-        val lines = layout.snapLines(state.slots, state.selection, movingChat = null, crosshair)
+        val lines = layout.snapLines(state.slots, state.selection, state.selectedChats, crosshair)
         val result = snapToLines(moving, lines.x, lines.y, state.snapDistance)
-        return layout.moved(state.selection, result.dx.roundToInt(), result.dy.roundToInt()) to result.guides
+        return layout.moved(state.selection, state.selectedChats, result.dx.roundToInt(), result.dy.roundToInt()) to result.guides
     }
 
     fun nudge(dx: Int, dy: Int, byGrid: Boolean) {
         val step = if (byGrid) context.current.gridSnapStep.takeIf { it > 0 } ?: NUDGE_WITHOUT_SNAP else 1
-        val selection = context.current.selection
-        context.editLayout { it.moved(selection, dx * step, dy * step) }
+        val state = context.current
+        context.editLayout { it.moved(state.selection, state.selectedChats, dx * step, dy * step) }
     }
 
     fun setPosition(id: SlotId, position: SlotPosition) = context.editLayout { it.withPosition(id, position) }
@@ -153,7 +183,7 @@ internal class EditorController(private val context: SlotsContext) {
         return if (step > 0) origin + ((value - origin) / step).roundToInt() * step else value.roundToInt()
     }
 
-    private fun Set<SlotId>.toggled(id: SlotId, additive: Boolean): Set<SlotId> = when {
+    private fun <T> Set<T>.toggled(id: T, additive: Boolean): Set<T> = when {
         !additive -> setOf(id)
         id in this -> this - id
         else -> this + id

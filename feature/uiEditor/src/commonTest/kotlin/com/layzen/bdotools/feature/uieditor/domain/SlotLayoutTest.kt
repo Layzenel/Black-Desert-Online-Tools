@@ -1,7 +1,9 @@
 package com.layzen.bdotools.feature.uieditor.domain
 
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SlotLayoutTest {
 
@@ -52,6 +54,13 @@ class SlotLayoutTest {
             val positions = builtIn.layout.positions
             assertEquals(SlotGroup.Cooldown.slots.toSet(), positions.keys, builtIn.name)
             assertEquals(positions.size, positions.values.toSet().size, builtIn.name)
+            // Рамки 50×50 не налезают друг на друга
+            val points = positions.values.toList()
+            points.forEachIndexed { i, a ->
+                points.drop(i + 1).forEach { b ->
+                    assertTrue(abs(a.x - b.x) >= 50 || abs(a.y - b.y) >= 50, "${builtIn.name}: $a и $b")
+                }
+            }
         }
     }
 }

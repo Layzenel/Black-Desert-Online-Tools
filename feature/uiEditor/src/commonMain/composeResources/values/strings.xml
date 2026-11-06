@@ -11,13 +11,15 @@
     <string name="slots_loading">Читаем настройки игры…</string>
 
     <!-- Боковая панель -->
-    <string name="slots_presets">Пресеты</string>
-    <string name="slots_presets_description">Готовые раскладки меняют только слоты перезарядки.</string>
+    <string name="slots_presets">Готовые пресеты</string>
     <string name="slots_preset_game">Как сейчас в игре</string>
-    <string name="slots_preset_two_rows">Два ряда под персонажем</string>
     <string name="slots_preset_sides">Колонки по бокам</string>
-    <string name="slots_preset_arc">Дуга над персонажем</string>
-    <string name="slots_preset_block">Блок 5×4 под персонажем</string>
+    <string name="slots_preset_arc">Дуга под персонажем</string>
+    <string name="slots_preset_horseshoe">Подкова</string>
+    <string name="slots_preset_ring">Кольцо у прицела</string>
+    <string name="slots_preset_wings">Крылья</string>
+    <string name="slots_preset_5plus5and5plus5">5+5 | 5+5</string>
+    <string name="slots_preset_key_clusters">Кластеры по клавишам</string>
     <string name="slots_user_presets">Мои пресеты</string>
     <string name="slots_user_presets_empty">Пока пусто. Сохранённые раскладки лежат в «Black Desert\\BDO Tools\\slots\\presets».</string>
     <string name="slots_grid">Сетка от прицела</string>
@@ -26,7 +28,7 @@
     <string name="slots_grid_off">Х</string>
     <string name="slots_grid_size">%1$d</string>
     <string name="slots_background">Подложка</string>
-    <string name="slots_background_description">Свой скриншот из игры — так проще ставить слоты вокруг персонажа.</string>
+    <string name="slots_background_description">Свой скриншот игры, сделанный со скрытым интерфейсом, упростит размещение элементов.</string>
     <string name="slots_background_pick">Выбрать</string>
     <string name="slots_background_hide">Спрятать</string>
     <string name="slots_background_show">Показать</string>
@@ -35,9 +37,9 @@
     <string name="slots_background_dim">Затенение, %</string>
 
     <!-- Выбранный слот -->
-    <string name="slots_selection">Выбранный слот</string>
-    <string name="slots_selection_hint">Клик — выбрать, Shift+клик — добавить к выбору, Shift и протянуть по пустому месту — обвести рамкой. Esc или клик по пустому месту снимает выбор. Стрелки двигают на 1, со Shift — на шаг привязки. Глазик в углу иконки скрывает элемент в игре.</string>
-    <string name="slots_selection_many">Выбрано слотов: %1$d</string>
+    <string name="slots_selection">Выбранный элемент</string>
+    <string name="slots_selection_hint">Выберите элемент или окно чата на холсте. Как управлять — кнопка «?» в конце панели инструментов.</string>
+    <string name="slots_selection_many">Выбрано элементов: %1$d</string>
     <string name="slots_slot_cooldown">Перезарядка · слот %1$d</string>
     <string name="slots_slot_hotbar">Хотбар · слот %1$d</string>
     <string name="slots_slot_index">UIData Index %1$d</string>
@@ -57,11 +59,9 @@
     <string name="slots_chat">Чат %1$d</string>
     <string name="slots_chat_take_out">Вынести в отдельный чат</string>
     <string name="slots_chat_bring_in">Внести в основной чат</string>
-    <string name="slots_chat_size_title">Размер: %1$s</string>
     <string name="slots_chat_width">Ширина</string>
     <string name="slots_chat_height">Высота</string>
-    <string name="slots_apply_size">Применить</string>
-    <string name="slots_chat_size_description">В UI-px. Ширина — от %1$d до %2$d, высота — от %3$d до %4$d; лишнее обрежется. Левый нижний угол окна останется на месте.</string>
+    <string name="slots_chat_size_description">Ширина — от %1$d до %2$d, высота — от %3$d до %4$d UI-px. Левый нижний угол окна остаётся на месте.</string>
     <string name="slots_preview_chats">Чаты</string>
     <string name="slots_chat_size">%1$d x %2$d</string>
     <string name="slots_element_health">Здоровье</string>
@@ -98,9 +98,33 @@
     <string name="slots_distribute_horizontal">Распределить по горизонтали</string>
     <string name="slots_distribute_vertical">Распределить по вертикали</string>
     <string name="slots_reload">Перечитать файл</string>
-    <string name="slots_canvas_hint">Колесо мыши — масштаб, зажатая ЛКМ по пустому месту — обводка (с Ctrl — добавить к выбору), Shift или Пробел + ЛКМ либо средняя кнопка мыши — сдвиг холста, ПКМ — меню. Ctrl+Z — отменить, Ctrl+Shift+Z или Ctrl+Y — повторить.</string>
     <string name="slots_screen">Экран игры: %1$d × %2$d, масштаб интерфейса %3$s. Сетка и координаты — от прицела.</string>
     <string name="slots_off_screen">Слотов за краем экрана: %1$d — в игре они уедут за край.</string>
+
+    <!-- Отдаление групп -->
+    <string name="slots_spread_description">Группы — касающиеся друг друга элементы и окна чата. Слайдеры разносят группы от центра между ними, UI-px.</string>
+    <string name="slots_spread_horizontal">Отдаление по горизонтали</string>
+    <string name="slots_spread_vertical">Отдаление по вертикали</string>
+
+    <!-- Справка: кнопка «?» на панели инструментов -->
+    <string name="slots_help">Справка</string>
+    <string name="slots_help_button">Помощь</string>
+    <string name="slots_help_controls">Управление</string>
+    <string name="slots_help_legend">Обозначения</string>
+    <string name="slots_help_item">%1$d. %2$s</string>
+    <string-array name="slots_help_items">
+        <item>Клик по элементу или окну чата — выбрать его, Ctrl+клик — добавить к выбору или убрать из него.</item>
+        <item>Зажатая ЛКМ по пустому месту — обвести рамкой элементы и окна чата, с Ctrl — добавить к выбору.</item>
+        <item>Перетаскивание элемента или окна чата — двигает всё выбранное вместе.</item>
+        <item>Ручка в правом верхнем углу окна чата — растянуть окно. Точные место и размер выбранного окна — в боковой панели.</item>
+        <item>Стрелки — сдвинуть выбранное на 1 UI-px, со Shift — на шаг привязки.</item>
+        <item>Esc или клик по пустому месту — снять выбор.</item>
+        <item>ПКМ — меню: выравнивание, распределение, заметка под слотом.</item>
+        <item>Колесо мыши — масштаб холста.</item>
+        <item>Shift или Пробел + ЛКМ либо средняя кнопка мыши — сдвиг холста.</item>
+        <item>Глазик в рамке — скрыть или показать элемент в игре.</item>
+        <item>Ctrl+Z — отменить, Ctrl+Shift+Z или Ctrl+Y — повторить.</item>
+    </string-array>
 
     <!-- Панель действий -->
     <string name="slots_import">Импорт</string>
@@ -117,7 +141,7 @@
     <string name="slots_import_title">Импорт раскладки</string>
     <string name="slots_import_description">Вставьте содержимое файла .json или выберите сам файл. Элементы встанут от прицела и углов экрана так же, как у автора, даже если у него другой монитор. Группы, которых нет в файле, не изменятся.</string>
     <string name="slots_import_file">Выбрать файл</string>
-    <string name="slots_import_confirm">Импортировать</string>
+    <string name="slots_import_confirm">Импорт</string>
     <string name="slots_import_next">Далее</string>
     <string name="slots_import_not_json">Не получилось прочитать JSON.</string>
     <string name="slots_import_wrong_format">Это не файл раскладки BDO Tools.</string>
@@ -127,12 +151,11 @@
     <string name="slots_apply_confirm">Игра закрыта, применить</string>
     <string name="slots_apply_target">Куда записать</string>
     <string name="slots_game_preset">Набор позиций игры</string>
-    <string name="slots_game_preset_description">Какой набор правится: общий — то, что сейчас на экране в игре, пресеты 1–3 — кнопки «Пресет» в окне «Редактирование интерфейса».</string>
     <string name="slots_game_preset_general">Общий</string>
     <string name="slots_game_preset_number">Пресет %1$d</string>
     <string name="slots_preview_import_title">Превью импорта</string>
     <string name="slots_preview_export_title">Превью экспорта</string>
-    <string name="slots_preview_export_confirm">Экспортировать</string>
+    <string name="slots_preview_export_confirm">Экспорт</string>
     <string name="slots_preview_screen">Монитор для просмотра</string>
     <string name="slots_preview_screen_description">Только для просмотра: так раскладка ляжет на чужой монитор. В файл она попадёт с якорями и у получателя встанет по его экрану.</string>
     <string name="slots_preview_resolution">Разрешение</string>

@@ -59,5 +59,4 @@ sealed interface SlotsDialog {
     data class ConfirmDelete(val name: String) : SlotsDialog
 
     /** Ввод размера окна чата [window] руками. */
-    data class ChatSize(val window: Int) : SlotsDialog
 }

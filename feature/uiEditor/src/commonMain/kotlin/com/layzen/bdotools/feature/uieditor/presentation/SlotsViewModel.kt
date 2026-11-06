@@ -8,6 +8,7 @@ import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.uieditor.data.SlotsRepository
 import com.layzen.bdotools.feature.uieditor.data.SlotsStorage
 import com.layzen.bdotools.feature.uieditor.presentation.controller.ChatsController
+import com.layzen.bdotools.feature.uieditor.presentation.controller.GroupSpreadController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.EditorController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.GameController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.LayoutFilesController
@@ -31,6 +32,7 @@ class SlotsViewModel(
     private val context = SlotsContext(viewModelScope)
     private val editor = EditorController(context)
     private val chats = ChatsController(context)
+    private val spread = GroupSpreadController(context)
     private val presets = PresetsController(context, repository)
     private val files = LayoutFilesController(context, repository, device)
     private val game = GameController(context, storage, repository, device, accounts)
@@ -59,6 +61,8 @@ class SlotsViewModel(
             SlotsEvent.ClearSelection -> editor.clearSelection()
             is SlotsEvent.SelectArea -> editor.selectArea(event.area, event.additive)
             is SlotsEvent.DragStart -> editor.dragStart(event.id, event.additive)
+            is SlotsEvent.SelectChat -> editor.selectChat(event.window, event.additive)
+            is SlotsEvent.DragChatStart -> editor.dragChatStart(event.window, event.additive)
             is SlotsEvent.DragBy -> editor.dragBy(event.dx, event.dy)
             SlotsEvent.DragEnd -> editor.dragEnd()
             is SlotsEvent.Nudge -> editor.nudge(event.dx, event.dy, event.byGrid)
@@ -72,10 +76,11 @@ class SlotsViewModel(
             is SlotsEvent.SetSnapDistance -> editor.setSnapDistance(event.distance)
             is SlotsEvent.Align -> editor.align(event.edge, event.anchor)
             is SlotsEvent.Distribute -> editor.distribute(event.horizontal)
-            is SlotsEvent.MoveChat -> chats.move(event.window, event.dx, event.dy)
             is SlotsEvent.ResizeChat -> chats.resize(event.window, event.dx, event.dy)
-            is SlotsEvent.OpenChatSize -> chats.openSize(event.window)
             is SlotsEvent.SetChatSize -> chats.setSize(event.window, event.width, event.height)
+            is SlotsEvent.SetChatPosition -> chats.setPosition(event.window, event.center)
+            is SlotsEvent.SpreadGroups -> spread.spread(event.horizontal, event.value)
+            SlotsEvent.SpreadGroupsEnd -> spread.end()
             SlotsEvent.ChatEditEnd -> chats.endEdit()
             is SlotsEvent.ToggleChatVisibility -> chats.toggleVisibility(event.window)
             is SlotsEvent.DetachChat -> chats.detach(event.window)

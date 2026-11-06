@@ -7,36 +7,19 @@ import com.layzen.bdotools.feature.uieditor.domain.SnapGuides
 import com.layzen.bdotools.feature.uieditor.domain.SnapLines
 import com.layzen.bdotools.feature.uieditor.domain.nearestLine
 import com.layzen.bdotools.feature.uieditor.domain.snapLines
-import com.layzen.bdotools.feature.uieditor.domain.snapToLines
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
-import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
+import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
 import kotlin.math.roundToInt
 
 /**
- * Окна чата в редакторе: перемещение, растягивание и размер, видимость, вынос вкладки в отдельное окно и обратно.
- * Перемещение и растягивание слушаются тех же привязок, что и слоты: к сетке от прицела и к элементам.
+ * Окна чата в редакторе: растягивание, размер и место руками, видимость, вынос вкладки в отдельное окно и обратно.
+ * Растягивание слушается тех же привязок, что и слоты: к сетке от прицела и к элементам. Перетаскивают окно
+ * вместе с выбранными элементами, см. [EditorController.dragChatStart].
  */
 internal class ChatsController(private val context: SlotsContext) {
 
     /** Раскладка до начала жеста: от неё считается сдвиг, и она уйдёт в «Отменить», когда жест закончится. */
     private var origin: SlotLayout? = null
-
-    /**
-     * Перетаскивание окна [window] на [dx], [dy] UI-px от начала жеста. С привязкой к сетке на узел встаёт левый нижний
-     * угол, при прилипании — ближайший край или середина рамки.
-     */
-    fun move(window: Int, dx: Int, dy: Int) = edit(window) { chat, screen ->
-        val bounds = chat.bounds
-        val crosshair = screen.crosshair
-        var moved = chat.movedBy(gridShift(bounds.left, dx, crosshair.x), gridShift(bounds.bottom, dy, crosshair.y))
-        var guides = SnapGuides.None
-        lines(window, screen)?.let { lines ->
-            val result = snapToLines(moved.bounds, lines.x, lines.y, context.current.snapDistance)
-            moved = moved.movedBy(result.dx.roundToInt(), result.dy.roundToInt())
-            guides = result.guides
-        }
-        moved to guides
-    }
 
     /** Растягивание окна [window] за правый верхний угол на [dx], [dy] UI-px от начала жеста; угол слушается привязок. */
     fun resize(window: Int, dx: Int, dy: Int) = edit(window) { chat, screen ->
@@ -65,7 +48,12 @@ internal class ChatsController(private val context: SlotsContext) {
             val chat = layout.chats[window] ?: return@editLayout layout
             layout.withChat(window, chat.withSize(width, height, screen))
         }
-        context.update { it.copy(dialog = null) }
+    }
+
+    /** Центр окна [window] от центра экрана, введённый руками. */
+    fun setPosition(window: Int, center: SlotPosition) = context.editLayout { layout ->
+        val chat = layout.chats[window] ?: return@editLayout layout
+        layout.withChat(window, chat.copy(center = center))
     }
 
     /** «Вынести» на плашке вкладки: окно встаёт над главным. */
@@ -79,9 +67,6 @@ internal class ChatsController(private val context: SlotsContext) {
         val chat = layout.chats[window] ?: return@editLayout layout
         layout.withChat(window, chat.copy(visible = !chat.visible))
     }
-
-
-    fun openSize(window: Int) = context.update { it.copy(dialog = SlotsDialog.ChatSize(window)) }
 
     /** Шаг жеста: окно считается от раскладки на начало жеста, линии прилипания показываются на холсте. */
     private fun edit(window: Int, change: (ChatWindow, ScreenSpace) -> Pair<ChatWindow, SnapGuides>) {
@@ -107,6 +92,6 @@ internal class ChatsController(private val context: SlotsContext) {
     private fun lines(window: Int, screen: ScreenSpace): SnapLines? {
         val state = context.current
         if (!state.snapToSlots) return null
-        return (origin ?: state.layout).snapLines(state.slots, emptySet(), window, screen.crosshair)
+        return (origin ?: state.layout).snapLines(state.slots, emptySet(), setOf(window), screen.crosshair)
     }
 }

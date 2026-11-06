@@ -87,7 +87,7 @@ private fun CanvasContent(
     val tabs = chats.filterValues { it.combined }.keys.toList()
     chats.filterValues { !it.combined }.forEach { (window, chat) ->
         val windowTabs = if (window == ChatWindow.MAIN) tabs else emptyList()
-        ChatFrame(window, chat, windowTabs, state.layout.isChatShown(window), screen, scale, onEvent)
+        ChatFrame(window, chat, windowTabs, state.layout.isChatShown(window), window in state.selectedChats, screen, scale, onEvent, onPress)
     }
     state.slots.forEach { id ->
         val position = state.layout[id] ?: return@forEach

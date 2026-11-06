@@ -14,6 +14,7 @@ import com.layzen.bdotools.feature.uieditor.domain.SnapGuides
  * @property loaded прочитанный `gamevariable.xml`; `null`, пока файл не прочитан.
  * @property layout раскладка в редакторе — её и запишет «Применить в игру».
  * @property history предыдущие раскладки для «Отменить», последняя — в конце.
+ * @property selectedChats выбранные отдельные окна чата (`WindowIndex`): двигаются вместе с выбранными элементами.
  * @property future отменённые раскладки для «Повторить», ближайшая — в конце; новая правка их забывает.
  * @property activePreset пресет, из которого взята раскладка; `null` после правки руками.
  * @property snapToGrid привязка к узлам сетки с шагом [snapStep], отсчитанным от прицела; по умолчанию выключена.
@@ -32,6 +33,7 @@ data class SlotsState(
     val history: List<SlotLayout> = emptyList(),
     val future: List<SlotLayout> = emptyList(),
     val selection: Set<SlotId> = emptySet(),
+    val selectedChats: Set<Int> = emptySet(),
     val presets: List<NamedLayout> = emptyList(),
     val activePreset: PresetRef? = PresetRef.Game,
     val grid: GridStep = GridStep.Game,
@@ -60,6 +62,9 @@ data class SlotsState(
      * скрытые — приглушёнными.
      */
     val slots: List<SlotId> get() = loaded?.game?.slots.orEmpty().filter { it.isActiveWith(layout.customQuickSlots) }
+
+    /** Сколько всего выбрано: элементов и окон чата. */
+    val selectedCount: Int get() = selection.size + selectedChats.size
 
     /** Шаг привязки к сетке, который действует сейчас: 0, пока привязка выключена. */
     val gridSnapStep: Int get() = if (snapToGrid) snapStep else 0

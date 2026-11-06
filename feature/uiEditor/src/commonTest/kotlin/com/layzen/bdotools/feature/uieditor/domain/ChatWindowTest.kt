@@ -104,7 +104,7 @@ class ChatWindowTest {
         val tab = ChatWindow(SlotPosition(0, 0), 420, 222, combined = true)
         val side = ChatWindow(SlotPosition(1000, 600), 400, 200)
         val layout = SlotLayout(chats = mapOf(0 to main, 1 to tab, 4 to side))
-        val lines = layout.snapLines(emptyList(), emptySet(), movingChat = 4, crosshair = SlotPosition(0, -131))
+        val lines = layout.snapLines(emptyList(), emptySet(), movingChats = setOf(4), crosshair = SlotPosition(0, -131))
         assertEquals(listOf(0.0, -1300.0, -1000.0, -700.0), lines.x)
         assertEquals(listOf(-131.0, 450.0, 600.0, 750.0), lines.y)
     }
