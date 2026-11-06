@@ -72,6 +72,12 @@ class PortraitDecorationTest {
     }
 
     @Test
+    fun worldBossBadgeSurvivesRoundTrip() {
+        assertEquals(SlotIcon.WorldBoss, SlotIcon.fromKey(SlotIcon.WorldBoss.key))
+        assertEquals(SlotIcon.WorldBoss, BadgeGroup.Functional.icons.first())
+    }
+
+    @Test
     fun legacyBadgeKeysMapToLifeSkills() {
         assertEquals(SlotIcon.Skill(LifeSkill.Training), decodeDecoration("top=horse-breeder\n").badge)
         assertEquals(SlotIcon.Skill(LifeSkill.Fishing), decodeDecoration("left=fisher\n").badge)

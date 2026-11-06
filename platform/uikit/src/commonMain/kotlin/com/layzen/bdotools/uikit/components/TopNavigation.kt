@@ -6,25 +6,27 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.foundation.Image
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
@@ -34,6 +36,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Верхняя навигация сайта: бронзовая полоса в стиле шапки окна, название слева и вкладки.
  * Выбранная вкладка — тёмная подложка, золотой текст и золотая черта снизу.
  * На узком экране вкладки прокручиваются по горизонтали.
+ * У вкладки иконка [icon] (белый силуэт) и подпись справа от неё, выровненная по левому краю.
  * [selected] равен `null`, когда открыт экран вне вкладок. [trailing] — элементы у правого края полосы,
  * например выбор аккаунта.
  */
@@ -43,6 +46,7 @@ fun <T> TopNavigation(
     selected: T?,
     onSelect: (T) -> Unit,
     label: @Composable (T) -> String,
+    icon: @Composable (T) -> Painter,
     modifier: Modifier = Modifier,
     title: String? = null,
     trailing: @Composable RowScope.() -> Unit = {},
@@ -75,6 +79,7 @@ fun <T> TopNavigation(
             tabs.forEach { tab ->
                 TopNavigationTab(
                     text = label(tab),
+                    icon = icon(tab),
                     selected = tab == selected,
                     onClick = { onSelect(tab) },
                 )
@@ -92,6 +97,7 @@ fun <T> TopNavigation(
 @Composable
 private fun TopNavigationTab(
     text: String,
+    icon: Painter,
     selected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -99,7 +105,12 @@ private fun TopNavigationTab(
     val dimens = AppTheme.dimens
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
-    Box(
+    val contentColor = when {
+        selected -> colors.accentGold
+        hovered -> colors.textPrimary
+        else -> colors.textBeige
+    }
+    Row(
         Modifier
             .fillMaxHeight()
             .pointerHoverIcon(PointerIcon.Hand)
@@ -123,18 +134,10 @@ private fun TopNavigationTab(
                 }
             }
             .padding(horizontal = dimens.spaceL),
-        contentAlignment = Alignment.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.spaceS),
     ) {
-        Text(
-            text = text,
-            style = AppTheme.typography.menuItem,
-            color = when {
-                selected -> colors.accentGold
-                hovered -> colors.textPrimary
-                else -> colors.textBeige
-            },
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-        )
+        Image(icon, contentDescription = null, Modifier.size(dimens.iconSize), colorFilter = ColorFilter.tint(contentColor))
+        Text(text = text, style = AppTheme.typography.menuItem, color = contentColor, maxLines = 2)
     }
 }

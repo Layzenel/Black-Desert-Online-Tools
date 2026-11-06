@@ -37,6 +37,9 @@
     <string name="app_version">v%1$s</string>
     <string name="app_version_dev">dev</string>
 
+    <!-- Ссылка на настольную версию в верхней навигации сайта -->
+    <string name="desktop_download">Скачать программу для Windows — она работает быстрее</string>
+
     <!-- Обновление сайта -->
     <string name="web_update_available">Вышла новая версия сайта %1$s. Обновите страницу, чтобы получить изменения.</string>
     <string name="web_update_reload">Обновить страницу</string>

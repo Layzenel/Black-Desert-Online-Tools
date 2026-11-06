@@ -3,7 +3,7 @@ package com.layzen.bdotools.feature.portraits.domain
 import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.core.game.LifeSkill
 
-/** Группы в списке выбора значка: классы персонажей и функциональные — жизненные навыки. */
+/** Группы в списке выбора значка: классы персонажей и функциональные — мировой босс первым, затем жизненные навыки. */
 enum class BadgeGroup {
     Class,
     Functional,
@@ -12,6 +12,6 @@ enum class BadgeGroup {
     val icons: List<SlotIcon>
         get() = when (this) {
             Class -> CharacterClass.entries.map(SlotIcon::Class)
-            Functional -> LifeSkill.entries.map(SlotIcon::Skill)
+            Functional -> listOf(SlotIcon.WorldBoss) + LifeSkill.entries.map(SlotIcon::Skill)
         }
 }

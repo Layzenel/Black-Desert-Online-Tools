@@ -76,6 +76,7 @@
     <string name="portraits_badge_change">Заменить значок</string>
     <string name="portraits_badge_group_class">Класс</string>
     <string name="portraits_badge_group_functional">Функциональные</string>
+    <string name="portraits_badge_world_boss">Мировой босс</string>
 
     <!-- Предпросмотр -->
     <string name="portraits_decoration_loading">Загружаю портрет…</string>
