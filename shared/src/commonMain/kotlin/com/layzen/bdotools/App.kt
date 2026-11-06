@@ -85,19 +85,22 @@ private fun AppContent() {
             AccountPicker(accountsState.accounts, accounts::select, accounts::readPortrait)
         }
         AppUpdateBanner()
-        when (current) {
-            Destination.Showcase -> ComponentShowcase()
-            is Destination.Tab -> Box(
-                Modifier
-                    .fillMaxSize()
-                    .then(
-                        if (current.tab.fillsScreen) Modifier
-                        else Modifier.verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceXl),
-                    ),
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                TabContent(current.tab)
+        Box(Modifier.weight(1f)) {
+            when (current) {
+                Destination.Showcase -> ComponentShowcase()
+                is Destination.Tab -> Box(
+                    Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (current.tab.fillsScreen) Modifier
+                            else Modifier.verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceXl),
+                        ),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
+                    TabContent(current.tab)
+                }
             }
+            DisclaimerFooter(Modifier.align(Alignment.BottomCenter))
         }
     }
 }

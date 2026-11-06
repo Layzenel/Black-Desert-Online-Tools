@@ -30,6 +30,9 @@
     <string name="account_switcher_label">Аккаунт</string>
     <string name="account_option">%1$s · %2$d перс.</string>
 
+    <!-- Оговорка внизу окна: формулировку требует «Руководство по созданию фан-контента» Pearl Abyss -->
+    <string name="app_disclaimer">Неофициальный фанатский проект, не связан с Pearl Abyss. Настоящий контент, включающий торговые марки и (или) произведения, интеллектуальные права на которые принадлежат Pearl Abyss, не является официальным. BDO Tools меняет только файлы настроек в «Документы\\Black Desert» и не трогает клиент игры.</string>
+
     <!-- Версия в верхней навигации -->
     <string name="app_version">v%1$s</string>
     <string name="app_version_dev">dev</string>

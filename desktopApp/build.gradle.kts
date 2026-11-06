@@ -42,7 +42,7 @@ compose.desktop {
             packageName = "BDO Tools"
             packageVersion = desktopVersion
             // Только латиница: WiX собирает MSI в кодовой странице 1252 и падает на кириллице (ошибка LGHT0311)
-            description = "Black Desert Online Tools"
+            description = "Unofficial fan tools for Black Desert Online, not affiliated with Pearl Abyss"
             vendor = "Layzen"
             // Список от задачи suggestRuntimeModules: без них урезанная JRE не запустит программу
             modules("java.instrument", "java.net.http", "java.prefs", "jdk.security.auth", "jdk.unsupported")
