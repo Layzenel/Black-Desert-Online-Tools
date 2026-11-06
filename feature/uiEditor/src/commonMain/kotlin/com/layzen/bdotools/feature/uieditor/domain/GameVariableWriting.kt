@@ -46,7 +46,7 @@ fun writeCustomQuickSlots(text: String, enabled: Boolean): String {
 private fun String.replaceTag(tag: String, index: Int, change: (String) -> String): String =
     Regex("""<$tag\s+Index="$index"[^>]*>""").replace(this) { change(it.value) }
 
-private fun String.withAttribute(name: String, value: String): String =
+internal fun String.withAttribute(name: String, value: String): String =
     replace(Regex("""\b$name="[^"]*""""), "$name=\"$value\"")
 
 /** Число с [digits] знаками после точки, без экспоненты: `0.3393750000`. */

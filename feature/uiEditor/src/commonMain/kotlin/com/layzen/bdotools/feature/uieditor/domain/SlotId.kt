@@ -9,6 +9,12 @@ data class SlotId(val group: SlotGroup, val number: Int) {
     val interfaceElement: InterfaceElement?
         get() = if (group == SlotGroup.Interface) InterfaceElement.entries[number - 1] else null
 
+    /**
+     * Правит ли редактор видимость элемента. Нет — у тех, чью видимость меняет сама игра
+     * ([InterfaceElement.visibilityByGame]): они всегда показаны видимыми, а `IsShow` в файле не трогается.
+     */
+    val hasVisibilityToggle: Boolean get() = interfaceElement?.visibilityByGame != true
+
     /** Ширина рамки в UI-px. */
     val width: Int get() = interfaceElement?.width ?: group.width
 

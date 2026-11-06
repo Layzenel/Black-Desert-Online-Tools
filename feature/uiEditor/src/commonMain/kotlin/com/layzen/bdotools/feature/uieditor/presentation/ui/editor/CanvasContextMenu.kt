@@ -76,8 +76,12 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
                         ActionMenuItem(stringResource(edge.title()), run(SlotsEvent.Align(edge, alignAnchor)), icon = painterResource(edge.icon()))
                     }
                 }
-                ContextSubmenu.DistributeHorizontal, ContextSubmenu.DistributeVertical ->
-                    SubmenuSlider(state.distributeGap, SlotsState.DISTRIBUTE_GAP_RANGE) { onEvent(SlotsEvent.SetDistributeGap(it)) }
+                ContextSubmenu.DistributeHorizontal, ContextSubmenu.DistributeVertical -> {
+                    val horizontal = submenu == ContextSubmenu.DistributeHorizontal
+                    SubmenuSlider(state.distributeGap(horizontal), SlotsState.DISTRIBUTE_GAP_RANGE) {
+                        onEvent(SlotsEvent.SetDistributeGap(it, horizontal))
+                    }
+                }
                 ContextSubmenu.SnapDistance ->
                     SubmenuSlider(state.snapDistance, SlotsState.SNAP_DISTANCE_RANGE) { onEvent(SlotsEvent.SetSnapDistance(it)) }
                 ContextSubmenu.SnapStep ->
@@ -118,14 +122,15 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
         )
         // Клик распределяет, справа выезжает промежуток между рамками
         val canDistribute = selected >= ARRANGE_MIN
-        val gapText = stringResource(Res.string.slots_snap_distance_value, state.distributeGap)
+        val gapXText = stringResource(Res.string.slots_snap_distance_value, state.distributeGapX)
+        val gapYText = stringResource(Res.string.slots_snap_distance_value, state.distributeGapY)
         ActionMenuItem(
             stringResource(Res.string.slots_distribute_horizontal),
             run(SlotsEvent.Distribute(horizontal = true)),
             modifier = if (canDistribute) trigger(ContextSubmenu.DistributeHorizontal) else Modifier,
             enabled = canDistribute,
             icon = painterResource(Res.drawable.tool_distribute_horizontal),
-            trailingText = gapText.takeIf { canDistribute },
+            trailingText = gapXText.takeIf { canDistribute },
             trailingIcon = painterResource(Res.drawable.tool_chevron_right),
         )
         ActionMenuItem(
@@ -134,7 +139,7 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
             modifier = if (canDistribute) trigger(ContextSubmenu.DistributeVertical) else Modifier,
             enabled = canDistribute,
             icon = painterResource(Res.drawable.tool_distribute_vertical),
-            trailingText = gapText.takeIf { canDistribute },
+            trailingText = gapYText.takeIf { canDistribute },
             trailingIcon = painterResource(Res.drawable.tool_chevron_right),
         )
         // Только у слота перезарядки, по которому открыли меню: клик ставит или убирает, справа выезжает ширина

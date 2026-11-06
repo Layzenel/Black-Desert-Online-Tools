@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -18,6 +19,8 @@ import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.domain.SlotId
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
+import com.layzen.bdotools.feature.uieditor.domain.ChatWindow
+import com.layzen.bdotools.feature.uieditor.domain.FixedElement
 import kotlin.math.roundToInt
 
 /**
@@ -52,8 +55,12 @@ internal fun SlotsCanvas(state: SlotsState, viewport: CanvasViewport, onEvent: (
         overlay = {
             // Пустой Box в точке клика: меню раскрывается от его угла
             menuAt?.let { at ->
-                Box(Modifier.offset { IntOffset(at.x.roundToInt(), at.y.roundToInt()) }) {
-                    CanvasContextMenu(state, menuAnchor, onDismiss = { menuAt = null }, onEvent = onEvent)
+                // Новое меню в новой точке — заново, а закрытие старого не трогает уже открытое новое:
+                // правый клик мимо меню и закрывает его, и открывает меню там, где кликнули
+                key(at) {
+                    Box(Modifier.offset { IntOffset(at.x.roundToInt(), at.y.roundToInt()) }) {
+                        CanvasContextMenu(state, menuAnchor, onDismiss = { if (menuAt == at) menuAt = null }, onEvent = onEvent)
+                    }
                 }
             }
         },
@@ -74,6 +81,14 @@ private fun CanvasContent(
     state.background?.takeIf { state.backgroundShown }?.let { BackgroundImage(it, state.backgroundDim) }
     GridLayer(state.grid, screen, scale, Modifier.fillMaxSize())
     CrosshairLayer(screen, scale, Modifier.fillMaxSize())
+    FixedElement.entries.forEach { FixedElementFrame(it, screen, scale) }
+    // Чаты под слотами: слоты над ними остаются кликабельными. Вкладки главного окна рисует само главное окно
+    val chats = state.layout.chats
+    val tabs = chats.filterValues { it.combined }.keys.toList()
+    chats.filterValues { !it.combined }.forEach { (window, chat) ->
+        val windowTabs = if (window == ChatWindow.MAIN) tabs else emptyList()
+        ChatFrame(window, chat, windowTabs, state.layout.isChatShown(window), screen, scale, onEvent)
+    }
     state.slots.forEach { id ->
         val position = state.layout[id] ?: return@forEach
         state.layout.labels[id]?.let { chars ->

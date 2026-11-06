@@ -13,8 +13,10 @@ import androidx.compose.ui.graphics.Color
 import com.layzen.bdotools.feature.uieditor.domain.SlotGroup
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.resources.Res
+import com.layzen.bdotools.feature.uieditor.resources.slots_legend_chat
 import com.layzen.bdotools.feature.uieditor.resources.slots_legend_class_resource
 import com.layzen.bdotools.feature.uieditor.resources.slots_legend_cooldown
+import com.layzen.bdotools.feature.uieditor.resources.slots_legend_fixed
 import com.layzen.bdotools.feature.uieditor.resources.slots_legend_hotbar
 import com.layzen.bdotools.feature.uieditor.resources.slots_legend_interface
 import com.layzen.bdotools.feature.uieditor.resources.slots_legend_off_screen
@@ -29,6 +31,8 @@ internal fun EditorLegend() {
         LegendItem(SlotGroup.Hotbar.frameColor(), stringResource(Res.string.slots_legend_hotbar))
         LegendItem(SlotGroup.ClassResource.frameColor(), stringResource(Res.string.slots_legend_class_resource))
         LegendItem(SlotGroup.Interface.frameColor(), stringResource(Res.string.slots_legend_interface))
+        LegendItem(AppTheme.colors.textBeige, stringResource(Res.string.slots_legend_chat))
+        LegendItem(fixedElementColor(), stringResource(Res.string.slots_legend_fixed))
         LegendItem(AppTheme.colors.danger, stringResource(Res.string.slots_legend_off_screen))
     }
 }

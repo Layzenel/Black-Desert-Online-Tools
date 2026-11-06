@@ -7,32 +7,67 @@ package com.layzen.bdotools.feature.uieditor.domain
  *
  * [customQuickSlots] — «Настройка быстрых слотов» игры: `true` — хотбар из 20 отдельных слотов, `false` — одна
  * панель «Быстрый слот» ([InterfaceElement.QuickSlot]); `null` — раскладка её не задаёт и не меняет.
+ *
+ * [chats] — окна чата по `WindowIndex`.
  */
 data class SlotLayout(
     val positions: Map<SlotId, SlotPosition> = emptyMap(),
     val hidden: Set<SlotId> = emptySet(),
     val labels: Map<SlotId, Int> = emptyMap(),
     val customQuickSlots: Boolean? = null,
+    val chats: Map<Int, ChatWindow> = emptyMap(),
 ) {
 
     operator fun get(id: SlotId): SlotPosition? = positions[id]
 
-    fun isVisible(id: SlotId): Boolean = id !in hidden
+    /** Виден ли элемент; у элементов без своего глазика ([SlotId.hasVisibilityToggle]) — всегда. */
+    fun isVisible(id: SlotId): Boolean = !id.hasVisibilityToggle || id !in hidden
 
     /**
      * Позиции, видимость и надписи из [other] поверх текущих. Видимость и надписи меняются только у элементов,
-     * которые есть в [other].
+     * которые есть в [other]. Окна чата берутся только те, что уже есть здесь: у игрока свой набор чатов,
+     * и чужие окна у него не появляются.
      */
     fun overlaidWith(other: SlotLayout) = SlotLayout(
         positions = positions + other.positions,
         hidden = (hidden - other.positions.keys) + other.hidden,
         labels = (labels - other.positions.keys) + other.labels,
         customQuickSlots = other.customQuickSlots ?: customQuickSlots,
+        chats = chats + other.chats.filterKeys { it in chats },
     )
 
     fun withPosition(id: SlotId, position: SlotPosition) = copy(positions = positions + (id to position))
 
-    fun withVisibility(id: SlotId, visible: Boolean) = copy(hidden = if (visible) hidden - id else hidden + id)
+    /**
+     * Видно ли окно чата [window] в игре отдельным окном: скрытый главный чат прячет все окна, а при видимом главном
+     * у каждого побочного окна своя видимость. Вкладки главного окна ([ChatWindow.combined]) отдельно не видны.
+     */
+    fun isChatShown(window: Int): Boolean {
+        val chat = chats[window]?.takeIf { !it.combined } ?: return false
+        return chat.visible && (window == ChatWindow.MAIN || chats[ChatWindow.MAIN]?.visible != false)
+    }
+
+    /** Вкладку главного окна [window] — в отдельное окно над главным, см. [ChatWindow.detachedAbove]. */
+    fun withDetachedChat(window: Int): SlotLayout {
+        val chat = chats[window]?.takeIf { it.combined } ?: return this
+        val main = chats[ChatWindow.MAIN] ?: return this
+        return withChat(window, chat.detachedAbove(main))
+    }
+
+    /**
+     * Отдельное окно [window] — обратно во вкладку главного окна. Размер окна сохраняется: с ним окно встанет
+     * при следующем выносе. Скрыто, как игра хранит вкладки (`IsShow="false"`). Главное окно не вкладывается.
+     */
+    fun withCombinedChat(window: Int): SlotLayout {
+        val chat = chats[window]?.takeIf { window != ChatWindow.MAIN && !it.combined } ?: return this
+        return withChat(window, chat.copy(combined = true, visible = false))
+    }
+
+    /** Окно чата [window] заменено на [chat]; окна, которого нет в раскладке, не добавляет. */
+    fun withChat(window: Int, chat: ChatWindow) = if (window in chats) copy(chats = chats + (window to chat)) else this
+
+    fun withVisibility(id: SlotId, visible: Boolean) =
+        if (!id.hasVisibilityToggle) this else copy(hidden = if (visible) hidden - id else hidden + id)
 
     /** Переключает «Настройку быстрых слотов» вместе с видимостью хотбара и «Быстрого слота», см. [hiddenWithCustomQuickSlots]. */
     fun withCustomQuickSlots(enabled: Boolean) =

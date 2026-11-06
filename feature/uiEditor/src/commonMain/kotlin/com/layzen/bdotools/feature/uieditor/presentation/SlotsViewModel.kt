@@ -7,6 +7,7 @@ import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.uieditor.data.SlotsRepository
 import com.layzen.bdotools.feature.uieditor.data.SlotsStorage
+import com.layzen.bdotools.feature.uieditor.presentation.controller.ChatsController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.EditorController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.GameController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.LayoutFilesController
@@ -29,6 +30,7 @@ class SlotsViewModel(
 
     private val context = SlotsContext(viewModelScope)
     private val editor = EditorController(context)
+    private val chats = ChatsController(context)
     private val presets = PresetsController(context, repository)
     private val files = LayoutFilesController(context, repository, device)
     private val game = GameController(context, storage, repository, device, accounts)
@@ -70,7 +72,15 @@ class SlotsViewModel(
             is SlotsEvent.SetSnapDistance -> editor.setSnapDistance(event.distance)
             is SlotsEvent.Align -> editor.align(event.edge, event.anchor)
             is SlotsEvent.Distribute -> editor.distribute(event.horizontal)
-            is SlotsEvent.SetDistributeGap -> editor.setDistributeGap(event.gap)
+            is SlotsEvent.MoveChat -> chats.move(event.window, event.dx, event.dy)
+            is SlotsEvent.ResizeChat -> chats.resize(event.window, event.dx, event.dy)
+            is SlotsEvent.OpenChatSize -> chats.openSize(event.window)
+            is SlotsEvent.SetChatSize -> chats.setSize(event.window, event.width, event.height)
+            SlotsEvent.ChatEditEnd -> chats.endEdit()
+            is SlotsEvent.ToggleChatVisibility -> chats.toggleVisibility(event.window)
+            is SlotsEvent.DetachChat -> chats.detach(event.window)
+            is SlotsEvent.CombineChat -> chats.combine(event.window)
+            is SlotsEvent.SetDistributeGap -> editor.setDistributeGap(event.gap, event.horizontal)
             is SlotsEvent.ToggleVisibility -> editor.toggleVisibility(event.id)
             is SlotsEvent.SetLabel -> editor.setLabel(event.id, event.chars)
             is SlotsEvent.SetCustomQuickSlots -> editor.setCustomQuickSlots(event.enabled)
@@ -88,7 +98,7 @@ class SlotsViewModel(
             SlotsEvent.ImportFromFile -> files.importFromFile()
             SlotsEvent.ConfirmImport -> files.confirmImport()
             SlotsEvent.Export -> files.export()
-            is SlotsEvent.PreviewInclude -> files.include(event.ids, event.include)
+            is SlotsEvent.PreviewInclude -> files.include(event.ids, event.chats, event.include)
             is SlotsEvent.PreviewArea -> files.includeArea(event.area)
             is SlotsEvent.PreviewScreen -> files.setPreviewScreen(event.screen)
             is SlotsEvent.PreviewCustomQuickSlots -> files.setPreviewQuickSlots(event.enabled)

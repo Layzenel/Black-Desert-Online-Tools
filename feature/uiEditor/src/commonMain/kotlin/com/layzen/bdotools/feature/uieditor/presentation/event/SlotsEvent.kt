@@ -38,7 +38,25 @@ sealed interface SlotsEvent {
     /** [anchor] — опорный элемент (по нему открыли меню), остальные встают по нему; `null` — по рамке всех выбранных. */
     data class Align(val edge: AlignEdge, val anchor: SlotId? = null) : SlotsEvent
     data class Distribute(val horizontal: Boolean) : SlotsEvent
-    data class SetDistributeGap(val gap: Int) : SlotsEvent
+
+    /** Шаг перетаскивания окна чата [window]: сдвиг от начала жеста. */
+    data class MoveChat(val window: Int, val dx: Int, val dy: Int) : SlotsEvent
+
+    /** Шаг растягивания окна чата [window] за правый верхний угол: сдвиг угла от начала жеста. */
+    data class ResizeChat(val window: Int, val dx: Int, val dy: Int) : SlotsEvent
+    data class OpenChatSize(val window: Int) : SlotsEvent
+    data class SetChatSize(val window: Int, val width: Int, val height: Int) : SlotsEvent
+
+    /** Перетаскивание или растягивание окна чата закончилось: прежняя раскладка уходит в «Отменить». */
+    data object ChatEditEnd : SlotsEvent
+    data class ToggleChatVisibility(val window: Int) : SlotsEvent
+
+    /** Вкладку главного окна [window] — в отдельное окно над главным. */
+    data class DetachChat(val window: Int) : SlotsEvent
+
+    /** Отдельное окно чата [window] — во вкладку главного окна. */
+    data class CombineChat(val window: Int) : SlotsEvent
+    data class SetDistributeGap(val gap: Int, val horizontal: Boolean) : SlotsEvent
     data class ToggleVisibility(val id: SlotId) : SlotsEvent
 
     /** Заглушка надписи под слотом шириной [chars] символов; `null` — убрать. */
@@ -63,7 +81,8 @@ sealed interface SlotsEvent {
     data object Export : SlotsEvent
 
     // Превью импорта и экспорта
-    data class PreviewInclude(val ids: Set<SlotId>, val include: Boolean) : SlotsEvent
+    /** Отметить или снять в превью элементы [ids] и окна чата [chats] (по `WindowIndex`) — одним шагом «Отменить». */
+    data class PreviewInclude(val ids: Set<SlotId>, val include: Boolean, val chats: Set<Int> = emptySet()) : SlotsEvent
     /** Обводка рамкой в превью: отметить задетые элементы, а если все они уже отмечены — снять. */
     data class PreviewArea(val area: ScreenArea) : SlotsEvent
     data class PreviewScreen(val screen: ScreenSpace) : SlotsEvent

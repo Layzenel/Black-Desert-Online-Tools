@@ -74,6 +74,7 @@ internal fun LayoutPreviewDialog(
                 QuickSlotSettings(layout.customQuickSlots) { onEvent(SlotsEvent.PreviewCustomQuickSlots(it)) }
                 SectionDivider()
                 PreviewElementList(layout.positions.keys.filter { it.isActiveWith(layout.customQuickSlots) }.toSet(), dialog.included, onEvent)
+                PreviewChatList(layout.chats.keys, dialog.includedChats, onEvent)
             },
             sidebarFooter = { PreviewActions(dialog, hasBackground = background != null, backgroundShown, backgroundDim, onEvent) },
         ) {
@@ -81,6 +82,7 @@ internal fun LayoutPreviewDialog(
                 PreviewCanvas(
                     dialog.layout.layout,
                     dialog.included,
+                    dialog.includedChats,
                     dialog.screen,
                     background.takeIf { backgroundShown },
                     backgroundDim,

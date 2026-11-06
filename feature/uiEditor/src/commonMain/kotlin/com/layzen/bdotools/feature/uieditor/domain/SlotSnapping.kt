@@ -24,6 +24,9 @@ fun snapToLines(moving: SlotBounds, xLines: List<Double>, yLines: List<Double>, 
     return SnapResult(x?.delta ?: 0.0, y?.delta ?: 0.0, SnapGuides(x?.line, y?.line))
 }
 
+/** Линия из [lines] не дальше [distance] UI-px от [edge], ближайшая к нему; `null` — такой нет. Так прилипает один край. */
+fun nearestLine(edge: Double, lines: List<Double>, distance: Int): Double? = nearestShift(listOf(edge), lines, distance)?.line
+
 private fun nearestShift(edges: List<Double>, lines: List<Double>, distance: Int): Shift? =
     edges.flatMap { edge -> lines.map { Shift(it - edge, it) } }
         .filter { abs(it.delta) <= distance }

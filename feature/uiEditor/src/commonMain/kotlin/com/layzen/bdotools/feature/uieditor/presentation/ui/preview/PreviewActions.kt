@@ -50,6 +50,7 @@ internal fun PreviewActions(
     onEvent: (SlotsEvent) -> Unit,
 ) {
     val all = dialog.layout.layout.positions.keys
+    val allChats = dialog.layout.layout.chats.keys
     ButtonRow {
         MenuAction(stringResource(Res.string.slots_undo), { onEvent(SlotsEvent.PreviewUndo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_undo), enabled = dialog.past.isNotEmpty())
         MenuAction(stringResource(Res.string.slots_redo), { onEvent(SlotsEvent.PreviewRedo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_redo), enabled = dialog.future.isNotEmpty())
@@ -57,17 +58,17 @@ internal fun PreviewActions(
     ButtonRow {
         MenuAction(
             stringResource(Res.string.slots_preview_include_all),
-            { onEvent(SlotsEvent.PreviewInclude(all, true)) },
+            { onEvent(SlotsEvent.PreviewInclude(all, true, allChats)) },
             Modifier.weight(1f),
             painterResource(Res.drawable.menu_select_all),
-            enabled = dialog.included.size < all.size,
+            enabled = dialog.included.size < all.size || dialog.includedChats.size < allChats.size,
         )
         MenuAction(
             stringResource(Res.string.slots_preview_exclude_all),
-            { onEvent(SlotsEvent.PreviewInclude(all, false)) },
+            { onEvent(SlotsEvent.PreviewInclude(all, false, allChats)) },
             Modifier.weight(1f),
             painterResource(Res.drawable.menu_select_none),
-            enabled = dialog.included.isNotEmpty(),
+            enabled = dialog.hasIncluded,
         )
     }
     if (hasBackground) {
@@ -89,7 +90,7 @@ internal fun PreviewActions(
             { onEvent(SlotsEvent.ConfirmPreview) },
             Modifier.weight(1f),
             painterResource(if (dialog.mode == PreviewMode.Import) Res.drawable.menu_import else Res.drawable.menu_export),
-            enabled = dialog.included.isNotEmpty(),
+            enabled = dialog.hasIncluded,
         )
     }
 }
@@ -103,7 +104,7 @@ private fun ButtonRow(content: @Composable RowScope.() -> Unit) {
 @Composable
 private fun summary(dialog: SlotsDialog.Preview): String {
     val screen = dialog.screen
-    val chosen = dialog.layout.layout.only(dialog.included)
+    val chosen = dialog.layout.layout.only(dialog.included, dialog.includedChats)
     val total = dialog.layout.layout.positions.size
     val offScreen = chosen.offScreenCount(screen)
     val scale = chosen.suggestedUiScale(screen)

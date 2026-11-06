@@ -48,6 +48,6 @@ class GamePresetTest {
             positions = mapOf(first to AnchoredPosition(SlotAnchor.Crosshair, 0, 0), second to AnchoredPosition(SlotAnchor.Crosshair, 50, 0)),
             hidden = setOf(first, second),
         )
-        assertEquals(AnchoredLayout(mapOf(second to AnchoredPosition(SlotAnchor.Crosshair, 50, 0)), setOf(second)), layout.only(setOf(second)))
+        assertEquals(AnchoredLayout(mapOf(second to AnchoredPosition(SlotAnchor.Crosshair, 50, 0)), setOf(second)), layout.only(setOf(second), emptySet()))
     }
 }
