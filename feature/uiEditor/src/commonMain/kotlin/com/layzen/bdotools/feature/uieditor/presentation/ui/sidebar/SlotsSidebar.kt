@@ -12,6 +12,7 @@ import com.layzen.bdotools.uikit.components.SectionDivider
 @Composable
 internal fun SlotsSidebar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     GamePresetSettings(state, onEvent)
+    if (state.loaded != null) QuickSlotSettings(state.layout.customQuickSlots) { onEvent(SlotsEvent.SetCustomQuickSlots(it)) }
     SectionDivider()
     PresetList(state, onEvent)
     SectionDivider()

@@ -72,7 +72,7 @@ internal fun PreviewCanvas(
     ) { scale ->
         background?.let { BackgroundImage(it, backgroundDim) }
         CrosshairLayer(screen, scale, Modifier.fillMaxSize())
-        layout.positions.forEach { (id, anchored) ->
+        layout.positions.filterKeys { it.isActiveWith(layout.customQuickSlots) }.forEach { (id, anchored) ->
             PreviewFrame(id, anchored.placeOn(screen), screen, scale, id in included) {
                 focus.requestFocus()
                 onEvent(SlotsEvent.PreviewInclude(setOf(id), id !in included))

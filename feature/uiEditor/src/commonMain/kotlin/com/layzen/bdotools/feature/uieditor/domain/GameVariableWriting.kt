@@ -29,6 +29,20 @@ fun writeVisibility(text: String, visibility: Map<Int, Boolean>): String =
         current.replaceTag(GamePreset.General.tag, index) { it.withAttribute("IsShow", visible.toString()) }
     }
 
+/**
+ * Записывает «Настройку быстрых слотов» в файл аккаунта. Если записи ещё нет, она добавляется первой в `<UIValue>`
+ * с тем же переводом строки, что у файла; без `<UIValue>` текст не меняется.
+ */
+fun writeCustomQuickSlots(text: String, enabled: Boolean): String {
+    if (CUSTOM_QUICK_SLOTS.containsMatchIn(text)) {
+        return CUSTOM_QUICK_SLOTS.replace(text) { it.value.replace(it.groupValues[1], enabled.toString()) }
+    }
+    val newline = if ("\r\n" in text) "\r\n" else "\n"
+    val end = (Regex("""<UIValue\s[^>]*>""").find(text) ?: return text).range.last + 1
+    val entry = "$newline\t<Bool Index=\"1\" Value=\"$enabled\" StorageType=\"1\"/>"
+    return text.substring(0, end) + entry + text.substring(end)
+}
+
 private fun String.replaceTag(tag: String, index: Int, change: (String) -> String): String =
     Regex("""<$tag\s+Index="$index"[^>]*>""").replace(this) { change(it.value) }
 

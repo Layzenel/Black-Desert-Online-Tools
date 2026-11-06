@@ -61,7 +61,9 @@ internal class LayoutFilesController(
     fun includeArea(area: ScreenArea) = updatePreview { preview ->
         val screen = preview.screen
         val touched = preview.layout.layout.positions
-            .filter { (id, anchored) -> area.touches(id, anchored.placeOn(screen), screen) }
+            .filter { (id, anchored) ->
+                id.isActiveWith(preview.layout.layout.customQuickSlots) && area.touches(id, anchored.placeOn(screen), screen)
+            }
             .keys
         if (touched.isEmpty()) preview
         else preview.withIncluded(if (preview.included.containsAll(touched)) preview.included - touched else preview.included + touched)
@@ -69,6 +71,11 @@ internal class LayoutFilesController(
 
     /** Монитор превью экспорта. Только для просмотра: в файл раскладка попадёт с якорями и у получателя встанет по его экрану. */
     fun setPreviewScreen(screen: ScreenSpace) = updatePreview { it.copy(screen = screen) }
+
+    /** «Настройка быстрых слотов» раскладки в превью: на мониторе остаются хотбар или «Быстрый слот», с ней раскладка и уйдёт. */
+    fun setPreviewQuickSlots(enabled: Boolean) = updatePreview {
+        it.copy(layout = it.layout.copy(layout = it.layout.layout.withCustomQuickSlots(enabled)))
+    }
 
     fun undoPreview() = updatePreview { it.undone() }
 
@@ -94,7 +101,9 @@ internal class LayoutFilesController(
             context.update { it.copy(dialog = SlotsDialog.Import(text, e.error)) }
             return
         }
-        openPreview(PreviewMode.Import, imported, screen)
+        // Файл без настройки быстрых слотов её не меняет: превью показывает ту, что сейчас в редакторе
+        val quickSlots = imported.layout.customQuickSlots ?: context.current.layout.customQuickSlots
+        openPreview(PreviewMode.Import, imported.copy(layout = imported.layout.copy(customQuickSlots = quickSlots)), screen)
     }
 
     private fun openPreview(mode: PreviewMode, layout: NamedLayout, screen: ScreenSpace) = context.update {

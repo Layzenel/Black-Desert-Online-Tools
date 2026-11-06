@@ -142,6 +142,12 @@ internal class EditorController(private val context: SlotsContext) {
     /** Глазик на иконке: скрыть или показать элемент в игре. */
     fun toggleVisibility(id: SlotId) = context.editLayout { it.withVisibility(id, !it.isVisible(id)) }
 
+    /** Переключает «Настройку быстрых слотов»; элементы, пропавшие с экрана, снимаются с выбора. */
+    fun setCustomQuickSlots(enabled: Boolean) {
+        context.editLayout { it.withCustomQuickSlots(enabled) }
+        context.update { state -> state.copy(selection = state.selection.filterTo(mutableSetOf()) { it.isActiveWith(enabled) }) }
+    }
+
     fun setLabel(id: SlotId, chars: Int?) {
         if (SlotLabel.allowedFor(id)) context.editLayout { it.withLabel(id, chars) }
     }

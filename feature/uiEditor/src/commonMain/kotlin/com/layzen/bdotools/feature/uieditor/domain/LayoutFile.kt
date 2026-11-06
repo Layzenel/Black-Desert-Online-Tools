@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.domain
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,8 +9,10 @@ import kotlinx.serialization.Serializable
  *
  * Каждый элемент хранит якорь (`crosshair`, `top-left`, `top-right`, `bottom-left`, `bottom-right`) и смещение
  * центра от него в UI-px, поэтому раскладка переносится на монитор с другим разрешением и масштабом интерфейса.
- * Группы, которых нет в файле, при импорте не меняются.
+ * Группы, которых нет в файле, при импорте не меняются. [customQuickSlots] — «Настройка быстрых слотов»
+ * ([SlotLayout.customQuickSlots]); нет в файле — при импорте не меняется.
  */
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class LayoutFile(
     val format: String = FORMAT,
@@ -20,6 +24,7 @@ data class LayoutFile(
     val classResource: List<LayoutSlot> = emptyList(),
     /** Прочие элементы; `slot` — номер элемента в [InterfaceElement] с единицы. */
     val interfaceElements: List<LayoutSlot> = emptyList(),
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val customQuickSlots: Boolean? = null,
 ) {
     /** Элементы группы [group] из файла. */
     fun slotsOf(group: SlotGroup): List<LayoutSlot> = when (group) {

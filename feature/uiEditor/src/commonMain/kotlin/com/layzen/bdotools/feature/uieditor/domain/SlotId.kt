@@ -14,4 +14,14 @@ data class SlotId(val group: SlotGroup, val number: Int) {
 
     /** Высота рамки в UI-px. */
     val height: Int get() = interfaceElement?.height ?: group.height
+
+    /**
+     * Есть ли элемент на экране игры при «Настройке быстрых слотов» [customQuickSlots] (см. [SlotLayout.customQuickSlots]):
+     * 20 слотов хотбара и «Быстрый слот» друг друга заменяют. `null` — как включённая.
+     */
+    fun isActiveWith(customQuickSlots: Boolean?): Boolean = when {
+        group == SlotGroup.Hotbar -> customQuickSlots != false
+        interfaceElement == InterfaceElement.QuickSlot -> customQuickSlots == false
+        else -> true
+    }
 }

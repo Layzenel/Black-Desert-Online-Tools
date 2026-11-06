@@ -44,6 +44,9 @@ sealed interface SlotsEvent {
     /** Заглушка надписи под слотом шириной [chars] символов; `null` — убрать. */
     data class SetLabel(val id: SlotId, val chars: Int?) : SlotsEvent
 
+    /** «Настройка быстрых слотов»: включена — 20 слотов хотбара, выключена — одна панель «Быстрый слот». */
+    data class SetCustomQuickSlots(val enabled: Boolean) : SlotsEvent
+
     // Пресеты
     data object UseGameLayout : SlotsEvent
     data class UseBuiltIn(val layout: BuiltInLayout) : SlotsEvent
@@ -64,6 +67,9 @@ sealed interface SlotsEvent {
     /** Обводка рамкой в превью: отметить задетые элементы, а если все они уже отмечены — снять. */
     data class PreviewArea(val area: ScreenArea) : SlotsEvent
     data class PreviewScreen(val screen: ScreenSpace) : SlotsEvent
+
+    /** «Настройка быстрых слотов» раскладки в превью: она и уйдёт в редактор или файл. */
+    data class PreviewCustomQuickSlots(val enabled: Boolean) : SlotsEvent
     data object PreviewUndo : SlotsEvent
     data object PreviewRedo : SlotsEvent
     data object ConfirmPreview : SlotsEvent

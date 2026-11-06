@@ -14,4 +14,14 @@ enum class InterfaceElement(val uiIndex: Int, val width: Int, val height: Int) {
     BlackSpiritRage(uiIndex = 85, width = 47, height = 47),
     Buffs(uiIndex = 119, width = 410, height = 160),
     RareItemHistory(uiIndex = 161, width = 416, height = 84),
+
+    /**
+     * «Быстрый слот» — одна панель хотбара, которую игра показывает при выключенной «Настройке быстрых слотов»
+     * (см. [SlotLayout.customQuickSlots]). Размер — как у самой панели в игре, а не у рамки в режиме правки.
+     */
+    QuickSlot(uiIndex = 12, width = 545, height = 52),
+    ;
+
+    /** Элемент как [SlotId] группы [SlotGroup.Interface]. */
+    val slotId: SlotId get() = SlotId(SlotGroup.Interface, ordinal + 1)
 }
