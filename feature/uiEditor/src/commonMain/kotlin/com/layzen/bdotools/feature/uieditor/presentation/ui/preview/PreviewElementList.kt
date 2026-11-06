@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import com.layzen.bdotools.feature.uieditor.domain.SlotGroup
 import com.layzen.bdotools.feature.uieditor.domain.SlotId
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
@@ -19,7 +18,6 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_elements
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_group_count
-import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
@@ -45,7 +43,7 @@ private fun GroupItems(group: SlotGroup, members: List<SlotId>, included: Set<Sl
     val chosen = members.count { it in included }
     val toggle = { id: SlotId -> { checked: Boolean -> onEvent(SlotsEvent.PreviewInclude(setOf(id), checked)) } }
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-        CheckRow(
+        PreviewCheckRow(
             text = stringResource(Res.string.slots_preview_group_count, groupTitle(group), chosen, members.size),
             checked = chosen == members.size,
             onCheckedChange = { onEvent(SlotsEvent.PreviewInclude(members.toSet(), it)) },
@@ -55,7 +53,7 @@ private fun GroupItems(group: SlotGroup, members: List<SlotId>, included: Set<Sl
         when {
             members.size == 1 -> Unit
             group == SlotGroup.Interface -> Column(items, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-                members.forEach { CheckRow(slotTitle(it), it in included, toggle(it)) }
+                members.forEach { PreviewCheckRow(slotTitle(it), it in included, toggle(it)) }
             }
             else -> NumberTable(members, included, toggle, items)
         }
@@ -69,29 +67,9 @@ private fun NumberTable(members: List<SlotId>, included: Set<SlotId>, toggle: (S
         members.chunked(NUMBER_COLUMNS).forEach { row ->
             Row {
                 row.forEach { id ->
-                    CheckRow(id.number.toString(), id in included, toggle(id), Modifier.width(SlotsDimens.previewNumberCellWidth))
+                    PreviewCheckRow(id.number.toString(), id in included, toggle(id), Modifier.width(SlotsDimens.previewNumberCellWidth))
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun CheckRow(
-    text: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    bold: Boolean = false,
-) {
-    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-        CheckBox(checked, onCheckedChange)
-        Text(
-            text,
-            style = if (bold) AppTheme.typography.bodyBold else AppTheme.typography.caption,
-            color = if (bold) AppTheme.colors.textBeige else AppTheme.colors.textPrimary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
     }
 }

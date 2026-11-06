@@ -25,6 +25,9 @@ object LayoutCodec {
             classResource = layout.layout.slotsOf(SlotGroup.ClassResource),
             interfaceElements = layout.layout.slotsOf(SlotGroup.Interface),
             customQuickSlots = layout.layout.customQuickSlots,
+            chats = layout.layout.chats.map { (window, chat) ->
+                LayoutChat(window, chat.position.anchor.id, chat.position.x, chat.position.y, chat.width, chat.height, chat.visible, chat.combined)
+            },
         ),
     )
 
@@ -38,13 +41,22 @@ object LayoutCodec {
             file.slotsOf(group).filter { it.slot in 1..group.uiIndices.size }.map { SlotId(group, it.slot) to it }
         }
         val layout = AnchoredLayout(
-            positions = slots.associate { (id, slot) -> id to AnchoredPosition(slot.anchorOrFail(), slot.x, slot.y) },
+            positions = slots.associate { (id, slot) -> id to AnchoredPosition(anchorOrFail(slot.anchor), slot.x, slot.y) },
             hidden = slots.filter { (_, slot) -> !slot.visible }.mapTo(mutableSetOf()) { it.first },
             labels = slots.mapNotNull { (id, slot) -> slot.labelOf(id)?.let { id to it } }.toMap(),
             customQuickSlots = file.customQuickSlots,
+            chats = file.chats.associate { it.window to it.toAnchored() },
         )
         return NamedLayout(file.name, layout)
     }
+
+    private fun LayoutChat.toAnchored() = AnchoredChat(
+        AnchoredPosition(anchorOrFail(anchor), x, y),
+        width.coerceAtLeast(CHAT_MIN_WIDTH),
+        height.coerceAtLeast(CHAT_MIN_HEIGHT),
+        visible,
+        combined = combined && window != ChatWindow.MAIN,
+    )
 
     private fun parse(text: String): LayoutFile {
         // Сначала только заголовок: чужой JSON должен давать понятную ошибку, а не «не тот тип поля»
@@ -63,8 +75,8 @@ object LayoutCodec {
         }
     }
 
-    private fun LayoutSlot.anchorOrFail(): SlotAnchor =
-        SlotAnchor.byId(anchor) ?: throw LayoutFormatException(LayoutError.WrongFormat, "Unknown anchor $anchor")
+    private fun anchorOrFail(id: String): SlotAnchor =
+        SlotAnchor.byId(id) ?: throw LayoutFormatException(LayoutError.WrongFormat, "Unknown anchor $id")
 
     /** Ширина надписи из файла, приведённая к допустимой; у элементов, которым надпись не положена, — `null`. */
     private fun LayoutSlot.labelOf(id: SlotId): Int? =

@@ -6,10 +6,10 @@ import com.layzen.bdotools.feature.uieditor.domain.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.SlotLabel
 import com.layzen.bdotools.feature.uieditor.domain.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
-import com.layzen.bdotools.feature.uieditor.domain.SlotBounds
 import com.layzen.bdotools.feature.uieditor.domain.SnapGuides
 import com.layzen.bdotools.feature.uieditor.domain.aligned
 import com.layzen.bdotools.feature.uieditor.domain.distributed
+import com.layzen.bdotools.feature.uieditor.domain.snapLines
 import com.layzen.bdotools.feature.uieditor.domain.snapToLines
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
 import com.layzen.bdotools.feature.uieditor.presentation.state.GridStep
@@ -77,7 +77,7 @@ internal class EditorController(private val context: SlotsContext) {
     }
 
     /**
-     * Раскладка [layout] с прилипанием группы выбранных к краям и серединам невыбранных видимых элементов
+     * Раскладка [layout] с прилипанием группы выбранных к краям и серединам невыбранных видимых элементов и окон чата
      * и к осям прицела; прилипание сильнее привязки к сетке. Выключено — раскладка как есть.
      */
     private fun snappedToSlots(layout: SlotLayout): Pair<SlotLayout, SnapGuides> {
@@ -85,15 +85,8 @@ internal class EditorController(private val context: SlotsContext) {
         val moving = layout.boundsOf(state.selection)
         if (!state.snapToSlots || moving == null) return layout to SnapGuides.None
         val crosshair = state.loaded?.game?.screen?.crosshair ?: SlotPosition(0, 0)
-        val others = state.slots
-            .filter { it !in state.selection && layout.isVisible(it) }
-            .mapNotNull { id -> layout[id]?.let { SlotBounds.of(id, it) } }
-        val result = snapToLines(
-            moving,
-            xLines = listOf(crosshair.x.toDouble()) + others.flatMap { it.xLines },
-            yLines = listOf(crosshair.y.toDouble()) + others.flatMap { it.yLines },
-            distance = state.snapDistance,
-        )
+        val lines = layout.snapLines(state.slots, state.selection, movingChat = null, crosshair)
+        val result = snapToLines(moving, lines.x, lines.y, state.snapDistance)
         return layout.moved(state.selection, result.dx.roundToInt(), result.dy.roundToInt()) to result.guides
     }
 
@@ -128,11 +121,13 @@ internal class EditorController(private val context: SlotsContext) {
     fun align(edge: AlignEdge, anchor: SlotId?) = editSelection { layout, selection -> layout.aligned(selection, edge, anchor) }
 
     fun distribute(horizontal: Boolean) {
-        val gap = context.current.distributeGap
+        val gap = context.current.distributeGap(horizontal)
         editSelection { layout, selection -> layout.distributed(selection, horizontal, gap) }
     }
 
-    fun setDistributeGap(gap: Int) = context.update { it.copy(distributeGap = gap) }
+    fun setDistributeGap(gap: Int, horizontal: Boolean) = context.update {
+        if (horizontal) it.copy(distributeGapX = gap) else it.copy(distributeGapY = gap)
+    }
 
     private fun editSelection(change: (SlotLayout, Set<SlotId>) -> SlotLayout) {
         val selection = context.current.selection

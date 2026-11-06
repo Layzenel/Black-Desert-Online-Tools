@@ -102,13 +102,15 @@ internal fun SlotFrame(
                 )
             }
         }
-        // Глаз внутри рамки сверху по центру, как в режиме правки интерфейса игры
-        EyeToggle(
-            visible = visible,
-            eyeSize = eyeSize,
-            onToggle = { onEvent(SlotsEvent.ToggleVisibility(id)) },
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = eyeSize * SlotsDimens.EYE_TOP_SHARE),
-        )
+        // Глаз внутри рамки сверху по центру, как в режиме правки интерфейса игры; видимость выносливости меняет сама игра
+        if (id.hasVisibilityToggle) {
+            EyeToggle(
+                visible = visible,
+                eyeSize = eyeSize,
+                onToggle = { onEvent(SlotsEvent.ToggleVisibility(id)) },
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = eyeSize * SlotsDimens.EYE_TOP_SHARE),
+            )
+        }
     }
 }
 

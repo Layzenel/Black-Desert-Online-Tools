@@ -20,6 +20,9 @@ internal object SlotsDimens {
     val crosshairStroke = 1.5.dp
     val eyeStroke = 1.dp
     val labelMinIconWidth = 18.dp
+    val chatHandle = 8.dp
+    val chatTabIcon = 18.dp
+    val chatSizeLabelWidth = 80.dp
     const val GRID_ALPHA = 0.12f
     const val GRID_MAJOR_ALPHA = 0.22f
     const val AXIS_ALPHA = 0.7f

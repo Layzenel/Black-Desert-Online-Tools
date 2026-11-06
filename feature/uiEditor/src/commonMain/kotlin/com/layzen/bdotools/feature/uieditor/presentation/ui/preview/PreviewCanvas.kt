@@ -37,12 +37,14 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.ScreenCanvas
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.frameColor
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.CanvasViewport
 import com.layzen.bdotools.feature.uieditor.presentation.ui.handleHistoryKeys
+import com.layzen.bdotools.feature.uieditor.presentation.ui.chatTitle
 import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 
 /**
- * Раскладка [layout] на экране игры [screen] ([ScreenCanvas]: зум колесом, сдвиг, обводка, как в редакторе). Невыбранные
+ * Раскладка [layout] на экране игры [screen] ([ScreenCanvas]: зум колесом, сдвиг, обводка, как в редакторе), окна чата —
+ * под элементами, отмечаются кликом, как и они ([includedChats]). Невыбранные
  * элементы приглушены, не влезающие на экран — с красной заливкой. Клик по рамке отмечает элемент или снимает отметку,
  * обводка отмечает задетые элементы, а если все они уже отмечены — снимает. [background] — подложка под рамками, затенённая на [backgroundDim] %.
  * Ctrl+Z и Ctrl+Shift+Z (или Ctrl+Y) отменяют и повторяют отметки.
@@ -51,6 +53,7 @@ import kotlin.math.roundToInt
 internal fun PreviewCanvas(
     layout: AnchoredLayout,
     included: Set<SlotId>,
+    includedChats: Set<Int>,
     screen: ScreenSpace,
     background: ImageBitmap?,
     backgroundDim: Int,
@@ -72,6 +75,13 @@ internal fun PreviewCanvas(
     ) { scale ->
         background?.let { BackgroundImage(it, backgroundDim) }
         CrosshairLayer(screen, scale, Modifier.fillMaxSize())
+        // Вкладки главного окна отдельно не рисуются: они отмечаются в списке слева
+        layout.chats.filterValues { !it.combined }.forEach { (window, chat) ->
+            PreviewChatFrame(chat.placeOn(screen), chatTitle(window), screen, scale, window in includedChats) {
+                focus.requestFocus()
+                onEvent(SlotsEvent.PreviewInclude(emptySet(), chats = setOf(window), include = window !in includedChats))
+            }
+        }
         layout.positions.filterKeys { it.isActiveWith(layout.customQuickSlots) }.forEach { (id, anchored) ->
             PreviewFrame(id, anchored.placeOn(screen), screen, scale, id in included) {
                 focus.requestFocus()

@@ -25,6 +25,8 @@ data class LayoutFile(
     /** Прочие элементы; `slot` — номер элемента в [InterfaceElement] с единицы. */
     val interfaceElements: List<LayoutSlot> = emptyList(),
     @EncodeDefault(EncodeDefault.Mode.NEVER) val customQuickSlots: Boolean? = null,
+    /** Окна чата; при импорте меняются только те, что есть у игрока. */
+    val chats: List<LayoutChat> = emptyList(),
 ) {
     /** Элементы группы [group] из файла. */
     fun slotsOf(group: SlotGroup): List<LayoutSlot> = when (group) {

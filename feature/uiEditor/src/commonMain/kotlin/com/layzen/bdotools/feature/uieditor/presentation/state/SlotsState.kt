@@ -19,7 +19,8 @@ import com.layzen.bdotools.feature.uieditor.domain.SnapGuides
  * @property snapToGrid привязка к узлам сетки с шагом [snapStep], отсчитанным от прицела; по умолчанию выключена.
  * @property snapToSlots прилипание двигаемого к краям и серединам других элементов и к осям прицела.
  * @property snapDistance с какого расстояния, UI-px, срабатывает прилипание к элементам.
- * @property distributeGap промежуток между рамками, UI-px, с которым «Распределить» ставит элементы друг за другом.
+ * @property distributeGapX промежуток между рамками, UI-px, с которым «Распределить по горизонтали» ставит элементы друг за другом.
+ * @property distributeGapY то же для «Распределить по вертикали»: у каждого направления свой промежуток.
  * @property snapGuides линии, к которым двигаемый элемент прилип сейчас; пусты вне перетаскивания.
  * @property backgroundShown видна ли подложка [background] на холсте: её можно спрятать, не убирая картинку.
  * @property backgroundDim затенение подложки в процентах, общее для редактора и превью; 0 — без затенения.
@@ -38,7 +39,8 @@ data class SlotsState(
     val snapStep: Int = DEFAULT_SNAP_STEP,
     val snapToSlots: Boolean = false,
     val snapDistance: Int = DEFAULT_SNAP_DISTANCE,
-    val distributeGap: Int = DEFAULT_DISTRIBUTE_GAP,
+    val distributeGapX: Int = DEFAULT_DISTRIBUTE_GAP,
+    val distributeGapY: Int = DEFAULT_DISTRIBUTE_GAP,
     val snapGuides: SnapGuides = SnapGuides.None,
     val background: ImageBitmap? = null,
     val backgroundShown: Boolean = true,
@@ -49,7 +51,9 @@ data class SlotsState(
 ) {
     /** Есть ли в редакторе изменения, которых ещё нет в файле игры. */
     val hasChanges: Boolean
-        get() = loaded?.game?.let { it.changedEntries(layout).isNotEmpty() || it.quickSlotsChanged(layout) } == true
+        get() = loaded?.game?.let {
+            it.changedEntries(layout).isNotEmpty() || it.quickSlotsChanged(layout) || it.changedChats(layout).isNotEmpty()
+        } == true
 
     /**
      * Элементы, которые есть в файле игры и на экране при текущей «Настройке быстрых слотов»: их показывает редактор,
@@ -59,6 +63,9 @@ data class SlotsState(
 
     /** Шаг привязки к сетке, который действует сейчас: 0, пока привязка выключена. */
     val gridSnapStep: Int get() = if (snapToGrid) snapStep else 0
+
+    /** Промежуток «Распределить» по горизонтали ([horizontal]) или по вертикали. */
+    fun distributeGap(horizontal: Boolean): Int = if (horizontal) distributeGapX else distributeGapY
 
     companion object {
         /** Шаг привязки по умолчанию, UI-px. */

@@ -9,6 +9,9 @@ import com.layzen.bdotools.feature.uieditor.domain.parseGamePresets
 import com.layzen.bdotools.feature.uieditor.domain.writeUiData
 import com.layzen.bdotools.feature.uieditor.domain.writeCustomQuickSlots
 import com.layzen.bdotools.feature.uieditor.domain.writeVisibility
+import com.layzen.bdotools.feature.uieditor.domain.chatWindowOrder
+import com.layzen.bdotools.feature.uieditor.domain.writeChatVisibility
+import com.layzen.bdotools.feature.uieditor.domain.writeChats
 
 private const val PRESET_EXTENSION = ".json"
 
@@ -39,13 +42,16 @@ class SlotsRepository(private val storage: SlotsStorage) {
      * Записывает [layout] в набор [target] файла аккаунта. Видимость общего набора игра хранит ещё и у каждого
      * персонажа, поэтому для него поменявшийся `IsShow` записывается и в файлы персонажей; у пресетов 1–3
      * видимость лежит в самих записях. «Настройка быстрых слотов» одна на аккаунт и пишется при любом [target],
-     * если поменялась. Возвращает путь резервной копии.
+     * если поменялась. Окна чата пишутся в тот же набор, их видимость в общем наборе — ещё и персонажам.
+     * Возвращает путь резервной копии.
      */
     suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String {
         val game = loaded.presets.getValue(target)
         val entries = game.changedEntries(layout)
         val quickSlots = layout.customQuickSlots?.takeIf { game.quickSlotsChanged(layout) }
+        val chats = game.changedChats(layout)
         var text = writeUiData(loaded.file.text, entries, target)
+        text = writeChats(text, chats, game.screen, target)
         if (quickSlots != null) text = writeCustomQuickSlots(text, quickSlots)
         if (quickSlots != null && target == GamePreset.General) {
             text = writeVisibility(text, mapOf(QUICK_SLOTS_COMPANION_INDEX to quickSlots))
@@ -56,14 +62,18 @@ class SlotsRepository(private val storage: SlotsStorage) {
             .filter { it.isShow != game.uiData.getValue(it.index).isShow }
             .associate { it.index to it.isShow } +
             listOfNotNull(quickSlots?.let { QUICK_SLOTS_COMPANION_INDEX to it })
-        if (visibility.isNotEmpty()) applyVisibility(loaded.account, visibility)
+        val chatVisibility = chats.filter { (window, chat) -> chat.visible != game.chats[window]?.visible }.mapValues { it.value.visible }
+        if (visibility.isNotEmpty() || chatVisibility.isNotEmpty()) {
+            applyVisibility(loaded.account, visibility, chatWindowOrder(loaded.file.text), chatVisibility)
+        }
         return backup
     }
 
-    private suspend fun applyVisibility(account: String, visibility: Map<Int, Boolean>) {
+    /** Видимость в файлах персонажей: элементов — по `Index`, окон чата — по порядку их записей ([chatOrder]). */
+    private suspend fun applyVisibility(account: String, visibility: Map<Int, Boolean>, chatOrder: List<Int>, chats: Map<Int, Boolean>) {
         storage.characterFiles(account).forEach { path ->
             val text = storage.readCharacterFile(account, path)
-            val changed = writeVisibility(text, visibility)
+            val changed = writeChatVisibility(writeVisibility(text, visibility), chatOrder, chats)
             if (changed != text) storage.writeCharacterFile(account, path, changed)
         }
     }

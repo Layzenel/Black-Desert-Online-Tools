@@ -45,13 +45,16 @@ internal class LayoutFilesController(
     /** Экспорт начинается с превью текущей раскладки редактора. */
     fun export() {
         val screen = screen() ?: return
-        val layout = NamedLayout(activeUserPreset() ?: DEFAULT_EXPORT_NAME, AnchoredLayout.of(context.current.layout, screen))
+        // Вкладки главного окна чата — не окна: в превью и в файл попадают только главное и отдельные окна
+        val current = context.current.layout.let { it.copy(chats = it.chats.filterValues { chat -> !chat.combined }) }
+        val layout = NamedLayout(activeUserPreset() ?: DEFAULT_EXPORT_NAME, AnchoredLayout.of(current, screen))
         openPreview(PreviewMode.Export, layout, screen)
     }
 
-    /** Отметить или снять элементы [ids] в превью — по одному, группой или все сразу. */
-    fun include(ids: Set<SlotId>, include: Boolean) = updatePreview {
-        it.withIncluded(if (include) it.included + ids else it.included - ids)
+    /** Отметить или снять элементы [ids] и окна чата [chats] в превью — по одному, группой или все сразу. */
+    fun include(ids: Set<SlotId>, chats: Set<Int>, include: Boolean) = updatePreview {
+        if (include) it.withIncluded(it.included + ids, it.includedChats + chats)
+        else it.withIncluded(it.included - ids, it.includedChats - chats)
     }
 
     /**
@@ -83,7 +86,7 @@ internal class LayoutFilesController(
 
     fun confirmPreview() {
         val preview = context.current.dialog as? SlotsDialog.Preview ?: return
-        val layout = preview.layout.copy(layout = preview.layout.layout.only(preview.included))
+        val layout = preview.layout.copy(layout = preview.layout.layout.only(preview.included, preview.includedChats))
         when (preview.mode) {
             PreviewMode.Import -> import(layout)
             PreviewMode.Export -> context.launch {
@@ -103,11 +106,14 @@ internal class LayoutFilesController(
         }
         // Файл без настройки быстрых слотов её не меняет: превью показывает ту, что сейчас в редакторе
         val quickSlots = imported.layout.customQuickSlots ?: context.current.layout.customQuickSlots
-        openPreview(PreviewMode.Import, imported.copy(layout = imported.layout.copy(customQuickSlots = quickSlots)), screen)
+        // Только окна, которые у игрока есть отдельными: вкладки главного окна и чужие окна не показываем и не импортируем
+        val ownWindows = context.current.layout.chats.filterValues { !it.combined }.keys
+        val ownChats = imported.layout.chats.filter { (window, chat) -> window in ownWindows && !chat.combined }
+        openPreview(PreviewMode.Import, imported.copy(layout = imported.layout.copy(customQuickSlots = quickSlots, chats = ownChats)), screen)
     }
 
     private fun openPreview(mode: PreviewMode, layout: NamedLayout, screen: ScreenSpace) = context.update {
-        it.copy(dialog = SlotsDialog.Preview(mode, layout, screen, layout.layout.positions.keys))
+        it.copy(dialog = SlotsDialog.Preview(mode, layout, screen, layout.layout.positions.keys, layout.layout.chats.keys))
     }
 
     /**

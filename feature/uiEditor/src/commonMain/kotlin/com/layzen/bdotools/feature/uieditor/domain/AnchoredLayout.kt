@@ -19,14 +19,24 @@ data class AnchoredLayout(
     val labels: Map<SlotId, Int> = emptyMap(),
     /** «Настройка быстрых слотов», см. [SlotLayout.customQuickSlots]. */
     val customQuickSlots: Boolean? = null,
+    /** Окна чата по `WindowIndex`, см. [SlotLayout.chats]. */
+    val chats: Map<Int, AnchoredChat> = emptyMap(),
 ) {
 
     fun placeOn(screen: ScreenSpace) =
-        SlotLayout(positions.mapValues { it.value.placeOn(screen) }, hidden, labels, customQuickSlots)
+        SlotLayout(positions.mapValues { it.value.placeOn(screen) }, hidden, labels, customQuickSlots, chats.mapValues { it.value.placeOn(screen) })
 
-    /** Только элементы [ids]: так импортируется и экспортируется часть раскладки. Настройка быстрых слотов остаётся. */
-    fun only(ids: Set<SlotId>) =
-        AnchoredLayout(positions.filterKeys { it in ids }, hidden intersect ids, labels.filterKeys { it in ids }, customQuickSlots)
+    /**
+     * Только элементы [ids] и окна чата [chatWindows]: так импортируется и экспортируется часть раскладки.
+     * Настройка быстрых слотов остаётся.
+     */
+    fun only(ids: Set<SlotId>, chatWindows: Set<Int>) = AnchoredLayout(
+        positions.filterKeys { it in ids },
+        hidden intersect ids,
+        labels.filterKeys { it in ids },
+        customQuickSlots,
+        chats.filterKeys { it in chatWindows },
+    )
 
     /** Переключает «Настройку быстрых слотов» вместе с видимостью хотбара и «Быстрого слота», см. [hiddenWithCustomQuickSlots]. */
     fun withCustomQuickSlots(enabled: Boolean) =
@@ -58,6 +68,7 @@ data class AnchoredLayout(
             hidden = layout.hidden,
             labels = layout.labels,
             customQuickSlots = layout.customQuickSlots,
+            chats = layout.chats.mapValues { AnchoredChat.of(it.value, screen) },
         )
     }
 }
