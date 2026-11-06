@@ -34,6 +34,7 @@ import com.layzen.bdotools.uikit.showcase.ComponentShowcase
 import com.layzen.bdotools.uikit.theme.AppTheme
 import com.layzen.bdotools.update.AppUpdateBanner
 import com.layzen.bdotools.update.AppVersionInfo
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
@@ -73,6 +74,7 @@ private fun AppContent() {
                 if (current != Destination.Tab(tab)) backStack.add(Destination.Tab(tab))
             },
             label = { stringResource(it.title) },
+            icon = { painterResource(it.icon) },
             title = stringResource(Res.string.app_title),
             trailing = {
                 AppVersionInfo()

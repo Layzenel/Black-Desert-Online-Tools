@@ -188,6 +188,9 @@ val sampleToolModule = module {
 3. `shared/.../navigation/AppTab.kt` → `enum class AppTab`: добавь вкладку (редактору на всё окно — `fillsScreen = true`) или переименуй
    свободную заглушку (`Tab2`…`Tab5`). `route` пиши в kebab-case, после релиза его не меняй: он попадает в ссылки.
    Название вкладки — строка в `shared/src/commonMain/composeResources/values/strings.xml` (`tab_<имя>`).
+   Иконка вкладки обязательна (параметр `icon` в `AppTab`): нарисуй SVG `shared/src/commonMain/composeResources/drawable/tab_<имя>_icon.svg`
+   по смыслу тулзы — белый контур `stroke="#FFFFFF"`, `stroke-width="2"`, `viewBox 0 0 24 24`, без игровых ассетов
+   (пример — `tab_portraits_icon.svg`). `TopNavigation` ставит её слева от подписи и красит в цвет текста вкладки.
 4. `shared/.../App.kt` → `TabContent`: в ветке своей вкладки вызови `<Имя>Route()` вместо `PlaceholderScreen`.
 
 Если фиче нужны внутренние экраны (список → детали), добавь их в `sealed interface Destination` и
@@ -204,7 +207,7 @@ val sampleToolModule = module {
 
 ## Чек-лист перед тем, как считать фичу готовой
 
-- [ ] код лежит в `feature/<имя>`, в `shared` добавлены только зависимость, Koin-модуль, вкладка и ветка в `TabContent`;
+- [ ] код лежит в `feature/<имя>`, в `shared` добавлены только зависимость, Koin-модуль, вкладка с иконкой и ветка в `TabContent`;
 - [ ] модуль зависит только от `:platform:composable`, без других фич;
 - [ ] формулы в `domain/` покрыты тестами, и тесты проходят;
 - [ ] UI собран из компонентов дизайн-системы и токенов `AppTheme`, строки лежат в `strings.xml`, размеры — в `*Dimens`;

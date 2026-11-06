@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.layzen.bdotools.core.app.DESKTOP_INSTALLER_URL
 import com.layzen.bdotools.feature.portraits.resources.Res
 import com.layzen.bdotools.feature.portraits.resources.portraits_desktop_description
 import com.layzen.bdotools.feature.portraits.resources.portraits_desktop_download
@@ -16,10 +17,6 @@ import com.layzen.bdotools.uikit.components.SectionDivider
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
-
-/** Постоянная ссылка на установщик: CI выкладывает его в релиз `desktop-latest` под этим именем (`desktop.yml`). */
-private const val DESKTOP_INSTALLER_URL =
-    "https://github.com/Layzenel/Black-Desert-Online-Tools/releases/download/desktop-latest/BDO-Tools.msi"
 
 /** Браузер не умеет писать в папки: подсказка для него, если есть, и ссылка на настольную версию. */
 @Composable
