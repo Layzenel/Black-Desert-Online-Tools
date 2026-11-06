@@ -82,6 +82,20 @@ data class SlotLayout(
 
     fun moved(ids: Set<SlotId>, dx: Int, dy: Int) = transform(ids) { it.movedBy(dx, dy) }
 
+    /** Отдельные окна чата из [windows]: вкладки главного окна своего места на экране не имеют. */
+    fun separateChats(windows: Set<Int>): Map<Int, ChatWindow> = chats.filter { (window, chat) -> window in windows && !chat.combined }
+
+    /** Рамка, охватывающая элементы [ids] и отдельные окна чата [windows]; `null`, если ничего из них нет. */
+    fun boundsOf(ids: Set<SlotId>, windows: Set<Int>): SlotBounds? = SlotBounds.union(
+        ids.mapNotNull { id -> this[id]?.let { SlotBounds.of(id, it) } } + separateChats(windows).values.map { it.bounds },
+    )
+
+    /** Элементы [ids] и отдельные окна чата [windows] сдвинуты вместе на [dx], [dy] UI-px. */
+    fun moved(ids: Set<SlotId>, windows: Set<Int>, dx: Int, dy: Int): SlotLayout {
+        val movedChats = separateChats(windows).mapValues { (_, chat) -> chat.movedBy(dx, dy) }
+        return moved(ids, dx, dy).copy(chats = chats + movedChats)
+    }
+
     private fun transform(ids: Set<SlotId>, change: (SlotPosition) -> SlotPosition) =
         copy(positions = positions.mapValues { (id, position) -> if (id in ids) change(position) else position })
 }

@@ -8,7 +8,6 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.gamePresetTitle
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_game_preset
-import com.layzen.bdotools.feature.uieditor.resources.slots_game_preset_description
 import com.layzen.bdotools.uikit.components.DropdownSelect
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -19,7 +18,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun GamePresetSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     val loaded = state.loaded ?: return
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-        SectionHeader(stringResource(Res.string.slots_game_preset), description = stringResource(Res.string.slots_game_preset_description))
+        SectionHeader(stringResource(Res.string.slots_game_preset))
         DropdownSelect(
             selected = loaded.edited,
             options = loaded.presets.keys.sorted(),

@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.uieditor.domain.ChatWindow
 import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
@@ -39,7 +38,8 @@ import kotlin.math.roundToInt
 /**
  * Окно чата [window] на холсте в настоящем размере, как в режиме правки интерфейса игры: глазик сверху по центру,
  * в центре название и размер в UI-px, справа сверху ручка, за которую окно растягивают (левый нижний угол стоит
- * на месте). Окно перетаскивается целиком. [shown] — видно ли окно в игре с учётом главного чата: невидимое
+ * на месте). Клик выбирает окно (с Ctrl — добавляет к выбору), его место и размер правятся в боковой панели;
+ * перетаскивание двигает окно вместе со всем выбранным. [selected] — окно выбрано: светлая толстая рамка. [shown] — видно ли окно в игре с учётом главного чата: невидимое
  * приглушено. Слева сверху плашки [ChatTab]: у главного окна — его вкладки [tabs] (`WindowIndex`) с «Вынести»,
  * у отдельного — оно само с «Внести».
  */
@@ -49,12 +49,14 @@ internal fun ChatFrame(
     chat: ChatWindow,
     tabs: List<Int>,
     shown: Boolean,
+    selected: Boolean,
     screen: ScreenSpace,
     scale: Float,
     onEvent: (SlotsEvent) -> Unit,
+    onPress: () -> Unit,
 ) {
     val density = LocalDensity.current
-    val color = AppTheme.colors.textBeige
+    val color = if (selected) AppTheme.colors.textPrimary else AppTheme.colors.textBeige
     // Значки такого же размера, как глазик у слота: растут вместе с увеличением холста
     val iconSize = with(density) { (SlotGroup.Cooldown.width * scale).toDp() } * SlotsDimens.EYE_SHARE
     Box(
@@ -63,9 +65,16 @@ internal fun ChatFrame(
             .size(with(density) { (chat.width * scale).toDp() }, with(density) { (chat.height * scale).toDp() })
             .alpha(if (shown) 1f else SlotsDimens.HIDDEN_ALPHA)
             .background(AppTheme.colors.backgroundDeep.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
-            .border(SlotsDimens.slotBorder, color)
+            .border(if (selected) SlotsDimens.selectedSlotBorder else SlotsDimens.slotBorder, color)
             .pointerHoverIcon(PointerIcon.Hand)
-            .chatDrag(scale, onEvent) { dx, dy -> SlotsEvent.MoveChat(window, dx, dy) },
+            .elementGestures(
+                key = window,
+                scale = scale,
+                onEvent = onEvent,
+                onPress = onPress,
+                select = { SlotsEvent.SelectChat(window, it) },
+                dragStart = { SlotsEvent.DragChatStart(window, it) },
+            ),
     ) {
         val inset = iconSize * SlotsDimens.EYE_TOP_SHARE
         // Глаз сверху по центру, как у слотов и в режиме правки интерфейса игры
@@ -88,13 +97,10 @@ internal fun ChatFrame(
         }
         Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(chatTitle(window), style = AppTheme.typography.caption, color = AppTheme.colors.textPrimary)
-            // Клик по размеру — ввод размера руками
             Text(
                 stringResource(Res.string.slots_chat_size, chat.width, chat.height),
-                modifier = Modifier.consumingTap { onEvent(SlotsEvent.OpenChatSize(window)) },
                 style = AppTheme.typography.caption,
                 color = AppTheme.colors.textBeige,
-                textDecoration = TextDecoration.Underline,
             )
         }
         ResizeHandle(window, scale, onEvent, Modifier.align(Alignment.TopEnd))

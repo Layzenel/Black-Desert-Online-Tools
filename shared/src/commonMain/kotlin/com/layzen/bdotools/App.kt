@@ -19,8 +19,8 @@ import com.layzen.bdotools.account.AccountPicker
 import com.layzen.bdotools.account.AccountSwitcher
 import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.account.accountsModule
-import com.layzen.bdotools.feature.portraits.di.portraitsModule
-import com.layzen.bdotools.feature.portraits.presentation.ui.PortraitsRoute
+import com.layzen.bdotools.feature.portraitconstructor.di.portraitsModule
+import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsRoute
 import com.layzen.bdotools.feature.uieditor.di.slotsModule
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsRoute
 import com.layzen.bdotools.navigation.AppTab

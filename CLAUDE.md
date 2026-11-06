@@ -53,7 +53,7 @@
 ```
 
 ```bash
-./gradlew :feature:portraits:wasmJsBrowserTest :feature:portraits:jsBrowserTest :feature:portraits:desktopTest
+./gradlew :feature:portraitConstructor:wasmJsBrowserTest :feature:portraitConstructor:jsBrowserTest :feature:portraitConstructor:desktopTest
 ```
 
 - Настольная версия: `./gradlew :desktopApp:run`, сборка папки с программой — `:desktopApp:createDistributable`, MSI — `:desktopApp:packageMsi`.

@@ -27,7 +27,7 @@ description: Правило проекта BDO Tools — строки, разм�
 Каждый модуль с UI хранит свои строки сам: `platform/uikit`, `shared`, `feature/<имя>`.
 
 ```xml
-<!-- feature/portraits/src/commonMain/composeResources/values/strings.xml -->
+<!-- feature/portraitConstructor/src/commonMain/composeResources/values/strings.xml -->
 <resources>
     <string name="portraits_title">Портреты</string>
     <string name="portraits_level">Ур.%1$d %2$s</string>
@@ -51,7 +51,7 @@ compose.resources {
 через `:platform:composable`, и без этой строки класс `Res` не генерируется (ошибка `Unresolved reference 'Res'`).
 
 Уже настроено: `com.layzen.bdotools.uikit.resources`, `com.layzen.bdotools.resources` (shared),
-`com.layzen.bdotools.feature.portraits.resources`. После добавления строки класс `Res` генерируется
+`com.layzen.bdotools.feature.portraitconstructor.resources`. После добавления строки класс `Res` генерируется
 при сборке; если IDE его не видит, запусти `./gradlew :<модуль>:generateComposeResClass`.
 
 ### Чтение
@@ -104,7 +104,7 @@ data class AppDimens(
 Размеры одного экрана — в отдельном объекте рядом с ним:
 
 ```kotlin
-// feature/portraits/.../presentation/PortraitsDimens.kt
+// feature/portraitConstructor/.../presentation/PortraitsDimens.kt
 internal object PortraitsDimens {
     val portraitSize = 92.dp
     val gridSpacing = 4.dp

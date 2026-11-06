@@ -57,7 +57,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 9. **Без символов-иконок в тексте.** Шрифт web-сборки по умолчанию содержит латиницу и кириллицу, но не
    содержит `✕ ▼ ⚙ ♪` и эмодзи: они показываются пустыми квадратами. Иконки рисуй через `Canvas`/`Path`
    (пример — стрелка в `DropdownSelect`) или клади SVG в `composeResources/drawable` своего модуля
-   (белый контур `stroke="#FFFFFF"`, `viewBox 0 0 24 24`; пример — `menu_*.svg` в `feature/portraits`).
+   (белый контур `stroke="#FFFFFF"`, `viewBox 0 0 24 24`; пример — `menu_*.svg` в `feature/portraitConstructor`).
 10. **У страниц тулз нет шапки окна.** Бронзовая шапка `GameWindow` с крестиком остаётся только у модальных окон
     (`ModalWindow`). Страница бывает двух видов:
     - **редактору нужно всё место** (холст слотов) — `ToolPage` на всё окно (вкладка с `fillsScreen = true`
@@ -159,11 +159,11 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `SectionDivider` | разделитель между секциями |
 | `LabelBadge(text, kind)` | NEW / HOT (`LabelBadgeKind.New` / `Hot`) |
 | `OptionGroup(options, selected, onSelect, label)` | выбор одного из 2–4 вариантов |
-| `DropdownSelect(selected, options, onSelect, label)` | выбор из длинного списка |
+| `DropdownSelect(selected, options, onSelect, label, fieldText)` | выбор из длинного списка; `fieldText` — постоянная подпись поля вместо выбранного значения (кнопка-список «Готовые пресеты») |
 | `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. Не выше `optionsMenuMaxHeight`, длинный прокручивается с полосой прокрутки. `DropdownSelect` построен на нём |
 | `GroupedOptionsMenu(expanded, onDismissRequest, groups, groupLabel, options, selected, onSelect, label, groupIcon, icon)` | двухуровневый список: слева группы со стрелкой, при наведении справа раскрываются их варианты (с прокруткой) и прячутся, когда курсор уходит и с группы, и с вариантов. У каждой колонки своя панель своей высоты |
 | `Modifier.verticalScrollbar(scrollState)` | тонкая полоса прокрутки у правого края; ставится перед `verticalScroll(scrollState)` |
-| `ValueSlider(value, onValueChange, range)` | целое число в диапазоне, где важна наглядность |
+| `ValueSlider(value, onValueChange, range, onValueChangeFinished)` | целое число в диапазоне, где важна наглядность; `onValueChangeFinished` — конец перетаскивания или клик, чтобы правка по ходу жеста легла в историю отмены одним шагом |
 | `NumberField(value, onValueChange, range)` | точный ввод числа (фейлстак, цена, количество) |
 | `InputField(value, onValueChange, placeholder, leading, trailing, minLines)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями. `minLines` больше 1 — многострочное поле (вставка текста файла) |
 | `ToggleSwitch(checked, onCheckedChange, label, description)` | включить или выключить опцию |

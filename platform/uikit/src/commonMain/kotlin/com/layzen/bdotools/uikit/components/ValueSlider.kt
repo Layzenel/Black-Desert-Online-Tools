@@ -27,7 +27,8 @@ import kotlin.math.roundToInt
 
 /**
  * Слайдер как «Масштаб интерфейса»: подписи min/max по краям, текущее значение
- * золотом по центру, тонкая тёмная дорожка и белый ромб-ползунок.
+ * золотом по центру, тонкая тёмная дорожка и белый ромб-ползунок. [onValueChangeFinished] — палец отпустили
+ * (конец перетаскивания или клик): для правок, которые по ходу жеста не копятся в историю отмены.
  */
 @Composable
 fun ValueSlider(
@@ -36,10 +37,12 @@ fun ValueSlider(
     range: IntRange,
     modifier: Modifier = Modifier,
     showLabels: Boolean = true,
+    onValueChangeFinished: () -> Unit = {},
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
     val currentOnChange by rememberUpdatedState(onValueChange)
+    val currentOnFinished by rememberUpdatedState(onValueChangeFinished)
     Column(modifier) {
         if (showLabels) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
@@ -66,9 +69,15 @@ fun ValueSlider(
             Box(
                 Modifier
                     .matchParentSize()
-                    .pointerInput(range, widthPx) { detectTapGestures { currentOnChange(valueAt(it.x)) } }
+                    .pointerInput(range, widthPx) { detectTapGestures {
+                            currentOnChange(valueAt(it.x))
+                            currentOnFinished()
+                        } }
                     .pointerInput(range, widthPx) {
-                        detectHorizontalDragGestures { change, _ -> currentOnChange(valueAt(change.position.x)) }
+                        detectHorizontalDragGestures(
+                            onDragEnd = { currentOnFinished() },
+                            onDragCancel = { currentOnFinished() },
+                        ) { change, _ -> currentOnChange(valueAt(change.position.x)) }
                     },
             )
             Box(Modifier.fillMaxWidth().height(dimens.sliderTrackHeight).background(colors.track))

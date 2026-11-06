@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -23,10 +24,10 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_legend_off_screen
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
-/** Под холстом: какой цвет рамки у какой группы элементов и что значит красная заливка. */
+/** В окне «Справка» ([HelpDialog]), столбиком: какой цвет рамки у какой группы элементов и что значит красная заливка. */
 @Composable
 internal fun EditorLegend() {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
         LegendItem(SlotGroup.Cooldown.frameColor(), stringResource(Res.string.slots_legend_cooldown))
         LegendItem(SlotGroup.Hotbar.frameColor(), stringResource(Res.string.slots_legend_hotbar))
         LegendItem(SlotGroup.ClassResource.frameColor(), stringResource(Res.string.slots_legend_class_resource))

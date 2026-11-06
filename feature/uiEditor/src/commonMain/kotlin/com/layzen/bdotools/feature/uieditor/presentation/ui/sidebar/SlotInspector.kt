@@ -2,17 +2,11 @@ package com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.uieditor.domain.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
-import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_selection
@@ -22,26 +16,31 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_slot_index
 import com.layzen.bdotools.feature.uieditor.resources.slots_slot_x
 import com.layzen.bdotools.feature.uieditor.resources.slots_slot_y
 import com.layzen.bdotools.uikit.components.DescriptionText
-import com.layzen.bdotools.uikit.components.NumberField
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ValueText
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
-/** Насколько далеко от центра можно ввести координату руками, UI-px. */
-private val COORDINATE_RANGE = -5000..5000
-
-/** Координаты выбранного слота с точным вводом или подсказка, как выбрать слот. */
+/**
+ * Выбранное на холсте: у одного слота — координаты с точным вводом, у одного окна чата — ещё и размер,
+ * у нескольких — сколько выбрано и отдаление групп. Ничего не выбрано — подсказка.
+ */
 @Composable
 internal fun SlotInspector(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
         SectionHeader(stringResource(Res.string.slots_selection))
-        val selected = state.selection.singleOrNull()
-        val position = selected?.let { state.layout[it] }
-        val crosshair = state.loaded?.game?.screen?.crosshair
+        val screen = state.loaded?.game?.screen
+        val slot = state.selection.singleOrNull()?.takeIf { state.selectedChats.isEmpty() }
+        val position = slot?.let { state.layout[it] }
+        val window = state.selectedChats.singleOrNull()?.takeIf { state.selection.isEmpty() }
+        val chat = window?.let { state.layout.chats[it] }
         when {
-            selected != null && position != null && crosshair != null -> SlotCoordinates(selected, position, crosshair, onEvent)
-            state.selection.size > 1 -> DescriptionText(stringResource(Res.string.slots_selection_many, state.selection.size))
+            slot != null && position != null && screen != null -> SlotCoordinates(slot, position, screen.crosshair, onEvent)
+            window != null && chat != null && screen != null -> ChatInspector(window, chat, screen, onEvent)
+            state.selectedCount > 1 -> {
+                DescriptionText(stringResource(Res.string.slots_selection_many, state.selectedCount))
+                GroupSpreadSliders(state, onEvent)
+            }
             else -> DescriptionText(stringResource(Res.string.slots_selection_hint))
         }
     }
@@ -57,13 +56,5 @@ private fun SlotCoordinates(id: SlotId, position: SlotPosition, crosshair: SlotP
     }
     CoordinateRow(stringResource(Res.string.slots_slot_y), position.y - crosshair.y) {
         onEvent(SlotsEvent.SetPosition(id, position.copy(y = it + crosshair.y)))
-    }
-}
-
-@Composable
-private fun CoordinateRow(label: String, value: Int, onValueChange: (Int) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(label, Modifier.weight(1f), style = AppTheme.typography.bodyBold, color = AppTheme.colors.textBeige)
-        NumberField(value, onValueChange, Modifier.width(SlotsDimens.coordinateFieldWidth), range = COORDINATE_RANGE)
     }
 }

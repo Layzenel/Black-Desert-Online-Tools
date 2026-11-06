@@ -24,6 +24,12 @@ sealed interface SlotsEvent {
     /** Обводка рамкой: выбрать всё, что она задела; [additive] — добавить к уже выбранному. */
     data class SelectArea(val area: ScreenArea, val additive: Boolean) : SlotsEvent
     data class DragStart(val id: SlotId, val additive: Boolean) : SlotsEvent
+
+    /** Клик по окну чата [window]: выбрать его; [additive] (Ctrl) — добавить к выбору или убрать из него. */
+    data class SelectChat(val window: Int, val additive: Boolean) : SlotsEvent
+
+    /** Окно чата [window] схватили: дальше [DragBy] двигает его вместе со всем выбранным, конец — [DragEnd]. */
+    data class DragChatStart(val window: Int, val additive: Boolean) : SlotsEvent
     data class DragBy(val dx: Float, val dy: Float) : SlotsEvent
     data object DragEnd : SlotsEvent
     data class Nudge(val dx: Int, val dy: Int, val byGrid: Boolean) : SlotsEvent
@@ -39,13 +45,18 @@ sealed interface SlotsEvent {
     data class Align(val edge: AlignEdge, val anchor: SlotId? = null) : SlotsEvent
     data class Distribute(val horizontal: Boolean) : SlotsEvent
 
-    /** Шаг перетаскивания окна чата [window]: сдвиг от начала жеста. */
-    data class MoveChat(val window: Int, val dx: Int, val dy: Int) : SlotsEvent
-
     /** Шаг растягивания окна чата [window] за правый верхний угол: сдвиг угла от начала жеста. */
     data class ResizeChat(val window: Int, val dx: Int, val dy: Int) : SlotsEvent
-    data class OpenChatSize(val window: Int) : SlotsEvent
     data class SetChatSize(val window: Int, val width: Int, val height: Int) : SlotsEvent
+
+    /** Центр окна чата [window] от центра экрана, введённый руками. */
+    data class SetChatPosition(val window: Int, val center: SlotPosition) : SlotsEvent
+
+    /** Шаг слайдера «Отдаление»: группы выбранного на [value] UI-px от центра между ними по оси. */
+    data class SpreadGroups(val horizontal: Boolean, val value: Int) : SlotsEvent
+
+    /** Слайдер «Отдаление» отпустили: прежняя раскладка уходит в «Отменить» одним шагом. */
+    data object SpreadGroupsEnd : SlotsEvent
 
     /** Перетаскивание или растягивание окна чата закончилось: прежняя раскладка уходит в «Отменить». */
     data object ChatEditEnd : SlotsEvent

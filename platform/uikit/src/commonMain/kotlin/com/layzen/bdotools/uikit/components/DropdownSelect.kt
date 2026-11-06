@@ -32,14 +32,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Выпадающий список: тёмное поле со значением по центру и треугольником справа. Повторный клик по полю закрывает список. */
+/**
+ * Выпадающий список: тёмное поле со значением по центру и треугольником справа. Повторный клик по полю закрывает список.
+ * [fieldText] — постоянная подпись поля вместо выбранного значения (список действий вроде «Готовые пресеты»);
+ * [selected] тогда может быть `null` — в списке ничего не подсвечено.
+ */
 @Composable
 fun <T> DropdownSelect(
-    selected: T,
+    selected: T?,
     options: List<T>,
     onSelect: (T) -> Unit,
     label: @Composable (T) -> String,
     modifier: Modifier = Modifier,
+    fieldText: String? = null,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -62,7 +67,7 @@ fun <T> DropdownSelect(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                label(selected),
+                fieldText ?: selected?.let { label(it) }.orEmpty(),
                 style = AppTheme.typography.bodyBold,
                 color = colors.textPrimary,
                 textAlign = TextAlign.Center,

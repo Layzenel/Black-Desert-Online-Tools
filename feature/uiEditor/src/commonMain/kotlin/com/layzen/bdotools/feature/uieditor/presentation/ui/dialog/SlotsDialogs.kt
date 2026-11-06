@@ -23,11 +23,6 @@ internal fun SlotsDialogs(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             LayoutPreviewDialog(dialog, it, state.background, state.backgroundShown, state.backgroundDim, onEvent)
         }
         is SlotsDialog.ConfirmApply -> ApplyDialog(dialog, state.loaded?.presets?.keys?.sorted().orEmpty(), onEvent)
-        is SlotsDialog.ChatSize -> {
-            val chat = state.layout.chats[dialog.window]
-            val screen = state.loaded?.game?.screen
-            if (chat != null && screen != null) ChatSizeDialog(dialog, chat, screen, onEvent)
-        }
         is SlotsDialog.ConfirmDelete -> ConfirmDialog(
             title = stringResource(Res.string.slots_delete_title),
             text = stringResource(Res.string.slots_delete_description, dialog.name),

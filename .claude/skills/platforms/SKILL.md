@@ -45,7 +45,7 @@ description: Правило проекта BDO Tools — приложение р
    на Desktop пусто). Не тащи через `expect` целые экраны.
 4. **Тексты, которые различаются.** В браузере файлы читает «сайт», на Desktop — «программа», а ошибки
    доступа звучат по-разному. Такие строки выбираются через `expect val` (пример — `PlatformTexts.kt` в
-   `feature/portraits`), сами строки лежат в общем `strings.xml`.
+   `feature/portraitConstructor`), сами строки лежат в общем `strings.xml`.
 5. **Одинаковое поведение.** Реализации одного интерфейса ведут себя одинаково: те же форматы файлов и
    имён папок, те же ошибки (`PortraitsError`), те же состояния (`FolderAccess`). Если поведение где-то
    отличается, опиши это в KDoc реализации. Тесты репозитория идут на `MemoryStorage` в `commonTest`
@@ -71,7 +71,7 @@ description: Правило проекта BDO Tools — приложение р
 ```
 
 ```bash
-./gradlew :feature:portraits:wasmJsBrowserTest :feature:portraits:jsBrowserTest :feature:portraits:desktopTest
+./gradlew :feature:portraitConstructor:wasmJsBrowserTest :feature:portraitConstructor:jsBrowserTest :feature:portraitConstructor:desktopTest
 ```
 
 - Сайт: UI проверяй в браузере через dev-сервер `webApp-wasm` из `.claude/launch.json`.
