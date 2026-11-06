@@ -43,6 +43,8 @@ data class AppDimens(
     // Списки и прокрутка
     val optionsMenuMaxHeight: Dp = 320.dp,
     val contextMenuWidth: Dp = 260.dp,
+    // Подсказка при наведении: длинный текст переносится, а не тянется в одну строку
+    val tooltipMaxWidth: Dp = 260.dp,
     val groupedMenuOptionsWidth: Dp = 220.dp,
     val menuShadow: Dp = 3.dp,
     val scrollbarWidth: Dp = 4.dp,

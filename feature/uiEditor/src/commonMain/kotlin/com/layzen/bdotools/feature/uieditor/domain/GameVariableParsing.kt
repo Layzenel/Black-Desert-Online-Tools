@@ -4,6 +4,9 @@ private val ATTRIBUTE = Regex("""(\w+)="([^"]*)"""")
 private val RESOLUTION = Regex("""<Resolution\s+Width="(\d+)"\s+Height="(\d+)"""")
 private val UI_SCALE = Regex("""<UiScale\s+Value="([\d.]+)"""")
 
+/** «Настройка быстрых слотов» — `<Bool Index="1">` в `<UIValue>` файла аккаунта; найдено сравнением файла до и после переключения. */
+internal val CUSTOM_QUICK_SLOTS = Regex("""<Bool\s+Index="1"\s+Value="(true|false)"""")
+
 private val SLOT_INDICES = SlotGroup.entries.flatMap { it.uiIndices }.toSet()
 
 /**
@@ -20,7 +23,8 @@ fun parseGameVariable(text: String, preset: GamePreset = GamePreset.General): Ga
         .filter { it.index in SLOT_INDICES }
         .associateBy { it.index }
     require(uiData.isNotEmpty()) { "No slot ${preset.tag} found" }
-    return GameVariable(screen, uiData)
+    val customQuickSlots = CUSTOM_QUICK_SLOTS.find(text)?.groupValues?.get(1)?.toBoolean()
+    return GameVariable(screen, uiData, customQuickSlots)
 }
 
 /** Все наборы позиций, которые есть в файле: общий обязателен, пресеты 1–3 — если игра их сохраняла. */

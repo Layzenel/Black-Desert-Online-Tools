@@ -7,9 +7,16 @@ import com.layzen.bdotools.feature.uieditor.domain.NamedLayout
 import com.layzen.bdotools.feature.uieditor.domain.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.parseGamePresets
 import com.layzen.bdotools.feature.uieditor.domain.writeUiData
+import com.layzen.bdotools.feature.uieditor.domain.writeCustomQuickSlots
 import com.layzen.bdotools.feature.uieditor.domain.writeVisibility
 
 private const val PRESET_EXTENSION = ".json"
+
+/**
+ * `Index` элемента, которому игра меняет `IsShow` вместе с «Настройкой быстрых слотов» (видим, пока она включена).
+ * Что это за элемент, не выяснено; повторяем за игрой, чтобы файл был таким же, как после переключения в ней.
+ */
+private const val QUICK_SLOTS_COMPANION_INDEX = 160
 private val UNSAFE_FILE_CHARS = Regex("""[\\/:*?"<>|]""")
 
 /** Сценарии работы с файлами: загрузка настроек игры, запись раскладки и пресеты пользователя. */
@@ -31,17 +38,24 @@ class SlotsRepository(private val storage: SlotsStorage) {
     /**
      * Записывает [layout] в набор [target] файла аккаунта. Видимость общего набора игра хранит ещё и у каждого
      * персонажа, поэтому для него поменявшийся `IsShow` записывается и в файлы персонажей; у пресетов 1–3
-     * видимость лежит в самих записях. Возвращает путь резервной копии.
+     * видимость лежит в самих записях. «Настройка быстрых слотов» одна на аккаунт и пишется при любом [target],
+     * если поменялась. Возвращает путь резервной копии.
      */
     suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String {
         val game = loaded.presets.getValue(target)
         val entries = game.changedEntries(layout)
-        val text = writeUiData(loaded.file.text, entries, target)
+        val quickSlots = layout.customQuickSlots?.takeIf { game.quickSlotsChanged(layout) }
+        var text = writeUiData(loaded.file.text, entries, target)
+        if (quickSlots != null) text = writeCustomQuickSlots(text, quickSlots)
+        if (quickSlots != null && target == GamePreset.General) {
+            text = writeVisibility(text, mapOf(QUICK_SLOTS_COMPANION_INDEX to quickSlots))
+        }
         val backup = storage.writeGameVariable(loaded.account, text, loaded.file.modified)
         if (target != GamePreset.General) return backup
         val visibility = entries
             .filter { it.isShow != game.uiData.getValue(it.index).isShow }
-            .associate { it.index to it.isShow }
+            .associate { it.index to it.isShow } +
+            listOfNotNull(quickSlots?.let { QUICK_SLOTS_COMPANION_INDEX to it })
         if (visibility.isNotEmpty()) applyVisibility(loaded.account, visibility)
         return backup
     }

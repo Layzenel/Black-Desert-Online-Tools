@@ -9,6 +9,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_element_black_spirit
 import com.layzen.bdotools.feature.uieditor.resources.slots_element_buffs
 import com.layzen.bdotools.feature.uieditor.resources.slots_element_health
 import com.layzen.bdotools.feature.uieditor.resources.slots_element_pvp
+import com.layzen.bdotools.feature.uieditor.resources.slots_element_quick_slot
 import com.layzen.bdotools.feature.uieditor.resources.slots_element_rare_item_history
 import com.layzen.bdotools.feature.uieditor.resources.slots_element_stamina
 import com.layzen.bdotools.feature.uieditor.resources.slots_group_class_resource
@@ -49,4 +50,5 @@ private val InterfaceElement.title: StringResource
         InterfaceElement.BlackSpiritRage -> Res.string.slots_element_black_spirit_rage
         InterfaceElement.Buffs -> Res.string.slots_element_buffs
         InterfaceElement.RareItemHistory -> Res.string.slots_element_rare_item_history
+        InterfaceElement.QuickSlot -> Res.string.slots_element_quick_slot
     }

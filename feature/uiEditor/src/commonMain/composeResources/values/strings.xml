@@ -56,6 +56,9 @@
     <string name="slots_element_black_spirit_rage">Гнев Черного духа</string>
     <string name="slots_element_buffs">Список усилений</string>
     <string name="slots_element_rare_item_history">История получения редких предметов</string>
+    <string name="slots_element_quick_slot">Быстрый слот</string>
+    <string name="slots_custom_quick_slots">Настройка быстрых слотов</string>
+    <string name="slots_custom_quick_slots_description">Как одноимённая настройка игры: включена — 20 отдельных слотов хотбара, выключена — одна панель «Быстрый слот».</string>
     <string name="slots_legend_off_screen">за краем экрана</string>
     <string name="slots_undo">Отменить</string>
     <string name="slots_redo">Повторить</string>

@@ -17,12 +17,20 @@ data class AnchoredLayout(
     val hidden: Set<SlotId> = emptySet(),
     /** Ширина заглушек надписей в символах, см. [SlotLayout.labels]. */
     val labels: Map<SlotId, Int> = emptyMap(),
+    /** «Настройка быстрых слотов», см. [SlotLayout.customQuickSlots]. */
+    val customQuickSlots: Boolean? = null,
 ) {
 
-    fun placeOn(screen: ScreenSpace) = SlotLayout(positions.mapValues { it.value.placeOn(screen) }, hidden, labels)
+    fun placeOn(screen: ScreenSpace) =
+        SlotLayout(positions.mapValues { it.value.placeOn(screen) }, hidden, labels, customQuickSlots)
 
-    /** Только элементы [ids]: так импортируется и экспортируется часть раскладки. */
-    fun only(ids: Set<SlotId>) = AnchoredLayout(positions.filterKeys { it in ids }, hidden intersect ids, labels.filterKeys { it in ids })
+    /** Только элементы [ids]: так импортируется и экспортируется часть раскладки. Настройка быстрых слотов остаётся. */
+    fun only(ids: Set<SlotId>) =
+        AnchoredLayout(positions.filterKeys { it in ids }, hidden intersect ids, labels.filterKeys { it in ids }, customQuickSlots)
+
+    /** Переключает «Настройку быстрых слотов» вместе с видимостью хотбара и «Быстрого слота», см. [hiddenWithCustomQuickSlots]. */
+    fun withCustomQuickSlots(enabled: Boolean) =
+        copy(customQuickSlots = enabled, hidden = hiddenWithCustomQuickSlots(hidden, enabled))
 
     /** Сколько элементов не помещается на экран [screen]. */
     fun offScreenCount(screen: ScreenSpace): Int =
@@ -49,6 +57,7 @@ data class AnchoredLayout(
             positions = layout.positions.mapValues { AnchoredPosition.of(it.value, screen) },
             hidden = layout.hidden,
             labels = layout.labels,
+            customQuickSlots = layout.customQuickSlots,
         )
     }
 }

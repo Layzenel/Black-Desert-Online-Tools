@@ -21,6 +21,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.PreviewMode
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.handleHistoryKeys
+import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.QuickSlotSettings
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_export_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_hint
@@ -69,7 +70,10 @@ internal fun LayoutPreviewDialog(
                     PreviewScreenSettings(dialog.screen, gameScreen, onEvent)
                     SectionDivider()
                 }
-                PreviewElementList(dialog.layout.layout.positions.keys, dialog.included, onEvent)
+                val layout = dialog.layout.layout
+                QuickSlotSettings(layout.customQuickSlots) { onEvent(SlotsEvent.PreviewCustomQuickSlots(it)) }
+                SectionDivider()
+                PreviewElementList(layout.positions.keys.filter { it.isActiveWith(layout.customQuickSlots) }.toSet(), dialog.included, onEvent)
             },
             sidebarFooter = { PreviewActions(dialog, hasBackground = background != null, backgroundShown, backgroundDim, onEvent) },
         ) {

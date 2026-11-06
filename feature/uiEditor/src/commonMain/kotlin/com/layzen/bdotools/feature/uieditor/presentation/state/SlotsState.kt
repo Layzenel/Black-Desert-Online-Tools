@@ -48,10 +48,14 @@ data class SlotsState(
     val notice: SlotsNotice? = null,
 ) {
     /** Есть ли в редакторе изменения, которых ещё нет в файле игры. */
-    val hasChanges: Boolean get() = loaded?.game?.changedEntries(layout)?.isNotEmpty() == true
+    val hasChanges: Boolean
+        get() = loaded?.game?.let { it.changedEntries(layout).isNotEmpty() || it.quickSlotsChanged(layout) } == true
 
-    /** Элементы, которые есть в файле игры: их показывает редактор, скрытые — приглушёнными. */
-    val slots: List<SlotId> get() = loaded?.game?.slots.orEmpty()
+    /**
+     * Элементы, которые есть в файле игры и на экране при текущей «Настройке быстрых слотов»: их показывает редактор,
+     * скрытые — приглушёнными.
+     */
+    val slots: List<SlotId> get() = loaded?.game?.slots.orEmpty().filter { it.isActiveWith(layout.customQuickSlots) }
 
     /** Шаг привязки к сетке, который действует сейчас: 0, пока привязка выключена. */
     val gridSnapStep: Int get() = if (snapToGrid) snapStep else 0

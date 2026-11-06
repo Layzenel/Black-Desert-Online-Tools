@@ -73,6 +73,7 @@ class SlotsViewModel(
             is SlotsEvent.SetDistributeGap -> editor.setDistributeGap(event.gap)
             is SlotsEvent.ToggleVisibility -> editor.toggleVisibility(event.id)
             is SlotsEvent.SetLabel -> editor.setLabel(event.id, event.chars)
+            is SlotsEvent.SetCustomQuickSlots -> editor.setCustomQuickSlots(event.enabled)
 
             SlotsEvent.UseGameLayout -> presets.useGameLayout()
             is SlotsEvent.UseBuiltIn -> presets.useBuiltIn(event.layout)
@@ -90,6 +91,7 @@ class SlotsViewModel(
             is SlotsEvent.PreviewInclude -> files.include(event.ids, event.include)
             is SlotsEvent.PreviewArea -> files.includeArea(event.area)
             is SlotsEvent.PreviewScreen -> files.setPreviewScreen(event.screen)
+            is SlotsEvent.PreviewCustomQuickSlots -> files.setPreviewQuickSlots(event.enabled)
             SlotsEvent.PreviewUndo -> files.undoPreview()
             SlotsEvent.PreviewRedo -> files.redoPreview()
             SlotsEvent.ConfirmPreview -> files.confirmPreview()

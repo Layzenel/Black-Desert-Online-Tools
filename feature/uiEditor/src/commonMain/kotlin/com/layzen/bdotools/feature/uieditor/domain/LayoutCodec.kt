@@ -24,6 +24,7 @@ object LayoutCodec {
             hotbar = layout.layout.slotsOf(SlotGroup.Hotbar),
             classResource = layout.layout.slotsOf(SlotGroup.ClassResource),
             interfaceElements = layout.layout.slotsOf(SlotGroup.Interface),
+            customQuickSlots = layout.layout.customQuickSlots,
         ),
     )
 
@@ -40,6 +41,7 @@ object LayoutCodec {
             positions = slots.associate { (id, slot) -> id to AnchoredPosition(slot.anchorOrFail(), slot.x, slot.y) },
             hidden = slots.filter { (_, slot) -> !slot.visible }.mapTo(mutableSetOf()) { it.first },
             labels = slots.mapNotNull { (id, slot) -> slot.labelOf(id)?.let { id to it } }.toMap(),
+            customQuickSlots = file.customQuickSlots,
         )
         return NamedLayout(file.name, layout)
     }
