@@ -31,11 +31,11 @@ internal fun ChatTab(window: Int, combined: Boolean, onMove: () -> Unit) {
         Modifier
             .background(AppTheme.colors.backgroundRaised)
             .border(SlotsDimens.slotBorder, AppTheme.colors.textBeige)
-            .padding(horizontal = AppTheme.dimens.spaceS, vertical = AppTheme.dimens.spaceXs),
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
+            .padding(horizontal = AppTheme.dimens.spaceXs, vertical = SlotsDimens.chatTabPaddingVertical),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(chatTitle(window), style = AppTheme.typography.bodyBold, color = AppTheme.colors.textBeige, maxLines = 1)
+        Text(chatTitle(window), style = AppTheme.typography.caption, color = AppTheme.colors.textBeige, maxLines = 1)
         FrameIconButton(
             painterResource(if (combined) Res.drawable.chat_take_out else Res.drawable.chat_bring_in),
             stringResource(if (combined) Res.string.slots_chat_take_out else Res.string.slots_chat_bring_in),

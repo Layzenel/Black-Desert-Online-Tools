@@ -11,7 +11,6 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.EditorToolbar
-import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.EditorStatus
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.SlotsCanvas
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.rememberCanvasViewport
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.SlotsFileActions
@@ -44,7 +43,6 @@ internal fun SlotsContent(state: SlotsState, onEvent: (SlotsEvent) -> Unit, modi
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
             ) {
                 SlotsCanvas(state, viewport, onEvent, Modifier.weight(1f).fillMaxWidth())
-                EditorStatus(state)
             }
         }
     }

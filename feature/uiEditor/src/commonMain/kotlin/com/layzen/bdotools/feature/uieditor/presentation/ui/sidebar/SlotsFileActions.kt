@@ -7,7 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.EditorStatus
 import com.layzen.bdotools.feature.uieditor.resources.Res
+import com.layzen.bdotools.feature.uieditor.resources.slots_game_closed_hint
 import com.layzen.bdotools.feature.uieditor.resources.menu_apply
 import com.layzen.bdotools.feature.uieditor.resources.menu_export
 import com.layzen.bdotools.feature.uieditor.resources.menu_import
@@ -18,18 +20,22 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_export
 import com.layzen.bdotools.feature.uieditor.resources.slots_import
 import com.layzen.bdotools.feature.uieditor.resources.slots_reload
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as
+import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Низ меню слева, всегда на виду: перечитать файл игры, импорт и экспорт раскладки, сохранение пресета
+ * Низ меню слева, всегда на виду: предупреждение об элементах за краем экрана, напоминание закрыть игру,
+ * перечитать файл игры, импорт и экспорт раскладки, сохранение пресета
  * и последним — главное действие «Применить в игру».
  */
 @Composable
 internal fun SlotsFileActions(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     val wide = Modifier.fillMaxWidth()
+    EditorStatus(state)
+    DescriptionText(stringResource(Res.string.slots_game_closed_hint))
     MenuAction(
         stringResource(Res.string.slots_reload),
         onClick = { onEvent(SlotsEvent.Reload) },

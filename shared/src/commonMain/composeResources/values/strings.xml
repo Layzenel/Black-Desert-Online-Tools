@@ -17,6 +17,7 @@
     <string name="account_picker_title">Выберите аккаунт</string>
     <string name="account_picker_description">На этом ПК играли с нескольких аккаунтов, а портреты у них лежат в одной папке. Тулзы покажут только выбранный аккаунт, сменить его можно в верхней навигации.</string>
     <string name="account_picker_apply">Выбрать</string>
+    <string name="account_picker_cancel">Отмена</string>
     <string name="account_last_played">Последний</string>
     <string name="account_details">Последняя игра: %1$s · персонажей: %2$d</string>
     <string name="account_played_today">сегодня</string>

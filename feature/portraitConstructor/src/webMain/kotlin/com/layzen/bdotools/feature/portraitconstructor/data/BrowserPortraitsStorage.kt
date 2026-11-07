@@ -23,58 +23,62 @@ internal class BrowserPortraitsStorage : GameFiles {
     override suspend fun readPortrait(characterId: String): ByteArray =
         Base64.decode(fileSystemBridge.call("read", characterId + BMP_EXTENSION))
 
-    override suspend fun createBackup(): String = fileSystemBridge.call("backupCreate")
+    override suspend fun createBackup(account: String?): String = fileSystemBridge.call("backupCreate", account.orEmpty())
 
     override suspend fun writePortrait(characterId: String, bmp: ByteArray) {
         fileSystemBridge.call("write", characterId + BMP_EXTENSION, Base64.encode(bmp))
     }
 
-    override suspend fun backupListing(): String = fileSystemBridge.call("backups")
+    override suspend fun backupListing(account: String?): String = fileSystemBridge.call("backups", account.orEmpty())
 
-    override suspend fun readBackupFile(backup: String, name: String): ByteArray? {
-        val result = fileSystemBridge.call("backupRead", backup, name)
+    override suspend fun readBackupFile(account: String?, backup: String, name: String): ByteArray? {
+        val result = fileSystemBridge.call("backupRead", "${account.orEmpty()}/$backup", name)
         return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
     }
 
-    override suspend fun writeBackupFile(backup: String, name: String, bytes: ByteArray) {
-        fileSystemBridge.call("backupWrite", "$backup/$name", Base64.encode(bytes))
+    override suspend fun writeBackupFile(account: String?, backup: String, name: String, bytes: ByteArray) {
+        fileSystemBridge.call("backupWrite", "${account.orEmpty()}/$backup/$name", Base64.encode(bytes))
     }
 
-    override suspend fun deleteBackup(backup: String) {
-        fileSystemBridge.call("backupDelete", backup)
+    override suspend fun deleteBackup(account: String?, backup: String) {
+        fileSystemBridge.call("backupDelete", account.orEmpty(), backup)
     }
 
-    override suspend fun toolFileNames(): List<String> =
-        fileSystemBridge.call("toolList").split('\n').filter { it.isNotEmpty() }
+    override suspend fun toolFileNames(account: String?): List<String> =
+        fileSystemBridge.call("toolList", account.orEmpty()).split('\n').filter { it.isNotEmpty() }
 
-    override suspend fun readToolFile(name: String): ByteArray? {
-        val result = fileSystemBridge.call("toolRead", name)
+    override suspend fun readToolFile(account: String?, name: String): ByteArray? {
+        val result = fileSystemBridge.call("toolRead", account.orEmpty(), name)
         return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
     }
 
-    override suspend fun writeToolFile(name: String, bytes: ByteArray) {
-        fileSystemBridge.call("toolWrite", name, Base64.encode(bytes))
+    override suspend fun writeToolFile(account: String?, name: String, bytes: ByteArray) {
+        fileSystemBridge.call("toolWrite", "${account.orEmpty()}/$name", Base64.encode(bytes))
     }
 
-    override suspend fun deleteToolFile(name: String) {
-        fileSystemBridge.call("toolDelete", name)
+    override suspend fun deleteToolFile(account: String?, name: String) {
+        fileSystemBridge.call("toolDelete", account.orEmpty(), name)
     }
 
-    override suspend fun createFavoriteSet(): String = fileSystemBridge.call("favoriteCreate")
+    override suspend fun createFavoriteSet(account: String?): String = fileSystemBridge.call("favoriteCreate", account.orEmpty())
 
-    override suspend fun favoriteListing(): String = fileSystemBridge.call("favorites")
+    override suspend fun favoriteListing(account: String?): String = fileSystemBridge.call("favorites", account.orEmpty())
 
-    override suspend fun readFavoriteFile(set: String, name: String): ByteArray? {
-        val result = fileSystemBridge.call("favoriteRead", set, name)
+    override suspend fun readFavoriteFile(account: String?, set: String, name: String): ByteArray? {
+        val result = fileSystemBridge.call("favoriteRead", "${account.orEmpty()}/$set", name)
         return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
     }
 
-    override suspend fun writeFavoriteFile(set: String, name: String, bytes: ByteArray) {
-        fileSystemBridge.call("favoriteWrite", "$set/$name", Base64.encode(bytes))
+    override suspend fun writeFavoriteFile(account: String?, set: String, name: String, bytes: ByteArray) {
+        fileSystemBridge.call("favoriteWrite", "${account.orEmpty()}/$set/$name", Base64.encode(bytes))
     }
 
-    override suspend fun deleteFavoriteSet(set: String) {
-        fileSystemBridge.call("favoriteDelete", set)
+    override suspend fun deleteFavoriteSet(account: String?, set: String) {
+        fileSystemBridge.call("favoriteDelete", account.orEmpty(), set)
+    }
+
+    override suspend fun adoptLooseFolders(account: String, characterIds: Set<String>) {
+        fileSystemBridge.call("adoptLoose", account, characterIds.joinToString("\n"))
     }
 
     override suspend fun readLobbyVariables(account: String): ByteArray? {

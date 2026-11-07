@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,15 +34,17 @@ internal fun EditorLegend() {
         LegendItem(SlotGroup.ClassResource.frameColor(), stringResource(Res.string.slots_legend_class_resource))
         LegendItem(SlotGroup.Interface.frameColor(), stringResource(Res.string.slots_legend_interface))
         LegendItem(AppTheme.colors.textBeige, stringResource(Res.string.slots_legend_chat))
-        LegendItem(fixedElementColor(), stringResource(Res.string.slots_legend_fixed))
-        LegendItem(AppTheme.colors.danger, stringResource(Res.string.slots_legend_off_screen))
+        LegendItem(fixedElementColor(), stringResource(Res.string.slots_legend_fixed), fill = fixedElementFill())
+        // За краем экрана элемент залит красным, а рамка остаётся цветом своей группы — поэтому в легенде только заливка
+        val offScreen = AppTheme.colors.danger.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA)
+        LegendItem(offScreen, stringResource(Res.string.slots_legend_off_screen), fill = offScreen)
     }
 }
 
 @Composable
-private fun LegendItem(color: Color, text: String) {
+private fun LegendItem(color: Color, text: String, fill: Color = Color.Transparent) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-        Box(Modifier.size(SlotsDimens.legendSwatch).border(SlotsDimens.slotBorder, color))
+        Box(Modifier.size(SlotsDimens.legendSwatch).background(fill).border(SlotsDimens.slotBorder, color))
         Text(text, style = AppTheme.typography.caption, color = AppTheme.colors.textMuted)
     }
 }

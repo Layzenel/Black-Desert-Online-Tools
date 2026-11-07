@@ -78,22 +78,22 @@ class SlotsRepository(private val storage: SlotsStorage) {
         }
     }
 
-    /** Пресеты из папки; файлы, которые не удалось прочитать, пропускаются. */
-    suspend fun presets(): List<NamedLayout> = storage.presetFiles().mapNotNull { name ->
+    /** Пресеты аккаунта [account]; файлы, которые не удалось прочитать, пропускаются. */
+    suspend fun presets(account: String): List<NamedLayout> = storage.presetFiles(account).mapNotNull { name ->
         try {
-            LayoutCodec.decode(storage.readPreset(name))
+            LayoutCodec.decode(storage.readPreset(account, name))
         } catch (e: LayoutFormatException) {
             null
         }
     }.sortedBy { it.name.lowercase() }
 
-    /** Сохраняет пресет; пресет с таким же названием перезаписывается. */
-    suspend fun savePreset(preset: NamedLayout) {
-        storage.writePreset(fileName(preset.name), LayoutCodec.encode(preset))
+    /** Сохраняет пресет аккаунта [account]; пресет с таким же названием перезаписывается. */
+    suspend fun savePreset(account: String, preset: NamedLayout) {
+        storage.writePreset(account, fileName(preset.name), LayoutCodec.encode(preset))
     }
 
-    suspend fun deletePreset(name: String) {
-        storage.deletePreset(fileName(name))
+    suspend fun deletePreset(account: String, name: String) {
+        storage.deletePreset(account, fileName(name))
     }
 
     /** Имя файла для экспорта и папки пресетов: название без символов, запрещённых в Windows. */

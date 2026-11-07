@@ -20,11 +20,6 @@ import kotlin.io.path.writeBytes
 private const val CACHE = "UserCache"
 private const val GAME_FILE = "gamevariable.xml"
 private const val SERVERS = "11"
-private const val TOOLS = "BDO Tools"
-private const val SLOTS = "slots"
-private const val BACKUPS = "backups"
-private const val PRESETS = "presets"
-private const val BACKGROUND = "background"
 private const val PRESET_EXTENSION = ".json"
 private const val GAME_FOLDER = "Black Desert"
 
@@ -82,9 +77,9 @@ internal class DesktopSlotsStorage(
         val file = accountFile(account)
         if (file.getLastModifiedTime().toMillis() != expectedModified) throw SlotsException(SlotsError.FileChanged)
         val backupName = "gamevariable_${account}_${now()}.xml"
-        file.copyTo(backups() / backupName)
+        file.copyTo(backups(account) / backupName)
         file.writeBytes(text.toByteArray(Charsets.ISO_8859_1))
-        "$TOOLS\\$SLOTS\\$BACKUPS\\$backupName"
+        "$TOOLS\\$TOOL\\$account\\$BACKUPS\\$backupName"
     }
 
     override suspend fun characterFiles(account: String): List<String> = fileCall {
@@ -101,47 +96,53 @@ internal class DesktopSlotsStorage(
 
     override suspend fun writeCharacterFile(account: String, path: String, text: String) = fileCall {
         val file = characterFile(account, path)
-        file.copyTo(backups() / "gamevariable_${account}_${path.split('/')[1]}_${now()}.xml")
+        file.copyTo(backups(account) / "gamevariable_${account}_${path.split('/')[1]}_${now()}.xml")
         file.writeBytes(text.toByteArray(Charsets.ISO_8859_1))
     }
 
-    override suspend fun presetFiles(): List<String> = fileCall {
-        val dir = tools() / PRESETS
+    override suspend fun presetFiles(account: String): List<String> = fileCall {
+        val dir = tool(account) / PRESETS
         if (!dir.isDirectory()) return@fileCall emptyList()
         dir.listDirectoryEntries().filter { it.isRegularFile() && it.name.endsWith(PRESET_EXTENSION, ignoreCase = true) }.map { it.name }
     }
 
-    override suspend fun readPreset(fileName: String): String = fileCall { (tools() / PRESETS / fileName).readBytes().decodeToString() }
-
-    override suspend fun writePreset(fileName: String, text: String) = fileCall {
-        ((tools() / PRESETS).createDirectories() / fileName).writeBytes(text.encodeToByteArray())
+    override suspend fun readPreset(account: String, fileName: String): String = fileCall {
+        (tool(account) / PRESETS / fileName).readBytes().decodeToString()
     }
 
-    override suspend fun deletePreset(fileName: String) = fileCall {
-        (tools() / PRESETS / fileName).deleteIfExists()
+    override suspend fun writePreset(account: String, fileName: String, text: String) = fileCall {
+        ((tool(account) / PRESETS).createDirectories() / fileName).writeBytes(text.encodeToByteArray())
+    }
+
+    override suspend fun deletePreset(account: String, fileName: String) = fileCall {
+        (tool(account) / PRESETS / fileName).deleteIfExists()
         Unit
     }
 
-    override suspend fun readBackground(): ByteArray? = fileCall {
-        (tools() / BACKGROUND).takeIf { it.isRegularFile() }?.readBytes()
+    override suspend fun readBackground(account: String): ByteArray? = fileCall {
+        (tool(account) / BACKGROUND / BACKGROUND_FILE).takeIf { it.isRegularFile() }?.readBytes()
     }
 
-    override suspend fun writeBackground(bytes: ByteArray?) = fileCall {
-        val file = tools() / BACKGROUND
+    override suspend fun writeBackground(account: String, bytes: ByteArray?) = fileCall {
+        val file = tool(account) / BACKGROUND / BACKGROUND_FILE
         if (bytes == null) {
             file.deleteIfExists()
         } else {
-            tools().createDirectories()
+            (tool(account) / BACKGROUND).createDirectories()
             file.writeBytes(bytes)
         }
         Unit
     }
 
+    override suspend fun adoptLooseFiles(account: String) = fileCall { adoptLegacySlotsFolders(root(), account) }
+
     private fun root(): Path = settings.folder?.takeIf(::hasCache) ?: throw SlotsException(SlotsError.NotGameFolder)
 
-    private fun tools(): Path = root() / TOOLS / SLOTS
+    /** `BDO Tools\uiEditor\<account>` — всё, что редактор хранит для аккаунта. */
+    private fun tool(account: String): Path = root() / TOOLS / TOOL / account
 
-    private fun backups(): Path = (tools() / BACKUPS).createDirectories()
+    /** `BDO Tools\uiEditor\<account>\backups` — копии файлов игры перед записью. */
+    private fun backups(account: String): Path = (tool(account) / BACKUPS).createDirectories()
 
     private fun accountFile(account: String): Path =
         gameFile(root() / CACHE / account) ?: throw SlotsException(SlotsError.NoGameVariable)

@@ -79,7 +79,7 @@ private fun AppContent() {
             trailing = {
                 AppVersionInfo()
                 if (accountsState.accounts.size > 1 && selectedAccount != null) {
-                    AccountSwitcher(selectedAccount, accountsState.accounts, accounts::select)
+                    AccountSwitcher(selectedAccount, accountsState.accounts, accounts::select, accounts::readPortrait)
                 }
             },
         )

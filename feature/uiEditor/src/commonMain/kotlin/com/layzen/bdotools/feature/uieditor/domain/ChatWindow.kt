@@ -38,6 +38,10 @@ data class ChatWindow(
 
     fun movedBy(dx: Int, dy: Int) = copy(center = center.movedBy(dx, dy))
 
+    /** Помещается ли окно на экран [screen] целиком. */
+    fun fits(screen: ScreenSpace): Boolean =
+        left(screen) >= 0 && top(screen) >= 0 && left(screen) + width <= screen.width && top(screen) + height <= screen.height
+
     /** Окно размером [newWidth]×[newHeight] (в пределах, как при растягивании), левый нижний угол на месте. */
     fun withSize(newWidth: Int, newHeight: Int, screen: ScreenSpace) = resizedFromTopRight(newWidth - width, height - newHeight, screen)
 
