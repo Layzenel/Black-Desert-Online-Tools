@@ -138,6 +138,7 @@ class PortraitsViewModel(
             accounts.refresh()
             val choice = accounts.state.value
             val ids = if (choice.needsChoice) emptyList() else repository.portraitOrder(choice.selected)
+            repository.useAccount(choice.selected?.id)
             context.update {
                 it.copy(
                     portraits = ids.map { id -> PortraitItem(id, null) },
@@ -151,7 +152,8 @@ class PortraitsViewModel(
                 context.breathe()
             }
             val decorations = repository.loadDecorations()
-            val backups = repository.backups()
+            // пока аккаунт не выбран, копий нет: в корне папки копий лежат папки аккаунтов, а не копии
+            val backups = if (choice.needsChoice) emptyList() else repository.backups()
             context.update { it.copy(decorations = decorations, backups = backups) }
         } finally {
             context.update { it.copy(loading = null) }

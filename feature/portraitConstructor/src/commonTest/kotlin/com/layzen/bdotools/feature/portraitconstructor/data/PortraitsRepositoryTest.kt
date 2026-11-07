@@ -190,4 +190,41 @@ class PortraitsRepositoryTest {
         assertContentEquals(byteArrayOf(1), stored.clean)
         assertEquals(decorated, stored.decoration)
     }
+
+    @Test
+    fun backupsAndFavoritesLiveInAccountFolder() = runTest {
+        val storage = MemoryStorage().apply { faces["1"] = byteArrayOf(1) }
+        val repository = PortraitsRepository(storage)
+        repository.useAccount("111")
+
+        val backup = repository.writePortraits(listOf(plainWrite("1", byteArrayOf(2))))
+        val set = repository.saveFavoriteSet(listOf("1"))
+
+        assertEquals("FaceTexture_backup\\111\\2026-11-05_10-00-01", backup)
+        assertEquals(listOf("2026-11-05_10-00-01"), repository.backups().map { it.name })
+        assertEquals(listOf(set), repository.favoriteSets().map { it.name })
+        assertEquals("111\\$set", repository.favoritePath(set))
+
+        // у другого аккаунта своих копий и наборов пока нет
+        repository.useAccount("222")
+        assertEquals(emptyList(), repository.backups())
+        assertEquals(emptyList(), repository.favoriteSets())
+    }
+
+    @Test
+    fun looseFoldersMoveToFirstOpenedAccount() = runTest {
+        val storage = MemoryStorage().apply {
+            backups["2026-11-01_10-00-00/1.bmp"] = byteArrayOf(1)
+            favorites["2026-11-02_10-00-00/1.bmp"] = byteArrayOf(2)
+        }
+        val repository = PortraitsRepository(storage)
+
+        repository.useAccount("111")
+        repository.useAccount("222")
+
+        assertEquals(emptyList(), repository.backups())
+        repository.useAccount("111")
+        assertEquals(listOf("2026-11-01_10-00-00"), repository.backups().map { it.name })
+        assertEquals(listOf("2026-11-02_10-00-00"), repository.favoriteSets().map { it.name })
+    }
 }

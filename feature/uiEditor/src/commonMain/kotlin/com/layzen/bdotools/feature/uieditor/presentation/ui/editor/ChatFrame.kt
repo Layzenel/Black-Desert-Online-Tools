@@ -40,7 +40,7 @@ import kotlin.math.roundToInt
  * в центре название и размер в UI-px, справа сверху ручка, за которую окно растягивают (левый нижний угол стоит
  * на месте). Клик выбирает окно (с Ctrl — добавляет к выбору), его место и размер правятся в боковой панели;
  * перетаскивание двигает окно вместе со всем выбранным. [selected] — окно выбрано: светлая толстая рамка. [shown] — видно ли окно в игре с учётом главного чата: невидимое
- * приглушено. Слева сверху плашки [ChatTab]: у главного окна — его вкладки [tabs] (`WindowIndex`) с «Вынести»,
+ * приглушено, а окно за краем экрана [screen] залито красным, как слот. Слева сверху плашки [ChatTab]: у главного окна — его вкладки [tabs] (`WindowIndex`) с «Вынести»,
  * у отдельного — оно само с «Внести».
  */
 @Composable
@@ -64,7 +64,7 @@ internal fun ChatFrame(
             .offset { IntOffset((chat.left(screen) * scale).roundToInt(), (chat.top(screen) * scale).roundToInt()) }
             .size(with(density) { (chat.width * scale).toDp() }, with(density) { (chat.height * scale).toDp() })
             .alpha(if (shown) 1f else SlotsDimens.HIDDEN_ALPHA)
-            .background(AppTheme.colors.backgroundDeep.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
+            .background((if (chat.fits(screen)) AppTheme.colors.backgroundDeep else AppTheme.colors.danger).copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
             .border(if (selected) SlotsDimens.selectedSlotBorder else SlotsDimens.slotBorder, color)
             .pointerHoverIcon(PointerIcon.Hand)
             .elementGestures(

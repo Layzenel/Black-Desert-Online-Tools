@@ -22,6 +22,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 
 @OptIn(ExperimentalPathApi::class)
@@ -63,21 +64,21 @@ class DesktopPortraitsStorageTest {
         (game / "FaceTexture" / "notes.txt").writeText("x")
         assertEquals(setOf("101", "102"), storage.portraitIds().toSet())
 
-        val first = storage.createBackup()
-        val second = storage.createBackup()
+        val first = storage.createBackup(ACCOUNT)
+        val second = storage.createBackup(ACCOUNT)
         assertNotEquals(first, second)
-        storage.writeBackupFile(first, "101.bmp", byteArrayOf(1))
-        storage.writeBackupFile(first, "101.txt", byteArrayOf(3))
-        storage.writeBackupFile(second, "101.bmp", byteArrayOf(1))
+        storage.writeBackupFile(ACCOUNT, first, "101.bmp", byteArrayOf(1))
+        storage.writeBackupFile(ACCOUNT, first, "101.txt", byteArrayOf(3))
+        storage.writeBackupFile(ACCOUNT, second, "101.bmp", byteArrayOf(1))
 
-        val backups = parseBackupList(storage.backupListing())
+        val backups = parseBackupList(storage.backupListing(ACCOUNT))
         assertEquals(2, backups.size)
         assertEquals(setOf("101"), backups.first().characterIds)
-        assertContentEquals(byteArrayOf(3), storage.readBackupFile(first, "101.txt"))
-        assertNull(storage.readBackupFile(second, "101.txt"))
+        assertContentEquals(byteArrayOf(3), storage.readBackupFile(ACCOUNT, first, "101.txt"))
+        assertNull(storage.readBackupFile(ACCOUNT, second, "101.txt"))
 
-        storage.deleteBackup(backups.first().name)
-        assertEquals(1, parseBackupList(storage.backupListing()).size)
+        storage.deleteBackup(ACCOUNT, backups.first().name)
+        assertEquals(1, parseBackupList(storage.backupListing(ACCOUNT)).size)
     }
 
     @Test
@@ -91,12 +92,36 @@ class DesktopPortraitsStorageTest {
         storage.deleteToolFile("101.txt")
         assertEquals(emptyList(), storage.toolFileNames())
 
-        val set = storage.createFavoriteSet()
-        storage.writeFavoriteFile(set, "101.bmp", byteArrayOf(3))
-        storage.writeFavoriteFile(set, "name.txt", byteArrayOf(4))
-        assertEquals("$set\t101.bmp", storage.favoriteListing())
-        assertContentEquals(byteArrayOf(4), storage.readFavoriteFile(set, "name.txt"))
-        storage.deleteFavoriteSet(set)
-        assertFalse((game / "Favorite FaceTexture" / set).exists())
+        val set = storage.createFavoriteSet(ACCOUNT)
+        storage.writeFavoriteFile(ACCOUNT, set, "101.bmp", byteArrayOf(3))
+        storage.writeFavoriteFile(ACCOUNT, set, "name.txt", byteArrayOf(4))
+        assertEquals("$set\t101.bmp", storage.favoriteListing(ACCOUNT))
+        assertContentEquals(byteArrayOf(4), storage.readFavoriteFile(ACCOUNT, set, "name.txt"))
+        storage.deleteFavoriteSet(ACCOUNT, set)
+        assertFalse((game / "Favorite FaceTexture" / ACCOUNT / set).exists())
+    }
+
+    @Test
+    fun backupsLiveInAccountFolderAndLooseOnesMoveThere() = runTest {
+        storage.selectFolder()
+        val loose = (game / "FaceTexture_backup" / "2026-11-01_10-00-00").createDirectories()
+        (loose / "101.bmp").writeBytes(byteArrayOf(1))
+        (game / "Favorite FaceTexture" / "2026-11-02_10-00-00").createDirectories()
+        (game / "FaceTexture_backup" / "222").createDirectories()
+
+        storage.adoptLooseFolders(ACCOUNT)
+
+        assertFalse(loose.exists())
+        assertEquals("2026-11-01_10-00-00\t101.bmp", storage.backupListing(ACCOUNT))
+        assertEquals("2026-11-02_10-00-00\t", storage.favoriteListing(ACCOUNT))
+        // папка другого аккаунта осталась на месте
+        assertTrue((game / "FaceTexture_backup" / "222").exists())
+
+        val created = storage.createBackup(ACCOUNT)
+        assertTrue((game / "FaceTexture_backup" / ACCOUNT / created).exists())
+    }
+
+    private companion object {
+        const val ACCOUNT = "111"
     }
 }

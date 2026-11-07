@@ -38,13 +38,17 @@ internal fun FixedElementFrame(element: FixedElement, screen: ScreenSpace, scale
                 with(density) { ((area.right - area.left).toFloat() * scale).toDp() },
                 with(density) { ((area.bottom - area.top).toFloat() * scale).toDp() },
             )
-            .background(AppTheme.colors.danger.copy(alpha = SlotsDimens.FIXED_FILL_ALPHA))
+            .background(fixedElementFill())
             .border(SlotsDimens.slotBorder, fixedElementColor()),
         contentAlignment = Alignment.Center,
     ) {
         Text(title, style = AppTheme.typography.caption, color = AppTheme.colors.textDisabled, maxLines = 1, overflow = TextOverflow.Clip)
     }
 }
+
+/** Заливка неподвижных элементов — прозрачно-красная, как в режиме правки игры; на холсте и в легенде одинаковая. */
+@Composable
+internal fun fixedElementFill() = AppTheme.colors.danger.copy(alpha = SlotsDimens.FIXED_FILL_ALPHA)
 
 /** Цвет рамки неподвижных элементов: на холсте и в легенде одинаковый. */
 @Composable

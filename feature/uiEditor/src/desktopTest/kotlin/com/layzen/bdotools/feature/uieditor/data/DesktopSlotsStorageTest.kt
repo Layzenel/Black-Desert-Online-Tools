@@ -9,6 +9,7 @@ import java.util.prefs.Preferences
 import kotlin.io.path.createDirectories
 import kotlin.io.path.div
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.setLastModifiedTime
 import kotlin.io.path.writeBytes
@@ -60,12 +61,16 @@ class DesktopSlotsStorageTest {
         storage.selectFolder()
         assertEquals(listOf("3537922"), storage.accounts())
         val file = storage.readGameVariable("3537922")
+        // копия из версии до аккаунтов: лежит прямо в backups и при записи переедет в папку аккаунта
+        val backups = (game / "BDO Tools" / "slots" / "backups").createDirectories()
+        (backups / "gamevariable_3537922_2026-11-01_10-00-00.xml").writeBytes(byteArrayOf(1))
 
         val backup = storage.writeGameVariable("3537922", file.text.replace("0.8", "1.0"), file.modified)
 
         assertContentEquals(gameBytes("1.0"), accountFile.readBytes())
-        assertEquals("BDO Tools\\slots\\backups\\", backup.substringBeforeLast('\\') + "\\")
-        assertEquals(1, (game / "BDO Tools" / "slots" / "backups").listDirectoryEntries().size)
+        assertEquals("BDO Tools\\slots\\backups\\3537922\\", backup.substringBeforeLast('\\') + "\\")
+        assertEquals(listOf("3537922"), backups.listDirectoryEntries().map { it.name })
+        assertEquals(2, (backups / "3537922").listDirectoryEntries().size)
     }
 
     @Test

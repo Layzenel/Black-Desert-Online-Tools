@@ -127,4 +127,13 @@ class ChatWindowTest {
         val decoded = LayoutCodec.decode(LayoutCodec.encode(NamedLayout("чаты", anchored)))
         assertEquals(chats, decoded.layout.placeOn(screen).chats)
     }
+
+    @Test
+    fun chatTouchingEdgeFitsButOneSlightlyOutDoesNot() {
+        // Экран 3200×1800: окно 700×350 с центром (2850 - 1600, 1592 - 900) касается правого края
+        val atEdge = ChatWindow(SlotPosition(1250, 692), width = 700, height = 350)
+        assertTrue(atEdge.fits(screen))
+        assertFalse(atEdge.movedBy(1, 0).fits(screen))
+        assertFalse(atEdge.copy(center = SlotPosition(-1300, 692)).fits(screen))
+    }
 }

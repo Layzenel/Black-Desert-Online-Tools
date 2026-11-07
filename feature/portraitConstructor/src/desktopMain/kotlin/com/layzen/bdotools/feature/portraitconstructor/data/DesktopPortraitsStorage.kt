@@ -7,6 +7,8 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.div
 import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
@@ -58,8 +60,8 @@ internal class DesktopPortraitsStorage(
         (root() / FACES / portraitFile(characterId)).readBytes()
     }
 
-    override suspend fun createBackup(): String = fileCall {
-        val backups = (root() / BACKUP).createDirectories()
+    override suspend fun createBackup(account: String?): String = fileCall {
+        val backups = area(BACKUP, account).createDirectories()
         val folder = freshFolderName(backups)
         (backups / folder).createDirectories()
         folder
@@ -69,17 +71,17 @@ internal class DesktopPortraitsStorage(
         (root() / FACES / portraitFile(characterId)).writeBytes(bmp)
     }
 
-    override suspend fun backupListing(): String = fileCall { folderListing(root() / BACKUP) }
+    override suspend fun backupListing(account: String?): String = fileCall { folderListing(area(BACKUP, account)) }
 
-    override suspend fun readBackupFile(backup: String, name: String): ByteArray? = fileCall {
-        readOrNull(root() / BACKUP / backup / name)
+    override suspend fun readBackupFile(account: String?, backup: String, name: String): ByteArray? = fileCall {
+        readOrNull(area(BACKUP, account) / backup / name)
     }
 
-    override suspend fun writeBackupFile(backup: String, name: String, bytes: ByteArray) = fileCall {
-        ((root() / BACKUP / backup).createDirectories() / name).writeBytes(bytes)
+    override suspend fun writeBackupFile(account: String?, backup: String, name: String, bytes: ByteArray) = fileCall {
+        ((area(BACKUP, account) / backup).createDirectories() / name).writeBytes(bytes)
     }
 
-    override suspend fun deleteBackup(backup: String) = fileCall { deleteFolder(root() / BACKUP / backup) }
+    override suspend fun deleteBackup(account: String?, backup: String) = fileCall { deleteFolder(area(BACKUP, account) / backup) }
 
     override suspend fun toolFileNames(): List<String> = fileCall { fileNames(toolFolder()) }
 
@@ -94,24 +96,35 @@ internal class DesktopPortraitsStorage(
         Unit
     }
 
-    override suspend fun createFavoriteSet(): String = fileCall {
-        val favorites = (root() / FAVORITES).createDirectories()
+    override suspend fun createFavoriteSet(account: String?): String = fileCall {
+        val favorites = area(FAVORITES, account).createDirectories()
         val folder = freshFolderName(favorites)
         (favorites / folder).createDirectories()
         folder
     }
 
-    override suspend fun favoriteListing(): String = fileCall { folderListing(root() / FAVORITES) }
+    override suspend fun favoriteListing(account: String?): String = fileCall { folderListing(area(FAVORITES, account)) }
 
-    override suspend fun readFavoriteFile(set: String, name: String): ByteArray? = fileCall {
-        readOrNull(root() / FAVORITES / set / name)
+    override suspend fun readFavoriteFile(account: String?, set: String, name: String): ByteArray? = fileCall {
+        readOrNull(area(FAVORITES, account) / set / name)
     }
 
-    override suspend fun writeFavoriteFile(set: String, name: String, bytes: ByteArray) = fileCall {
-        ((root() / FAVORITES / set).createDirectories() / name).writeBytes(bytes)
+    override suspend fun writeFavoriteFile(account: String?, set: String, name: String, bytes: ByteArray) = fileCall {
+        ((area(FAVORITES, account) / set).createDirectories() / name).writeBytes(bytes)
     }
 
-    override suspend fun deleteFavoriteSet(set: String) = fileCall { deleteFolder(root() / FAVORITES / set) }
+    override suspend fun deleteFavoriteSet(account: String?, set: String) = fileCall { deleteFolder(area(FAVORITES, account) / set) }
+
+    override suspend fun adoptLooseFolders(account: String) = fileCall {
+        listOf(BACKUP, FAVORITES).forEach { name ->
+            val base = root() / name
+            if (!base.isDirectory()) return@forEach
+            val loose = base.listDirectoryEntries().filter { it.isDirectory() && !isAccountFolder(it.name) }
+            if (loose.isEmpty()) return@forEach
+            val target = (base / account).createDirectories()
+            loose.forEach { folder -> folder.moveTo(target / freshFolderName(target, base = folder.name)) }
+        }
+    }
 
     override suspend fun readLobbyVariables(account: String): ByteArray? = fileCall {
         readOrNull(root() / USER_CACHE / account / LOBBY_FILE)
@@ -129,6 +142,9 @@ internal class DesktopPortraitsStorage(
     }
 
     override suspend fun isGameRunning(): Boolean = fileCall { isGameProcessRunning() }
+
+    /** Папка копий или избранного [name] аккаунта [account]; без аккаунта — сама [name]. */
+    private fun area(name: String, account: String?): Path = (root() / name).let { base -> account?.let { base / it } ?: base }
 
     /** Сохранённая папка `Black Desert`; без неё работать с файлами нельзя. */
     private fun root(): Path =

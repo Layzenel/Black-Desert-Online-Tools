@@ -39,6 +39,22 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
         await writable.close();
     };
     const writeTo = async (dir, name, data) => writeHandle(await dir.getFileHandle(name, { create: true }), data);
+    // Копии файлов игры: BDO Tools\slots\backups\<аккаунт>\. Копии из версий до аккаунтов лежат прямо в backups
+    // с аккаунтом в имени (gamevariable_<аккаунт>_…) и переезжают в его папку при следующей записи
+    const accountBackups = async account => {
+        const backups = await tools('backups', true);
+        const dir = await backups.getDirectoryHandle(account, { create: true });
+        const prefix = 'gamevariable_' + account + '_';
+        const loose = [];
+        for await (const [name, handle] of backups.entries()) {
+            if (handle.kind === 'file' && name.startsWith(prefix)) loose.push([name, handle]);
+        }
+        for (const [name, handle] of loose) {
+            await writeTo(dir, name, await handle.getFile());
+            await backups.removeEntry(name);
+        }
+        return dir;
+    };
 
     return {
         // Аккаунты по свежести файла: игра пишет в папку того аккаунта, под которым играли последним
@@ -64,11 +80,10 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
             const handle = await gameFile(account);
             const current = await handle.getFile();
             if (current.lastModified !== expected) return 'ERR:FILE_CHANGED';
-            const backups = await tools('backups', true);
             const backupName = 'gamevariable_' + account + '_' + stamp() + '.xml';
-            await writeTo(backups, backupName, current);
+            await writeTo(await accountBackups(account), backupName, current);
             await writeHandle(handle, gameBytes(text));
-            return 'OK:' + TOOLS + '\\slots\\backups\\' + backupName;
+            return 'OK:' + TOOLS + '\\slots\\backups\\' + account + '\\' + backupName;
         },
         // Настройки персонажей: UserCache\<аккаунт>\11\<персонаж>\gamevariable.xml (регистр имени файла бывает разный)
         async characters(account) {
@@ -87,7 +102,7 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
             const path = payload.substring(0, payload.indexOf('\n'));
             const handle = await characterFile(account, path);
             const backupName = 'gamevariable_' + account + '_' + path.split('/')[1] + '_' + stamp() + '.xml';
-            await writeTo(await tools('backups', true), backupName, await handle.getFile());
+            await writeTo(await accountBackups(account), backupName, await handle.getFile());
             await writeHandle(handle, gameBytes(payload.substring(payload.indexOf('\n') + 1)));
             return 'OK:';
         },

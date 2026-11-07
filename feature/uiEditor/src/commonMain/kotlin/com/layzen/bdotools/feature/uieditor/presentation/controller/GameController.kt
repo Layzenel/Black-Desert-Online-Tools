@@ -97,7 +97,7 @@ internal class GameController(
     private suspend fun load(account: String) {
         val loaded = repository.load(account, context.current.loaded?.edited ?: GamePreset.General)
         context.update {
-            it.copy(loaded = loaded, layout = loaded.game.layout, history = emptyList(), future = emptyList(), selection = emptySet(), activePreset = PresetRef.Game)
+            it.copy(loaded = loaded, layout = loaded.game.layout, history = emptyList(), future = emptyList(), selection = emptySet(), selectedChats = emptySet(), activePreset = PresetRef.Game)
         }
     }
 

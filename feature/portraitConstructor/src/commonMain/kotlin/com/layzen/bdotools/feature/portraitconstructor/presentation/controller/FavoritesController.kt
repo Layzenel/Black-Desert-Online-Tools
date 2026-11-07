@@ -109,7 +109,7 @@ internal class FavoritesController(private val context: PortraitsContext) {
                     context.setProgress(done, total)
                 }
             }
-            context.showNotice(Notice(NoticeKind.FavoriteAdded, set))
+            context.showNotice(Notice(NoticeKind.FavoriteAdded, context.repository.favoritePath(set)))
             reload(select = set)
         }
     }

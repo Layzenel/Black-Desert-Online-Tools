@@ -4,7 +4,7 @@ import com.layzen.bdotools.core.folder.FolderAccess
 
 /**
  * Хранилище в памяти для тестов: файлы игры, папки BDO Tools, копий и избранного — обычные Map, [log] — порядок записей.
- * В копиях и избранном ключ — `<папка>/<файл>`.
+ * В копиях и избранном ключ — `<папка>/<файл>`, а папка аккаунта — `<аккаунт>:<папка>`; без аккаунта — просто `<папка>`.
  */
 internal class MemoryStorage : PortraitsStorage {
     val faces = mutableMapOf<String, ByteArray>()
@@ -20,10 +20,10 @@ internal class MemoryStorage : PortraitsStorage {
     override suspend fun portraitIds() = faces.keys.toList()
     override suspend fun readPortrait(characterId: String) = faces.getValue(characterId)
 
-    override suspend fun createBackup(): String {
+    override suspend fun createBackup(account: String?): String {
         // имена как у настоящих копий, чтобы порядок «новые первыми» совпадал с порядком создания
         val name = "2026-11-05_10-00-${(++createdBackups).toString().padStart(2, '0')}"
-        log += "backup:$name"
+        log += "backup:${scoped(account, name)}"
         return name
     }
 
@@ -32,15 +32,16 @@ internal class MemoryStorage : PortraitsStorage {
         faces[characterId] = bmp
     }
 
-    override suspend fun backupListing() = listing(backups)
-    override suspend fun deleteBackup(backup: String) {
-        backups.keys.removeAll { it.startsWith("$backup/") }
+    override suspend fun backupListing(account: String?) = listing(backups, account)
+    override suspend fun deleteBackup(account: String?, backup: String) {
+        backups.keys.removeAll { it.startsWith("${scoped(account, backup)}/") }
     }
 
-    override suspend fun readBackupFile(backup: String, name: String) = backups["$backup/$name"]
-    override suspend fun writeBackupFile(backup: String, name: String, bytes: ByteArray) {
-        log += "backupFile:$backup/$name"
-        backups["$backup/$name"] = bytes
+    override suspend fun readBackupFile(account: String?, backup: String, name: String) = backups["${scoped(account, backup)}/$name"]
+    override suspend fun writeBackupFile(account: String?, backup: String, name: String, bytes: ByteArray) {
+        val key = "${scoped(account, backup)}/$name"
+        log += "backupFile:$key"
+        backups[key] = bytes
     }
 
     override suspend fun toolFileNames() = tools.keys.toList()
@@ -53,15 +54,23 @@ internal class MemoryStorage : PortraitsStorage {
         tools.remove(name)
     }
 
-    override suspend fun createFavoriteSet(): String = "set${favorites.keys.map { it.substringBefore('/') }.toSet().size + 1}"
-    override suspend fun favoriteListing() = listing(favorites)
-    override suspend fun readFavoriteFile(set: String, name: String) = favorites["$set/$name"]
-    override suspend fun writeFavoriteFile(set: String, name: String, bytes: ByteArray) {
-        favorites["$set/$name"] = bytes
+    override suspend fun createFavoriteSet(account: String?): String =
+        "set${favorites.keys.map { it.substringBefore('/') }.toSet().size + 1}"
+
+    override suspend fun favoriteListing(account: String?) = listing(favorites, account)
+    override suspend fun readFavoriteFile(account: String?, set: String, name: String) = favorites["${scoped(account, set)}/$name"]
+    override suspend fun writeFavoriteFile(account: String?, set: String, name: String, bytes: ByteArray) {
+        favorites["${scoped(account, set)}/$name"] = bytes
     }
 
-    override suspend fun deleteFavoriteSet(set: String) {
-        favorites.keys.removeAll { it.startsWith("$set/") }
+    override suspend fun deleteFavoriteSet(account: String?, set: String) {
+        favorites.keys.removeAll { it.startsWith("${scoped(account, set)}/") }
+    }
+
+    override suspend fun adoptLooseFolders(account: String) {
+        listOf(backups, favorites).forEach { files ->
+            files.keys.filter { ':' !in it.substringBefore('/') }.forEach { key -> files["$account:$key"] = files.remove(key)!! }
+        }
     }
 
     /** `gameVariable_lobby.xml` по аккаунтам и копии: `<аккаунт>/<имя>`. */
@@ -83,7 +92,13 @@ internal class MemoryStorage : PortraitsStorage {
 
     override suspend fun isGameRunning() = gameRunning
 
-    private fun listing(files: Map<String, ByteArray>) =
-        files.keys.groupBy({ it.substringBefore('/') }, { it.substringAfter('/') })
+    private fun scoped(account: String?, folder: String) = account?.let { "$it:$folder" } ?: folder
+
+    /** Папки аккаунта [account] (без аккаунта — папки без префикса) строками `<папка>\t<файлы>`. */
+    private fun listing(files: Map<String, ByteArray>, account: String?) =
+        files.keys
+            .map { it.substringBefore('/') to it.substringAfter('/') }
+            .filter { (folder, _) -> if (account == null) ':' !in folder else folder.startsWith("$account:") }
+            .groupBy({ it.first.substringAfter(':') }, { it.second })
             .entries.joinToString("\n") { (folder, names) -> folder + "\t" + names.joinToString(",") }
 }

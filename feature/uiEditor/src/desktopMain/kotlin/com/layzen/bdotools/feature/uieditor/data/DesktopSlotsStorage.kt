@@ -13,6 +13,7 @@ import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
@@ -82,9 +83,9 @@ internal class DesktopSlotsStorage(
         val file = accountFile(account)
         if (file.getLastModifiedTime().toMillis() != expectedModified) throw SlotsException(SlotsError.FileChanged)
         val backupName = "gamevariable_${account}_${now()}.xml"
-        file.copyTo(backups() / backupName)
+        file.copyTo(backups(account) / backupName)
         file.writeBytes(text.toByteArray(Charsets.ISO_8859_1))
-        "$TOOLS\\$SLOTS\\$BACKUPS\\$backupName"
+        "$TOOLS\\$SLOTS\\$BACKUPS\\$account\\$backupName"
     }
 
     override suspend fun characterFiles(account: String): List<String> = fileCall {
@@ -101,7 +102,7 @@ internal class DesktopSlotsStorage(
 
     override suspend fun writeCharacterFile(account: String, path: String, text: String) = fileCall {
         val file = characterFile(account, path)
-        file.copyTo(backups() / "gamevariable_${account}_${path.split('/')[1]}_${now()}.xml")
+        file.copyTo(backups(account) / "gamevariable_${account}_${path.split('/')[1]}_${now()}.xml")
         file.writeBytes(text.toByteArray(Charsets.ISO_8859_1))
     }
 
@@ -141,7 +142,16 @@ internal class DesktopSlotsStorage(
 
     private fun tools(): Path = root() / TOOLS / SLOTS
 
-    private fun backups(): Path = (tools() / BACKUPS).createDirectories()
+    /**
+     * `BDO Tools\slots\backups\<account>` — копии файлов игры аккаунта. Копии из версий до аккаунтов лежат прямо
+     * в `backups` с аккаунтом в имени (`gamevariable_<account>_…`) и переезжают сюда при следующей записи.
+     */
+    private fun backups(account: String): Path {
+        val all = (tools() / BACKUPS).createDirectories()
+        val dir = (all / account).createDirectories()
+        all.listDirectoryEntries("gamevariable_${account}_*").filter { it.isRegularFile() }.forEach { it.moveTo(dir / it.name) }
+        return dir
+    }
 
     private fun accountFile(account: String): Path =
         gameFile(root() / CACHE / account) ?: throw SlotsException(SlotsError.NoGameVariable)

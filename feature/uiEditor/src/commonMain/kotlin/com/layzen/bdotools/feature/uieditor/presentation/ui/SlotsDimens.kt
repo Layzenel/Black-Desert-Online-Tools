@@ -23,7 +23,8 @@ internal object SlotsDimens {
     val chatHandle = 8.dp
     val helpDialogMaxWidth = 640.dp
     val helpMaxHeight = 560.dp
-    val chatTabIcon = 18.dp
+    val chatTabIcon = 14.dp
+    val chatTabPaddingVertical = 2.dp
     const val GRID_ALPHA = 0.12f
     const val GRID_MAJOR_ALPHA = 0.22f
     const val AXIS_ALPHA = 0.7f

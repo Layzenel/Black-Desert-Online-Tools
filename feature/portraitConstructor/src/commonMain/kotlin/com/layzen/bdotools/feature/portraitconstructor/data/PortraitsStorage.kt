@@ -2,7 +2,11 @@ package com.layzen.bdotools.feature.portraitconstructor.data
 
 import com.layzen.bdotools.core.folder.FolderAccess
 
-/** Файлы игры в папке `Документы\Black Desert`. Все методы, кроме [access], требуют [FolderAccess.Granted]. */
+/**
+ * Файлы игры в папке `Документы\Black Desert`. Все методы, кроме [access], требуют [FolderAccess.Granted].
+ * Резервные копии и избранное лежат по аккаунтам: `FaceTexture_backup\<account>\…` и `Favorite FaceTexture\<account>\…`;
+ * `account = null` — прямо в этих папках, как до появления аккаунтов.
+ */
 interface PortraitsStorage {
     suspend fun access(): FolderAccess
 
@@ -17,21 +21,21 @@ interface PortraitsStorage {
 
     suspend fun readPortrait(characterId: String): ByteArray
 
-    /** Создаёт пустую папку `FaceTexture_backup\<дата-время>` и возвращает её имя. */
-    suspend fun createBackup(): String
+    /** Создаёт пустую папку `FaceTexture_backup\<account>\<дата-время>` и возвращает её имя. */
+    suspend fun createBackup(account: String?): String
 
     suspend fun writePortrait(characterId: String, bmp: ByteArray)
 
-    /** Список папок `FaceTexture_backup` в формате [com.layzen.bdotools.feature.portraitconstructor.domain.parseBackupList]. */
-    suspend fun backupListing(): String
+    /** Список папок `FaceTexture_backup\<account>` в формате [com.layzen.bdotools.feature.portraitconstructor.domain.parseBackupList]. */
+    suspend fun backupListing(account: String?): String
 
     /** Файл из резервной копии [backup]; `null`, если файла нет. */
-    suspend fun readBackupFile(backup: String, name: String): ByteArray?
+    suspend fun readBackupFile(account: String?, backup: String, name: String): ByteArray?
 
-    suspend fun writeBackupFile(backup: String, name: String, bytes: ByteArray)
+    suspend fun writeBackupFile(account: String?, backup: String, name: String, bytes: ByteArray)
 
-    /** Удаляет папку `FaceTexture_backup\<backup>` целиком. */
-    suspend fun deleteBackup(backup: String)
+    /** Удаляет папку `FaceTexture_backup\<account>\<backup>` целиком. */
+    suspend fun deleteBackup(account: String?, backup: String)
 
     /** Файлы в `Black Desert\BDO Tools\portraits`: чистые портреты и украшения. */
     suspend fun toolFileNames(): List<String>
@@ -43,19 +47,25 @@ interface PortraitsStorage {
 
     suspend fun deleteToolFile(name: String)
 
-    /** Создаёт пустую папку `Favorite FaceTexture\<дата-время>` и возвращает её имя. */
-    suspend fun createFavoriteSet(): String
+    /** Создаёт пустую папку `Favorite FaceTexture\<account>\<дата-время>` и возвращает её имя. */
+    suspend fun createFavoriteSet(account: String?): String
 
-    /** Список папок `Favorite FaceTexture` в том же формате, что [backupListing]. */
-    suspend fun favoriteListing(): String
+    /** Список папок `Favorite FaceTexture\<account>` в том же формате, что [backupListing]. */
+    suspend fun favoriteListing(account: String?): String
 
     /** Файл из папки избранного [set]; `null`, если файла нет. */
-    suspend fun readFavoriteFile(set: String, name: String): ByteArray?
+    suspend fun readFavoriteFile(account: String?, set: String, name: String): ByteArray?
 
-    suspend fun writeFavoriteFile(set: String, name: String, bytes: ByteArray)
+    suspend fun writeFavoriteFile(account: String?, set: String, name: String, bytes: ByteArray)
 
-    /** Удаляет папку `Favorite FaceTexture\<set>` целиком. */
-    suspend fun deleteFavoriteSet(set: String)
+    /** Удаляет папку `Favorite FaceTexture\<account>\<set>` целиком. */
+    suspend fun deleteFavoriteSet(account: String?, set: String)
+
+    /**
+     * Переносит в папку аккаунта [account] копии и наборы избранного, лежащие прямо в `FaceTexture_backup` и
+     * `Favorite FaceTexture` (из версий до аккаунтов): это папки, чьё имя не номер аккаунта. Совпавшее имя получает суффикс.
+     */
+    suspend fun adoptLooseFolders(account: String)
 
     /** `UserCache\<account>\gameVariable_lobby.xml`; `null`, если файла нет. */
     suspend fun readLobbyVariables(account: String): ByteArray?

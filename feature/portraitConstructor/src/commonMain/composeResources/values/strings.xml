@@ -85,7 +85,7 @@
     <!-- Избранное -->
     <string name="portraits_favorites_title">Избранное</string>
     <string name="portraits_favorites_button">Избранное</string>
-    <string name="portraits_favorites_description">Наборы всех портретов в папке «Favorite FaceTexture» рядом с FaceTexture. Сохраняются и применяются только все портреты сразу: «Применить» вернёт портреты из набора всем персонажам, которые есть сейчас, вместе с заметками и значками. Старые портреты попадут в резервную копию.</string>
+    <string name="portraits_favorites_description">Наборы всех портретов в папке «Favorite FaceTexture\\&lt;аккаунт&gt;» рядом с FaceTexture: у каждого аккаунта свои. Сохраняются и применяются только все портреты сразу: «Применить» вернёт портреты из набора всем персонажам, которые есть сейчас, вместе с заметками и значками. Старые портреты попадут в резервную копию.</string>
     <string name="portraits_favorites_sets">Наборы</string>
     <string name="portraits_favorites_portraits">Портреты: %1$d</string>
     <string name="portraits_favorites_empty">В избранном пока пусто. Сохраните текущие портреты кнопкой ниже.</string>

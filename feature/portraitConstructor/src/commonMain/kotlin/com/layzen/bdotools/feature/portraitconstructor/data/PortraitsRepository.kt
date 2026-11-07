@@ -13,6 +13,7 @@ import com.layzen.bdotools.feature.portraitconstructor.domain.sortByCharacterOrd
 private const val BMP_EXTENSION = ".bmp"
 private const val DECORATION_EXTENSION = ".txt"
 private const val BACKUP_FOLDER = "FaceTexture_backup"
+private const val PATH_SEPARATOR = '\\'
 // в наборах прошлых версий .bmp — портрет с украшениями, а чистая основа лежит в этом файле
 private const val LEGACY_FAVORITE_BASE_EXTENSION = ".base"
 /** Название набора избранного, которое задал пользователь. */
@@ -26,6 +27,22 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
 
     /** Отпечатки портретов в копиях: `<копия>/<ID>` → [StoredPortrait.fingerprint]. Копии после записи не меняются. */
     private val backupFingerprints = mutableMapOf<String, Int>()
+
+    /** Аккаунт, в чьих папках лежат копии и избранное (см. [PortraitsStorage]); `null` — без аккаунта. */
+    private var account: String? = null
+
+    /**
+     * Переключает копии и избранное на папки аккаунта [id]. Копии и наборы из версий до аккаунтов, лежащие без папки
+     * аккаунта, переносятся в папку того аккаунта, который открыли первым.
+     */
+    suspend fun useAccount(id: String?) {
+        if (id != null) storage.adoptLooseFolders(id)
+        account = id
+        backupFingerprints.clear()
+    }
+
+    /** Путь набора избранного [set] от `Favorite FaceTexture` — для сообщений. */
+    fun favoritePath(set: String): String = account?.let { it + PATH_SEPARATOR + set } ?: set
 
     /**
      * ID персонажей [account] в порядке окна выбора персонажа: портреты других аккаунтов в `FaceTexture`
@@ -41,11 +58,11 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
     suspend fun readPortrait(characterId: String): ByteArray = storage.readPortrait(characterId)
 
     /** Резервные копии от новых к старым. */
-    suspend fun backups(): List<BackupInfo> = parseBackupList(storage.backupListing())
+    suspend fun backups(): List<BackupInfo> = parseBackupList(storage.backupListing(account))
 
     /** Портрет из копии. В копиях прошлых версий лежит только готовый портрет — он читается без украшения. */
     suspend fun readBackupPortrait(backup: String, characterId: String): StoredPortrait =
-        StoredPortrait.read(characterId) { storage.readBackupFile(backup, it) }
+        StoredPortrait.read(characterId) { storage.readBackupFile(account, backup, it) }
 
     /** Удаляет копии по одной и возвращает обновлённый список. */
     suspend fun deleteBackups(
@@ -53,7 +70,7 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): List<BackupInfo> {
         names.forEachIndexed { index, name ->
-            storage.deleteBackup(name)
+            storage.deleteBackup(account, name)
             onProgress(index + 1, names.size)
         }
         return backups()
@@ -81,15 +98,15 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
 
     /** Наборы в `Favorite FaceTexture` с названиями, от новых к старым. */
     suspend fun favoriteSets(): List<FavoriteSet> =
-        parseBackupList(storage.favoriteListing()).map { set ->
-            val title = storage.readFavoriteFile(set.name, FAVORITE_TITLE_FILE)?.decodeToString()
+        parseBackupList(storage.favoriteListing(account)).map { set ->
+            val title = storage.readFavoriteFile(account, set.name, FAVORITE_TITLE_FILE)?.decodeToString()
             FavoriteSet(set.name, set.characterIds, title?.let(FavoriteSet::normalizeTitle))
         }
 
     /** Меняет название набора; пустое название возвращает подпись датой. */
     suspend fun renameFavoriteSet(set: String, title: String) {
         val normalized = FavoriteSet.normalizeTitle(title).orEmpty()
-        storage.writeFavoriteFile(set, FAVORITE_TITLE_FILE, normalized.encodeToByteArray())
+        storage.writeFavoriteFile(account, set, FAVORITE_TITLE_FILE, normalized.encodeToByteArray())
     }
 
     /**
@@ -101,10 +118,10 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         characterIds: List<String>,
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): String {
-        val title = storage.readFavoriteFile(set, FAVORITE_TITLE_FILE)
+        val title = storage.readFavoriteFile(account, set, FAVORITE_TITLE_FILE)
         val replacement = saveFavoriteSet(characterIds, onProgress)
-        if (title != null) storage.writeFavoriteFile(replacement, FAVORITE_TITLE_FILE, title)
-        storage.deleteFavoriteSet(set)
+        if (title != null) storage.writeFavoriteFile(account, replacement, FAVORITE_TITLE_FILE, title)
+        storage.deleteFavoriteSet(account, set)
         return replacement
     }
 
@@ -114,7 +131,7 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): List<FavoriteSet> {
         names.forEachIndexed { index, name ->
-            storage.deleteFavoriteSet(name)
+            storage.deleteFavoriteSet(account, name)
             onProgress(index + 1, names.size)
         }
         return favoriteSets()
@@ -122,8 +139,8 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
 
     /** Портрет из набора [set]. В наборах прошлых версий чистая основа лежала отдельно от готового портрета. */
     suspend fun readFavoritePortrait(set: String, characterId: String): StoredPortrait {
-        val stored = StoredPortrait.read(characterId) { storage.readFavoriteFile(set, it) }
-        val legacyBase = storage.readFavoriteFile(set, characterId + LEGACY_FAVORITE_BASE_EXTENSION) ?: return stored
+        val stored = StoredPortrait.read(characterId) { storage.readFavoriteFile(account, set, it) }
+        val legacyBase = storage.readFavoriteFile(account, set, characterId + LEGACY_FAVORITE_BASE_EXTENSION) ?: return stored
         return StoredPortrait(legacyBase, stored.decoration)
     }
 
@@ -132,9 +149,9 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         ids: List<String>,
         onProgress: suspend (done: Int, total: Int) -> Unit = { _, _ -> },
     ): String {
-        val set = storage.createFavoriteSet()
+        val set = storage.createFavoriteSet(account)
         ids.forEachIndexed { index, id ->
-            currentPortrait(id).writeTo(id) { name, bytes -> storage.writeFavoriteFile(set, name, bytes) }
+            currentPortrait(id).writeTo(id) { name, bytes -> storage.writeFavoriteFile(account, set, name, bytes) }
             onProgress(index + 1, ids.size)
         }
         return set
@@ -177,11 +194,12 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
                 duplicateIn = duplicateIn ?: copy
                 continue
             }
-            val folder = created ?: storage.createBackup().also { created = it }
-            portrait.writeTo(id) { name, bytes -> storage.writeBackupFile(folder, name, bytes) }
+            val folder = created ?: storage.createBackup(account).also { created = it }
+            portrait.writeTo(id) { name, bytes -> storage.writeBackupFile(account, folder, name, bytes) }
             backupFingerprints["$folder/$id"] = portrait.fingerprint
         }
-        return BACKUP_FOLDER + "\\" + (created ?: duplicateIn.orEmpty())
+        val folder = created ?: duplicateIn.orEmpty()
+        return listOfNotNull(BACKUP_FOLDER, account, folder).joinToString(PATH_SEPARATOR.toString())
     }
 
     /** Копия из [backups], где уже лежит такой же [portrait] персонажа, или `null`. */

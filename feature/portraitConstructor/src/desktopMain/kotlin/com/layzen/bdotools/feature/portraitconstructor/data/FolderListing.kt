@@ -37,14 +37,18 @@ internal fun folderListing(dir: Path): String {
 /**
  * Имя новой папки (или файла с расширением [extension]) внутри [parent] по текущим дате и времени: `2026-11-04_18-30-05`.
  * Если такое уже есть (две записи в одну секунду), добавляется номер: `…_2`, `…_3`. Расширение в имя не входит.
+ * [base] — своё имя вместо даты: при переносе папки, чьё имя в новом месте уже занято.
  */
-internal fun freshFolderName(parent: Path, extension: String = ""): String {
-    val stamp = LocalDateTime.now().format(folderStamp)
+internal fun freshFolderName(parent: Path, extension: String = "", base: String = LocalDateTime.now().format(folderStamp)): String {
+    val stamp = base
     var folder = stamp
     var number = 2
     while (parent.resolve(folder + extension).exists()) folder = stamp + "_" + number++
     return folder
 }
+
+/** Папка аккаунта в `FaceTexture_backup` или `Favorite FaceTexture` — её имя номер аккаунта; копии и наборы названы датой. */
+internal fun isAccountFolder(name: String): Boolean = name.isNotEmpty() && name.all(Char::isDigit)
 
 /** Содержимое файла или `null`, если его нет или прочитать не удалось. */
 internal fun readOrNull(file: Path): ByteArray? =

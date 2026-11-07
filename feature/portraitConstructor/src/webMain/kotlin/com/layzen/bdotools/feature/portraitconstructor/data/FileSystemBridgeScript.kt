@@ -2,7 +2,8 @@ package com.layzen.bdotools.feature.portraitconstructor.data
 
 /**
  * Методы портретов для общего моста к папке `Black Desert` (`FolderBridge` в `platform/core`):
- * портреты, резервные копии, файлы украшений, избранное и загрузка картинок.
+ * портреты, резервные копии, файлы украшений, избранное и загрузка картинок. Копии и избранное лежат по аккаунтам:
+ * `FaceTexture_backup/<аккаунт>/<дата-время>`; пустой аккаунт — прямо в папке, как до аккаунтов.
  * Kotlin получает только строки: `OK:<данные>` или `ERR:<код>`. Файлы передаются в base64.
  */
 internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64, stamp, pickFile }) => {
@@ -40,8 +41,63 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
         }
         return 'OK:' + lines.join('\n');
     };
-    const favoriteFolder = async folder => child(await child(await savedRoot(), FAVORITES), folder);
-    const backupFolder = async folder => child(await child(await savedRoot(), BACKUP), folder);
+    // Папка копий или избранного аккаунта; пустой аккаунт — сама папка. Без create папки может не быть — тогда null
+    const area = async (name, account, create) => {
+        const root = await savedRoot();
+        const base = create ? await root.getDirectoryHandle(name, { create: true }) : await child(root, name);
+        if (!base || !account) return base;
+        return create ? base.getDirectoryHandle(account, { create: true }) : child(base, account);
+    };
+    // мост передаёт два аргумента, поэтому аккаунт и папка приходят одной строкой «аккаунт/папка»
+    const split = path => [path.substring(0, path.indexOf('/')), path.substring(path.indexOf('/') + 1)];
+    const areaFolder = async (name, path) => {
+        const [account, folder] = split(path);
+        return child(await area(name, account, false), folder);
+    };
+    const areaCreate = async (name, account) => {
+        const dir = await area(name, account, true);
+        const folder = await freshFolder(dir);
+        await dir.getDirectoryHandle(folder, { create: true });
+        return 'OK:' + folder;
+    };
+    const areaDelete = async (name, account, folder) => {
+        const dir = await area(name, account, false);
+        if (dir) {
+            try { await dir.removeEntry(folder, { recursive: true }); } catch (e) { if (e.name !== 'NotFoundError') throw e; }
+        }
+        return 'OK:';
+    };
+    // «аккаунт/папка/файл»: папку копии или набора создаёт запись, если её ещё нет
+    const areaWrite = async (name, path, base64) => {
+        const [account, rest] = split(path);
+        const [folder, file] = split(rest);
+        const dir = await (await area(name, account, true)).getDirectoryHandle(folder, { create: true });
+        return writeFile(dir, file, base64);
+    };
+    // Копии и наборы из версий до аккаунтов лежат прямо в папке: их имя — дата, а у папок аккаунтов — номер.
+    // Перенос — копированием файлов: перемещать папки File System Access API не умеет
+    const adoptFrom = async (name, account) => {
+        const base = await child(await savedRoot(), name);
+        if (!base) return;
+        const loose = [];
+        for await (const [folder, handle] of base.entries()) {
+            if (handle.kind === 'directory' && !/^\d+$/.test(folder)) loose.push([folder, handle]);
+        }
+        if (!loose.length) return;
+        const target = await base.getDirectoryHandle(account, { create: true });
+        for (const [folder, handle] of loose) {
+            let moved = folder;
+            for (let n = 2; await child(target, moved); n++) moved = folder + '_' + n;
+            const copy = await target.getDirectoryHandle(moved, { create: true });
+            for await (const [file, entry] of handle.entries()) {
+                if (entry.kind !== 'file') continue;
+                const writable = await (await copy.getFileHandle(file, { create: true })).createWritable();
+                await writable.write(await entry.getFile());
+                await writable.close();
+            }
+            await base.removeEntry(folder, { recursive: true });
+        }
+    };
     // Файлы в папке тулзы; папки может ещё не быть
     const listFiles = async dir => {
         const names = [];
@@ -75,25 +131,12 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
             const file = await (await (await faces()).getFileHandle(name)).getFile();
             return 'OK:' + await toBase64(file);
         },
-        // Резервная копия: Black Desert\FaceTexture_backup\<дата-время>\ — чистые портреты и украшения
-        async backupCreate() {
-            const dir = await (await savedRoot()).getDirectoryHandle(BACKUP, { create: true });
-            const folder = await freshFolder(dir);
-            await dir.getDirectoryHandle(folder, { create: true });
-            return 'OK:' + folder;
-        },
-        backups: async () => listFolders(await child(await savedRoot(), BACKUP)),
-        async backupDelete(folder) {
-            const dir = await child(await savedRoot(), BACKUP);
-            if (dir) {
-                try { await dir.removeEntry(folder, { recursive: true }); } catch (e) { if (e.name !== 'NotFoundError') throw e; }
-            }
-            return 'OK:';
-        },
-        backupRead: async (folder, name) => readFile(await backupFolder(folder), name),
-        // мост передаёт два аргумента, поэтому папка и имя файла приходят одной строкой «папка/имя»
-        backupWrite: async (path, base64) =>
-            writeFile(await backupFolder(path.substring(0, path.indexOf('/'))), path.substring(path.indexOf('/') + 1), base64),
+        // Резервная копия: Black Desert\FaceTexture_backup\<аккаунт>\<дата-время>\ — чистые портреты и украшения
+        backupCreate: account => areaCreate(BACKUP, account),
+        backups: async account => listFolders(await area(BACKUP, account, false)),
+        backupDelete: (account, folder) => areaDelete(BACKUP, account, folder),
+        backupRead: async (path, name) => readFile(await areaFolder(BACKUP, path), name),
+        backupWrite: (path, base64) => areaWrite(BACKUP, path, base64),
         async write(name, base64) {
             const handle = await (await faces()).getFileHandle(name, { create: true });
             const writable = await handle.createWritable();
@@ -111,23 +154,15 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
             }
             return 'OK:';
         },
-        // Избранное: Black Desert\Favorite FaceTexture\<дата-время>\ — набор всех портретов
-        async favoriteCreate() {
-            const dir = await (await savedRoot()).getDirectoryHandle(FAVORITES, { create: true });
-            const folder = await freshFolder(dir);
-            await dir.getDirectoryHandle(folder, { create: true });
-            return 'OK:' + folder;
-        },
-        favorites: async () => listFolders(await child(await savedRoot(), FAVORITES)),
-        favoriteRead: async (folder, name) => readFile(await favoriteFolder(folder), name),
-        // мост передаёт два аргумента, поэтому папка и имя файла приходят одной строкой «папка/имя»
-        favoriteWrite: async (path, base64) =>
-            writeFile(await favoriteFolder(path.substring(0, path.indexOf('/'))), path.substring(path.indexOf('/') + 1), base64),
-        async favoriteDelete(folder) {
-            const dir = await child(await savedRoot(), FAVORITES);
-            if (dir) {
-                try { await dir.removeEntry(folder, { recursive: true }); } catch (e) { if (e.name !== 'NotFoundError') throw e; }
-            }
+        // Избранное: Black Desert\Favorite FaceTexture\<аккаунт>\<дата-время>\ — набор всех портретов
+        favoriteCreate: account => areaCreate(FAVORITES, account),
+        favorites: async account => listFolders(await area(FAVORITES, account, false)),
+        favoriteRead: async (path, name) => readFile(await areaFolder(FAVORITES, path), name),
+        favoriteWrite: (path, base64) => areaWrite(FAVORITES, path, base64),
+        favoriteDelete: (account, folder) => areaDelete(FAVORITES, account, folder),
+        async adoptLoose(account) {
+            await adoptFrom(BACKUP, account);
+            await adoptFrom(FAVORITES, account);
             return 'OK:';
         },
         // Заметки персонажей: Black Desert\UserCache\<аккаунт>\gameVariable_lobby.xml
