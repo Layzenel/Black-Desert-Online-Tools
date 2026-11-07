@@ -12,7 +12,10 @@ import com.layzen.bdotools.feature.portraitconstructor.domain.sortByCharacterOrd
 
 private const val BMP_EXTENSION = ".bmp"
 private const val DECORATION_EXTENSION = ".txt"
+/** Папка тулзы от `Black Desert` — для путей в сообщениях о записи. */
+private const val TOOL_FOLDER = "BDO Tools\\portraitConstructor"
 private const val BACKUP_FOLDER = "FaceTexture_backup"
+private const val FAVORITE_FOLDER = "Favorite FaceTexture"
 private const val PATH_SEPARATOR = '\\'
 // в наборах прошлых версий .bmp — портрет с украшениями, а чистая основа лежит в этом файле
 private const val LEGACY_FAVORITE_BASE_EXTENSION = ".base"
@@ -28,21 +31,22 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
     /** Отпечатки портретов в копиях: `<копия>/<ID>` → [StoredPortrait.fingerprint]. Копии после записи не меняются. */
     private val backupFingerprints = mutableMapOf<String, Int>()
 
-    /** Аккаунт, в чьих папках лежат копии и избранное (см. [PortraitsStorage]); `null` — без аккаунта. */
+    /** Аккаунт, в чьей папке лежат копии, избранное и текущие портреты (см. [PortraitsStorage]); `null` — без аккаунта. */
     private var account: String? = null
 
     /**
-     * Переключает копии и избранное на папки аккаунта [id]. Копии и наборы из версий до аккаунтов, лежащие без папки
-     * аккаунта, переносятся в папку того аккаунта, который открыли первым.
+     * Переключает копии, избранное и текущие портреты на папку аккаунта [selected]. Данные прошлых версий
+     * переносятся в неё (см. [PortraitsStorage.adoptLooseFolders]): копии и наборы без аккаунта — в аккаунт, который
+     * открыли первым, чистые портреты и украшения — в аккаунт их персонажей.
      */
-    suspend fun useAccount(id: String?) {
-        if (id != null) storage.adoptLooseFolders(id)
-        account = id
+    suspend fun useAccount(selected: GameAccount?) {
+        if (selected != null) storage.adoptLooseFolders(selected.id, selected.characterOrder.keys)
+        account = selected?.id
         backupFingerprints.clear()
     }
 
-    /** Путь набора избранного [set] от `Favorite FaceTexture` — для сообщений. */
-    fun favoritePath(set: String): String = account?.let { it + PATH_SEPARATOR + set } ?: set
+    /** Путь набора избранного [set] от `BDO Tools\portraitConstructor` — для сообщений. */
+    fun favoritePath(set: String): String = listOfNotNull(account, FAVORITE_FOLDER, set).joinToString(PATH_SEPARATOR.toString())
 
     /**
      * ID персонажей [account] в порядке окна выбора персонажа: портреты других аккаунтов в `FaceTexture`
@@ -77,10 +81,10 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
     }
 
     suspend fun loadDecorations(): Map<String, PortraitDecoration> =
-        storage.toolFileNames()
+        storage.toolFileNames(account)
             .filter { it.endsWith(DECORATION_EXTENSION) }
             .mapNotNull { name ->
-                val text = storage.readToolFile(name)?.decodeToString() ?: return@mapNotNull null
+                val text = storage.readToolFile(account, name)?.decodeToString() ?: return@mapNotNull null
                 name.removeSuffix(DECORATION_EXTENSION) to decodeDecoration(text)
             }
             .filterNot { it.second.isEmpty }
@@ -88,11 +92,11 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
 
     /** Портрет без украшений: сохранённая основа, а если её нет — текущий файл из `FaceTexture`. */
     suspend fun readCleanBase(characterId: String): ByteArray =
-        storage.readToolFile(characterId + BMP_EXTENSION) ?: storage.readPortrait(characterId)
+        storage.readToolFile(account, characterId + BMP_EXTENSION) ?: storage.readPortrait(characterId)
 
-    /** Текущий портрет персонажа: чистая основа и украшение из `BDO Tools\portraits`. */
+    /** Текущий портрет персонажа: чистая основа и украшение из `Current portraits` аккаунта. */
     suspend fun currentPortrait(characterId: String): StoredPortrait {
-        val decoration = storage.readToolFile(characterId + DECORATION_EXTENSION)?.let { decodeDecoration(it.decodeToString()) }
+        val decoration = storage.readToolFile(account, characterId + DECORATION_EXTENSION)?.let { decodeDecoration(it.decodeToString()) }
         return StoredPortrait(readCleanBase(characterId), decoration ?: PortraitDecoration())
     }
 
@@ -166,11 +170,11 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
         writes.forEachIndexed { index, write ->
             val id = write.characterId
             if (write.decoration.isEmpty) {
-                storage.deleteToolFile(id + BMP_EXTENSION)
-                storage.deleteToolFile(id + DECORATION_EXTENSION)
+                storage.deleteToolFile(account, id + BMP_EXTENSION)
+                storage.deleteToolFile(account, id + DECORATION_EXTENSION)
             } else {
-                storage.writeToolFile(id + BMP_EXTENSION, write.cleanBase)
-                storage.writeToolFile(id + DECORATION_EXTENSION, encodeDecoration(write.decoration).encodeToByteArray())
+                storage.writeToolFile(account, id + BMP_EXTENSION, write.cleanBase)
+                storage.writeToolFile(account, id + DECORATION_EXTENSION, encodeDecoration(write.decoration).encodeToByteArray())
             }
             storage.writePortrait(id, write.face)
             onProgress(index + 1, writes.size)
@@ -199,7 +203,7 @@ class PortraitsRepository(private val storage: PortraitsStorage) {
             backupFingerprints["$folder/$id"] = portrait.fingerprint
         }
         val folder = created ?: duplicateIn.orEmpty()
-        return listOfNotNull(BACKUP_FOLDER, account, folder).joinToString(PATH_SEPARATOR.toString())
+        return listOfNotNull(TOOL_FOLDER, account, BACKUP_FOLDER, folder).joinToString(PATH_SEPARATOR.toString())
     }
 
     /** Копия из [backups], где уже лежит такой же [portrait] персонажа, или `null`. */

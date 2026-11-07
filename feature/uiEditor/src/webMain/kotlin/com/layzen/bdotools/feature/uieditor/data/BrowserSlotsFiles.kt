@@ -32,25 +32,31 @@ internal class BrowserSlotsFiles : SlotsFiles {
         slotsBridge.call("characterWrite", account, "$path\n$text")
     }
 
-    override suspend fun presetFiles(): List<String> = slotsBridge.call("presets").lines().filter { it.isNotEmpty() }
+    override suspend fun presetFiles(account: String): List<String> =
+        slotsBridge.call("presets", account).lines().filter { it.isNotEmpty() }
 
-    override suspend fun readPreset(fileName: String): String = slotsBridge.call("presetRead", fileName)
+    override suspend fun readPreset(account: String, fileName: String): String = slotsBridge.call("presetRead", account, fileName)
 
-    override suspend fun writePreset(fileName: String, text: String) {
-        slotsBridge.call("presetWrite", fileName, text)
+    // мост передаёт два аргумента, поэтому аккаунт и имя файла идут одной строкой «аккаунт/файл»
+    override suspend fun writePreset(account: String, fileName: String, text: String) {
+        slotsBridge.call("presetWrite", "$account/$fileName", text)
     }
 
-    override suspend fun deletePreset(fileName: String) {
-        slotsBridge.call("presetDelete", fileName)
+    override suspend fun deletePreset(account: String, fileName: String) {
+        slotsBridge.call("presetDelete", account, fileName)
     }
 
-    override suspend fun readBackground(): ByteArray? {
-        val result = slotsBridge.call("backgroundRead")
+    override suspend fun readBackground(account: String): ByteArray? {
+        val result = slotsBridge.call("backgroundRead", account)
         return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
     }
 
-    override suspend fun writeBackground(bytes: ByteArray?) {
-        slotsBridge.call("backgroundWrite", bytes?.let { Base64.encode(it) }.orEmpty())
+    override suspend fun writeBackground(account: String, bytes: ByteArray?) {
+        slotsBridge.call("backgroundWrite", account, bytes?.let { Base64.encode(it) }.orEmpty())
+    }
+
+    override suspend fun adoptLooseFiles(account: String) {
+        slotsBridge.call("adoptLoose", account)
     }
 
     override suspend fun pickImage(): ByteArray? = cancellable { Base64.decode(slotsBridge.call("pickImage")) }

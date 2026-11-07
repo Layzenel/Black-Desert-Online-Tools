@@ -8,6 +8,7 @@ import java.nio.file.attribute.FileTime
 import java.util.prefs.Preferences
 import kotlin.io.path.createDirectories
 import kotlin.io.path.div
+import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
@@ -18,6 +19,9 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 
 /** Настольное хранилище на временной папке: те же пути, копии и ошибки, что у моста в браузере. */
@@ -61,16 +65,12 @@ class DesktopSlotsStorageTest {
         storage.selectFolder()
         assertEquals(listOf("3537922"), storage.accounts())
         val file = storage.readGameVariable("3537922")
-        // копия из версии до аккаунтов: лежит прямо в backups и при записи переедет в папку аккаунта
-        val backups = (game / "BDO Tools" / "slots" / "backups").createDirectories()
-        (backups / "gamevariable_3537922_2026-11-01_10-00-00.xml").writeBytes(byteArrayOf(1))
 
         val backup = storage.writeGameVariable("3537922", file.text.replace("0.8", "1.0"), file.modified)
 
         assertContentEquals(gameBytes("1.0"), accountFile.readBytes())
-        assertEquals("BDO Tools\\slots\\backups\\3537922\\", backup.substringBeforeLast('\\') + "\\")
-        assertEquals(listOf("3537922"), backups.listDirectoryEntries().map { it.name })
-        assertEquals(2, (backups / "3537922").listDirectoryEntries().size)
+        assertEquals("BDO Tools\\uiEditor\\3537922\\backups\\", backup.substringBeforeLast('\\') + "\\")
+        assertEquals(1, (tool / "3537922" / "backups").listDirectoryEntries().size)
     }
 
     @Test
@@ -93,12 +93,40 @@ class DesktopSlotsStorageTest {
     }
 
     @Test
-    fun keepsPresetsInToolFolder() = runBlocking {
+    fun keepsPresetsInAccountFolder() = runBlocking {
         storage.selectFolder()
-        storage.writePreset("Моя.json", "{}")
-        assertEquals(listOf("Моя.json"), storage.presetFiles())
-        assertEquals("{}", storage.readPreset("Моя.json"))
-        storage.deletePreset("Моя.json")
-        assertEquals(emptyList(), storage.presetFiles())
+        storage.writePreset("3537922", "Моя.json", "{}")
+        assertEquals(listOf("Моя.json"), storage.presetFiles("3537922"))
+        assertEquals(emptyList(), storage.presetFiles("111"))
+        assertEquals("{}", storage.readPreset("3537922", "Моя.json"))
+        assertTrue((tool / "3537922" / "presets" / "Моя.json").exists())
+        storage.deletePreset("3537922", "Моя.json")
+        assertEquals(emptyList(), storage.presetFiles("3537922"))
     }
+
+    @Test
+    fun legacySlotsFolderMovesIntoAccountFolders() = runBlocking {
+        storage.selectFolder()
+        // версия до аккаунтов: пресеты прямо в presets, подложка — файл, копии с аккаунтом в имени
+        val slots = (game / "BDO Tools" / "slots").createDirectories()
+        ((slots / "presets").createDirectories() / "Старый.json").writeBytes("{}".encodeToByteArray())
+        (slots / "background").writeBytes(byteArrayOf(7))
+        ((slots / "backups").createDirectories() / "gamevariable_222_2026-11-01_10-00-00.xml").writeBytes(byteArrayOf(1))
+        // прошлая версия: пресеты другого аккаунта уже в его папке
+        ((slots / "presets" / "222").createDirectories() / "Чужой.json").writeBytes("{}".encodeToByteArray())
+
+        storage.adoptLooseFiles("3537922")
+
+        assertFalse(slots.exists())
+        assertEquals(listOf("Старый.json"), storage.presetFiles("3537922"))
+        assertEquals(listOf("Чужой.json"), storage.presetFiles("222"))
+        assertContentEquals(byteArrayOf(7), storage.readBackground("3537922"))
+        assertTrue((tool / "222" / "backups" / "gamevariable_222_2026-11-01_10-00-00.xml").exists())
+        assertNull(storage.readBackground("111"))
+        storage.writeBackground("111", byteArrayOf(8))
+        assertContentEquals(byteArrayOf(8), storage.readBackground("111"))
+    }
+
+    /** `Black Desert\BDO Tools\uiEditor` — папка тулзы, в ней папки аккаунтов. */
+    private val tool get() = game / "BDO Tools" / "uiEditor"
 }

@@ -3,7 +3,8 @@ package com.layzen.bdotools.feature.uieditor.data
 import com.layzen.bdotools.core.folder.FolderAccess
 
 /**
- * Файлы в папке `Документы\Black Desert`: настройки игры и файлы тулзы в `BDO Tools\slots`.
+ * Файлы в папке `Документы\Black Desert`: настройки игры и файлы тулзы в папке аккаунта
+ * `BDO Tools\uiEditor\<account>\` — `backups`, `presets`, `background`.
  * Все методы, кроме [access], требуют [FolderAccess.Granted].
  */
 interface SlotsStorage {
@@ -21,7 +22,7 @@ interface SlotsStorage {
     suspend fun readGameVariable(account: String): GameFile
 
     /**
-     * Копирует текущий файл в `BDO Tools\slots\backups` и записывает [text]. Если файл изменился
+     * Копирует текущий файл в `<account>\backups` и записывает [text]. Если файл изменился
      * после [expectedModified] — [SlotsError.FileChanged], ничего не записывается. Возвращает путь копии.
      */
     suspend fun writeGameVariable(account: String, text: String, expectedModified: Long): String
@@ -31,20 +32,27 @@ interface SlotsStorage {
 
     suspend fun readCharacterFile(account: String, path: String): String
 
-    /** Копирует файл персонажа в `BDO Tools\slots\backups` и записывает [text]. */
+    /** Копирует файл персонажа в `<account>\backups` и записывает [text]. */
     suspend fun writeCharacterFile(account: String, path: String, text: String)
 
-    /** Файлы `*.json` в `BDO Tools\slots\presets`. */
-    suspend fun presetFiles(): List<String>
+    /** Файлы `*.json` в `<account>\presets`. */
+    suspend fun presetFiles(account: String): List<String>
 
-    suspend fun readPreset(fileName: String): String
+    suspend fun readPreset(account: String, fileName: String): String
 
-    suspend fun writePreset(fileName: String, text: String)
+    suspend fun writePreset(account: String, fileName: String, text: String)
 
-    suspend fun deletePreset(fileName: String)
+    suspend fun deletePreset(account: String, fileName: String)
 
-    /** Картинка-подложка редактора; `null`, если её не выбирали. */
-    suspend fun readBackground(): ByteArray?
+    /** Картинка-подложка редактора аккаунта — файл `<account>\background\image`; `null`, если её не выбирали. */
+    suspend fun readBackground(account: String): ByteArray?
 
-    suspend fun writeBackground(bytes: ByteArray?)
+    suspend fun writeBackground(account: String, bytes: ByteArray?)
+
+    /**
+     * Переносит данные прошлых версий из `BDO Tools\slots` в `BDO Tools\uiEditor\<аккаунт>\…`: где аккаунт известен
+     * (папка `<аккаунт>` или копия `gamevariable_<аккаунт>_…`) — ему, остальное (пресеты прямо в `presets`, файл
+     * `background`) — аккаунту [account]. Совпавший файл не перезаписывается и остаётся на старом месте.
+     */
+    suspend fun adoptLooseFiles(account: String)
 }

@@ -1,6 +1,6 @@
 package com.layzen.bdotools.feature.portraitconstructor.domain
 
-/** Папка `FaceTexture_backup\<name>` и персонажи, чьи портреты в ней лежат. */
+/** Папка резервной копии `<name>` в `BDO Tools\portraits\FaceTexture_backup\<аккаунт>` и персонажи, чьи портреты в ней лежат. */
 data class BackupInfo(val name: String, val characterIds: Set<String>) {
     /** `2026-11-03_12-00-05` → `2026-11-03 12:00:05`. Повторная копия в ту же секунду получает суффикс `_2`. */
     val label: String

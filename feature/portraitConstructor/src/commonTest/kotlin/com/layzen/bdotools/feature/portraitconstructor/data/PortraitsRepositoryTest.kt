@@ -42,7 +42,7 @@ class PortraitsRepositoryTest {
 
         val backup = repository.writePortraits(listOf(PortraitWrite("1", face = byteArrayOf(2), cleanBase = byteArrayOf(1), decoration = decorated)))
 
-        assertEquals("FaceTexture_backup\\2026-11-05_10-00-01", backup)
+        assertEquals("BDO Tools\\portraitConstructor\\FaceTexture_backup\\2026-11-05_10-00-01", backup)
         assertEquals(listOf("backup:2026-11-05_10-00-01", "backupFile:2026-11-05_10-00-01/1.bmp", "face:1"), storage.log)
         assertContentEquals(byteArrayOf(2), storage.faces["1"])
         assertContentEquals(byteArrayOf(1), storage.tools["1.bmp"])
@@ -192,39 +192,49 @@ class PortraitsRepositoryTest {
     }
 
     @Test
-    fun backupsAndFavoritesLiveInAccountFolder() = runTest {
+    fun backupsFavoritesAndCurrentPortraitsLiveInAccountFolder() = runTest {
         val storage = MemoryStorage().apply { faces["1"] = byteArrayOf(1) }
         val repository = PortraitsRepository(storage)
-        repository.useAccount("111")
+        repository.useAccount(account("111", "1"))
 
-        val backup = repository.writePortraits(listOf(plainWrite("1", byteArrayOf(2))))
+        val backup = repository.writePortraits(listOf(PortraitWrite("1", face = byteArrayOf(2), cleanBase = byteArrayOf(1), decoration = decorated)))
         val set = repository.saveFavoriteSet(listOf("1"))
 
-        assertEquals("FaceTexture_backup\\111\\2026-11-05_10-00-01", backup)
+        assertEquals("BDO Tools\\portraitConstructor\\111\\FaceTexture_backup\\2026-11-05_10-00-01", backup)
         assertEquals(listOf("2026-11-05_10-00-01"), repository.backups().map { it.name })
         assertEquals(listOf(set), repository.favoriteSets().map { it.name })
-        assertEquals("111\\$set", repository.favoritePath(set))
+        assertEquals("111\\Favorite FaceTexture\\$set", repository.favoritePath(set))
+        assertEquals(mapOf("1" to decorated), repository.loadDecorations())
 
-        // у другого аккаунта своих копий и наборов пока нет
-        repository.useAccount("222")
+        // у другого аккаунта своих копий, наборов и украшений нет
+        repository.useAccount(account("222"))
         assertEquals(emptyList(), repository.backups())
         assertEquals(emptyList(), repository.favoriteSets())
+        assertEquals(emptyMap(), repository.loadDecorations())
     }
 
     @Test
-    fun looseFoldersMoveToFirstOpenedAccount() = runTest {
+    fun legacyDataMovesToItsAccount() = runTest {
         val storage = MemoryStorage().apply {
             backups["2026-11-01_10-00-00/1.bmp"] = byteArrayOf(1)
             favorites["2026-11-02_10-00-00/1.bmp"] = byteArrayOf(2)
+            tools["1.txt"] = encodeDecoration(decorated).encodeToByteArray()
+            tools["2.txt"] = encodeDecoration(decorated).encodeToByteArray()
         }
         val repository = PortraitsRepository(storage)
 
-        repository.useAccount("111")
-        repository.useAccount("222")
+        repository.useAccount(account("111", "1"))
+        repository.useAccount(account("222", "2"))
 
+        // копии без аккаунта ушли к первому открытому, украшения — к аккаунту своего персонажа
         assertEquals(emptyList(), repository.backups())
-        repository.useAccount("111")
+        assertEquals(mapOf("2" to decorated), repository.loadDecorations())
+        repository.useAccount(account("111", "1"))
         assertEquals(listOf("2026-11-01_10-00-00"), repository.backups().map { it.name })
         assertEquals(listOf("2026-11-02_10-00-00"), repository.favoriteSets().map { it.name })
+        assertEquals(mapOf("1" to decorated), repository.loadDecorations())
     }
+
+    private fun account(id: String, vararg characters: String) =
+        GameAccount(id, characters.withIndex().associate { (index, character) -> character to index }, lastPlayed = 0)
 }

@@ -44,20 +44,20 @@ internal class BrowserPortraitsStorage : GameFiles {
         fileSystemBridge.call("backupDelete", account.orEmpty(), backup)
     }
 
-    override suspend fun toolFileNames(): List<String> =
-        fileSystemBridge.call("toolList").split('\n').filter { it.isNotEmpty() }
+    override suspend fun toolFileNames(account: String?): List<String> =
+        fileSystemBridge.call("toolList", account.orEmpty()).split('\n').filter { it.isNotEmpty() }
 
-    override suspend fun readToolFile(name: String): ByteArray? {
-        val result = fileSystemBridge.call("toolRead", name)
+    override suspend fun readToolFile(account: String?, name: String): ByteArray? {
+        val result = fileSystemBridge.call("toolRead", account.orEmpty(), name)
         return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null
     }
 
-    override suspend fun writeToolFile(name: String, bytes: ByteArray) {
-        fileSystemBridge.call("toolWrite", name, Base64.encode(bytes))
+    override suspend fun writeToolFile(account: String?, name: String, bytes: ByteArray) {
+        fileSystemBridge.call("toolWrite", "${account.orEmpty()}/$name", Base64.encode(bytes))
     }
 
-    override suspend fun deleteToolFile(name: String) {
-        fileSystemBridge.call("toolDelete", name)
+    override suspend fun deleteToolFile(account: String?, name: String) {
+        fileSystemBridge.call("toolDelete", account.orEmpty(), name)
     }
 
     override suspend fun createFavoriteSet(account: String?): String = fileSystemBridge.call("favoriteCreate", account.orEmpty())
@@ -77,8 +77,8 @@ internal class BrowserPortraitsStorage : GameFiles {
         fileSystemBridge.call("favoriteDelete", account.orEmpty(), set)
     }
 
-    override suspend fun adoptLooseFolders(account: String) {
-        fileSystemBridge.call("adoptLoose", account)
+    override suspend fun adoptLooseFolders(account: String, characterIds: Set<String>) {
+        fileSystemBridge.call("adoptLoose", account, characterIds.joinToString("\n"))
     }
 
     override suspend fun readLobbyVariables(account: String): ByteArray? {

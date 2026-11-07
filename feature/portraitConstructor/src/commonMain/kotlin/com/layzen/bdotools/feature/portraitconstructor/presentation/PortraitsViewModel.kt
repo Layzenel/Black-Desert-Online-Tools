@@ -138,7 +138,7 @@ class PortraitsViewModel(
             accounts.refresh()
             val choice = accounts.state.value
             val ids = if (choice.needsChoice) emptyList() else repository.portraitOrder(choice.selected)
-            repository.useAccount(choice.selected?.id)
+            repository.useAccount(choice.selected)
             context.update {
                 it.copy(
                     portraits = ids.map { id -> PortraitItem(id, null) },

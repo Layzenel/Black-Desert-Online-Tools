@@ -38,10 +38,11 @@ internal class PresetsController(
     fun confirmSaveAs() {
         val name = (context.current.dialog as? SlotsDialog.SaveAs)?.name?.trim().orEmpty()
         val screen = screen()
-        if (name.isEmpty() || screen == null) return
+        val account = context.current.loaded?.account
+        if (name.isEmpty() || screen == null || account == null) return
         context.launch(busy = true) {
-            repository.savePreset(NamedLayout(name, AnchoredLayout.of(context.current.layout, screen)))
-            val presets = repository.presets()
+            repository.savePreset(account, NamedLayout(name, AnchoredLayout.of(context.current.layout, screen)))
+            val presets = repository.presets(account)
             context.update {
                 it.copy(presets = presets, activePreset = PresetRef.User(name), dialog = null, notice = SlotsNotice.PresetSaved(name))
             }
@@ -52,9 +53,10 @@ internal class PresetsController(
 
     fun confirmDelete() {
         val name = (context.current.dialog as? SlotsDialog.ConfirmDelete)?.name ?: return
+        val account = context.current.loaded?.account ?: return
         context.launch(busy = true) {
-            repository.deletePreset(name)
-            val presets = repository.presets()
+            repository.deletePreset(account, name)
+            val presets = repository.presets(account)
             context.update { state ->
                 val active = state.activePreset.takeUnless { it == PresetRef.User(name) }
                 state.copy(presets = presets, activePreset = active, dialog = null, notice = SlotsNotice.PresetDeleted(name))

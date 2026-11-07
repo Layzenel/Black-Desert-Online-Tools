@@ -29,9 +29,6 @@ internal class GameController(
     suspend fun loadAll() {
         accounts.refresh()
         load(accounts.state.value.selected?.id ?: repository.accounts().first())
-        val presets = repository.presets()
-        val background = storage.readBackground()?.let(::decodeOrNull)
-        context.update { it.copy(presets = presets, background = background) }
     }
 
     /** Открывает файл другого аккаунта, если страница уже читала папку. */
@@ -82,9 +79,10 @@ internal class GameController(
     }
 
     fun pickBackground() = context.launch {
+        val account = context.current.loaded?.account ?: return@launch
         val bytes = device.pickImage() ?: return@launch
         val image = decodeOrNull(bytes) ?: throw SlotsException(SlotsError.NotImage)
-        storage.writeBackground(bytes)
+        storage.writeBackground(account, bytes)
         context.update { it.copy(background = image, backgroundShown = true) }
     }
 
@@ -93,11 +91,27 @@ internal class GameController(
 
     fun setBackgroundDim(percent: Int) = context.update { it.copy(backgroundDim = percent) }
 
-    /** Читает файл аккаунта; открытым остаётся тот же набор позиций, если он есть в файле. */
+    /**
+     * Читает файл аккаунта, его пресеты и подложку; открытым остаётся тот же набор позиций, если он есть в файле.
+     * Пресеты и подложка из версий до аккаунтов сначала переезжают в аккаунт, который открыли первым.
+     */
     private suspend fun load(account: String) {
         val loaded = repository.load(account, context.current.loaded?.edited ?: GamePreset.General)
+        storage.adoptLooseFiles(account)
+        val presets = repository.presets(account)
+        val background = storage.readBackground(account)?.let(::decodeOrNull)
         context.update {
-            it.copy(loaded = loaded, layout = loaded.game.layout, history = emptyList(), future = emptyList(), selection = emptySet(), selectedChats = emptySet(), activePreset = PresetRef.Game)
+            it.copy(
+                loaded = loaded,
+                layout = loaded.game.layout,
+                history = emptyList(),
+                future = emptyList(),
+                selection = emptySet(),
+                selectedChats = emptySet(),
+                activePreset = PresetRef.Game,
+                presets = presets,
+                background = background,
+            )
         }
     }
 

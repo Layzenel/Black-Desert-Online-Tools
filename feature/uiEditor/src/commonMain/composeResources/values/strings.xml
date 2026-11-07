@@ -22,7 +22,7 @@
     <string name="slots_preset_key_clusters">Кластеры по клавишам</string>
     <string name="slots_user_presets">Мои пресеты</string>
     <string name="slots_user_preset_delete">Удалить пресет</string>
-    <string name="slots_user_presets_empty">Пока пусто. Сохранённые раскладки лежат в «Black Desert\\BDO Tools\\slots\\presets».</string>
+    <string name="slots_user_presets_empty">Пока пусто. Сохранённые раскладки этого аккаунта лежат в «Black Desert\\BDO Tools\\uiEditor\\&lt;аккаунт&gt;\\presets».</string>
     <string name="slots_grid">Сетка от прицела</string>
     <string name="slots_snap_step">Шаг привязки</string>
     <string name="slots_snap_step_caption">Шаг</string>
@@ -101,7 +101,7 @@
     <string name="slots_reload">Перечитать файл</string>
     <string name="slots_screen">Экран игры: %1$d × %2$d, масштаб интерфейса %3$s. Сетка и координаты — от прицела.</string>
     <string name="slots_off_screen">Элементов за краем экрана: %1$d — в игре они уедут за край.</string>
-    <string name="slots_game_closed_hint">Перед правкой закройте игру и нажмите «Перечитать файл», а применяйте тоже при закрытой игре: запущенная игра перезапишет файл своими настройками, и изменения не сохранятся.</string>
+    <string name="slots_game_closed_hint">Перед изменениями сохраните настройки в игре(Настройки -> Архив настроек -> Сохранить) для того, чтобы иметь возможность восстановить интерфейс после изменений, закройте игру и нажмите «Перечитать файл», а применяйте тоже при закрытой игре: запущенная игра перезапишет файл своими настройками, и изменения не сохранятся.</string>
 
     <!-- Отдаление групп -->
     <string name="slots_spread_description">Группы — касающиеся друг друга элементы и окна чата. Слайдеры разносят группы от центра между ними, UI-px.</string>
@@ -151,7 +151,7 @@
     <string name="slots_import_wrong_format">Это не файл раскладки BDO Tools.</string>
     <string name="slots_import_unsupported_version">Файл из более новой версии BDO Tools — обновите сайт или программу.</string>
     <string name="slots_apply_title">Применить в игру</string>
-    <string name="slots_apply_description">Полностью закройте игру: пока она запущена, она перезапишет файл своими значениями. Перед записью сохранится копия gamevariable.xml в «BDO Tools\\slots\\backups\\&lt;аккаунт&gt;».</string>
+    <string name="slots_apply_description">Полностью закройте игру: пока она запущена, она перезапишет файл своими значениями. Перед записью сохранится копия gamevariable.xml в «BDO Tools\\uiEditor\\&lt;аккаунт&gt;\\backups».</string>
     <string name="slots_apply_confirm">Игра закрыта, применить</string>
     <string name="slots_apply_target">Куда записать</string>
     <string name="slots_game_preset">Пресеты в игре</string>

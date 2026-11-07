@@ -85,13 +85,13 @@
     <!-- Избранное -->
     <string name="portraits_favorites_title">Избранное</string>
     <string name="portraits_favorites_button">Избранное</string>
-    <string name="portraits_favorites_description">Наборы всех портретов в папке «Favorite FaceTexture\\&lt;аккаунт&gt;» рядом с FaceTexture: у каждого аккаунта свои. Сохраняются и применяются только все портреты сразу: «Применить» вернёт портреты из набора всем персонажам, которые есть сейчас, вместе с заметками и значками. Старые портреты попадут в резервную копию.</string>
+    <string name="portraits_favorites_description">Наборы всех портретов в папке «BDO Tools\\portraitConstructor\\&lt;аккаунт&gt;\\Favorite FaceTexture»: у каждого аккаунта свои. Сохраняются и применяются только все портреты сразу: «Применить» вернёт портреты из набора всем персонажам, которые есть сейчас, вместе с заметками и значками. Старые портреты попадут в резервную копию.</string>
     <string name="portraits_favorites_sets">Наборы</string>
     <string name="portraits_favorites_portraits">Портреты: %1$d</string>
     <string name="portraits_favorites_empty">В избранном пока пусто. Сохраните текущие портреты кнопкой ниже.</string>
     <string name="portraits_favorites_save">Сохранить текущие портреты</string>
     <string name="portraits_favorites_apply">Применить</string>
-    <string name="portraits_favorite_added">Портреты сохранены в избранное: «Favorite FaceTexture\%1$s».</string>
+    <string name="portraits_favorite_added">Портреты сохранены в избранное: «BDO Tools\\portraitConstructor\\%1$s».</string>
     <string name="portraits_favorites_loading">Читаю избранное…</string>
     <string name="portraits_favorites_close">Закрыть</string>
     <string name="portraits_favorite_applied">Портреты из избранного применены. Старые файлы — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
@@ -165,7 +165,7 @@
     <string name="portraits_notes_none">Заметки в файле игры уже совпадают с заметками на портретах.</string>
     <string name="portraits_notes_none_hint">Если вы синхронизировали, пока игра была запущена, она вернёт прежние заметки при смене персонажа, телепорте или выходе. Тогда закройте игру и откройте это окно снова.</string>
     <string name="portraits_notes_loading">Читаю заметки…</string>
-    <string name="portraits_notes_backup">Перед записью копия gameVariable_lobby.xml сохранится в «BDO Tools\\lobby_backup».</string>
+    <string name="portraits_notes_backup">Перед записью копия gameVariable_lobby.xml сохранится в «BDO Tools\\portraitConstructor\\&lt;аккаунт&gt;\\lobby_backup».</string>
     <string name="portraits_notes_apply">Синхронизировать</string>
     <string name="portraits_notes_synced">Заметки записаны. Прежний файл — в «%1$s». Запустите игру, чтобы увидеть их.</string>
     <!-- Подсказки к действиям под сеткой -->

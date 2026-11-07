@@ -7,21 +7,14 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.div
 import kotlin.io.path.isDirectory
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
 
 private const val FACES = "FaceTexture"
-private const val BACKUP = "FaceTexture_backup"
-private const val TOOLS = "BDO Tools"
-private const val TOOL_PORTRAITS = "portraits"
-private const val FAVORITES = "Favorite FaceTexture"
 private const val GAME_FOLDER = "Black Desert"
 private const val USER_CACHE = "UserCache"
 private const val LOBBY_FILE = "gameVariable_lobby.xml"
-private const val LOBBY_BACKUP = "lobby_backup"
 private const val LOBBY_BACKUP_EXTENSION = ".xml"
 /**
  * Файлы игры на диске через `java.nio.file` для настольной версии. Папки, имена копий и форматы списков те же,
@@ -83,16 +76,16 @@ internal class DesktopPortraitsStorage(
 
     override suspend fun deleteBackup(account: String?, backup: String) = fileCall { deleteFolder(area(BACKUP, account) / backup) }
 
-    override suspend fun toolFileNames(): List<String> = fileCall { fileNames(toolFolder()) }
+    override suspend fun toolFileNames(account: String?): List<String> = fileCall { fileNames(area(CURRENT, account)) }
 
-    override suspend fun readToolFile(name: String): ByteArray? = fileCall { readOrNull(toolFolder() / name) }
+    override suspend fun readToolFile(account: String?, name: String): ByteArray? = fileCall { readOrNull(area(CURRENT, account) / name) }
 
-    override suspend fun writeToolFile(name: String, bytes: ByteArray) = fileCall {
-        (toolFolder().createDirectories() / name).writeBytes(bytes)
+    override suspend fun writeToolFile(account: String?, name: String, bytes: ByteArray) = fileCall {
+        (area(CURRENT, account).createDirectories() / name).writeBytes(bytes)
     }
 
-    override suspend fun deleteToolFile(name: String) = fileCall {
-        (toolFolder() / name).deleteIfExists()
+    override suspend fun deleteToolFile(account: String?, name: String) = fileCall {
+        (area(CURRENT, account) / name).deleteIfExists()
         Unit
     }
 
@@ -115,15 +108,8 @@ internal class DesktopPortraitsStorage(
 
     override suspend fun deleteFavoriteSet(account: String?, set: String) = fileCall { deleteFolder(area(FAVORITES, account) / set) }
 
-    override suspend fun adoptLooseFolders(account: String) = fileCall {
-        listOf(BACKUP, FAVORITES).forEach { name ->
-            val base = root() / name
-            if (!base.isDirectory()) return@forEach
-            val loose = base.listDirectoryEntries().filter { it.isDirectory() && !isAccountFolder(it.name) }
-            if (loose.isEmpty()) return@forEach
-            val target = (base / account).createDirectories()
-            loose.forEach { folder -> folder.moveTo(target / freshFolderName(target, base = folder.name)) }
-        }
+    override suspend fun adoptLooseFolders(account: String, characterIds: Set<String>) = fileCall {
+        adoptLegacyPortraitFolders(root(), account, characterIds)
     }
 
     override suspend fun readLobbyVariables(account: String): ByteArray? = fileCall {
@@ -135,23 +121,21 @@ internal class DesktopPortraitsStorage(
     }
 
     override suspend fun backupLobbyVariables(account: String, bytes: ByteArray): String = fileCall {
-        val folder = (root() / TOOLS / LOBBY_BACKUP / account).createDirectories()
+        val folder = area(LOBBY_BACKUP, account).createDirectories()
         val name = freshFolderName(folder, LOBBY_BACKUP_EXTENSION) + LOBBY_BACKUP_EXTENSION
         (folder / name).writeBytes(bytes)
-        "$TOOLS\\$LOBBY_BACKUP\\$account\\$name"
+        "$TOOLS\\$TOOL\\$account\\$LOBBY_BACKUP\\$name"
     }
 
     override suspend fun isGameRunning(): Boolean = fileCall { isGameProcessRunning() }
 
-    /** Папка копий или избранного [name] аккаунта [account]; без аккаунта — сама [name]. */
-    private fun area(name: String, account: String?): Path = (root() / name).let { base -> account?.let { base / it } ?: base }
+    /** Папка [name] (копии, избранное, текущие портреты) в `BDO Tools\portraitConstructor\<account>`; без аккаунта — без его папки. */
+    private fun area(name: String, account: String?): Path =
+        (root() / TOOLS / TOOL).let { tool -> account?.let { tool / it } ?: tool } / name
 
     /** Сохранённая папка `Black Desert`; без неё работать с файлами нельзя. */
     private fun root(): Path =
         settings.folder?.takeIf(::isGameFolder) ?: throw PortraitsException(PortraitsError.NotGameFolder)
-
-    /** `Black Desert\BDO Tools\portraits` — чистые портреты и украшения. */
-    private fun toolFolder(): Path = root() / TOOLS / TOOL_PORTRAITS
 
     private fun portraitFile(characterId: String) = characterId + PORTRAIT_EXTENSION
 

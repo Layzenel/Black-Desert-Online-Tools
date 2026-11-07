@@ -44,14 +44,16 @@ internal class MemoryStorage : PortraitsStorage {
         backups[key] = bytes
     }
 
-    override suspend fun toolFileNames() = tools.keys.toList()
-    override suspend fun readToolFile(name: String) = tools[name]
-    override suspend fun writeToolFile(name: String, bytes: ByteArray) {
-        tools[name] = bytes
+    override suspend fun toolFileNames(account: String?) =
+        tools.keys.filter { if (account == null) ':' !in it else it.startsWith("$account:") }.map { it.substringAfter(':') }
+
+    override suspend fun readToolFile(account: String?, name: String) = tools[scoped(account, name)]
+    override suspend fun writeToolFile(account: String?, name: String, bytes: ByteArray) {
+        tools[scoped(account, name)] = bytes
     }
 
-    override suspend fun deleteToolFile(name: String) {
-        tools.remove(name)
+    override suspend fun deleteToolFile(account: String?, name: String) {
+        tools.remove(scoped(account, name))
     }
 
     override suspend fun createFavoriteSet(account: String?): String =
@@ -67,10 +69,12 @@ internal class MemoryStorage : PortraitsStorage {
         favorites.keys.removeAll { it.startsWith("${scoped(account, set)}/") }
     }
 
-    override suspend fun adoptLooseFolders(account: String) {
+    override suspend fun adoptLooseFolders(account: String, characterIds: Set<String>) {
         listOf(backups, favorites).forEach { files ->
             files.keys.filter { ':' !in it.substringBefore('/') }.forEach { key -> files["$account:$key"] = files.remove(key)!! }
         }
+        tools.keys.filter { ':' !in it && it.substringBeforeLast('.') in characterIds }
+            .forEach { name -> tools["$account:$name"] = tools.remove(name)!! }
     }
 
     /** `gameVariable_lobby.xml` по аккаунтам и копии: `<аккаунт>/<имя>`. */

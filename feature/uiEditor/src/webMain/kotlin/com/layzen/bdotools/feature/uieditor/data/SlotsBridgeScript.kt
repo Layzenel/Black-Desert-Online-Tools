@@ -2,18 +2,25 @@ package com.layzen.bdotools.feature.uieditor.data
 
 /**
  * Методы слотов для общего моста к папке `Black Desert` (`FolderBridge` в `platform/core`):
- * `gamevariable.xml` аккаунтов, пресеты и подложка в `BDO Tools\slots`, файлы с устройства.
+ * `gamevariable.xml` аккаунтов, копии, пресеты и подложка в папке аккаунта `BDO Tools\uiEditor\<аккаунт>\`,
+ * файлы с устройства.
  * Kotlin получает только строки: `OK:<данные>` или `ERR:<код>`. Картинки передаются в base64, тексты — как есть,
  * файлы игры — символ на байт (Latin-1), чтобы запись не меняла байты, которых тулза не трогала.
  */
 internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64, stamp, pickFile }) => {
-    const CACHE = 'UserCache', GAME_FILE = 'gamevariable.xml', TOOLS = 'BDO Tools';
+    const CACHE = 'UserCache', GAME_FILE = 'gamevariable.xml', TOOLS = 'BDO Tools', TOOL = 'uiEditor';
+    const BACKUPS = 'backups', PRESETS = 'presets', BACKGROUND = 'background', BACKGROUND_FILE = 'image';
+    // Папка тулзы в прошлых версиях
+    const LEGACY_TOOL = 'slots';
 
-    // Black Desert\BDO Tools\slots\<sub>
-    const tools = async (sub, create) => {
-        const app = await child(await savedRoot(), TOOLS, create);
-        const slots = app && await child(app, 'slots', create);
-        return sub ? slots && await child(slots, sub, create) : slots;
+    // Black Desert\BDO Tools\uiEditor\<аккаунт>\<sub>; без create папки может не быть — тогда null
+    const area = async (account, sub, create) => {
+        let dir = await child(await savedRoot(), TOOLS, create);
+        for (const part of [TOOL, account, sub]) {
+            if (!dir) return null;
+            dir = await child(dir, part, create);
+        }
+        return dir;
     };
     const accountDir = async account => (await (await savedRoot()).getDirectoryHandle(CACHE)).getDirectoryHandle(account);
     const gameFile = async account => (await accountDir(account)).getFileHandle(GAME_FILE);
@@ -39,21 +46,35 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
         await writable.close();
     };
     const writeTo = async (dir, name, data) => writeHandle(await dir.getFileHandle(name, { create: true }), data);
-    // Копии файлов игры: BDO Tools\slots\backups\<аккаунт>\. Копии из версий до аккаунтов лежат прямо в backups
-    // с аккаунтом в имени (gamevariable_<аккаунт>_…) и переезжают в его папку при следующей записи
-    const accountBackups = async account => {
-        const backups = await tools('backups', true);
-        const dir = await backups.getDirectoryHandle(account, { create: true });
-        const prefix = 'gamevariable_' + account + '_';
-        const loose = [];
-        for await (const [name, handle] of backups.entries()) {
-            if (handle.kind === 'file' && name.startsWith(prefix)) loose.push([name, handle]);
+    const hasFile = async (dir, name) => { try { await dir.getFileHandle(name); return true; } catch (e) { return false; } };
+
+    // Перенос данных прошлых версий из BDO Tools\slots. Перемещать File System Access API не умеет — копирование
+    // и удаление; совпавший файл не перезаписывается и остаётся на старом месте
+    const isAccount = name => /^\d+$/.test(name);
+    const entriesOf = async dir => {
+        const list = [];
+        if (dir) for await (const entry of dir.entries()) list.push(entry);
+        return list;
+    };
+    const copyTree = async (from, to) => {
+        for (const [name, entry] of await entriesOf(from)) {
+            if (entry.kind === 'directory') await copyTree(entry, await to.getDirectoryHandle(name, { create: true }));
+            else await writeTo(to, name, await entry.getFile());
         }
-        for (const [name, handle] of loose) {
-            await writeTo(dir, name, await handle.getFile());
-            await backups.removeEntry(name);
-        }
-        return dir;
+    };
+    const moveIfFree = async (parent, name, entry, to, newName = name) => {
+        if (await hasFile(to, newName) || await child(to, newName)) return;
+        if (entry.kind === 'directory') await copyTree(entry, await to.getDirectoryHandle(newName, { create: true }));
+        else await writeTo(to, newName, await entry.getFile());
+        await parent.removeEntry(name, { recursive: true });
+    };
+    const moveContents = async (parent, name, from, to) => {
+        for (const [inner, entry] of await entriesOf(from)) await moveIfFree(from, inner, entry, to);
+        await removeIfEmpty(parent, name);
+    };
+    const removeIfEmpty = async (parent, name) => {
+        const dir = parent && await child(parent, name);
+        if (dir && !(await entriesOf(dir)).length) await parent.removeEntry(name);
     };
 
     return {
@@ -74,6 +95,7 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
             const file = await (await gameFile(account)).getFile();
             return 'OK:' + file.lastModified + '\n' + await readGameText(file);
         },
+        // Копия перед записью: <аккаунт>\backups\gamevariable_<аккаунт>_<дата-время>.xml
         async write(account, payload) {
             const expected = Number(payload.substring(0, payload.indexOf('\n')));
             const text = payload.substring(payload.indexOf('\n') + 1);
@@ -81,9 +103,9 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
             const current = await handle.getFile();
             if (current.lastModified !== expected) return 'ERR:FILE_CHANGED';
             const backupName = 'gamevariable_' + account + '_' + stamp() + '.xml';
-            await writeTo(await accountBackups(account), backupName, current);
+            await writeTo(await area(account, BACKUPS, true), backupName, current);
             await writeHandle(handle, gameBytes(text));
-            return 'OK:' + TOOLS + '\\slots\\backups\\' + account + '\\' + backupName;
+            return 'OK:' + [TOOLS, TOOL, account, BACKUPS, backupName].join('\\');
         },
         // Настройки персонажей: UserCache\<аккаунт>\11\<персонаж>\gamevariable.xml (регистр имени файла бывает разный)
         async characters(account) {
@@ -102,42 +124,75 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
             const path = payload.substring(0, payload.indexOf('\n'));
             const handle = await characterFile(account, path);
             const backupName = 'gamevariable_' + account + '_' + path.split('/')[1] + '_' + stamp() + '.xml';
-            await writeTo(await accountBackups(account), backupName, await handle.getFile());
+            await writeTo(await area(account, BACKUPS, true), backupName, await handle.getFile());
             await writeHandle(handle, gameBytes(payload.substring(payload.indexOf('\n') + 1)));
             return 'OK:';
         },
-        async presets() {
-            const dir = await tools('presets', false);
+        // Пресеты аккаунта: <аккаунт>\presets\*.json
+        async presets(account) {
             const names = [];
-            if (dir) for await (const [name, handle] of dir.entries()) {
+            for (const [name, handle] of await entriesOf(await area(account, PRESETS, false))) {
                 if (handle.kind === 'file' && name.toLowerCase().endsWith('.json')) names.push(name);
             }
             return 'OK:' + names.join('\n');
         },
-        presetRead: async name => 'OK:' + await readText(await (await (await tools('presets', false)).getFileHandle(name)).getFile()),
-        async presetWrite(name, text) {
-            await writeTo(await tools('presets', true), name, new TextEncoder().encode(text));
+        presetRead: async (account, name) =>
+            'OK:' + await readText(await (await (await area(account, PRESETS, false)).getFileHandle(name)).getFile()),
+        // мост передаёт два аргумента, поэтому аккаунт и имя файла приходят одной строкой «аккаунт/файл»
+        async presetWrite(path, text) {
+            const account = path.substring(0, path.indexOf('/'));
+            const name = path.substring(path.indexOf('/') + 1);
+            await writeTo(await area(account, PRESETS, true), name, new TextEncoder().encode(text));
             return 'OK:';
         },
-        async presetDelete(name) {
-            const dir = await tools('presets', false);
+        async presetDelete(account, name) {
+            const dir = await area(account, PRESETS, false);
             if (dir) {
                 try { await dir.removeEntry(name); } catch (e) { /* файла уже нет */ }
             }
             return 'OK:';
         },
-        async backgroundRead() {
-            const dir = await tools('', false);
+        // Подложка аккаунта: файл <аккаунт>\background\image
+        async backgroundRead(account) {
             try {
-                return 'OK:1' + await toBase64(await (await dir.getFileHandle('background')).getFile());
+                return 'OK:1' + await toBase64(await (await (await area(account, BACKGROUND, false)).getFileHandle(BACKGROUND_FILE)).getFile());
             } catch (e) {
                 return 'OK:0';
             }
         },
-        async backgroundWrite(base64) {
-            const dir = await tools('', true);
-            if (base64) await writeTo(dir, 'background', fromBase64(base64));
-            else try { await dir.removeEntry('background'); } catch (e) { /* подложки уже нет */ }
+        async backgroundWrite(account, base64) {
+            const dir = await area(account, BACKGROUND, true);
+            if (base64) await writeTo(dir, BACKGROUND_FILE, fromBase64(base64));
+            else try { await dir.removeEntry(BACKGROUND_FILE); } catch (e) { /* подложки уже нет */ }
+            return 'OK:';
+        },
+        // Данные прошлых версий из BDO Tools\slots: где аккаунт известен (папка или имя копии с его номером) — ему,
+        // остальное (пресеты прямо в presets, файл background) — аккаунту, который открыли первым
+        async adoptLoose(account) {
+            const tools = await child(await savedRoot(), TOOLS);
+            const legacy = tools && await child(tools, LEGACY_TOOL);
+            if (!legacy) return 'OK:';
+            const presets = await child(legacy, PRESETS);
+            for (const [name, entry] of await entriesOf(presets)) {
+                if (entry.kind === 'directory' && isAccount(name)) await moveContents(presets, name, entry, await area(name, PRESETS, true));
+                else await moveIfFree(presets, name, entry, await area(account, PRESETS, true));
+            }
+            if (await hasFile(legacy, BACKGROUND)) {
+                await moveIfFree(legacy, BACKGROUND, await legacy.getFileHandle(BACKGROUND), await area(account, BACKGROUND, true), BACKGROUND_FILE);
+            } else {
+                const backgrounds = await child(legacy, BACKGROUND);
+                for (const [name, entry] of await entriesOf(backgrounds)) {
+                    if (entry.kind === 'file' && isAccount(name)) await moveIfFree(backgrounds, name, entry, await area(name, BACKGROUND, true), BACKGROUND_FILE);
+                }
+            }
+            const backups = await child(legacy, BACKUPS);
+            for (const [name, entry] of await entriesOf(backups)) {
+                const owner = entry.kind === 'directory' ? (isAccount(name) ? name : null) : ((/^gamevariable_(\d+)_/.exec(name) || [])[1] || null);
+                if (entry.kind === 'directory' && owner) await moveContents(backups, name, entry, await area(owner, BACKUPS, true));
+                else await moveIfFree(backups, name, entry, await area(owner || account, BACKUPS, true));
+            }
+            for (const name of [PRESETS, BACKGROUND, BACKUPS]) await removeIfEmpty(legacy, name);
+            await removeIfEmpty(tools, LEGACY_TOOL);
             return 'OK:';
         },
         async pickImage() {
