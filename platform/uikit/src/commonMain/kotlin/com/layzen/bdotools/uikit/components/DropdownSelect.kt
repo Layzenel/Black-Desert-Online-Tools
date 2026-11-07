@@ -35,7 +35,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 /**
  * Выпадающий список: тёмное поле со значением по центру и треугольником справа. Повторный клик по полю закрывает список.
  * [fieldText] — постоянная подпись поля вместо выбранного значения (список действий вроде «Готовые пресеты»);
- * [selected] тогда может быть `null` — в списке ничего не подсвечено.
+ * [selected] тогда может быть `null` — в списке ничего не подсвечено. [trailing] — элемент справа от варианта в списке,
+ * как у [OptionsMenu].
  */
 @Composable
 fun <T> DropdownSelect(
@@ -45,6 +46,7 @@ fun <T> DropdownSelect(
     label: @Composable (T) -> String,
     modifier: Modifier = Modifier,
     fieldText: String? = null,
+    trailing: (@Composable (T) -> Unit)? = null,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -95,6 +97,7 @@ fun <T> DropdownSelect(
             selected = selected,
             onSelect = onSelect,
             label = label,
+            trailing = trailing,
             modifier = if (anchorWidth != Dp.Unspecified) Modifier.width(anchorWidth) else Modifier,
         )
     }

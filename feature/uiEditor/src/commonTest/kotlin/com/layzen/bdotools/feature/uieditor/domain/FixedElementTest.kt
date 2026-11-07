@@ -9,7 +9,7 @@ class FixedElementTest {
 
     @Test
     fun elementsSitInBottomCorners() {
-        assertEquals(ScreenArea(0.0, 1766.0, 992.0, 1800.0), FixedElement.Tips.area(screen))
-        assertEquals(ScreenArea(3200.0 - 672.0, 1766.0, 3200.0, 1800.0), FixedElement.MenuBar.area(screen))
+        assertEquals(ScreenArea(0.0, 1770.0, 512.0, 1800.0), FixedElement.Tips.area(screen))
+        assertEquals(ScreenArea(3200.0 - 672.0, 1752.0, 3200.0, 1800.0), FixedElement.MenuBar.area(screen))
     }
 }

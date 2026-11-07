@@ -159,8 +159,8 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `SectionDivider` | разделитель между секциями |
 | `LabelBadge(text, kind)` | NEW / HOT (`LabelBadgeKind.New` / `Hot`) |
 | `OptionGroup(options, selected, onSelect, label)` | выбор одного из 2–4 вариантов |
-| `DropdownSelect(selected, options, onSelect, label, fieldText)` | выбор из длинного списка; `fieldText` — постоянная подпись поля вместо выбранного значения (кнопка-список «Готовые пресеты») |
-| `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. Не выше `optionsMenuMaxHeight`, длинный прокручивается с полосой прокрутки. `DropdownSelect` построен на нём |
+| `DropdownSelect(selected, options, onSelect, label, fieldText, trailing)` | выбор из длинного списка; `fieldText` — постоянная подпись поля вместо выбранного значения (кнопка-список «Готовые пресеты»), `trailing` — элемент справа от варианта (корзина удаления) |
+| `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon, trailing)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. Не выше `optionsMenuMaxHeight`, длинный прокручивается с полосой прокрутки. `DropdownSelect` построен на нём |
 | `GroupedOptionsMenu(expanded, onDismissRequest, groups, groupLabel, options, selected, onSelect, label, groupIcon, icon)` | двухуровневый список: слева группы со стрелкой, при наведении справа раскрываются их варианты (с прокруткой) и прячутся, когда курсор уходит и с группы, и с вариантов. У каждой колонки своя панель своей высоты |
 | `Modifier.verticalScrollbar(scrollState)` | тонкая полоса прокрутки у правого края; ставится перед `verticalScroll(scrollState)` |
 | `ValueSlider(value, onValueChange, range, onValueChangeFinished)` | целое число в диапазоне, где важна наглядность; `onValueChangeFinished` — конец перетаскивания или клик, чтобы правка по ходу жеста легла в историю отмены одним шагом |
