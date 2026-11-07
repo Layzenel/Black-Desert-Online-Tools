@@ -17,7 +17,7 @@ internal fun SlotsDialogs(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     val close = { onEvent(SlotsEvent.CloseDialog) }
     when (val dialog = state.dialog) {
         null -> Unit
-        is SlotsDialog.SaveAs -> SaveAsDialog(dialog, onEvent)
+        is SlotsDialog.SaveAs -> SaveAsDialog(dialog, state.presets.map { it.name }, onEvent)
         is SlotsDialog.Import -> ImportDialog(dialog, onEvent)
         is SlotsDialog.Preview -> state.loaded?.game?.screen?.let {
             LayoutPreviewDialog(dialog, it, state.background, state.backgroundShown, state.backgroundDim, onEvent)

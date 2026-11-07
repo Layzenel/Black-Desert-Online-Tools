@@ -21,6 +21,7 @@
     <string name="slots_preset_5plus5and5plus5">5+5 | 5+5</string>
     <string name="slots_preset_key_clusters">Кластеры по клавишам</string>
     <string name="slots_user_presets">Мои пресеты</string>
+    <string name="slots_user_preset_delete">Удалить пресет</string>
     <string name="slots_user_presets_empty">Пока пусто. Сохранённые раскладки лежат в «Black Desert\\BDO Tools\\slots\\presets».</string>
     <string name="slots_grid">Сетка от прицела</string>
     <string name="slots_snap_step">Шаг привязки</string>
@@ -137,7 +138,9 @@
     <string name="slots_save">Сохранить</string>
     <string name="slots_save_as_title">Сохранить пресет</string>
     <string name="slots_save_as_name">Название</string>
-    <string name="slots_save_as_description">Пресет с таким же названием будет перезаписан.</string>
+    <string name="slots_save_as_description">Введите новое название или выберите свой пресет в списке, чтобы заменить его текущей раскладкой.</string>
+    <string name="slots_save_as_replace">Заменить пресет</string>
+    <string name="slots_save_replace">Заменить</string>
     <string name="slots_import_title">Импорт раскладки</string>
     <string name="slots_import_description">Вставьте содержимое файла .json или выберите сам файл. Элементы встанут от прицела и углов экрана так же, как у автора, даже если у него другой монитор. Группы, которых нет в файле, не изменятся.</string>
     <string name="slots_import_file">Выбрать файл</string>
@@ -150,7 +153,7 @@
     <string name="slots_apply_description">Полностью закройте игру: пока она запущена, она перезапишет файл своими значениями. Перед записью сохранится копия gamevariable.xml в «BDO Tools\\slots\\backups».</string>
     <string name="slots_apply_confirm">Игра закрыта, применить</string>
     <string name="slots_apply_target">Куда записать</string>
-    <string name="slots_game_preset">Набор позиций игры</string>
+    <string name="slots_game_preset">Пресеты в игре</string>
     <string name="slots_game_preset_general">Общий</string>
     <string name="slots_game_preset_number">Пресет %1$d</string>
     <string name="slots_preview_import_title">Превью импорта</string>

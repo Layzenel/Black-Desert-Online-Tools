@@ -22,7 +22,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
 
-/** Неподвижный элемент игры на холсте: серая рамка с названием. Нажатия не перехватывает. */
+/** Неподвижный элемент игры на холсте: серая рамка с прозрачно-красной заливкой, как в режиме правки игры, и названием. Нажатия не перехватывает. */
 @Composable
 internal fun FixedElementFrame(element: FixedElement, screen: ScreenSpace, scale: Float) {
     val density = LocalDensity.current
@@ -38,7 +38,7 @@ internal fun FixedElementFrame(element: FixedElement, screen: ScreenSpace, scale
                 with(density) { ((area.right - area.left).toFloat() * scale).toDp() },
                 with(density) { ((area.bottom - area.top).toFloat() * scale).toDp() },
             )
-            .background(AppTheme.colors.backgroundDeep.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
+            .background(AppTheme.colors.danger.copy(alpha = SlotsDimens.FIXED_FILL_ALPHA))
             .border(SlotsDimens.slotBorder, fixedElementColor()),
         contentAlignment = Alignment.Center,
     ) {

@@ -29,6 +29,7 @@ internal object SlotsDimens {
     const val AXIS_ALPHA = 0.7f
     const val CROSSHAIR_ALPHA = 0.85f
     const val SLOT_FILL_ALPHA = 0.55f
+    const val FIXED_FILL_ALPHA = 0.35f
     const val HIDDEN_ALPHA = 0.35f
     const val MARQUEE_FILL_ALPHA = 0.12f
     const val LABEL_FILL_ALPHA = 0.3f
