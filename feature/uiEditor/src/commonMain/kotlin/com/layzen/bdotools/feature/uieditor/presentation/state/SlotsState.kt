@@ -46,7 +46,7 @@ data class SlotsState(
     val snapGuides: SnapGuides = SnapGuides.None,
     val background: ImageBitmap? = null,
     val backgroundShown: Boolean = true,
-    val backgroundDim: Int = 0,
+    val backgroundDim: Int = 50,
     val dialog: SlotsDialog? = null,
     val busy: Boolean = false,
     val notice: SlotsNotice? = null,
@@ -80,7 +80,7 @@ data class SlotsState(
         const val DEFAULT_SNAP_DISTANCE = 10
 
         /** Допустимый шаг привязки к сетке, UI-px; без привязки — выключатель [snapToGrid]. */
-        val SNAP_STEP_RANGE = 1..20
+        val SNAP_STEP_RANGE = 1..25
 
         /** Промежуток между рамками при распределении по умолчанию, UI-px: вплотную, как слоты в игре. */
         const val DEFAULT_DISTRIBUTE_GAP = 0
@@ -92,6 +92,6 @@ data class SlotsState(
         val BACKGROUND_DIM_RANGE = 0..100
 
         /** Допустимое расстояние прилипания к элементам, UI-px. */
-        val SNAP_DISTANCE_RANGE = 2..30
+        val SNAP_DISTANCE_RANGE = 2..25
     }
 }
