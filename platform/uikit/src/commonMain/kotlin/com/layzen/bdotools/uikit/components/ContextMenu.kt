@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -70,6 +71,13 @@ fun <K : Any> ContextMenu(
         val hovered by source.collectIsHoveredAsState()
         LaunchedEffect(hovered) {
             if (hovered) hoveredKey = key else if (hoveredKey == key) hoveredKey = null
+        }
+        // Пункт перестал быть триггером под курсором (например, настройку выключили) — его панель закрывается сразу
+        DisposableEffect(key) {
+            onDispose {
+                if (hoveredKey == key) hoveredKey = null
+                if (openKey == key) openKey = null
+            }
         }
         Modifier.hoverable(source).onGloballyPositioned { anchorTops[key] = it.positionInParent().y.toInt() }
     }
