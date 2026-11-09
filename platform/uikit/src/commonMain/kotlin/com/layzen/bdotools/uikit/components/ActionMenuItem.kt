@@ -73,7 +73,7 @@ fun ActionMenuItem(
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(dimens.spaceS)) {
                 icon?.let { MenuItemIcon(it, color) }
-                Text(text, Modifier.weight(1f), style = AppTheme.typography.bodyBold, color = color, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(text, Modifier.weight(1f), style = AppTheme.typography.bodyBold, color = color, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 trailingText?.let { Text(it, style = AppTheme.typography.bodyBold, color = colors.accentGold) }
                 trailingIcon?.let { MenuItemIcon(it, color) }
             }

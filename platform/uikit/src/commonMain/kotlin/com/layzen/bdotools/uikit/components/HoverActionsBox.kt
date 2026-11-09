@@ -46,8 +46,7 @@ fun HoverActionsBox(
             Column(
                 Modifier
                     .background(AppTheme.colors.backgroundDeep.copy(alpha = SCRIM_ALPHA))
-                    .border(AppTheme.dimens.selectedBorderWidth, AppTheme.colors.accentGoldPale)
-                    .padding(AppTheme.dimens.spaceXs),
+                    .border(AppTheme.dimens.selectedBorderWidth, AppTheme.colors.accentGoldPale),
                 verticalArrangement = Arrangement.Center,
                 content = actions,
             )

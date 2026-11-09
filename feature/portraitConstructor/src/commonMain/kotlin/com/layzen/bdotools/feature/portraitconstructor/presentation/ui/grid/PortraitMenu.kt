@@ -5,11 +5,17 @@ import androidx.compose.runtime.Composable
 import com.layzen.bdotools.feature.portraitconstructor.presentation.event.PortraitsEvent
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.ReplaceTarget
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
+import com.layzen.bdotools.feature.portraitconstructor.resources.menu_backups
+import com.layzen.bdotools.feature.portraitconstructor.resources.menu_edit
+import com.layzen.bdotools.feature.portraitconstructor.resources.menu_upload
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_menu_edit
-import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_menu_replace
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_menu_restore
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_menu_upload
 import com.layzen.bdotools.uikit.components.ActionMenuDivider
 import com.layzen.bdotools.uikit.components.ActionMenuItem
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /** Действия над портретом: замена, надпись и значки и — если есть копии — откат. */
@@ -20,12 +26,43 @@ internal fun ColumnScope.PortraitMenu(
     onEvent: (PortraitsEvent) -> Unit,
 ) {
     val items = buildList {
-        add(Res.string.portraits_menu_replace to PortraitsEvent.OpenSource(ReplaceTarget.One(characterId)))
-        add(Res.string.portraits_menu_edit to PortraitsEvent.OpenDecoration(characterId))
-        if (hasBackups) add(Res.string.portraits_menu_restore to PortraitsEvent.OpenRestore(ReplaceTarget.One(characterId)))
+        add(
+            MenuItem(
+                title = Res.string.portraits_menu_upload,
+                icon = Res.drawable.menu_upload,
+                event = PortraitsEvent.OpenSource(ReplaceTarget.One(characterId))
+            )
+        )
+        add(
+            MenuItem(
+                title = Res.string.portraits_menu_edit,
+                icon = Res.drawable.menu_edit,
+                event = PortraitsEvent.OpenDecoration(characterId)
+            )
+        )
+        if (hasBackups) {
+            add(
+                MenuItem(
+                    title = Res.string.portraits_menu_restore,
+                    icon = Res.drawable.menu_backups,
+                    event = PortraitsEvent.OpenRestore(ReplaceTarget.One(characterId))
+                )
+            )
+        }
     }
-    items.forEachIndexed { index, (title, event) ->
+    items.forEachIndexed { index, item ->
         if (index > 0) ActionMenuDivider()
-        ActionMenuItem(stringResource(title), onClick = { onEvent(event) })
+        ActionMenuItem(
+            icon = painterResource(item.icon),
+            text = stringResource(item.title),
+            onClick = { onEvent(item.event) }
+        )
     }
 }
+
+/** Модель данных для списка действие в меню потрета*/
+internal data class MenuItem(
+    val title: StringResource,
+    val icon: DrawableResource,
+    val event: PortraitsEvent,
+)

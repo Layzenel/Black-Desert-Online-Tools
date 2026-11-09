@@ -59,8 +59,8 @@
     <string name="portraits_error_unknown">Что-то пошло не так: %1$s</string>
 
     <!-- Меню портрета -->
-    <string name="portraits_menu_replace">Загрузить</string>
-    <string name="portraits_menu_edit">Редактировать</string>
+    <string name="portraits_menu_upload">Загрузить</string>
+    <string name="portraits_menu_edit">Изменить</string>
     <string name="portraits_menu_restore">Восстановить</string>
 
     <!-- Окно заметки и значков -->
