@@ -82,7 +82,7 @@ private fun CanvasContent(
     state.background?.takeIf { state.backgroundShown }?.let { BackgroundImage(it, state.backgroundDim) }
     GridLayer(state.grid, screen, scale, Modifier.fillMaxSize())
     CrosshairLayer(screen, scale, Modifier.fillMaxSize())
-    FixedElement.entries.forEach { FixedElementFrame(it, screen, scale) }
+    FixedElement.entries.filter { it.isShownWith(state.layout.splitHp) }.forEach { FixedElementFrame(it, screen, scale) }
     // Чаты под слотами: слоты над ними остаются кликабельными. Вкладки главного окна рисует само главное окно
     val chats = state.layout.chats
     val tabs = chats.filterValues { it.combined }.keys.toList()

@@ -11,6 +11,9 @@ import com.layzen.bdotools.feature.uieditor.domain.screen.position
  * панель «Быстрый слот» ([InterfaceElement.QuickSlot]); `null` — раскладка её не задаёт и не меняет.
  *
  * [chats] — окна чата по `WindowIndex`.
+ *
+ * [splitHp] — «Разделение HP» игры: `true` — здоровье, PVP и гнев Чёрного духа отдельными элементами, `false` —
+ * одна неподвижная панель слева вверху ([FixedElement.CombinedHp]); `null` — раскладка её не задаёт и не меняет.
  */
 data class SlotLayout(
     val positions: Map<SlotId, SlotPosition> = emptyMap(),
@@ -18,6 +21,7 @@ data class SlotLayout(
     val labels: Map<SlotId, Int> = emptyMap(),
     val customQuickSlots: Boolean? = null,
     val chats: Map<Int, ChatWindow> = emptyMap(),
+    val splitHp: Boolean? = null,
 ) {
 
     /** Позиция элемента [id]; `null`, если его нет в раскладке. */
@@ -37,7 +41,11 @@ data class SlotLayout(
         labels = (labels - other.positions.keys) + other.labels,
         customQuickSlots = other.customQuickSlots ?: customQuickSlots,
         chats = chats + other.chats.filterKeys { it in chats },
+        splitHp = other.splitHp ?: splitHp,
     )
+
+    /** Есть ли элемент [id] на экране игры при настройках этой раскладки, см. [SlotId.isActiveWith]. */
+    fun isActive(id: SlotId): Boolean = id.isActiveWith(customQuickSlots, splitHp)
 
     /** Раскладка с элементом [id] в позиции [position]. */
     fun withPosition(id: SlotId, position: SlotPosition) = copy(positions = positions + (id to position))
@@ -77,6 +85,9 @@ data class SlotLayout(
     /** Переключает «Настройку быстрых слотов» вместе с видимостью хотбара и «Быстрого слота», см. [hiddenWithCustomQuickSlots]. */
     fun withCustomQuickSlots(enabled: Boolean) =
         copy(customQuickSlots = enabled, hidden = hiddenWithCustomQuickSlots(hidden, enabled))
+
+    /** Переключает «Разделение HP» вместе с видимостью здоровья, PVP и гнева, см. [hiddenWithSplitHp]. */
+    fun withSplitHp(enabled: Boolean) = copy(splitHp = enabled, hidden = hiddenWithSplitHp(hidden, enabled))
 
     /** Заглушка надписи шириной [chars] символов; `null` убирает надпись. */
     fun withLabel(id: SlotId, chars: Int?) = copy(labels = if (chars == null) labels - id else labels + (id to chars))

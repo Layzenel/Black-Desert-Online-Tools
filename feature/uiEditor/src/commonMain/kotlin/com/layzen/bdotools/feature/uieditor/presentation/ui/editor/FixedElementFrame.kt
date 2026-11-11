@@ -16,6 +16,7 @@ import com.layzen.bdotools.feature.uieditor.domain.layout.FixedElement
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.resources.Res
+import com.layzen.bdotools.feature.uieditor.resources.slots_fixed_combined_hp
 import com.layzen.bdotools.feature.uieditor.resources.slots_fixed_menu_bar
 import com.layzen.bdotools.feature.uieditor.resources.slots_fixed_tips
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -30,6 +31,7 @@ internal fun FixedElementFrame(element: FixedElement, screen: ScreenSpace, scale
     val title = when (element) {
         FixedElement.Tips -> stringResource(Res.string.slots_fixed_tips)
         FixedElement.MenuBar -> stringResource(Res.string.slots_fixed_menu_bar)
+        FixedElement.CombinedHp -> stringResource(Res.string.slots_fixed_combined_hp)
     }
     Box(
         Modifier

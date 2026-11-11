@@ -23,6 +23,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.presentation.ui.handleHistoryKeys
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.QuickSlotSettings
+import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.SplitHpSettings
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_export_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_hint
@@ -73,8 +74,9 @@ internal fun LayoutPreviewDialog(
                 }
                 val layout = dialog.layout.layout
                 QuickSlotSettings(layout.customQuickSlots) { onEvent(SlotsEvent.PreviewCustomQuickSlots(it)) }
+                SplitHpSettings(layout.splitHp) { onEvent(SlotsEvent.PreviewSplitHp(it)) }
                 SectionDivider()
-                PreviewElementList(layout.positions.keys.filter { it.isActiveWith(layout.customQuickSlots) }.toSet(), dialog.included, onEvent)
+                PreviewElementList(layout.positions.keys.filter { layout.isActive(it) }.toSet(), dialog.included, onEvent)
                 PreviewChatList(layout.chats.keys, dialog.includedChats, onEvent)
             },
             sidebarFooter = { PreviewActions(dialog, hasBackground = background != null, backgroundShown, backgroundDim, onEvent) },

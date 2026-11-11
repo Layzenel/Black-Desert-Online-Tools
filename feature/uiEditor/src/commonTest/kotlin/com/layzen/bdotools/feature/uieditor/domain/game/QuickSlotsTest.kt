@@ -45,12 +45,12 @@ class QuickSlotsTest {
         val off = SlotLayout(hidden = setOf(quickSlot)).withCustomQuickSlots(false)
         assertTrue(off.isVisible(quickSlot))
         assertTrue(SlotGroup.Hotbar.slots.none { off.isVisible(it) })
-        assertFalse(SlotGroup.Hotbar.slots.first().isActiveWith(off.customQuickSlots))
+        assertFalse(SlotGroup.Hotbar.slots.first().isActiveWith(off.customQuickSlots, null))
 
         val on = off.withCustomQuickSlots(true)
         assertFalse(on.isVisible(quickSlot))
         assertTrue(SlotGroup.Hotbar.slots.all { on.isVisible(it) })
-        assertFalse(quickSlot.isActiveWith(on.customQuickSlots))
+        assertFalse(quickSlot.isActiveWith(on.customQuickSlots, null))
     }
 
     @Test

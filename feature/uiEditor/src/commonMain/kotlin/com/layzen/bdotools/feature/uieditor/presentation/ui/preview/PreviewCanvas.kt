@@ -83,7 +83,7 @@ internal fun PreviewCanvas(
                 onEvent(SlotsEvent.PreviewInclude(emptySet(), chats = setOf(window), include = window !in includedChats))
             }
         }
-        layout.positions.filterKeys { it.isActiveWith(layout.customQuickSlots) }.forEach { (id, anchored) ->
+        layout.positions.filterKeys { layout.isActive(it) }.forEach { (id, anchored) ->
             PreviewFrame(id, anchored.placeOn(screen), screen, scale, id in included) {
                 focus.requestFocus()
                 onEvent(SlotsEvent.PreviewInclude(setOf(id), id !in included))

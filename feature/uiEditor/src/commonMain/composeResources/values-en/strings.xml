@@ -57,6 +57,7 @@
     <string name="slots_legend_fixed">fixed</string>
     <string name="slots_fixed_tips">Tips</string>
     <string name="slots_fixed_menu_bar">Menu Bar</string>
+    <string name="slots_fixed_combined_hp">HP</string>
     <string name="slots_chat">Chat %1$d</string>
     <string name="slots_chat_take_out">Move to a separate chat</string>
     <string name="slots_chat_bring_in">Move to the main chat</string>
@@ -74,6 +75,8 @@
     <string name="slots_element_quick_slot">Quick Slot</string>
     <string name="slots_custom_quick_slots">Quick Slot Settings</string>
     <string name="slots_custom_quick_slots_description">Works like the in-game setting of the same name: on — 20 separate hotbar slots, off — a single Quick Slot panel.</string>
+    <string name="slots_split_hp">Split HP</string>
+    <string name="slots_split_hp_description">Works like the in-game setting of the same name: on — HP, PVP and Black Spirit's Rage are separate, off — a single fixed panel at the top left.</string>
     <string name="slots_legend_off_screen">off screen</string>
     <string name="slots_undo">Undo</string>
     <string name="slots_redo">Redo</string>

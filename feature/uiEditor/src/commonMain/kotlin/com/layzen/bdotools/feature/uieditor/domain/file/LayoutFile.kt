@@ -11,7 +11,8 @@ import kotlinx.serialization.Serializable
  * Каждый элемент хранит якорь (`crosshair`, `top-left`, `top-right`, `bottom-left`, `bottom-right`) и смещение
  * центра от него в UI-px, поэтому раскладка переносится на монитор с другим разрешением и масштабом интерфейса.
  * Группы, которых нет в файле, при импорте не меняются. [customQuickSlots] — «Настройка быстрых слотов»
- * ([SlotLayout.customQuickSlots]); нет в файле — при импорте не меняется.
+ * ([SlotLayout.customQuickSlots]) и [splitHp] — «Разделение HP» ([SlotLayout.splitHp]); нет в файле — при импорте
+ * не меняются.
  */
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -28,6 +29,7 @@ data class LayoutFile(
     @EncodeDefault(EncodeDefault.Mode.NEVER) val customQuickSlots: Boolean? = null,
     /** Окна чата; при импорте меняются только те, что есть у игрока. */
     val chats: List<LayoutChat> = emptyList(),
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val splitHp: Boolean? = null,
 ) {
     /** Элементы группы [group] из файла. */
     fun slotsOf(group: SlotGroup): List<LayoutSlot> = when (group) {

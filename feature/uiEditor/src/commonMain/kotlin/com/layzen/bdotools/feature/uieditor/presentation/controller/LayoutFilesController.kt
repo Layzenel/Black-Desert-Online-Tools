@@ -67,7 +67,7 @@ internal class LayoutFilesController(
         val screen = preview.screen
         val touched = preview.layout.layout.positions
             .filter { (id, anchored) ->
-                id.isActiveWith(preview.layout.layout.customQuickSlots) && area.touches(id, anchored.placeOn(screen), screen)
+                preview.layout.layout.isActive(id) && area.touches(id, anchored.placeOn(screen), screen)
             }
             .keys
         if (touched.isEmpty()) preview
@@ -80,6 +80,11 @@ internal class LayoutFilesController(
     /** «Настройка быстрых слотов» раскладки в превью: на мониторе остаются хотбар или «Быстрый слот», с ней раскладка и уйдёт. */
     fun setPreviewQuickSlots(enabled: Boolean) = updatePreview {
         it.copy(layout = it.layout.copy(layout = it.layout.layout.withCustomQuickSlots(enabled)))
+    }
+
+    /** «Разделение HP» раскладки в превью: на мониторе остаются здоровье, PVP и гнев или нет, с ним раскладка и уйдёт. */
+    fun setPreviewSplitHp(enabled: Boolean) = updatePreview {
+        it.copy(layout = it.layout.copy(layout = it.layout.layout.withSplitHp(enabled)))
     }
 
     /** Отменяет последнюю правку раскладки в превью. */
@@ -109,12 +114,13 @@ internal class LayoutFilesController(
             context.update { it.copy(dialog = SlotsDialog.Import(text, e.error)) }
             return
         }
-        // Файл без настройки быстрых слотов её не меняет: превью показывает ту, что сейчас в редакторе
+        // Файл без настроек быстрых слотов и разделения HP их не меняет: превью показывает те, что сейчас в редакторе
         val quickSlots = imported.layout.customQuickSlots ?: context.current.layout.customQuickSlots
+        val splitHp = imported.layout.splitHp ?: context.current.layout.splitHp
         // Только окна, которые у игрока есть отдельными: вкладки главного окна и чужие окна не показываем и не импортируем
         val ownWindows = context.current.layout.chats.filterValues { !it.combined }.keys
         val ownChats = imported.layout.chats.filter { (window, chat) -> window in ownWindows && !chat.combined }
-        openPreview(PreviewMode.Import, imported.copy(layout = imported.layout.copy(customQuickSlots = quickSlots, chats = ownChats)), screen)
+        openPreview(PreviewMode.Import, imported.copy(layout = imported.layout.copy(customQuickSlots = quickSlots, splitHp = splitHp, chats = ownChats)), screen)
     }
 
     private fun openPreview(mode: PreviewMode, layout: NamedLayout, screen: ScreenSpace) = context.update {

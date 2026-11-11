@@ -38,6 +38,7 @@ object LayoutCodec {
             chats = layout.layout.chats.map { (window, chat) ->
                 LayoutChat(window, chat.position.anchor.id, chat.position.x, chat.position.y, chat.width, chat.height, chat.visible, chat.combined)
             },
+            splitHp = layout.layout.splitHp,
         ),
     )
 
@@ -56,6 +57,7 @@ object LayoutCodec {
             labels = slots.mapNotNull { (id, slot) -> slot.labelOf(id)?.let { id to it } }.toMap(),
             customQuickSlots = file.customQuickSlots,
             chats = file.chats.associate { it.window to it.toAnchored() },
+            splitHp = file.splitHp,
         )
         return NamedLayout(file.name, layout)
     }
