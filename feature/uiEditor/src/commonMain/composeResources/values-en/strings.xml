@@ -1,0 +1,198 @@
+<resources>
+    <!-- Folder access -->
+    <string name="slots_checking_access">Checking access to the game folder…</string>
+    <string name="slots_unsupported_title">Browser not supported</string>
+    <string name="slots_unsupported_description">The site needs access to the game folder, which is only available in Chrome, Edge, Opera and Yandex Browser.</string>
+    <string name="slots_folder_title">Game folder</string>
+    <string name="slots_folder_description">Select the "Documents\\Black Desert" folder — it contains the interface settings (UserCache\\…\\gamevariable.xml).</string>
+    <string name="slots_folder_select">Select folder</string>
+    <string name="slots_permission_description">Confirm access to the "%1$s" folder to read and change the slot layout.</string>
+    <string name="slots_permission_request">Allow access</string>
+    <string name="slots_loading">Reading game settings…</string>
+
+    <!-- Sidebar -->
+    <string name="slots_presets">Ready-made presets</string>
+    <string name="slots_preset_game">As in the game now</string>
+    <string name="slots_preset_sides">Columns on the sides</string>
+    <string name="slots_preset_arc">Arc under the character</string>
+    <string name="slots_preset_horseshoe">Horseshoe</string>
+    <string name="slots_preset_ring">Ring around the crosshair</string>
+    <string name="slots_preset_wings">Wings</string>
+    <string name="slots_preset_5plus5and5plus5">5+5 | 5+5</string>
+    <string name="slots_preset_key_clusters">Key clusters</string>
+    <string name="slots_user_presets">My presets</string>
+    <string name="slots_user_preset_delete">Delete preset</string>
+    <string name="slots_user_presets_empty">Nothing yet. Saved layouts for this account are stored in "Black Desert\\BDO Tools\\uiEditor\\&lt;account&gt;\\presets".</string>
+    <string name="slots_grid">Grid from crosshair</string>
+    <string name="slots_snap_step">Snap step</string>
+    <string name="slots_snap_step_caption">Step</string>
+    <string name="slots_grid_off">X</string>
+    <string name="slots_grid_size">%1$d</string>
+    <string name="slots_background">Backdrop</string>
+    <string name="slots_background_description">Your own game screenshot taken with the UI hidden will make placing elements easier.</string>
+    <string name="slots_background_pick">Select</string>
+    <string name="slots_background_hide">Hide</string>
+    <string name="slots_background_show">Show</string>
+    <string name="slots_background_hide_preview">Hide backdrop</string>
+    <string name="slots_background_show_preview">Show backdrop</string>
+    <string name="slots_background_dim">Dimming, %</string>
+
+    <!-- Selected slot -->
+    <string name="slots_selection">Selected element</string>
+    <string name="slots_selection_hint">Select an element or chat window on the canvas. For controls, press the "?" button at the end of the toolbar.</string>
+    <string name="slots_selection_many">Elements selected: %1$d</string>
+    <string name="slots_slot_cooldown">Skill Cooldown · slot %1$d</string>
+    <string name="slots_slot_hotbar">Hotbar · slot %1$d</string>
+    <string name="slots_slot_index">UIData Index %1$d</string>
+    <string name="slots_slot_x">X from crosshair</string>
+    <string name="slots_slot_y">Y from crosshair</string>
+    <string name="slots_slot_class_resource">Class resource</string>
+
+    <!-- Editor -->
+    <string name="slots_legend_cooldown">skill cooldown</string>
+    <string name="slots_legend_hotbar">hotbar</string>
+    <string name="slots_legend_class_resource">class resource</string>
+    <string name="slots_legend_interface">other elements</string>
+    <string name="slots_legend_chat">chats</string>
+    <string name="slots_legend_fixed">fixed</string>
+    <string name="slots_fixed_tips">Tips</string>
+    <string name="slots_fixed_menu_bar">Menu Bar</string>
+    <string name="slots_chat">Chat %1$d</string>
+    <string name="slots_chat_take_out">Move to a separate chat</string>
+    <string name="slots_chat_bring_in">Move to the main chat</string>
+    <string name="slots_chat_width">Width</string>
+    <string name="slots_chat_height">Height</string>
+    <string name="slots_chat_size_description">Width: from %1$d to %2$d, height: from %3$d to %4$d UI px. The bottom-left corner of the window stays in place.</string>
+    <string name="slots_preview_chats">Chats</string>
+    <string name="slots_chat_size">%1$d x %2$d</string>
+    <string name="slots_element_health">HP</string>
+    <string name="slots_element_stamina">Stamina</string>
+    <string name="slots_element_pvp">PVP</string>
+    <string name="slots_element_black_spirit_rage">Black Spirit's Rage</string>
+    <string name="slots_element_buffs">Buffs</string>
+    <string name="slots_element_rare_item_history">Rare Item Acquisition History</string>
+    <string name="slots_element_quick_slot">Quick Slot</string>
+    <string name="slots_custom_quick_slots">Quick Slot Settings</string>
+    <string name="slots_custom_quick_slots_description">Works like the in-game setting of the same name: on — 20 separate hotbar slots, off — a single Quick Slot panel.</string>
+    <string name="slots_legend_off_screen">off screen</string>
+    <string name="slots_undo">Undo</string>
+    <string name="slots_redo">Redo</string>
+
+    <!-- Toolbar -->
+    <string name="slots_snap_to_slots">Slot snapping</string>
+    <string name="slots_snap_distance">Threshold</string>
+    <string name="slots_snap_distance_value">%1$d px</string>
+    <string name="slots_label">Note</string>
+    <string name="slots_label_chars">%1$d chars</string>
+    <string name="slots_label_hint">Width of the caption under a slot in characters. In game, up to %1$d characters.</string>
+    <string name="slots_align">Align</string>
+    <string name="slots_align_by_slot">to slot</string>
+    <string name="slots_align_by_group">to group</string>
+    <string name="slots_align_anchor_hint">Anchor: %1$s (gold frame). It stays in place, the others line up to it.</string>
+    <string name="slots_align_group_hint">Anchor: the frame around all selected elements. To align to a single slot, right-click it to open the menu.</string>
+    <string name="slots_align_left">Align left</string>
+    <string name="slots_align_center_x">Align horizontal center</string>
+    <string name="slots_align_right">Align right</string>
+    <string name="slots_align_top">Align top</string>
+    <string name="slots_align_center_y">Align vertical center</string>
+    <string name="slots_align_bottom">Align bottom</string>
+    <string name="slots_distribute_horizontal">Distribute horizontally</string>
+    <string name="slots_distribute_vertical">Distribute vertically</string>
+    <string name="slots_reload">Reload file</string>
+    <string name="slots_screen">Game screen: %1$d × %2$d, UI scale %3$s. Grid and coordinates are measured from the crosshair.</string>
+    <string name="slots_off_screen">Elements off screen: %1$d — in game they will end up beyond the edge.</string>
+    <string name="slots_game_closed_hint">Before making changes, save your settings in the game (Settings -> Settings Archive -> Save) so you can restore the interface afterwards. Close the game and press "Reload file". Apply changes with the game closed too: a running game overwrites the file with its own settings, and your changes will be lost.</string>
+
+    <!-- Group spread -->
+    <string name="slots_spread_description">Groups are elements and chat windows that touch each other. The sliders push groups apart from the center between them, in UI px.</string>
+    <string name="slots_spread_horizontal">Horizontal spread</string>
+    <string name="slots_spread_vertical">Vertical spread</string>
+
+    <!-- Help: the "?" button on the toolbar -->
+    <string name="slots_help">Help</string>
+    <string name="slots_help_button">Help</string>
+    <string name="slots_help_controls">Controls</string>
+    <string name="slots_help_legend">Legend</string>
+    <string name="slots_help_item">%1$d. %2$s</string>
+    <string-array name="slots_help_items">
+        <item>Click an element or chat window to select it, Ctrl+click to add it to or remove it from the selection.</item>
+        <item>Hold the left mouse button on an empty spot to draw a frame around elements and chat windows, with Ctrl to add to the selection.</item>
+        <item>Dragging an element or chat window moves everything selected together.</item>
+        <item>The handle in the top-right corner of a chat window resizes it. The exact position and size of the selected window are in the sidebar.</item>
+        <item>Arrow keys move the selection by 1 UI px, with Shift by the snap step.</item>
+        <item>Esc or a click on an empty spot clears the selection.</item>
+        <item>Right-click opens a menu: align, distribute, note under a slot.</item>
+        <item>Mouse wheel zooms the canvas.</item>
+        <item>Shift or Space + left mouse button, or the middle mouse button, pans the canvas.</item>
+        <item>The eye in the frame hides or shows the element in game.</item>
+        <item>Ctrl+Z undoes, Ctrl+Shift+Z or Ctrl+Y redoes.</item>
+    </string-array>
+
+    <!-- Action bar -->
+    <string name="slots_import">Import</string>
+    <string name="slots_export">Export</string>
+    <string name="slots_save_as">Save as preset</string>
+    <string name="slots_apply">Apply to game</string>
+
+    <!-- Dialogs -->
+    <string name="slots_cancel">Cancel</string>
+    <string name="slots_save">Save</string>
+    <string name="slots_save_as_title">Save preset</string>
+    <string name="slots_save_as_name">Name</string>
+    <string name="slots_save_as_description">Enter a new name or pick one of your presets from the list to replace it with the current layout.</string>
+    <string name="slots_save_as_replace">Replace preset</string>
+    <string name="slots_save_replace">Replace</string>
+    <string name="slots_import_title">Import layout</string>
+    <string name="slots_import_description">Paste the contents of a .json file or select the file itself. Elements will be placed relative to the crosshair and screen corners just like the author's, even if their monitor is different. Groups that are not in the file stay unchanged.</string>
+    <string name="slots_import_file">Select file</string>
+    <string name="slots_import_confirm">Import</string>
+    <string name="slots_import_next">Next</string>
+    <string name="slots_import_not_json">Could not read the JSON.</string>
+    <string name="slots_import_wrong_format">This is not a BDO Tools layout file.</string>
+    <string name="slots_import_unsupported_version">The file is from a newer version of BDO Tools — update the site or the app.</string>
+    <string name="slots_apply_title">Apply to game</string>
+    <string name="slots_apply_description">Fully close the game: while it is running, it will overwrite the file with its own values. A copy of gamevariable.xml is saved to "BDO Tools\\uiEditor\\&lt;account&gt;\\backups" before writing.</string>
+    <string name="slots_apply_confirm">Game is closed, apply</string>
+    <string name="slots_apply_target">Write to</string>
+    <string name="slots_game_preset">In-game presets</string>
+    <string name="slots_game_preset_general">General</string>
+    <string name="slots_game_preset_number">Preset %1$d</string>
+    <string name="slots_preview_import_title">Import preview</string>
+    <string name="slots_preview_export_title">Export preview</string>
+    <string name="slots_preview_export_confirm">Export</string>
+    <string name="slots_preview_screen">Preview monitor</string>
+    <string name="slots_preview_screen_description">For preview only: this is how the layout will look on someone else's monitor. It is saved to the file with anchors and will be placed to fit the recipient's screen.</string>
+    <string name="slots_preview_resolution">Resolution</string>
+    <string name="slots_preview_resolution_value">%1$d × %2$d</string>
+    <string name="slots_preview_scale">UI scale</string>
+    <string name="slots_preview_reset_screen">My screen</string>
+    <string name="slots_preview_elements">Elements</string>
+    <string name="slots_preview_include_all">Select all</string>
+    <string name="slots_preview_exclude_all">Clear all</string>
+    <string name="slots_preview_hint">Mouse wheel zooms. Click an element to check or uncheck it, hold the left mouse button on an empty spot to draw a frame: it checks the touched ones, or unchecks them if all are already checked. Shift or Space + left mouse button, or the middle mouse button, pans. Ctrl+Z undoes. Dimmed elements will not be saved to the file.</string>
+    <string name="slots_group_cooldown">Skill Cooldown</string>
+    <string name="slots_group_hotbar">Hotbar</string>
+    <string name="slots_group_class_resource">Class resource</string>
+    <string name="slots_group_interface">Other elements</string>
+    <string name="slots_preview_group_count">%1$s · %2$d of %3$d</string>
+    <string name="slots_preview_summary">Selected %1$d of %2$d. Off screen: %3$d.</string>
+    <string name="slots_preview_summary_scale">Selected %1$d of %2$d. Off screen: %3$d — everything fits at %4$d %.</string>
+    <string name="slots_delete_title">Delete preset</string>
+    <string name="slots_delete_description">Delete the preset "%1$s"? The file in the presets folder will be deleted.</string>
+    <string name="slots_delete_confirm">Delete</string>
+    <string name="slots_busy">One moment…</string>
+
+    <!-- Messages -->
+    <string name="slots_notice_applied">Layout written. Copy of the previous file: %1$s</string>
+    <string name="slots_notice_saved">Preset "%1$s" saved.</string>
+    <string name="slots_notice_deleted">Preset "%1$s" deleted.</string>
+    <string name="slots_notice_imported">Layout "%1$s" loaded into the editor.</string>
+    <string name="slots_notice_imported_off_screen">Layout "%1$s" loaded, but %2$d elements do not fit on this screen — move them manually.</string>
+    <string name="slots_notice_imported_scale">Layout "%1$s" loaded, but %2$d elements do not fit on this screen. Everything fits at UI scale %3$s.</string>
+    <string name="slots_error_not_game_folder">This folder has no UserCache. Select "Documents\\Black Desert".</string>
+    <string name="slots_error_permission">The browser did not grant access to the folder.</string>
+    <string name="slots_error_no_game_variable">Interface settings not found. Log in to the game on any character and exit.</string>
+    <string name="slots_error_file_changed">The game changed the file while the page was open — it is probably running. Close the game and apply again.</string>
+    <string name="slots_error_not_image">This is not an image.</string>
+    <string name="slots_error_unknown">Something went wrong. Please try again.</string>
+</resources>

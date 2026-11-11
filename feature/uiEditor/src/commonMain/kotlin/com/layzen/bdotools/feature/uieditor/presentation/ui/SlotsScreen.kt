@@ -32,12 +32,14 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
+/** Точка входа экрана: берёт [SlotsViewModel] и передаёт [SlotsScreen] его состояние и события. */
 @Composable
 fun SlotsRoute(viewModel: SlotsViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     SlotsScreen(state, viewModel::onEvent)
 }
 
+/** Экран редактора; пока игра не загружена, показывает выбор папки и доступ к ней. */
 @Composable
 fun SlotsScreen(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     val ready = state.loaded != null

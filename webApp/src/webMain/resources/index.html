@@ -17,6 +17,18 @@
                               repeatCount="indefinite"/>
         </circle>
     </svg>
+    <script type="application/javascript">
+        // Язык интерфейса выбирается в приложении: Compose берёт язык из navigator.languages, поэтому
+        // подменяем его значением __customLocale (его ставит LanguageEnvironment.web.kt)
+        (function () {
+            var original = Object.getOwnPropertyDescriptor(Navigator.prototype, "languages");
+            Object.defineProperty(Navigator.prototype, "languages", Object.assign({}, original, {
+                get: function () {
+                    return window.__customLocale ? [window.__customLocale] : original.get.apply(this);
+                }
+            }));
+        })();
+    </script>
     <script type="application/javascript" src="webApp.js"></script>
 </body>
 </html>

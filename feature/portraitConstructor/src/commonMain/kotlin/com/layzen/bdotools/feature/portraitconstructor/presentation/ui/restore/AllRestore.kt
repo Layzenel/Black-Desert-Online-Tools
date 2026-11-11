@@ -12,9 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.portraitconstructor.presentation.event.PortraitsEvent
+import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.RestoreDialogState
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.previewKey
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
+import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.grid.PortraitGridLayout
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.grid.PortraitTile
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
@@ -27,11 +29,11 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_resto
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_warning
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.CheckBox
-import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
+/** Содержимое окна восстановления всех портретов: список копий, превью и отметки портретов. */
 @Composable
 internal fun AllRestore(state: RestoreDialogState, onEvent: (PortraitsEvent) -> Unit) {
     val backup = state.selectedBackup

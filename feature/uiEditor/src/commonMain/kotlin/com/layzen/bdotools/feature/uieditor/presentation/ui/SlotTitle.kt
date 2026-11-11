@@ -1,9 +1,10 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui
 
 import androidx.compose.runtime.Composable
-import com.layzen.bdotools.feature.uieditor.domain.InterfaceElement
-import com.layzen.bdotools.feature.uieditor.domain.SlotGroup
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.InterfaceElement
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_element_black_spirit_rage
 import com.layzen.bdotools.feature.uieditor.resources.slots_element_buffs

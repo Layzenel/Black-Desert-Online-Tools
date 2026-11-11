@@ -2,6 +2,8 @@ package com.layzen.bdotools.feature.uieditor.data
 
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.core.folder.GameFolderSettings
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.FileTime

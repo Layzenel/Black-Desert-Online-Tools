@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Path
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlinx.coroutines.delay
 
+/** Сколько вложенная панель ждёт после ухода курсора, прежде чем спрятаться: за это время курсор успевает дойти до неё. */
 internal const val SUBMENU_CLOSE_DELAY_MS = 150L
 
 /**

@@ -11,9 +11,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.portraitconstructor.presentation.event.PortraitsEvent
+import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.FavoritesDialogState
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.ConfirmationDialog
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
+import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_delete_confirm
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_apply
@@ -34,7 +36,6 @@ import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.LoadingRow
-import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme

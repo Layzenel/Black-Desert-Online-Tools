@@ -31,6 +31,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
+/** Пункт примера главного меню: подпись, горячая клавиша и плашка NEW/HOT. */
 private class MenuEntry(val title: StringResource, val hotkey: String, val badge: LabelBadgeKind? = null)
 
 private val menuEntries = listOf(

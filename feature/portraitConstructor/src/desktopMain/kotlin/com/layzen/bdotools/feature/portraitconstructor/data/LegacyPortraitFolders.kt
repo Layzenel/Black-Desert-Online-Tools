@@ -12,11 +12,17 @@ import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 
 // Папки тулзы: Black Desert\BDO Tools\portraitConstructor\<аккаунт>\…
+/** Папка `BDO Tools` внутри `Black Desert`. */
 internal const val TOOLS = "BDO Tools"
+/** Папка этой тулзы внутри `BDO Tools`. */
 internal const val TOOL = "portraitConstructor"
+/** Папка резервных копий портретов. */
 internal const val BACKUP = "FaceTexture_backup"
+/** Папка наборов избранного. */
 internal const val FAVORITES = "Favorite FaceTexture"
+/** Папка чистых портретов и украшений. */
 internal const val CURRENT = "Current portraits"
+/** Папка копий файла заметок `gameVariable_lobby.xml`. */
 internal const val LOBBY_BACKUP = "lobby_backup"
 
 /** Папка тулзы в прошлой версии: `BDO Tools\portraits` с файлами портретов и папками копий и избранного внутри. */

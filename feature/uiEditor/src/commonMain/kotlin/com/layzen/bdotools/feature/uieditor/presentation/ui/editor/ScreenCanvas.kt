@@ -38,8 +38,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import com.layzen.bdotools.feature.uieditor.domain.ScreenArea
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenArea
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.uikit.components.PanCursor
 import com.layzen.bdotools.uikit.components.onSecondaryClick
 import com.layzen.bdotools.uikit.components.panCursor

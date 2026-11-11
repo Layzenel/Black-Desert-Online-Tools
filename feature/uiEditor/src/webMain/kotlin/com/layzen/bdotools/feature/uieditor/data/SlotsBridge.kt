@@ -1,6 +1,8 @@
 package com.layzen.bdotools.feature.uieditor.data
 
 import com.layzen.bdotools.core.folder.FolderBridge
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
 
 /** Мост слотов: папку игры узнаёт по `UserCache`, ошибки бросает как [SlotsException]. */
 internal val slotsBridge = FolderBridge(

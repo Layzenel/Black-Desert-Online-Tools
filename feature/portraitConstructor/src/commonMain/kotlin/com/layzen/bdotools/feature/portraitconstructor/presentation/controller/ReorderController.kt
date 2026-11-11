@@ -1,8 +1,8 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.controller
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitWrite
-import com.layzen.bdotools.feature.portraitconstructor.data.StoredPortrait
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitWrite
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.StoredPortrait
 import com.layzen.bdotools.feature.portraitconstructor.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Notice
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.NoticeKind
@@ -23,10 +23,13 @@ internal class ReorderController(private val context: PortraitsContext) {
     /** Идёт обмен: анимация или запись файлов. */
     private var swapping = false
 
+    /** Включает режим перестановки и показывает подсказку. */
     fun start() = context.update { it.copy(reorder = ReorderState(), notice = Notice(NoticeKind.ReorderHint)) }
 
+    /** Выключает режим перестановки. */
     fun cancel() = context.update { it.copy(reorder = null) }
 
+    /** Выбирает портрет [characterId]: первым в паре или вторым — тогда запускает обмен. */
     fun pick(characterId: String) {
         val mode = context.current.reorder ?: return
         // пока идёт обмен, второй не начинается: он прочитал бы ещё не записанные портреты
@@ -70,8 +73,8 @@ internal class ReorderController(private val context: PortraitsContext) {
 
     /** Персонажи обмениваются чистыми основами, а надпись и значок каждого остаются на его портрете. */
     private suspend fun swappedPortraits(first: String, second: String): Pair<Map<String, ImageBitmap>, List<PortraitWrite>> {
-        val a = context.repository.currentPortrait(first)
-        val b = context.repository.currentPortrait(second)
+        val a = context.portraits.currentPortrait(first)
+        val b = context.portraits.currentPortrait(second)
         val (faceA, writeA) = context.compose(first, StoredPortrait(b.clean, a.decoration))
         val (faceB, writeB) = context.compose(second, StoredPortrait(a.clean, b.decoration))
         return mapOf(first to faceA, second to faceB) to listOf(writeA, writeB)

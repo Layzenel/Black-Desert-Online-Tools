@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.domain.FavoriteSet
+import com.layzen.bdotools.feature.portraitconstructor.domain.favorite.FavoriteSet
 
 /**
  * Окно избранного: наборы всех портретов в `Favorite FaceTexture`. [sets] — `null`, пока список читается;
@@ -18,6 +18,7 @@ data class FavoritesDialogState(
     val confirmDelete: Boolean = false,
     val confirmReplace: Boolean = false,
 ) {
+    /** Выбранный набор; `null`, если ничего не выбрано или список ещё читается. */
     val selectedSet: FavoriteSet? get() = sets?.firstOrNull { it.name == selected }
 
     /** Название в поле отличается от сохранённого. */

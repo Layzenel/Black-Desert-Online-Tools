@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.data
 
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
 import java.io.IOException
 import java.nio.file.AccessDeniedException
 import kotlinx.coroutines.Dispatchers

@@ -1,5 +1,8 @@
 package com.layzen.bdotools.feature.portraitconstructor.data
 
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.ImageSource
 import java.io.IOException
 import java.net.URI
 import java.net.URISyntaxException

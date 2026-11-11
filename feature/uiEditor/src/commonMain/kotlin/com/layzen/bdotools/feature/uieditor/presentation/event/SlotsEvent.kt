@@ -1,12 +1,13 @@
 package com.layzen.bdotools.feature.uieditor.presentation.event
 
-import com.layzen.bdotools.feature.uieditor.domain.AlignEdge
-import com.layzen.bdotools.feature.uieditor.domain.BuiltInLayout
-import com.layzen.bdotools.feature.uieditor.domain.GamePreset
-import com.layzen.bdotools.feature.uieditor.domain.ScreenArea
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
-import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.AlignEdge
+import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.preset.BuiltInLayout
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenArea
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.screen.position
 import com.layzen.bdotools.feature.uieditor.presentation.state.GridStep
 
 /** Действия пользователя на странице слотов. Сдвиги — в UI-px игры, а не в пикселях страницы. */

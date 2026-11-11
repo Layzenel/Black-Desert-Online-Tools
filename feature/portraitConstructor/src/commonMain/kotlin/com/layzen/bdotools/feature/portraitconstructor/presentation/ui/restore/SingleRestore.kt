@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.portraitconstructor.presentation.event.PortraitsEvent
+import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.PortraitItem
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.RestoreDialogState
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.previewKey
@@ -23,6 +24,7 @@ import com.layzen.bdotools.uikit.components.WarningText
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
+/** Содержимое окна восстановления портрета [characterId]: версии из копий рядом с текущим портретом [current]. */
 @Composable
 internal fun SingleRestore(state: RestoreDialogState, current: PortraitItem?, characterId: String, onEvent: (PortraitsEvent) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {

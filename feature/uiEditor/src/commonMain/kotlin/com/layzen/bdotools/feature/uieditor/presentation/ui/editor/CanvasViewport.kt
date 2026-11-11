@@ -20,8 +20,10 @@ private const val MAX_ZOOM = 8f
  */
 @Stable
 internal class CanvasViewport {
+    /** Текущий масштаб холста: от 1 до 8. */
     var zoom by mutableFloatStateOf(MIN_ZOOM)
         private set
+    /** Сдвиг содержимого холста в пикселях окна. */
     var pan by mutableStateOf(Offset.Zero)
         private set
 
@@ -36,6 +38,7 @@ internal class CanvasViewport {
         pan = clamped(focus - (focus - pan) * ratio)
     }
 
+    /** Сдвигает содержимое на [delta] пикселей, не выпуская его за края окна. */
     fun panBy(delta: Offset) {
         pan = clamped(pan + delta)
     }
@@ -46,5 +49,6 @@ internal class CanvasViewport {
     )
 }
 
+/** Запоминает [CanvasViewport] на время жизни экрана. */
 @Composable
 internal fun rememberCanvasViewport(): CanvasViewport = remember { CanvasViewport() }

@@ -14,6 +14,7 @@ class GameAccounts(private val files: AccountFiles, private val choice: AccountC
 
     private val mutableState = MutableStateFlow(AccountsState(selectedId = choice.load()))
 
+    /** Аккаунты на этом ПК и выбранный из них; меняется через [refresh] и [select]. */
     val state: StateFlow<AccountsState> = mutableState.asStateFlow()
 
     /**
@@ -32,6 +33,7 @@ class GameAccounts(private val files: AccountFiles, private val choice: AccountC
         mutableState.update { it.copy(accounts = accounts) }
     }
 
+    /** Делает аккаунт [id] выбранным и запоминает выбор между запусками. */
     fun select(id: String) {
         choice.save(id)
         mutableState.update { it.copy(selectedId = id) }

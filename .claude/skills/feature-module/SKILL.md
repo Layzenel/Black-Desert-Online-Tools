@@ -51,16 +51,32 @@ feature/<имя>/
 ├── build.gradle.kts
 └── src/
     ├── commonMain/composeResources/values/
-    │   └── strings.xml    все строки фичи (ключи с префиксом фичи)
+    │   └── strings.xml    все строки фичи на русском (ключи с префиксом фичи)
+    ├── commonMain/composeResources/values-en/
+    │   └── strings.xml    те же ключи на английском; такая же папка `values-<tag>` — для каждого языка
+    │                      из `AppLanguage` (скилл resources-externalization, раздел «Языки»)
     ├── commonMain/kotlin/com/layzen/bdotools/feature/<пакет>/
-    │   ├── domain/        формулы и модели, чистый Kotlin без Compose
-    │   ├── data/          источники данных (JSON, API), если нужны
-    │   ├── presentation/  <Имя>ViewModel; state/, event/, ui/ (экран и его части по папкам),
-    │   │                  controller/ — если ViewModel разрастается (см. скилл clean-code)
-    │   └── di/            <имя>Module (Koin)
+    │   ├── domain/        чистый Kotlin без Compose; ничего не импортирует из data и presentation.
+    │   │   └── <тема>/    папка на тему предметной области (`backup/`, `favorite/`, `layout/`): её модели
+    │   │                  и формулы, **интерфейс** `<Тема>Repository` и `<Тема>Interactor`; ошибки — в `error/`.
+    │   │                  В корне `domain/` файлов нет
+    │   ├── data/          `<Тема>RepositoryImpl` — реализации интерфейсов из domain — и интерфейс источника
+    │   │                  данных `<Имя>Storage`; его платформенные реализации — в webMain и desktopMain
+    │   ├── presentation/  <Имя>ViewModel получает только интеракторы; state/, event/, ui/ (экран и его части
+    │   │                  по папкам), controller/ — если ViewModel разрастается (см. скилл clean-code)
+    │   └── di/            <имя>Module (Koin): реализации репозиториев, интеракторы, ViewModel
     └── commonTest/kotlin/com/layzen/bdotools/feature/<пакет>/
-        └── domain/        тесты формул — обязательны
+        ├── domain/<тема>/ тесты формул — обязательны; лежат в той же папке-теме, что и код
+        └── data/          тесты `…RepositoryImpl` на хранилище в памяти (`MemoryStorage`)
 ```
+
+Как это выглядит в готовых фичах:
+
+| Фича | Папки `domain/` | Интеракторы | Репозитории (интерфейс → реализация) |
+|---|---|---|---|
+| `portraitConstructor` | `portrait`, `decoration`, `backup`, `favorite`, `memo`, `error` | `PortraitsInteractor`, `BackupsInteractor`, `FavoritesInteractor`, `MemosInteractor` | `PortraitsRepository` → `PortraitsRepositoryImpl`, `CharacterMemosRepository` → `CharacterMemosRepositoryImpl` |
+| `uiEditor` | `game`, `layout`, `arrangement`, `screen`, `file`, `preset`, `error` | `GameSettingsInteractor`, `PresetsInteractor`, `LayoutFilesInteractor` | `SlotsRepository` → `SlotsRepositoryImpl` |
+| `shared/update` (не фича, но слои те же) | `domain` | `UpdateInteractor` (Desktop), `SiteUpdateInteractor` (сайт) | `UpdateRepository` → `UpdateRepositoryImpl`, `SiteVersionRepository` → `SiteVersionRepositoryImpl` |
 
 ## Как создать фичу
 
@@ -117,7 +133,33 @@ include(":feature:<имя>")
 ### 3. Логика в `domain/`
 
 Только чистые функции и классы, без Compose и без Koin-аннотаций. Здесь лежат формулы игры,
-и на каждую формулу пишется тест в `commonTest`.
+и на каждую формулу пишется тест в `commonTest`. Файлы раскладываются по папкам-темам, а не по виду класса.
+
+Если фиче нужны данные (файлы игры, сеть), в папке темы появляются интерфейс репозитория и интерактор,
+а в `data/` — реализация (подробно — скилл `clean-code`, раздел «Clean Architecture»):
+
+```kotlin
+// domain/preset/PresetsRepository.kt — контракт с KDoc
+interface PresetsRepository {
+    /** Пресеты аккаунта [account]. */
+    suspend fun presets(account: String): List<Preset>
+}
+
+// domain/preset/PresetsInteractor.kt — сценарии; только его видит ViewModel
+class PresetsInteractor(private val repository: PresetsRepository) {
+    /** См. [PresetsRepository.presets]. */
+    suspend fun presets(account: String): List<Preset> = repository.presets(account)
+}
+
+// data/PresetsRepositoryImpl.kt — работа с файлами через интерфейс хранилища
+class PresetsRepositoryImpl(private val storage: SampleStorage) : PresetsRepository {
+    override suspend fun presets(account: String): List<Preset> = storage.presetFiles(account).map(::decode)
+}
+```
+
+ViewModel и контроллеры `presentation/` получают в конструктор только интеракторы: ни репозиторий,
+ни `*Storage` в `presentation` не импортируются. Фиче без данных (чистый калькулятор) репозиторий
+и интерактор не нужны — ViewModel зовёт классы `domain` напрямую, как `SampleCalculator` ниже.
 
 ### 4. Состояние и ViewModel в `presentation/`
 
@@ -187,7 +229,8 @@ val sampleToolModule = module {
 2. `shared/.../App.kt` → список `featureModules`: добавь `<имя>Module`.
 3. `shared/.../navigation/AppTab.kt` → `enum class AppTab`: добавь вкладку (редактору на всё окно — `fillsScreen = true`) или переименуй
    свободную заглушку (`Tab2`…`Tab5`). `route` пиши в kebab-case, после релиза его не меняй: он попадает в ссылки.
-   Название вкладки — строка в `shared/src/commonMain/composeResources/values/strings.xml` (`tab_<имя>`).
+   Название вкладки — строка `tab_<имя>` в `shared/src/commonMain/composeResources/values/strings.xml`
+   и её перевод в `values-<tag>/strings.xml` каждого языка.
    Иконка вкладки обязательна (параметр `icon` в `AppTab`): нарисуй SVG `shared/src/commonMain/composeResources/drawable/tab_<имя>_icon.svg`
    по смыслу тулзы — белый контур `stroke="#FFFFFF"`, `stroke-width="2"`, `viewBox 0 0 24 24`, без игровых ассетов
    (пример — `tab_portraits_icon.svg`). `TopNavigation` ставит её слева от подписи и красит в цвет текста вкладки.
@@ -211,4 +254,8 @@ val sampleToolModule = module {
 - [ ] модуль зависит только от `:platform:composable`, без других фич;
 - [ ] формулы в `domain/` покрыты тестами, и тесты проходят;
 - [ ] UI собран из компонентов дизайн-системы и токенов `AppTheme`, строки лежат в `strings.xml`, размеры — в `*Dimens`;
+- [ ] каждая строка переведена на все языки приложения (`values-<tag>/strings.xml`), экран проверен на каждом языке;
+- [ ] слои по `clean-code`: в `domain` нет импортов из `data` и `presentation`; репозиторий — интерфейс
+      в `domain` и `…RepositoryImpl` в `data`; ViewModel и контроллеры ходят только в интеракторы;
+      файлы `domain` лежат в папках-темах;
 - [ ] приложение собирается под wasmJs и js, страница открывается в браузере.

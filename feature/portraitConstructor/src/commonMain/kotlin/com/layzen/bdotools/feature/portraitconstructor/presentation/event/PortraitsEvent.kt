@@ -1,6 +1,6 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.event
 
-import com.layzen.bdotools.feature.portraitconstructor.domain.SlotIcon
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.SlotIcon
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.PortraitDecorator
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.ReplaceTarget
 

@@ -2,11 +2,11 @@ package com.layzen.bdotools.feature.uieditor.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
 import com.layzen.bdotools.core.folder.FolderAccess
-import com.layzen.bdotools.feature.uieditor.data.LoadedGame
-import com.layzen.bdotools.feature.uieditor.domain.NamedLayout
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
-import com.layzen.bdotools.feature.uieditor.domain.SlotLayout
-import com.layzen.bdotools.feature.uieditor.domain.SnapGuides
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.SnapGuides
+import com.layzen.bdotools.feature.uieditor.domain.game.LoadedGame
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
+import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
 
 /**
  * Состояние страницы раскладки слотов.

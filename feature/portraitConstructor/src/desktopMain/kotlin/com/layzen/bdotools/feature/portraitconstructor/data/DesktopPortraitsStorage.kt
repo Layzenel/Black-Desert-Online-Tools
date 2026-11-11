@@ -2,6 +2,8 @@ package com.layzen.bdotools.feature.portraitconstructor.data
 
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.core.folder.GameFolderSettings
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists

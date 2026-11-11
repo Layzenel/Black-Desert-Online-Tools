@@ -15,12 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntOffset
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
+import com.layzen.bdotools.feature.uieditor.domain.layout.FixedElement
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.screen.position
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
-import com.layzen.bdotools.feature.uieditor.domain.ChatWindow
-import com.layzen.bdotools.feature.uieditor.domain.FixedElement
 import kotlin.math.roundToInt
 
 /**

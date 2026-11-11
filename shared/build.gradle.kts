@@ -56,11 +56,11 @@ val generateWebVersion by tasks.registering {
     inputs.property("webVersion", value)
     outputs.dir(output)
     doLast {
-        val file = output.get().file("com/layzen/bdotools/update/WebVersion.kt").asFile
+        val file = output.get().file("com/layzen/bdotools/update/data/WebVersion.kt").asFile
         file.parentFile.mkdirs()
         file.writeText(
             """
-            |package com.layzen.bdotools.update
+            |package com.layzen.bdotools.update.data
             |
             |/** Версия сайта из сборки (`-PwebVersion`); `null` — сборка разработчика. Файл создаёт `shared/build.gradle.kts`. */
             |internal val WEB_VERSION: String? = $value

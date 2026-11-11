@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.EditorStatus
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.icon
 import com.layzen.bdotools.feature.uieditor.resources.Res
-import com.layzen.bdotools.feature.uieditor.resources.slots_game_closed_hint
 import com.layzen.bdotools.feature.uieditor.resources.menu_apply
 import com.layzen.bdotools.feature.uieditor.resources.menu_export
 import com.layzen.bdotools.feature.uieditor.resources.menu_import
@@ -17,6 +17,7 @@ import com.layzen.bdotools.feature.uieditor.resources.menu_reload
 import com.layzen.bdotools.feature.uieditor.resources.menu_save
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply
 import com.layzen.bdotools.feature.uieditor.resources.slots_export
+import com.layzen.bdotools.feature.uieditor.resources.slots_game_closed_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_import
 import com.layzen.bdotools.feature.uieditor.resources.slots_reload
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as

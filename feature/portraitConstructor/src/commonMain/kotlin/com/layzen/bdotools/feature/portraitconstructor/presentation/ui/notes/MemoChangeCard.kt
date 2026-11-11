@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import com.layzen.bdotools.feature.portraitconstructor.domain.MemoChange
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitTexture
+import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemoChange
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitTexture
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_added

@@ -10,10 +10,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitTexture
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitTexture
 import com.layzen.bdotools.uikit.components.Skeleton
 import com.layzen.bdotools.uikit.components.Tile
-import com.layzen.bdotools.uikit.theme.AppTheme
 
 private const val PORTRAIT_RATIO = PortraitTexture.WIDTH.toFloat() / PortraitTexture.HEIGHT
 private const val DIMMED_ALPHA = 0.35f

@@ -9,10 +9,11 @@ import java.util.prefs.Preferences
 private const val PREFERENCES_NODE = "com/layzen/bdotools/portraits"
 private const val FOLDER_KEY = "gameFolder"
 private const val ACCOUNT_KEY = "account"
+private const val LANGUAGE_KEY = "language"
 
 /**
  * Запоминает выбранную папку `Black Desert` между запусками — одну на все тулзы настольной версии,
- * как одна запись IndexedDB на сайте. Хранится в [Preferences] пользователя
+ * как одна запись IndexedDB на сайте, — а с ней выбранный аккаунт и язык интерфейса. Хранится в [Preferences] пользователя
  * (в Windows — в реестре `HKCU\Software\JavaSoft\Prefs`).
  */
 class GameFolderSettings(
@@ -31,6 +32,14 @@ class GameFolderSettings(
         get() = preferences.get(ACCOUNT_KEY, null)
         set(value) {
             if (value == null) preferences.remove(ACCOUNT_KEY) else preferences.put(ACCOUNT_KEY, value)
+            preferences.flush()
+        }
+
+    /** Код языка интерфейса, выбранного пользователем, или `null`, если он ещё не выбирал. */
+    var language: String?
+        get() = preferences.get(LANGUAGE_KEY, null)
+        set(value) {
+            if (value == null) preferences.remove(LANGUAGE_KEY) else preferences.put(LANGUAGE_KEY, value)
             preferences.flush()
         }
 

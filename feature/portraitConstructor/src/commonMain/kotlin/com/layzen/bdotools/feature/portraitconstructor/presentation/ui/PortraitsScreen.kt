@@ -31,12 +31,14 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
+/** Точка входа страницы: берёт [PortraitsViewModel] из Koin и показывает [PortraitsScreen]. */
 @Composable
 fun PortraitsRoute(viewModel: PortraitsViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     PortraitsScreen(state, viewModel::onEvent)
 }
 
+/** Страница портретов: по [state] рисует выбор папки, сетку и окна, действия пользователя отдаёт в [onEvent]. */
 @Composable
 fun PortraitsScreen(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
     val ready = state.access is FolderAccess.Granted

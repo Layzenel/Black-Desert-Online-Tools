@@ -1,8 +1,8 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.controller
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.domain.BackupInfo
-import com.layzen.bdotools.feature.portraitconstructor.domain.containing
+import com.layzen.bdotools.feature.portraitconstructor.domain.backup.BackupInfo
+import com.layzen.bdotools.feature.portraitconstructor.domain.backup.containing
 import com.layzen.bdotools.feature.portraitconstructor.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.BusyKind
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Notice
@@ -20,6 +20,7 @@ internal class RestoreController(private val context: PortraitsContext) {
 
     private var previewJob: Job? = null
 
+    /** Открывает окно восстановления для [target]: для всех портретов — со всеми копиями, для одного — только с копиями, где он есть. */
     fun open(target: ReplaceTarget) {
         val all = forPage(context.current.backups)
         when (target) {
@@ -45,22 +46,29 @@ internal class RestoreController(private val context: PortraitsContext) {
         loadPreviews(ids.map { name to it })
     }
 
+    /** Отмечает или снимает отметку восстановления у портрета [characterId]. */
     fun togglePortrait(characterId: String) = updateDialog { it.copy(checked = it.checked.toggled(characterId)) }
 
+    /** Отмечает все портреты выбранной копии или снимает все отметки. */
     fun checkAll(checked: Boolean) =
         updateDialog { it.copy(checked = if (checked) it.selectedBackup?.characterIds.orEmpty() else emptySet()) }
 
+    /** Отмечает копию [name] для удаления или снимает отметку. */
     fun toggleBackupMark(name: String) = updateDialog { it.copy(marked = it.marked.toggled(name)) }
 
+    /** Просит подтверждение удаления; без отмеченных копий ничего не делает. */
     fun requestDelete() = updateDialog { if (it.marked.isEmpty()) it else it.copy(confirmDelete = true) }
 
+    /** Закрывает подтверждение удаления. */
     fun cancelDelete() = updateDialog { it.copy(confirmDelete = false) }
 
+    /** Закрывает окно и останавливает загрузку превью. */
     fun close() {
         previewJob?.cancel()
         context.update { it.copy(restoreDialog = null) }
     }
 
+    /** Восстанавливает отмеченные портреты из выбранной копии и показывает их в сетке. */
     fun apply() {
         val dialog = context.current.restoreDialog ?: return
         val backup = dialog.selected ?: return
@@ -75,7 +83,7 @@ internal class RestoreController(private val context: PortraitsContext) {
             val writes = context.withBusy(BusyKind.Restoring) {
                 ids.mapIndexed { index, id ->
                     context.setProgress(index, ids.size)
-                    val (face, write) = context.compose(id, context.repository.readBackupPortrait(backup, id))
+                    val (face, write) = context.compose(id, context.backups.readPortrait(backup, id))
                     faces[id] = face
                     write
                 }
@@ -94,7 +102,7 @@ internal class RestoreController(private val context: PortraitsContext) {
         context.launch {
             val left = context.withBusy(BusyKind.Deleting) {
                 context.setProgress(0, names.size)
-                context.repository.deleteBackups(names) { done, total -> context.setProgress(done, total) }
+                context.backups.delete(names) { done, total -> context.setProgress(done, total) }
             }
             val visible = forPage(left)
             val selected = dialog.selected?.takeIf { name -> visible.any { it.name == name } }
@@ -124,7 +132,7 @@ internal class RestoreController(private val context: PortraitsContext) {
                 items.forEach { (backup, id) ->
                     val key = previewKey(backup, id)
                     if (context.current.restoreDialog?.previews?.containsKey(key) == true) return@forEach
-                    val image = context.images.render(context.repository.readBackupPortrait(backup, id))
+                    val image = context.images.render(context.backups.readPortrait(backup, id))
                     updateDialog { it.copy(previews = it.previews + (key to image)) }
                     context.breathe()
                 }

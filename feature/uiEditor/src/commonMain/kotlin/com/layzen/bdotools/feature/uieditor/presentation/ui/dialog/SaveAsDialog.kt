@@ -10,14 +10,15 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
 import com.layzen.bdotools.feature.uieditor.resources.slots_save
-import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_replace
-import com.layzen.bdotools.feature.uieditor.resources.slots_save_replace
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_name
+import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_replace
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_title
+import com.layzen.bdotools.feature.uieditor.resources.slots_save_replace
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect

@@ -1,6 +1,8 @@
 package com.layzen.bdotools.feature.portraitconstructor.data
 
 import com.layzen.bdotools.core.folder.FolderBridge
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
 
 /** Мост портретов: папку игры узнаёт по `FaceTexture`, ошибки бросает как [PortraitsException]. */
 internal val fileSystemBridge = FolderBridge(

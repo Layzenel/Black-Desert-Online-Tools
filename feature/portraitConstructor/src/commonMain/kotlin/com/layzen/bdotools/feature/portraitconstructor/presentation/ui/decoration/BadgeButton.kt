@@ -11,8 +11,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import com.layzen.bdotools.feature.portraitconstructor.domain.BadgeGroup
-import com.layzen.bdotools.feature.portraitconstructor.domain.SlotIcon
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.BadgeGroup
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.SlotIcon
 import com.layzen.bdotools.feature.portraitconstructor.presentation.drawable
 import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res

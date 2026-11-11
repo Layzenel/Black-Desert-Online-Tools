@@ -1,6 +1,6 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.state
 
-import com.layzen.bdotools.feature.portraitconstructor.domain.MemoChange
+import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemoChange
 
 /**
  * Окно синхронизации надписей с заметками игры. [changes] — `null`, пока заметки читаются; пустой — менять нечего.

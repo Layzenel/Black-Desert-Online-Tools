@@ -5,8 +5,8 @@ import com.layzen.bdotools.resources.tab_3
 import com.layzen.bdotools.resources.tab_4
 import com.layzen.bdotools.resources.tab_5
 import com.layzen.bdotools.resources.tab_portraits
-import com.layzen.bdotools.resources.tab_slots
 import com.layzen.bdotools.resources.tab_portraits_icon
+import com.layzen.bdotools.resources.tab_slots
 import com.layzen.bdotools.resources.tab_slots_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource

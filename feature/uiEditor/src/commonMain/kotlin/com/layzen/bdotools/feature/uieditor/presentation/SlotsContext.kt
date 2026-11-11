@@ -1,8 +1,8 @@
 package com.layzen.bdotools.feature.uieditor.presentation
 
-import com.layzen.bdotools.feature.uieditor.data.SlotsError
-import com.layzen.bdotools.feature.uieditor.data.SlotsException
-import com.layzen.bdotools.feature.uieditor.domain.SlotLayout
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.presentation.state.PresetRef
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsNotice
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
@@ -20,10 +20,13 @@ private const val HISTORY_LIMIT = 50
 internal class SlotsContext(private val scope: CoroutineScope) {
 
     private val _state = MutableStateFlow(SlotsState())
+    /** Состояние экрана; меняют его только контроллеры через [update] и [editLayout]. */
     val state: StateFlow<SlotsState> = _state.asStateFlow()
 
+    /** Текущее значение [state] без подписки, для контроллеров. */
     val current: SlotsState get() = _state.value
 
+    /** Атомарно заменяет состояние результатом [change]. */
     fun update(change: (SlotsState) -> SlotsState) = _state.update(change)
 
     /**

@@ -22,9 +22,9 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import com.layzen.bdotools.feature.uieditor.domain.ChatWindow
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.SlotGroup
+import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.chatTitle
@@ -32,8 +32,8 @@ import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_chat_size
 import com.layzen.bdotools.uikit.components.resizeCursor
 import com.layzen.bdotools.uikit.theme.AppTheme
-import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Окно чата [window] на холсте в настоящем размере, как в режиме правки интерфейса игры: глазик сверху по центру,

@@ -5,25 +5,26 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.icon
 import com.layzen.bdotools.feature.uieditor.resources.Res
+import com.layzen.bdotools.feature.uieditor.resources.menu_reload
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_reset_screen
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_resolution
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_resolution_value
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_scale
-import com.layzen.bdotools.feature.uieditor.resources.menu_reload
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_screen
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_screen_description
-import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect
+import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ValueSlider
 import com.layzen.bdotools.uikit.theme.AppTheme
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.roundToInt
 
 /** Распространённые мониторы для просмотра. */
 private val RESOLUTIONS = listOf(

@@ -9,8 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.layzen.bdotools.feature.uieditor.domain.SlotGroup
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.groupTitle

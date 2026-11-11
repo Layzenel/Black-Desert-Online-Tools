@@ -1,14 +1,13 @@
 package com.layzen.bdotools.feature.uieditor.presentation.controller
 
-import com.layzen.bdotools.feature.uieditor.data.DeviceFiles
-import com.layzen.bdotools.feature.uieditor.data.SlotsRepository
-import com.layzen.bdotools.feature.uieditor.domain.AnchoredLayout
-import com.layzen.bdotools.feature.uieditor.domain.LayoutCodec
-import com.layzen.bdotools.feature.uieditor.domain.LayoutFormatException
-import com.layzen.bdotools.feature.uieditor.domain.NamedLayout
-import com.layzen.bdotools.feature.uieditor.domain.ScreenArea
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.file.AnchoredLayout
+import com.layzen.bdotools.feature.uieditor.domain.file.LayoutCodec
+import com.layzen.bdotools.feature.uieditor.domain.file.LayoutFilesInteractor
+import com.layzen.bdotools.feature.uieditor.domain.file.LayoutFormatException
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenArea
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
 import com.layzen.bdotools.feature.uieditor.presentation.state.PresetRef
 import com.layzen.bdotools.feature.uieditor.presentation.state.PreviewMode
@@ -24,19 +23,22 @@ private const val DEFAULT_EXPORT_NAME = "slot-layout"
  */
 internal class LayoutFilesController(
     private val context: SlotsContext,
-    private val repository: SlotsRepository,
-    private val device: DeviceFiles,
+    private val interactor: LayoutFilesInteractor,
 ) {
 
+    /** Открывает диалог импорта с пустым текстом. */
     fun openImport() = context.update { it.copy(dialog = SlotsDialog.Import("")) }
 
+    /** Запоминает текст раскладки, введённый в диалоге импорта. */
     fun changeImportText(text: String) = context.update { it.copy(dialog = SlotsDialog.Import(text)) }
 
+    /** Даёт выбрать файл раскладки и открывает его превью. */
     fun importFromFile() = context.launch {
-        val text = device.pickLayoutFile() ?: return@launch
+        val text = interactor.pickLayoutFile() ?: return@launch
         openImportPreview(text)
     }
 
+    /** Открывает превью раскладки из текста диалога импорта. */
     fun confirmImport() {
         val dialog = context.current.dialog as? SlotsDialog.Import ?: return
         openImportPreview(dialog.text)
@@ -80,17 +82,20 @@ internal class LayoutFilesController(
         it.copy(layout = it.layout.copy(layout = it.layout.layout.withCustomQuickSlots(enabled)))
     }
 
+    /** Отменяет последнюю правку раскладки в превью. */
     fun undoPreview() = updatePreview { it.undone() }
 
+    /** Повторяет отменённую правку раскладки в превью. */
     fun redoPreview() = updatePreview { it.redone() }
 
+    /** Подтверждает превью: берёт отмеченные элементы и либо импортирует их в редактор, либо скачивает файл экспорта. */
     fun confirmPreview() {
         val preview = context.current.dialog as? SlotsDialog.Preview ?: return
         val layout = preview.layout.copy(layout = preview.layout.layout.only(preview.included, preview.includedChats))
         when (preview.mode) {
             PreviewMode.Import -> import(layout)
             PreviewMode.Export -> context.launch {
-                device.download(repository.fileName(layout.name), LayoutCodec.encode(layout))
+                interactor.export(layout)
                 context.update { it.copy(dialog = null) }
             }
         }

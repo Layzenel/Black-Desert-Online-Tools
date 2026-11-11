@@ -14,14 +14,15 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
-import com.layzen.bdotools.feature.uieditor.domain.BuiltInLayout
+import com.layzen.bdotools.feature.uieditor.domain.preset.BuiltInLayout
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.PresetRef
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.menu_delete
-import com.layzen.bdotools.feature.uieditor.resources.slots_preset_arc
 import com.layzen.bdotools.feature.uieditor.resources.slots_preset_5plus5and5plus5
+import com.layzen.bdotools.feature.uieditor.resources.slots_preset_arc
 import com.layzen.bdotools.feature.uieditor.resources.slots_preset_game
 import com.layzen.bdotools.feature.uieditor.resources.slots_preset_horseshoe
 import com.layzen.bdotools.feature.uieditor.resources.slots_preset_key_clusters

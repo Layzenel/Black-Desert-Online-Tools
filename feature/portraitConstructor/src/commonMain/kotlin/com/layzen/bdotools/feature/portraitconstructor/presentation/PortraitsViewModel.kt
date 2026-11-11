@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.folder.FolderAccess
-import com.layzen.bdotools.feature.portraitconstructor.data.CharacterMemosRepository
-import com.layzen.bdotools.feature.portraitconstructor.data.ImageSource
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitsRepository
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitsStorage
+import com.layzen.bdotools.feature.portraitconstructor.domain.backup.BackupsInteractor
+import com.layzen.bdotools.feature.portraitconstructor.domain.favorite.FavoritesInteractor
+import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemosInteractor
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitsInteractor
 import com.layzen.bdotools.feature.portraitconstructor.presentation.controller.DecorationController
 import com.layzen.bdotools.feature.portraitconstructor.presentation.controller.FavoritesController
 import com.layzen.bdotools.feature.portraitconstructor.presentation.controller.NotesSyncController
@@ -30,26 +30,27 @@ import kotlinx.coroutines.launch
  * а замену, украшения и резервные копии раздаёт контроллерам.
  */
 class PortraitsViewModel(
-    private val storage: PortraitsStorage,
-    imageSource: ImageSource,
-    repository: PortraitsRepository,
-    memos: CharacterMemosRepository,
+    private val portraits: PortraitsInteractor,
+    backups: BackupsInteractor,
+    favorites: FavoritesInteractor,
+    memos: MemosInteractor,
     private val accounts: GameAccounts,
 ) : ViewModel() {
 
-    private val context = PortraitsContext(viewModelScope, repository, PortraitImages())
-    private val replacement = ReplacementController(context, imageSource)
+    private val context = PortraitsContext(viewModelScope, portraits, backups, favorites, PortraitImages())
+    private val replacement = ReplacementController(context)
     private val decoration = DecorationController(context)
     private val restore = RestoreController(context)
     private val favorites = FavoritesController(context)
     private val reorder = ReorderController(context)
     private val notesSync = NotesSyncController(context, memos)
 
+    /** Состояние страницы для экрана; меняется только контроллерами. */
     val state: StateFlow<PortraitsState> = context.state
 
     init {
         context.launch {
-            val access = storage.access()
+            val access = portraits.access()
             context.update { it.copy(access = access) }
             if (access is FolderAccess.Granted) loadPortraits()
         }
@@ -60,10 +61,11 @@ class PortraitsViewModel(
         }
     }
 
+    /** Единая точка входа для действий пользователя: раздаёт [event] контроллерам и загрузке портретов. */
     fun onEvent(event: PortraitsEvent) {
         when (event) {
-            PortraitsEvent.SelectFolder -> context.launch { onAccessGranted(storage.selectFolder()) }
-            PortraitsEvent.RequestPermission -> context.launch { onAccessGranted(storage.requestPermission()) }
+            PortraitsEvent.SelectFolder -> context.launch { onAccessGranted(portraits.selectFolder()) }
+            PortraitsEvent.RequestPermission -> context.launch { onAccessGranted(portraits.requestPermission()) }
             PortraitsEvent.Reload -> context.launch { loadPortraits() }
             PortraitsEvent.DismissNotice -> context.update { it.copy(notice = null) }
             is PortraitsEvent.DecoratorChanged -> context.images.useDecorator(event.decorator)
@@ -132,13 +134,12 @@ class PortraitsViewModel(
      * Портреты только выбранного аккаунта; пока аккаунт не выбран в окне выбора, сетка пустая.
      */
     private suspend fun loadPortraits() {
-        val repository = context.repository
         context.update { it.copy(loading = LoadProgress(), reorder = null) }
         try {
             accounts.refresh()
             val choice = accounts.state.value
-            val ids = if (choice.needsChoice) emptyList() else repository.portraitOrder(choice.selected)
-            repository.useAccount(choice.selected)
+            val ids = if (choice.needsChoice) emptyList() else portraits.portraitOrder(choice.selected)
+            portraits.useAccount(choice.selected)
             context.update {
                 it.copy(
                     portraits = ids.map { id -> PortraitItem(id, null) },
@@ -147,13 +148,13 @@ class PortraitsViewModel(
                 )
             }
             ids.forEachIndexed { index, id ->
-                val image = context.images.decode(repository.readPortrait(id))
+                val image = context.images.decode(portraits.readPortrait(id))
                 context.update { it.withPortraitImages(mapOf(id to image)).copy(loading = LoadProgress(index + 1, ids.size)) }
                 context.breathe()
             }
-            val decorations = repository.loadDecorations()
+            val decorations = portraits.loadDecorations()
             // пока аккаунт не выбран, копий нет: в корне папки копий лежат папки аккаунтов, а не копии
-            val backups = if (choice.needsChoice) emptyList() else repository.backups()
+            val backups = if (choice.needsChoice) emptyList() else context.backups.backups()
             context.update { it.copy(decorations = decorations, backups = backups) }
         } finally {
             context.update { it.copy(loading = null) }

@@ -1,7 +1,9 @@
 package com.layzen.bdotools.feature.portraitconstructor.data
 
-import com.layzen.bdotools.feature.portraitconstructor.domain.MemoChange
-import com.layzen.bdotools.feature.portraitconstructor.domain.parseCharacterMemos
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
+import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemoChange
+import com.layzen.bdotools.feature.portraitconstructor.domain.memo.parseCharacterMemos
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -18,7 +20,7 @@ class CharacterMemosRepositoryTest {
     @Test
     fun writesChangesAndKeepsOtherMemosAndBackup() = runTest {
         val storage = MemoryStorage().apply { lobby["acc"] = original }
-        val repository = CharacterMemosRepository(storage)
+        val repository = CharacterMemosRepositoryImpl(storage)
 
         val backup = repository.write("acc", listOf(MemoChange("2", "Золотой свин", "Свин"), MemoChange("3", "", "Рыбак")))
 
@@ -35,7 +37,7 @@ class CharacterMemosRepositoryTest {
         }
 
         val error = assertFailsWith<PortraitsException> {
-            CharacterMemosRepository(storage).write("acc", listOf(MemoChange("3", "", "Рыбак")))
+            CharacterMemosRepositoryImpl(storage).write("acc", listOf(MemoChange("3", "", "Рыбак")))
         }
 
         assertEquals(PortraitsError.GameRunning, error.error)
@@ -45,7 +47,7 @@ class CharacterMemosRepositoryTest {
 
     @Test
     fun missingLobbyFileIsReported() = runTest {
-        val error = assertFailsWith<PortraitsException> { CharacterMemosRepository(MemoryStorage()).memos("acc") }
+        val error = assertFailsWith<PortraitsException> { CharacterMemosRepositoryImpl(MemoryStorage()).memos("acc") }
         assertEquals(PortraitsError.LobbyNotFound, error.error)
     }
 }

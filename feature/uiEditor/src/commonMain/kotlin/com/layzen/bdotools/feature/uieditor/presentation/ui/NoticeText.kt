@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui
 
 import androidx.compose.runtime.Composable
-import com.layzen.bdotools.feature.uieditor.data.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsNotice
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_error_file_changed

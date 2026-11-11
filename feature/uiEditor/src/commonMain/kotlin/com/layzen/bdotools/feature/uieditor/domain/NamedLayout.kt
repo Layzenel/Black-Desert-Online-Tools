@@ -1,4 +1,0 @@
-package com.layzen.bdotools.feature.uieditor.domain
-
-/** Раскладка с названием — пресет пользователя или содержимое импортированного файла. От монитора не зависит. */
-data class NamedLayout(val name: String, val layout: AnchoredLayout)

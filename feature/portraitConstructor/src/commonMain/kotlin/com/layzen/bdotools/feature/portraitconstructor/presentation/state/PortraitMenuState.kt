@@ -16,5 +16,6 @@ internal data class PortraitMenuItem(
     val event: PortraitsEvent
 ) {
 
+    /** Событие пункта для портрета [characterId]; сейчас оно одно на все портреты. */
     fun getEvent(characterId: String): PortraitsEvent = event
 }

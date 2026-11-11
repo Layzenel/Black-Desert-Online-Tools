@@ -16,8 +16,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitOverlayLayout
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitTexture
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitOverlayLayout
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitTexture
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.PortraitDecorator
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.DecorationDialogState
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
