@@ -33,13 +33,18 @@ fun writeVisibility(text: String, visibility: Map<Int, Boolean>): String =
  * Записывает «Настройку быстрых слотов» в файл аккаунта. Если записи ещё нет, она добавляется первой в `<UIValue>`
  * с тем же переводом строки, что у файла; без `<UIValue>` текст не меняется.
  */
-fun writeCustomQuickSlots(text: String, enabled: Boolean): String {
-    if (CUSTOM_QUICK_SLOTS.containsMatchIn(text)) {
-        return CUSTOM_QUICK_SLOTS.replace(text) { it.value.replace(it.groupValues[1], enabled.toString()) }
+fun writeCustomQuickSlots(text: String, enabled: Boolean): String = writeUiValueBool(text, 1, CUSTOM_QUICK_SLOTS, enabled)
+
+/** Записывает «Разделение HP» в файл аккаунта (в файле хранится обратное значение, см. [COMBINED_HP]), как [writeCustomQuickSlots]. */
+fun writeSplitHp(text: String, enabled: Boolean): String = writeUiValueBool(text, 72, COMBINED_HP, !enabled)
+
+private fun writeUiValueBool(text: String, index: Int, entryRegex: Regex, value: Boolean): String {
+    if (entryRegex.containsMatchIn(text)) {
+        return entryRegex.replace(text) { it.value.replace(it.groupValues[1], value.toString()) }
     }
     val newline = if ("\r\n" in text) "\r\n" else "\n"
     val end = (Regex("""<UIValue\s[^>]*>""").find(text) ?: return text).range.last + 1
-    val entry = "$newline\t<Bool Index=\"1\" Value=\"$enabled\" StorageType=\"1\"/>"
+    val entry = "$newline\t<Bool Index=\"$index\" Value=\"$value\" StorageType=\"1\"/>"
     return text.substring(0, end) + entry + text.substring(end)
 }
 

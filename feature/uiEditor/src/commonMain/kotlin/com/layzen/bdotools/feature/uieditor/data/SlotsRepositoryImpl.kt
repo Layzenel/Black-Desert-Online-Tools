@@ -13,6 +13,7 @@ import com.layzen.bdotools.feature.uieditor.domain.game.parseGamePresets
 import com.layzen.bdotools.feature.uieditor.domain.game.writeChatVisibility
 import com.layzen.bdotools.feature.uieditor.domain.game.writeChats
 import com.layzen.bdotools.feature.uieditor.domain.game.writeCustomQuickSlots
+import com.layzen.bdotools.feature.uieditor.domain.game.writeSplitHp
 import com.layzen.bdotools.feature.uieditor.domain.game.writeUiData
 import com.layzen.bdotools.feature.uieditor.domain.game.writeVisibility
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
@@ -25,6 +26,15 @@ private const val PRESET_EXTENSION = ".json"
  * Что это за элемент, не выяснено; повторяем за игрой, чтобы файл был таким же, как после переключения в ней.
  */
 private const val QUICK_SLOTS_COMPANION_INDEX = 160
+
+/** `Index` панели «здоровье + PVP + гнев» слева вверху: игра показывает её при выключенном «Разделении HP». */
+private const val COMBINED_HP_INDEX = 138
+
+/**
+ * `Index` элемента без позиции, которому игра меняет `IsShow` вместе с «Разделением HP» (видим, пока оно включено).
+ * Что это за элемент, не выяснено; повторяем за игрой (сравнение файлов 2026-11-11).
+ */
+private const val SPLIT_HP_COMPANION_INDEX = 2
 private val UNSAFE_FILE_CHARS = Regex("""[\\/:*?"<>|]""")
 
 /** Сценарии работы с файлами: загрузка настроек игры, запись раскладки и пресеты пользователя. */
@@ -46,25 +56,30 @@ class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
         val game = loaded.presets.getValue(target)
         val entries = game.changedEntries(layout)
         val quickSlots = layout.customQuickSlots?.takeIf { game.quickSlotsChanged(layout) }
+        val splitHp = layout.splitHp?.takeIf { game.splitHpChanged(layout) }
         val chats = game.changedChats(layout)
         var text = writeUiData(loaded.file.text, entries, target)
         text = writeChats(text, chats, game.screen, target)
         if (quickSlots != null) text = writeCustomQuickSlots(text, quickSlots)
-        if (quickSlots != null && target == GamePreset.General) {
-            text = writeVisibility(text, mapOf(QUICK_SLOTS_COMPANION_INDEX to quickSlots))
-        }
+        if (splitHp != null) text = writeSplitHp(text, splitHp)
+        val companions = companionVisibility(quickSlots, splitHp)
+        if (target == GamePreset.General) text = writeVisibility(text, companions)
         val backup = storage.writeGameVariable(loaded.account, text, loaded.file.modified)
         if (target != GamePreset.General) return backup
         val visibility = entries
             .filter { it.isShow != game.uiData.getValue(it.index).isShow }
-            .associate { it.index to it.isShow } +
-            listOfNotNull(quickSlots?.let { QUICK_SLOTS_COMPANION_INDEX to it })
+            .associate { it.index to it.isShow } + companions
         val chatVisibility = chats.filter { (window, chat) -> chat.visible != game.chats[window]?.visible }.mapValues { it.value.visible }
         if (visibility.isNotEmpty() || chatVisibility.isNotEmpty()) {
             applyVisibility(loaded.account, visibility, chatWindowOrder(loaded.file.text), chatVisibility)
         }
         return backup
     }
+
+    /** `IsShow` элементов вне редактора, которые игра меняет вместе с изменёнными настройками ([quickSlots], [splitHp]). */
+    private fun companionVisibility(quickSlots: Boolean?, splitHp: Boolean?): Map<Int, Boolean> =
+        listOfNotNull(quickSlots?.let { QUICK_SLOTS_COMPANION_INDEX to it }).toMap() +
+            (splitHp?.let { mapOf(COMBINED_HP_INDEX to !it, SPLIT_HP_COMPANION_INDEX to it) } ?: emptyMap())
 
     /** Видимость в файлах персонажей: элементов — по `Index`, окон чата — по порядку их записей ([chatOrder]). */
     private suspend fun applyVisibility(account: String, visibility: Map<Int, Boolean>, chatOrder: List<Int>, chats: Map<Int, Boolean>) {

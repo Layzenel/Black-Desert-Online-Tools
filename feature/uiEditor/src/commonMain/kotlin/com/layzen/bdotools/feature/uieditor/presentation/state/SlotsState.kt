@@ -54,14 +54,15 @@ data class SlotsState(
     /** Есть ли в редакторе изменения, которых ещё нет в файле игры. */
     val hasChanges: Boolean
         get() = loaded?.game?.let {
-            it.changedEntries(layout).isNotEmpty() || it.quickSlotsChanged(layout) || it.changedChats(layout).isNotEmpty()
+            it.changedEntries(layout).isNotEmpty() || it.quickSlotsChanged(layout) || it.splitHpChanged(layout) ||
+                it.changedChats(layout).isNotEmpty()
         } == true
 
     /**
-     * Элементы, которые есть в файле игры и на экране при текущей «Настройке быстрых слотов»: их показывает редактор,
-     * скрытые — приглушёнными.
+     * Элементы, которые есть в файле игры и на экране при текущих «Настройке быстрых слотов» и «Разделении HP»:
+     * их показывает редактор, скрытые — приглушёнными.
      */
-    val slots: List<SlotId> get() = loaded?.game?.slots.orEmpty().filter { it.isActiveWith(layout.customQuickSlots) }
+    val slots: List<SlotId> get() = loaded?.game?.slots.orEmpty().filter { layout.isActive(it) }
 
     /** Сколько всего выбрано: элементов и окон чата. */
     val selectedCount: Int get() = selection.size + selectedChats.size

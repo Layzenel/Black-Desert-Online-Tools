@@ -185,7 +185,17 @@ internal class EditorController(private val context: SlotsContext) {
     /** Переключает «Настройку быстрых слотов»; элементы, пропавшие с экрана, снимаются с выбора. */
     fun setCustomQuickSlots(enabled: Boolean) {
         context.editLayout { it.withCustomQuickSlots(enabled) }
-        context.update { state -> state.copy(selection = state.selection.filterTo(mutableSetOf()) { it.isActiveWith(enabled) }) }
+        dropInactiveFromSelection()
+    }
+
+    /** Переключает «Разделение HP»; элементы, пропавшие с экрана, снимаются с выбора. */
+    fun setSplitHp(enabled: Boolean) {
+        context.editLayout { it.withSplitHp(enabled) }
+        dropInactiveFromSelection()
+    }
+
+    private fun dropInactiveFromSelection() = context.update { state ->
+        state.copy(selection = state.selection.filterTo(mutableSetOf()) { state.layout.isActive(it) })
     }
 
     /** Ставит слоту [id] заглушку надписи шириной [chars] символов; `null` убирает её. */

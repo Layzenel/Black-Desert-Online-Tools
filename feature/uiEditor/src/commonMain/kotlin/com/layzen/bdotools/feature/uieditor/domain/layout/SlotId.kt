@@ -23,11 +23,13 @@ data class SlotId(val group: SlotGroup, val number: Int) {
 
     /**
      * Есть ли элемент на экране игры при «Настройке быстрых слотов» [customQuickSlots] (см. [SlotLayout.customQuickSlots]):
-     * 20 слотов хотбара и «Быстрый слот» друг друга заменяют. `null` — как включённая.
+     * 20 слотов хотбара и «Быстрый слот» друг друга заменяют. При выключенном «Разделении HP» [splitHp]
+     * (см. [SlotLayout.splitHp]) нет здоровья, PVP и гнева. `null` — как включённая.
      */
-    fun isActiveWith(customQuickSlots: Boolean?): Boolean = when {
+    fun isActiveWith(customQuickSlots: Boolean?, splitHp: Boolean?): Boolean = when {
         group == SlotGroup.Hotbar -> customQuickSlots != false
         interfaceElement == InterfaceElement.QuickSlot -> customQuickSlots == false
+        interfaceElement in SPLIT_HP_ELEMENTS -> splitHp != false
         else -> true
     }
 }

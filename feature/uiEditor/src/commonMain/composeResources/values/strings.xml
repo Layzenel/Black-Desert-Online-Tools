@@ -57,6 +57,7 @@
     <string name="slots_legend_fixed">неподвижные</string>
     <string name="slots_fixed_tips">Подсказки</string>
     <string name="slots_fixed_menu_bar">Панель меню</string>
+    <string name="slots_fixed_combined_hp">Здоровье</string>
     <string name="slots_chat">Чат %1$d</string>
     <string name="slots_chat_take_out">Вынести в отдельный чат</string>
     <string name="slots_chat_bring_in">Внести в основной чат</string>
@@ -74,6 +75,8 @@
     <string name="slots_element_quick_slot">Быстрый слот</string>
     <string name="slots_custom_quick_slots">Настройка быстрых слотов</string>
     <string name="slots_custom_quick_slots_description">Как одноимённая настройка игры: включена — 20 отдельных слотов хотбара, выключена — одна панель «Быстрый слот».</string>
+    <string name="slots_split_hp">Разделение HP</string>
+    <string name="slots_split_hp_description">Как одноимённая настройка игры: включено — здоровье, PVP и гнев Черного духа отдельно, выключено — одна неподвижная панель слева вверху.</string>
     <string name="slots_legend_off_screen">за краем экрана</string>
     <string name="slots_undo">Отменить</string>
     <string name="slots_redo">Повторить</string>

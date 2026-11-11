@@ -11,7 +11,16 @@ private val RESOLUTION = Regex("""<Resolution\s+Width="(\d+)"\s+Height="(\d+)"""
 private val UI_SCALE = Regex("""<UiScale\s+Value="([\d.]+)"""")
 
 /** «Настройка быстрых слотов» — `<Bool Index="1">` в `<UIValue>` файла аккаунта; найдено сравнением файла до и после переключения. */
-internal val CUSTOM_QUICK_SLOTS = Regex("""<Bool\s+Index="1"\s+Value="(true|false)"""")
+internal val CUSTOM_QUICK_SLOTS = uiValueBool(1)
+
+/**
+ * «Разделение HP» — `<Bool Index="72">` в `<UIValue>`, `true`, когда настройка **выключена** (здоровье, PVP и гнев
+ * собраны в одну панель слева вверху). Найдено 2026-11-11 сравнением файла до и после переключения.
+ */
+internal val COMBINED_HP = uiValueBool(72)
+
+/** Запись `<Bool Index="[index]">` в `<UIValue>`; значение — первая группа. */
+internal fun uiValueBool(index: Int) = Regex("""<Bool\s+Index="$index"\s+Value="(true|false)"""")
 
 private val SLOT_INDICES = SlotGroup.entries.flatMap { it.uiIndices }.toSet()
 
@@ -33,7 +42,8 @@ fun parseGameVariable(text: String, preset: GamePreset = GamePreset.General): Ga
         .associateBy { it.index }
     require(uiData.isNotEmpty()) { "No slot ${preset.tag} found" }
     val customQuickSlots = CUSTOM_QUICK_SLOTS.find(text)?.groupValues?.get(1)?.toBoolean()
-    return GameVariable(screen, uiData, customQuickSlots, parseChats(entries, screen))
+    val splitHp = COMBINED_HP.find(text)?.groupValues?.get(1)?.toBoolean()?.not()
+    return GameVariable(screen, uiData, customQuickSlots, parseChats(entries, screen), splitHp)
 }
 
 /** Все наборы позиций, которые есть в файле: общий обязателен, пресеты 1–3 — если игра их сохраняла. */

@@ -77,6 +77,9 @@ sealed interface SlotsEvent {
     /** «Настройка быстрых слотов»: включена — 20 слотов хотбара, выключена — одна панель «Быстрый слот». */
     data class SetCustomQuickSlots(val enabled: Boolean) : SlotsEvent
 
+    /** «Разделение HP»: включено — здоровье, PVP и гнев отдельно, выключено — одна панель слева вверху. */
+    data class SetSplitHp(val enabled: Boolean) : SlotsEvent
+
     // Пресеты
     data object UseGameLayout : SlotsEvent
     data class UseBuiltIn(val layout: BuiltInLayout) : SlotsEvent
@@ -101,6 +104,9 @@ sealed interface SlotsEvent {
 
     /** «Настройка быстрых слотов» раскладки в превью: она и уйдёт в редактор или файл. */
     data class PreviewCustomQuickSlots(val enabled: Boolean) : SlotsEvent
+
+    /** «Разделение HP» раскладки в превью: оно и уйдёт в редактор или файл. */
+    data class PreviewSplitHp(val enabled: Boolean) : SlotsEvent
     data object PreviewUndo : SlotsEvent
     data object PreviewRedo : SlotsEvent
     data object ConfirmPreview : SlotsEvent

@@ -12,12 +12,14 @@ import com.layzen.bdotools.feature.uieditor.domain.screen.position
  * Всё, что фиче нужно из `gamevariable.xml`: экран игры, записи `UIData` элементов
  * (ключ — `Index`) и «Настройка быстрых слотов» ([SlotLayout.customQuickSlots]; `null` — её нет в файле).
  * Элемента без записи в файле нет в [uiData]. [chats] — видимые в игре окна чата по `WindowIndex`.
+ * [splitHp] — «Разделение HP» ([SlotLayout.splitHp]; `null` — её нет в файле).
  */
 data class GameVariable(
     val screen: ScreenSpace,
     val uiData: Map<Int, UiData>,
     val customQuickSlots: Boolean? = null,
     val chats: Map<Int, ChatWindow> = emptyMap(),
+    val splitHp: Boolean? = null,
 ) {
 
     /** Элементы, у которых есть запись в файле. */
@@ -30,11 +32,15 @@ data class GameVariable(
             hidden = slots.filterTo(mutableSetOf()) { it.hasVisibilityToggle && !uiData.getValue(it.uiIndex).isShow },
             customQuickSlots = customQuickSlots,
             chats = chats,
+            splitHp = splitHp,
         )
 
     /** Задаёт ли [target] «Настройку быстрых слотов» не такую, как в файле. */
     fun quickSlotsChanged(target: SlotLayout): Boolean =
         target.customQuickSlots != null && target.customQuickSlots != customQuickSlots
+
+    /** Задаёт ли [target] «Разделение HP» не такое, как в файле. */
+    fun splitHpChanged(target: SlotLayout): Boolean = target.splitHp != null && target.splitHp != splitHp
 
     /** Окна чата из [target], которые отличаются от файла; окон, которых нет в файле, здесь нет. */
     fun changedChats(target: SlotLayout): Map<Int, ChatWindow> =
