@@ -22,6 +22,8 @@
 | Файлы и папки в `Black Desert` (`UserCache`, `FaceTexture`, копии, избранное, пресеты, `BDO Tools`), выбор аккаунта | `multi-account` и `tool-folder` |
 | Чтение, поиск и разбор файлов игры в `Документы\Black Desert` (`gamevariable.xml`, `UIData`, `UIValue`), поиск поля настройки игры | `game-files` |
 | Широкий поиск по коду, сборка или тесты с длинным выводом, ревью, задача из независимых частей | `subagent-delegation` |
+| Освободить место, почистить `.claude/worktrees` | `worktree-cleanup` |
+| Ветка влита в `main` (PR смержен), удалить влитую ветку или старые ветки | `branch-cleanup` |
 
 Если меняешь дизайн-систему (`platform/uikit`), обнови таблицу компонентов в `bdo-design-system`.
 
