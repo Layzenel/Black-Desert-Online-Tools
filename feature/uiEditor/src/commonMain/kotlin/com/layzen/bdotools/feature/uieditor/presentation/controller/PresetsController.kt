@@ -19,7 +19,8 @@ internal class PresetsController(
     /** Возвращает в редактор раскладку, прочитанную из игры. */
     fun useGameLayout() {
         val game = context.current.loaded?.game ?: return
-        context.editLayout(PresetRef.Game) { game.layout }
+        // В файле аккаунта навыков нет: навыки и надписи персонажа в редакторе остаются
+        context.editLayout(PresetRef.Game) { it.withSkillsOf(game.layout) }
     }
 
     /** Накладывает встроенную раскладку [layout] на текущую. */
@@ -45,7 +46,9 @@ internal class PresetsController(
         val account = context.current.loaded?.account
         if (name.isEmpty() || screen == null || account == null) return
         context.launch(busy = true) {
-            val presets = interactor.save(account, NamedLayout(name, AnchoredLayout.of(context.current.layout, screen)))
+            // Пресет — только расположение: навыки и надписи принадлежат персонажу, пресет их не меняет
+            val layout = AnchoredLayout.of(context.current.layout, screen).withSkillsIncluded(withSkills = false, withMemos = false)
+            val presets = interactor.save(account, NamedLayout(name, layout))
             context.update {
                 it.copy(presets = presets, activePreset = PresetRef.User(name), dialog = null, notice = SlotsNotice.PresetSaved(name))
             }

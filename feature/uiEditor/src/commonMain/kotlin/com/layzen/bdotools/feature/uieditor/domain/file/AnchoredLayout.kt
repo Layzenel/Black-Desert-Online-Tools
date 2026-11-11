@@ -29,6 +29,10 @@ data class AnchoredLayout(
     val chats: Map<Int, AnchoredChat> = emptyMap(),
     /** «Разделение HP», см. [SlotLayout.splitHp]. */
     val splitHp: Boolean? = null,
+    /** Навыки слотов перезарядки, см. [SlotLayout.skills]. */
+    val skills: Map<SlotId, Int>? = null,
+    /** Надписи навыков, см. [SlotLayout.memos]. */
+    val memos: Map<Int, String>? = null,
 ) {
 
     /** Ставит раскладку на экран [screen]: каждое смещение от якоря превращается в позицию от центра экрана. */
@@ -39,19 +43,32 @@ data class AnchoredLayout(
         customQuickSlots,
         chats.mapValues { it.value.placeOn(screen) },
         splitHp,
+        skills,
+        memos,
     )
 
     /**
      * Только элементы [ids] и окна чата [chatWindows]: так импортируется и экспортируется часть раскладки.
-     * Настройки быстрых слотов и разделения HP остаются.
+     * Настройки быстрых слотов и разделения HP остаются; надписи — только навыков, которые остались в слотах.
      */
-    fun only(ids: Set<SlotId>, chatWindows: Set<Int>) = AnchoredLayout(
-        positions.filterKeys { it in ids },
-        hidden intersect ids,
-        labels.filterKeys { it in ids },
-        customQuickSlots,
-        chats.filterKeys { it in chatWindows },
-        splitHp,
+    fun only(ids: Set<SlotId>, chatWindows: Set<Int>): AnchoredLayout {
+        val keptSkills = skills?.filterKeys { it in ids }
+        return AnchoredLayout(
+            positions.filterKeys { it in ids },
+            hidden intersect ids,
+            labels.filterKeys { it in ids },
+            customQuickSlots,
+            chats.filterKeys { it in chatWindows },
+            splitHp,
+            keptSkills,
+            keptSkills?.let { kept -> memos?.filterKeys { it in kept.values } },
+        )
+    }
+
+    /** Без навыков и надписей ([withSkills] = `false`) или только без надписей ([withMemos] = `false`). */
+    fun withSkillsIncluded(withSkills: Boolean, withMemos: Boolean) = copy(
+        skills = skills.takeIf { withSkills },
+        memos = memos.takeIf { withSkills && withMemos },
     )
 
     /** Переключает «Настройку быстрых слотов» вместе с видимостью хотбара и «Быстрого слота», см. [hiddenWithCustomQuickSlots]. */
@@ -92,6 +109,8 @@ data class AnchoredLayout(
             customQuickSlots = layout.customQuickSlots,
             chats = layout.chats.mapValues { AnchoredChat.of(it.value, screen) },
             splitHp = layout.splitHp,
+            skills = layout.skills,
+            memos = layout.memos,
         )
     }
 }

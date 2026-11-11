@@ -17,6 +17,12 @@ private const val CACHE = "UserCache"
 private const val FACES = "FaceTexture"
 private const val GAME_VARIABLE_FILE = "gamevariable.xml"
 
+// Подписи персонажей — в файлах украшений «Конструктора портретов»: BDO Tools\portraitConstructor\<аккаунт>\Current portraits
+private const val TOOL = "BDO Tools"
+private const val PORTRAITS = "portraitConstructor"
+private const val CURRENT_PORTRAITS = "Current portraits"
+private const val DECORATION_EXTENSION = ".txt"
+
 /** Аккаунты на диске через `java.nio.file`; [folder] — выбранная папка `Black Desert` или `null`. */
 internal class DesktopAccountFiles(private val folder: () -> Path?) : AccountFiles {
 
@@ -31,6 +37,14 @@ internal class DesktopAccountFiles(private val folder: () -> Path?) : AccountFil
 
     override suspend fun readPortrait(characterId: String): ByteArray? = withContext(Dispatchers.IO) {
         folder()?.let { it / FACES / "$characterId.bmp" }?.takeIf { it.isRegularFile() }?.readBytes()
+    }
+
+    override suspend fun readPortraitDecorations(accountId: String): Map<String, String> = withContext(Dispatchers.IO) {
+        val dir = folder()?.let { it / TOOL / PORTRAITS / accountId / CURRENT_PORTRAITS }?.takeIf { it.isDirectory() }
+            ?: return@withContext emptyMap()
+        dir.listDirectoryEntries()
+            .filter { it.isRegularFile() && it.name.endsWith(DECORATION_EXTENSION, ignoreCase = true) }
+            .associate { it.name.dropLast(DECORATION_EXTENSION.length) to it.readText() }
     }
 }
 

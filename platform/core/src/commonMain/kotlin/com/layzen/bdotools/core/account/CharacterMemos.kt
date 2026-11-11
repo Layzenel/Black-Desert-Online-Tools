@@ -1,4 +1,4 @@
-package com.layzen.bdotools.feature.portraitconstructor.domain.memo
+package com.layzen.bdotools.core.account
 
 // Заметки персонажей из окна «Просмотр персонажей аккаунта» (карта → кнопка персонажей) в `gameVariable_lobby.xml`:
 // <CharacterMemo Version="1">
@@ -29,17 +29,6 @@ fun withCharacterMemos(file: ByteArray, memos: Map<String, String>): ByteArray {
     if (block == null) return file + text + LINE_BREAK.encodeToByteArray()
     return file.copyOfRange(0, block.first) + text + file.copyOfRange(block.last + 1, file.size)
 }
-
-/**
- * Что изменится в заметках, если записать в них надписи [captions] (ID → надпись, в порядке страницы).
- * Персонажи без надписи и с уже совпадающей заметкой не попадают в список.
- */
-fun memoChanges(captions: List<Pair<String, String>>, memos: Map<String, String>): List<MemoChange> =
-    captions.mapNotNull { (id, caption) ->
-        val new = caption.trim()
-        val old = memos[id].orEmpty()
-        if (new.isEmpty() || new == old) null else MemoChange(id, old, new)
-    }
 
 private fun memoBlockText(version: String, memos: Map<String, String>): String {
     if (memos.isEmpty()) return "$BLOCK_TAG\"$version\"/>"

@@ -18,6 +18,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.PreviewMode
+import com.layzen.bdotools.feature.uieditor.presentation.state.SkillsState
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
@@ -40,11 +41,12 @@ import org.jetbrains.compose.resources.stringResource
  * справа — как раскладка ляжет на экран. При экспорте над элементами — монитор для просмотра (по умолчанию
  * экран игры [gameScreen]). Импортируются или экспортируются только отмеченные элементы. [background] — подложка
  * из редактора, [backgroundShown] — включена ли она, [backgroundDim] — её затенение в процентах; переключатель стоит среди кнопок слева.
- * Ctrl+Z отменяет последнюю отметку, Ctrl+Shift+Z и Ctrl+Y повторяют её.
+ * [skills] — справочник и иконки для навыков в слотах. Ctrl+Z отменяет последнюю отметку, Ctrl+Shift+Z и Ctrl+Y повторяют её.
  */
 @Composable
 internal fun LayoutPreviewDialog(
     dialog: SlotsDialog.Preview,
+    skills: SkillsState,
     gameScreen: ScreenSpace,
     background: ImageBitmap?,
     backgroundShown: Boolean,
@@ -75,6 +77,7 @@ internal fun LayoutPreviewDialog(
                 val layout = dialog.layout.layout
                 QuickSlotSettings(layout.customQuickSlots) { onEvent(SlotsEvent.PreviewCustomQuickSlots(it)) }
                 SplitHpSettings(layout.splitHp) { onEvent(SlotsEvent.PreviewSplitHp(it)) }
+                PreviewSkillSettings(dialog, onEvent)
                 SectionDivider()
                 PreviewElementList(layout.positions.keys.filter { layout.isActive(it) }.toSet(), dialog.included, onEvent)
                 PreviewChatList(layout.chats.keys, dialog.includedChats, onEvent)
@@ -83,7 +86,8 @@ internal fun LayoutPreviewDialog(
         ) {
             Column(Modifier.fillMaxSize().padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
                 PreviewCanvas(
-                    dialog.layout.layout,
+                    dialog.layout.layout.withSkillsIncluded(dialog.includeSkills, dialog.includeMemos),
+                    skills,
                     dialog.included,
                     dialog.includedChats,
                     dialog.screen,

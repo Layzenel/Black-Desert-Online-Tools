@@ -7,6 +7,7 @@ import com.layzen.bdotools.feature.uieditor.domain.game.LoadedGame
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
 
 /**
  * Состояние страницы раскладки слотов.
@@ -25,6 +26,8 @@ import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
  * @property snapGuides линии, к которым двигаемый элемент прилип сейчас; пусты вне перетаскивания.
  * @property backgroundShown видна ли подложка [background] на холсте: её можно спрятать, не убирая картинку.
  * @property backgroundDim затенение подложки в процентах, общее для редактора и превью; 0 — без затенения.
+ * @property skills навыки выбранного персонажа в слотах перезарядки.
+ * @property skillDrag навык, который сейчас перетаскивают между слотами (Shift+ЛКМ); `null` — не тащат.
  */
 data class SlotsState(
     val access: FolderAccess? = null,
@@ -50,13 +53,29 @@ data class SlotsState(
     val dialog: SlotsDialog? = null,
     val busy: Boolean = false,
     val notice: SlotsNotice? = null,
+    val skills: SkillsState = SkillsState(),
+    val skillDrag: SkillDrag? = null,
 ) {
     /** Есть ли в редакторе изменения, которых ещё нет в файле игры. */
     val hasChanges: Boolean
         get() = loaded?.game?.let {
             it.changedEntries(layout).isNotEmpty() || it.quickSlotsChanged(layout) || it.splitHpChanged(layout) ||
-                it.changedChats(layout).isNotEmpty()
+                it.changedChats(layout).isNotEmpty() || skillsChanged
         } == true
+
+    /**
+     * Класс навыков в редакторе (ключ `CharacterClass.key`): по навыкам в слотах, а если по ним не понять — по файлу
+     * выбранного персонажа. `null` — не определить: тогда и умение не выбрать.
+     */
+    val skillsClass: String?
+        get() = skills.catalog?.classOf(layout.skills?.values.orEmpty())
+            ?: skills.selectedCharacter?.let(skills::classOf)
+
+    /** Стойка по навыкам в слотах редактора; `null` — стоят только общие навыки, подходят обе. */
+    val skillsStance: SkillStance? get() = skills.catalog?.stanceOf(layout.skills?.values.orEmpty())
+
+    /** Отличаются ли навыки и надписи редактора от файла выбранного персонажа: «Применить» запишет их ему. */
+    val skillsChanged: Boolean get() = skills.selectedCharacter?.let { layout.skillsDifferFrom(it) } == true
 
     /**
      * Элементы, которые есть в файле игры и на экране при текущих «Настройке быстрых слотов» и «Разделении HP»:

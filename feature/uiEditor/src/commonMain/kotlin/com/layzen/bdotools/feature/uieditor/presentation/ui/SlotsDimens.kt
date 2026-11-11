@@ -25,6 +25,15 @@ internal object SlotsDimens {
     val helpMaxHeight = 560.dp
     val chatTabIcon = 14.dp
     val chatTabPaddingVertical = 2.dp
+    val portraitWidth = 40.dp
+    val portraitHeight = 52.dp
+    val skillIcon = 32.dp
+    val skillListHeight = 420.dp
+    val skillNumberPadding = 2.dp
+    val classIcon = 22.dp
+    val stanceSelectWidth = 160.dp
+    val skillTooltipWidth = 380.dp
+    val skillTooltipIcon = 44.dp
     const val GRID_ALPHA = 0.12f
     const val GRID_MAJOR_ALPHA = 0.22f
     const val AXIS_ALPHA = 0.7f
@@ -34,6 +43,12 @@ internal object SlotsDimens {
     const val HIDDEN_ALPHA = 0.35f
     const val MARQUEE_FILL_ALPHA = 0.12f
     const val LABEL_FILL_ALPHA = 0.3f
+
+    /** Затемнение подложки номера слота поверх иконки навыка. */
+    const val SKILL_NUMBER_BACKDROP_ALPHA = 0.65f
+
+    /** Прозрачность иконки навыка, который тащат между слотами. */
+    const val SKILL_DRAG_ALPHA = 0.8f
 
     /** Какую долю окна приложения занимает превью импорта и экспорта. */
     const val PREVIEW_WIDTH_SHARE = 0.94f
@@ -48,4 +63,10 @@ internal object SlotsDimens {
     /** Каждая какая линия сетки толще: 5 — для мелкого шага, 2 — для шага игры. */
     const val MAJOR_EVERY_FINE = 5
     const val MAJOR_EVERY_COARSE = 2
+
+    /** Высота уменьшенного портрета в памяти, px: вдвое больше показанного, чтобы был чётким на экранах с масштабом. */
+    const val PORTRAIT_THUMBNAIL_HEIGHT = 104
+
+    /** Высота букв надписи под слотом — доля высоты её полосы. */
+    const val MEMO_TEXT_SHARE = 0.85f
 }

@@ -17,9 +17,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntOffset
 import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
 import com.layzen.bdotools.feature.uieditor.domain.layout.FixedElement
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
+import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillSlotTooltip
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import kotlin.math.roundToInt
@@ -92,8 +95,14 @@ private fun CanvasContent(
     }
     state.slots.forEach { id ->
         val position = state.layout[id] ?: return@forEach
-        state.layout.labels[id]?.let { chars ->
-            SlotLabelStub(id, position, screen, scale, chars, state.layout.isVisible(id))
+        // У слота с навыком — его надпись из игры; у пустого — заглушка надписи шириной в символах
+        val skill = state.layout.skillAt(id)
+        val memo = state.layout.memoAt(id)
+        when {
+            memo != null -> SlotLabelStub(id, position, screen, scale, memo.length.coerceIn(SlotLabel.CHARS_RANGE), state.layout.isVisible(id), memo)
+            skill == null -> state.layout.labels[id]?.let { chars ->
+                SlotLabelStub(id, position, screen, scale, chars, state.layout.isVisible(id))
+            }
         }
         SlotFrame(
             id = id,
@@ -105,7 +114,16 @@ private fun CanvasContent(
             visible = state.layout.isVisible(id),
             onEvent = onEvent,
             onPress = onPress,
+            skillIcon = skill?.let(state.skills::iconOf),
+            // Слоты, выбранные группой, тащатся вместе как слоты: навык по одному слоту — только без группы
+            skillDraggable = skill != null && state.selection.size <= 1,
+            pickSkillOnDoubleClick = id.group == SlotGroup.Cooldown && state.skills.catalog != null && state.skillsClass != null,
+            skillTooltip = skill?.takeIf { state.skills.skill(it) != null && state.skillDrag == null }
+                ?.let { skillNo -> { SkillSlotTooltip(skillNo, state.skills, onEvent) } },
         )
+    }
+    state.skillDrag?.let { drag ->
+        state.layout.skillAt(drag.from)?.let(state.skills::iconOf)?.let { SkillDragGhost(drag, it, screen, scale) }
     }
     SnapGuidesLayer(state.snapGuides, screen, scale, Modifier.fillMaxSize())
 }

@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotPosition
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
@@ -23,7 +24,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Выбранное на холсте: у одного слота — координаты с точным вводом, у одного окна чата — ещё и размер,
+ * Выбранное на холсте: у одного слота — координаты с точным вводом (у слота перезарядки — ещё навык выбранного
+ * персонажа), у одного окна чата — ещё и размер,
  * у нескольких — сколько выбрано и отдаление групп. Ничего не выбрано — подсказка.
  */
 @Composable
@@ -36,7 +38,10 @@ internal fun SlotInspector(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
         val window = state.selectedChats.singleOrNull()?.takeIf { state.selection.isEmpty() }
         val chat = window?.let { state.layout.chats[it] }
         when {
-            slot != null && position != null && screen != null -> SlotCoordinates(slot, position, screen.crosshair, onEvent)
+            slot != null && position != null && screen != null -> {
+                SlotCoordinates(slot, position, screen.crosshair, onEvent)
+                if (slot.group == SlotGroup.Cooldown && state.layout.skills != null) SkillDetails(slot, state.layout, state.skills)
+            }
             window != null && chat != null && screen != null -> ChatInspector(window, chat, screen, onEvent)
             state.selectedCount > 1 -> {
                 DescriptionText(stringResource(Res.string.slots_selection_many, state.selectedCount))

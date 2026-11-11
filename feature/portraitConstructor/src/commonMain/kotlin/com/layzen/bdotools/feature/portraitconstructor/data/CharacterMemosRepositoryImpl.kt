@@ -4,8 +4,8 @@ import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsErr
 import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
 import com.layzen.bdotools.feature.portraitconstructor.domain.memo.CharacterMemosRepository
 import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemoChange
-import com.layzen.bdotools.feature.portraitconstructor.domain.memo.parseCharacterMemos
-import com.layzen.bdotools.feature.portraitconstructor.domain.memo.withCharacterMemos
+import com.layzen.bdotools.core.account.parseCharacterMemos
+import com.layzen.bdotools.core.account.withCharacterMemos
 
 /**
  * Заметки персонажей из окна «Просмотр персонажей аккаунта» игры (`UserCache\<аккаунт>\gameVariable_lobby.xml`).

@@ -18,6 +18,9 @@ import com.layzen.bdotools.feature.uieditor.domain.game.writeUiData
 import com.layzen.bdotools.feature.uieditor.domain.game.writeVisibility
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
+import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
+import com.layzen.bdotools.feature.uieditor.domain.skill.parseCharacterSkills
+import com.layzen.bdotools.feature.uieditor.domain.skill.writeCharacterSkills
 
 private const val PRESET_EXTENSION = ".json"
 
@@ -89,6 +92,21 @@ class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
             if (changed != text) storage.writeCharacterFile(account, path, changed)
         }
     }
+
+    override suspend fun characterSkills(account: String): List<CharacterSkills> =
+        storage.characterFiles(account).map { path ->
+            parseCharacterSkills(characterNoOf(path), storage.readCharacterFile(account, path))
+        }
+
+    override suspend fun writeCharacterSkills(account: String, characterNo: String, slots: Map<Int, Int>, memos: Map<Int, String>) {
+        val path = storage.characterFiles(account).firstOrNull { characterNoOf(it) == characterNo } ?: return
+        val text = storage.readCharacterFile(account, path)
+        val changed = writeCharacterSkills(text, slots, memos)
+        if (changed != text) storage.writeCharacterFile(account, path, changed)
+    }
+
+    /** Путь файла персонажа — `11/<CharacterNo>/gamevariable.xml`: номер персонажа — имя папки. */
+    private fun characterNoOf(path: String) = path.split('/')[1]
 
     override suspend fun presets(account: String): List<NamedLayout> = storage.presetFiles(account).mapNotNull { name ->
         try {

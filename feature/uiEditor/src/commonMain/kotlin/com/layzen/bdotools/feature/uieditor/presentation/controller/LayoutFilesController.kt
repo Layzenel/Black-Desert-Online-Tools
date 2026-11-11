@@ -24,6 +24,7 @@ private const val DEFAULT_EXPORT_NAME = "slot-layout"
 internal class LayoutFilesController(
     private val context: SlotsContext,
     private val interactor: LayoutFilesInteractor,
+    private val skills: SkillsController,
 ) {
 
     /** Открывает диалог импорта с пустым текстом. */
@@ -87,18 +88,67 @@ internal class LayoutFilesController(
         it.copy(layout = it.layout.copy(layout = it.layout.layout.withSplitHp(enabled)))
     }
 
+    /** «Умения в слотах» в превью: с навыками слотов перезарядки или без них (тогда и без надписей). */
+    fun setPreviewSkills(enabled: Boolean) = updatePreview { it.copy(includeSkills = enabled) }
+
+    /** «Заметки под слотами» в превью: с надписями навыков или без них. */
+    fun setPreviewMemos(enabled: Boolean) = updatePreview { it.copy(includeMemos = enabled) }
+
+    /** Отмечает или снимает персонажа [characterNo] в импорте с навыками. */
+    fun toggleImportCharacter(characterNo: String) = context.update {
+        val dialog = it.dialog as? SlotsDialog.ImportCharacter ?: return@update it
+        val chosen = if (characterNo in dialog.chosen) dialog.chosen - characterNo else dialog.chosen + characterNo
+        it.copy(dialog = dialog.copy(chosen = chosen))
+    }
+
+    /**
+     * Импорт с навыками отмеченным персонажам. В редакторе — выбранный сейчас, если он отмечен, иначе первый
+     * отмеченный в окне выбора персонажа; остальным «Применить» запишет те же навыки и надписи.
+     */
+    fun confirmImportCharacters() {
+        val dialog = context.current.dialog as? SlotsDialog.ImportCharacter ?: return
+        val state = context.current.skills
+        val main = state.selected?.takeIf { it in dialog.chosen }
+            ?: state.characters.firstOrNull { it.characterNo in dialog.chosen }?.characterNo
+            ?: return
+        skills.select(main)
+        skills.alsoApplyTo(dialog.chosen)
+        import(dialog.layout)
+    }
+
+    /** Импорт без навыков и надписей: у выбранного персонажа они не меняются. */
+    fun importWithoutSkills() {
+        val dialog = context.current.dialog as? SlotsDialog.ImportCharacter ?: return
+        import(dialog.layout.copy(layout = dialog.layout.layout.withSkillsIncluded(withSkills = false, withMemos = false)))
+    }
+
     /** Отменяет последнюю правку раскладки в превью. */
     fun undoPreview() = updatePreview { it.undone() }
 
     /** Повторяет отменённую правку раскладки в превью. */
     fun redoPreview() = updatePreview { it.redone() }
 
-    /** Подтверждает превью: берёт отмеченные элементы и либо импортирует их в редактор, либо скачивает файл экспорта. */
+    /**
+     * Подтверждает превью: берёт отмеченные элементы и либо импортирует их в редактор, либо скачивает файл экспорта.
+     * Импорт с навыками сначала спрашивает, какому персонажу их поставить: навыки принадлежат персонажу.
+     */
     fun confirmPreview() {
         val preview = context.current.dialog as? SlotsDialog.Preview ?: return
-        val layout = preview.layout.copy(layout = preview.layout.layout.only(preview.included, preview.includedChats))
+        val chosen = preview.layout.layout.only(preview.included, preview.includedChats)
+            .withSkillsIncluded(preview.includeSkills, preview.includeMemos)
+        val layout = preview.layout.copy(layout = chosen)
         when (preview.mode) {
-            PreviewMode.Import -> import(layout)
+            PreviewMode.Import -> {
+                val importedSkills = chosen.skills
+                if (importedSkills == null || context.current.skills.characters.isEmpty()) import(layout)
+                else {
+                    val skillsState = context.current.skills
+                    val classKey = skillsState.catalog?.classOf(importedSkills.values)
+                    // Выбранный в редакторе персонаж того же класса отмечен сразу: чаще всего импортируют ему
+                    val chosen = setOfNotNull(skillsState.selectedCharacter?.takeIf { skillsState.fitsClass(it, classKey) }?.characterNo)
+                    context.update { it.copy(dialog = SlotsDialog.ImportCharacter(layout, classKey, chosen)) }
+                }
+            }
             PreviewMode.Export -> context.launch {
                 interactor.export(layout)
                 context.update { it.copy(dialog = null) }
@@ -123,8 +173,11 @@ internal class LayoutFilesController(
         openPreview(PreviewMode.Import, imported.copy(layout = imported.layout.copy(customQuickSlots = quickSlots, splitHp = splitHp, chats = ownChats)), screen)
     }
 
-    private fun openPreview(mode: PreviewMode, layout: NamedLayout, screen: ScreenSpace) = context.update {
-        it.copy(dialog = SlotsDialog.Preview(mode, layout, screen, layout.layout.positions.keys, layout.layout.chats.keys))
+    private fun openPreview(mode: PreviewMode, layout: NamedLayout, screen: ScreenSpace) {
+        context.update {
+            it.copy(dialog = SlotsDialog.Preview(mode, layout, screen, layout.layout.positions.keys, layout.layout.chats.keys))
+        }
+        layout.layout.skills?.let { skills.loadIcons(it.values) }
     }
 
     /**

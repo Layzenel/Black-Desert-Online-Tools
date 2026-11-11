@@ -1,4 +1,4 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 
 /** Панели, которые выезжают сбоку от контекстного меню холста. */
-internal enum class ContextSubmenu { Align, DistributeHorizontal, DistributeVertical, SnapDistance, SnapStep, LabelWidth }
+internal enum class ContextSubmenu { Align, DistributeHorizontal, DistributeVertical, SnapDistance, SnapStep, LabelWidth, Memo }

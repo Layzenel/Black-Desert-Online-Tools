@@ -7,7 +7,7 @@ import com.layzen.bdotools.uikit.components.SectionDivider
 
 /**
  * Меню слева (аккаунт выбирается в верхней навигации): списки «Пресеты в игре», «Готовые пресеты», «Мои пресеты»;
- * «Настройка быстрых слотов», «Разделение HP» и сетка, подложка и координаты выбранного.
+ * персонаж, чьи навыки видны в слотах перезарядки; «Настройка быстрых слотов», «Разделение HP» и сетка, подложка и координаты выбранного.
  * Прокрутку и отступы даёт страница `ToolPage`.
  */
 @Composable
@@ -15,6 +15,10 @@ internal fun SlotsSidebar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     GamePresetSettings(state, onEvent)
     PresetList(state, onEvent)
     SectionDivider()
+    if (state.skills.characters.isNotEmpty()) {
+        CharacterPicker(state.skills, onEvent)
+        SectionDivider()
+    }
     if (state.loaded != null) {
         QuickSlotSettings(state.layout.customQuickSlots) { onEvent(SlotsEvent.SetCustomQuickSlots(it)) }
         SplitHpSettings(state.layout.splitHp) { onEvent(SlotsEvent.SetSplitHp(it)) }

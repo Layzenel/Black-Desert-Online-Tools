@@ -3,6 +3,10 @@ package com.layzen.bdotools.feature.uieditor.di
 import com.layzen.bdotools.feature.uieditor.data.SlotsRepositoryImpl
 import com.layzen.bdotools.feature.uieditor.data.SlotsStorage
 import com.layzen.bdotools.feature.uieditor.data.createSlotsFiles
+import com.layzen.bdotools.feature.uieditor.data.skill.SkillCatalogRepositoryImpl
+import com.layzen.bdotools.feature.uieditor.data.skill.createSkillDownloads
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillCatalogRepository
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillsInteractor
 import com.layzen.bdotools.feature.uieditor.domain.file.DeviceFiles
 import com.layzen.bdotools.feature.uieditor.domain.file.LayoutFilesInteractor
 import com.layzen.bdotools.feature.uieditor.domain.game.GameSettingsInteractor
@@ -20,6 +24,9 @@ import org.koin.dsl.module
 val slotsModule = module {
     single { createSlotsFiles() } binds arrayOf(SlotsStorage::class, DeviceFiles::class)
     singleOf(::SlotsRepositoryImpl) bind SlotsRepository::class
+    single { createSkillDownloads() }
+    singleOf(::SkillCatalogRepositoryImpl) bind SkillCatalogRepository::class
+    factoryOf(::SkillsInteractor)
     factoryOf(::GameSettingsInteractor)
     factoryOf(::PresetsInteractor)
     factoryOf(::LayoutFilesInteractor)

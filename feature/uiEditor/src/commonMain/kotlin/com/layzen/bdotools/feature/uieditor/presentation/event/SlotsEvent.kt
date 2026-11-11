@@ -8,6 +8,7 @@ import com.layzen.bdotools.feature.uieditor.domain.preset.BuiltInLayout
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenArea
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
 import com.layzen.bdotools.feature.uieditor.presentation.state.GridStep
 
 /** Действия пользователя на странице слотов. Сдвиги — в UI-px игры, а не в пикселях страницы. */
@@ -80,6 +81,54 @@ sealed interface SlotsEvent {
     /** «Разделение HP»: включено — здоровье, PVP и гнев отдельно, выключено — одна панель слева вверху. */
     data class SetSplitHp(val enabled: Boolean) : SlotsEvent
 
+    /** Чьи навыки показать в слотах перезарядки: `CharacterNo` или `null` — «Не выбран». */
+    data class SelectCharacter(val characterNo: String?) : SlotsEvent
+
+    // Навыки и надписи слотов перезарядки
+    /** Открыть окно надписи навыка в слоте [id]: добавить или изменить. */
+    data class OpenMemo(val id: SlotId) : SlotsEvent
+    data class MemoChanged(val text: String) : SlotsEvent
+    data object ConfirmMemo : SlotsEvent
+
+    /** Убрать надпись навыка в слоте [id]. */
+    data class DeleteMemo(val id: SlotId) : SlotsEvent
+
+    /** Открыть выбор навыка для слота перезарядки [id]. */
+    data class OpenSkillPicker(val id: SlotId) : SlotsEvent
+    data class SkillQueryChanged(val query: String) : SlotsEvent
+
+    /** Навыки какой стойки показать в выборе. */
+    data class SkillStanceChanged(val stance: SkillStance) : SlotsEvent
+
+    /** «Скрыть умения «Абсолют»» у наследия: прятать «Абсолют», у которого есть вариант «Мощь». */
+    data class SkillHideAbsoluteChanged(val hide: Boolean) : SlotsEvent
+
+    data class PickSkill(val skillNo: Int) : SlotsEvent
+
+    /** Shift+ЛКМ по слоту перезарядки [id] с навыком и перетаскивание: навык едет за курсором. */
+    data class SkillDragStart(val id: SlotId) : SlotsEvent
+
+    /** Курсор с навыком сдвинулся на [dx], [dy] UI-px. */
+    data class SkillDragBy(val dx: Float, val dy: Float) : SlotsEvent
+
+    /** Навык отпустили: встаёт в слот под курсором, навык оттуда — на его место. */
+    data object SkillDragEnd : SlotsEvent
+
+    /** Тултипу нужны подробности навыка [skillNo]. */
+    data class RequestSkillDetails(val skillNo: Int) : SlotsEvent
+
+    /** Очистить слот перезарядки [id]. */
+    data class RemoveSkill(val id: SlotId) : SlotsEvent
+
+    /** Отметить или снять персонажа [characterNo] в импорте навыков. */
+    data class ToggleImportCharacter(val characterNo: String) : SlotsEvent
+
+    /** Импорт с навыками отмеченным персонажам: их навыки заменяются импортом. */
+    data object ConfirmImportCharacters : SlotsEvent
+
+    /** Импорт без навыков и надписей. */
+    data object ImportWithoutSkills : SlotsEvent
+
     // Пресеты
     data object UseGameLayout : SlotsEvent
     data class UseBuiltIn(val layout: BuiltInLayout) : SlotsEvent
@@ -107,6 +156,12 @@ sealed interface SlotsEvent {
 
     /** «Разделение HP» раскладки в превью: оно и уйдёт в редактор или файл. */
     data class PreviewSplitHp(val enabled: Boolean) : SlotsEvent
+
+    /** «Умения в слотах» в превью: переносить навыки слотов перезарядки. */
+    data class PreviewSkills(val enabled: Boolean) : SlotsEvent
+
+    /** «Заметки под слотами» в превью: переносить надписи навыков. */
+    data class PreviewMemos(val enabled: Boolean) : SlotsEvent
     data object PreviewUndo : SlotsEvent
     data object PreviewRedo : SlotsEvent
     data object ConfirmPreview : SlotsEvent

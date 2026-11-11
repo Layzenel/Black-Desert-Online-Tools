@@ -24,6 +24,12 @@ internal class BrowserAccountFiles : AccountFiles {
 
     override suspend fun readPortrait(characterId: String): ByteArray? =
         bridge.call("face", "$characterId.bmp").takeIf { it.isNotEmpty() }?.let { Base64.decode(it) }
+
+    override suspend fun readPortraitDecorations(accountId: String): Map<String, String> =
+        bridge.call("decorations", accountId)
+            .split(ACCOUNT_SEPARATOR)
+            .filter { '\n' in it }
+            .associate { it.substringBefore('\n') to it.substringAfter('\n') }
 }
 
 internal actual fun createAccountFiles(): AccountFiles = BrowserAccountFiles()

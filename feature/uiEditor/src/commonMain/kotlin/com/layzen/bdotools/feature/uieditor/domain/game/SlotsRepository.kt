@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.uieditor.domain.game
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
+import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
 
 /**
  * Настройки интерфейса игры в папке `Документы\Black Desert` и файлы редактора рядом с ними: пресеты
@@ -33,6 +34,15 @@ interface SlotsRepository {
      * Возвращает путь резервной копии.
      */
     suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String
+
+    /** Навыки слотов перезарядки и надписи всех персонажей аккаунта [account], у которых есть файл. */
+    suspend fun characterSkills(account: String): List<CharacterSkills>
+
+    /**
+     * Записывает персонажу [characterNo] аккаунта [account] навыки слотов перезарядки [slots] (`SlotNo` → `SkillNo`)
+     * и надписи [memos] (`SkillNo` → текст); перед записью делает резервную копию. Нет файла — ничего не пишет.
+     */
+    suspend fun writeCharacterSkills(account: String, characterNo: String, slots: Map<Int, Int>, memos: Map<Int, String>)
 
     /** Переносит пресеты и подложку из версий до аккаунтов в папку аккаунта [account]. */
     suspend fun adoptLooseFiles(account: String)

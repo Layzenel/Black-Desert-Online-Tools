@@ -1,5 +1,6 @@
 package com.layzen.bdotools.desktop
 
+import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
@@ -13,6 +14,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /** Настольная версия: одно окно на весь экран с тем же [App], что и на сайте. */
 fun main() = application {
+    remember { AltMenuBlocker.install() }
     Window(
         onCloseRequest = ::exitApplication,
         state = rememberWindowState(placement = WindowPlacement.Maximized),

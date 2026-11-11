@@ -9,6 +9,7 @@ import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
 import com.layzen.bdotools.feature.uieditor.domain.screen.SlotAnchor
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
+import com.layzen.bdotools.feature.uieditor.domain.skill.isCp1251
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
@@ -39,6 +40,8 @@ object LayoutCodec {
                 LayoutChat(window, chat.position.anchor.id, chat.position.x, chat.position.y, chat.width, chat.height, chat.visible, chat.combined)
             },
             splitHp = layout.layout.splitHp,
+            skills = true.takeIf { layout.layout.skills != null },
+            memos = true.takeIf { layout.layout.memos != null },
         ),
     )
 
@@ -58,9 +61,23 @@ object LayoutCodec {
             customQuickSlots = file.customQuickSlots,
             chats = file.chats.associate { it.window to it.toAnchored() },
             splitHp = file.splitHp,
+            skills = if (file.skills == true) cooldownSkills(slots) else null,
+            memos = if (file.memos == true) cooldownMemos(slots) else null,
         )
         return NamedLayout(file.name, layout)
     }
+
+    /** Навыки слотов перезарядки из файла: у других групп навыков не бывает. */
+    private fun cooldownSkills(slots: List<Pair<SlotId, LayoutSlot>>): Map<SlotId, Int> = slots.mapNotNull { (id, slot) ->
+        slot.skill?.takeIf { id.group == SlotGroup.Cooldown && it > 0 }?.let { id to it }
+    }.toMap()
+
+    /** Надписи навыков из слотов перезарядки: только знаки, которые игра покажет, и не длиннее, чем она позволяет. */
+    private fun cooldownMemos(slots: List<Pair<SlotId, LayoutSlot>>): Map<Int, String> = slots.mapNotNull { (id, slot) ->
+        val skill = slot.skill?.takeIf { id.group == SlotGroup.Cooldown } ?: return@mapNotNull null
+        val memo = slot.memo?.filter(::isCp1251)?.take(SlotLabel.MAX_CHARS)?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+        skill to memo
+    }.toMap()
 
     private fun LayoutChat.toAnchored() = AnchoredChat(
         AnchoredPosition(anchorOrFail(anchor), x, y),
@@ -95,6 +112,7 @@ object LayoutCodec {
         labelChars?.takeIf { SlotLabel.allowedFor(id) }?.coerceIn(SlotLabel.CHARS_RANGE)
 
     private fun AnchoredLayout.slotsOf(group: SlotGroup): List<LayoutSlot> = group.slots.mapNotNull { id ->
-        positions[id]?.let { LayoutSlot(id.number, it.anchor.id, it.x, it.y, id !in hidden, labels[id]) }
+        val skill = skills?.get(id)
+        positions[id]?.let { LayoutSlot(id.number, it.anchor.id, it.x, it.y, id !in hidden, labels[id], skill, skill?.let { memos?.get(it) }) }
     }
 }

@@ -3,7 +3,7 @@ package com.layzen.bdotools.feature.portraitconstructor.data
 import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
 import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
 import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemoChange
-import com.layzen.bdotools.feature.portraitconstructor.domain.memo.parseCharacterMemos
+import com.layzen.bdotools.core.account.parseCharacterMemos
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
