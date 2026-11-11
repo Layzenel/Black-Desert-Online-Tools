@@ -36,16 +36,18 @@ description: Правило проекта BDO Tools — приложение р
 1. **Сначала общий код.** Если нужное есть в `commonMain` (Compose, корутины, Koin, ресурсы, `kotlinx.*`),
    пиши там. Платформенный набор — только когда без платформенного API не обойтись.
 2. **Интерфейс в `commonMain`, реализации в `webMain` и `desktopMain`.** Так сделано хранилище портретов:
-   `PortraitsStorage` и `ImageSource` — интерфейсы в `commonMain`, `GameFiles` объединяет их,
+   `PortraitsStorage` (`data`) и `ImageSource` (`domain`) — интерфейсы в `commonMain`, `GameFiles` объединяет их,
    `expect fun createGameFiles()` создаёт нужную реализацию (`BrowserPortraitsStorage` в вебе,
-   `DesktopPortraitsStorage` на Desktop), Koin получает её из `PortraitsModule`. Логика (репозиторий,
-   контроллеры, экраны) не знает, на какой она платформе.
+   `DesktopPortraitsStorage` на Desktop), Koin получает её из `PortraitsModule`. Платформенная часть —
+   только источник данных в `data`; `PortraitsRepositoryImpl`, интеракторы, контроллеры и экраны общие
+   и не знают, на какой они платформе.
 3. **`expect`/`actual` — для маленьких точек различия**: фабрика реализации, платформенный текст, связь
    навигации с адресом страницы (`PlatformNavigation`: в браузере — `ChronologicalBrowserNavigation`,
    на Desktop пусто). Не тащи через `expect` целые экраны.
 4. **Тексты, которые различаются.** В браузере файлы читает «сайт», на Desktop — «программа», а ошибки
    доступа звучат по-разному. Такие строки выбираются через `expect val` (пример — `PlatformTexts.kt` в
-   `feature/portraitConstructor`), сами строки лежат в общем `strings.xml`.
+   `feature/portraitConstructor`), сами строки лежат в общем `strings.xml` и переводятся на все языки
+   приложения, как любые другие (скилл `resources-externalization`, раздел «Языки»).
 5. **Одинаковое поведение.** Реализации одного интерфейса ведут себя одинаково: те же форматы файлов и
    имён папок, те же ошибки (`PortraitsError`), те же состояния (`FolderAccess`). Если поведение где-то
    отличается, опиши это в KDoc реализации. Тесты репозитория идут на `MemoryStorage` в `commonTest`
@@ -90,7 +92,9 @@ description: Правило проекта BDO Tools — приложение р
   это то, что увидит пользователь в «Что нового»).
 - Программа знает свою версию из `-Dbdotools.version` (`jvmArgs` в `desktopApp/build.gradle.kts`),
   а путь к `BDO Tools.exe` — из `jpackage.app-path`. При запуске она читает `update.txt`
-  (`shared/src/desktopMain/.../update`) и, если версия новее, показывает плашку под верхней навигацией.
+  (`shared/src/desktopMain/.../update`: `data` — сеть, архив и замена файлов, `domain` — `UpdateRepository`
+  и `UpdateInteractor`, `presentation` — `UpdateViewModel` и плашка) и, если версия новее, показывает плашку
+  под верхней навигацией. На сайте в тех же папках `webMain` — проверка выложенной версии страницы.
 - «Обновить» и в установленной, и в портативной копии скачивает `BDO-Tools-portable.zip`, распаковывает его
   во временную папку и запускает скрипт в окне консоли: он ждёт закрытия программы, заменяет её папку новой
   (`robocopy /MIR`, лишние старые файлы удаляются) и запускает программу снова. Установщик не нужен:
@@ -99,13 +103,21 @@ description: Правило проекта BDO Tools — приложение р
   показывают старую версию; следующий MSI всё равно ставится поверх.
 - Старые версии (до перехода на ZIP) требуют строку `msi=` в `update.txt` — не убирай её.
 - Из `:desktopApp:run` проверки нет: там нет ни `jpackage.app-path`, ни версии пакета.
-- Меняешь имена файлов релиза или формат `update.txt` — меняй и `UpdateSource`/`UpdateInfo`, иначе
+- Меняешь имена файлов релиза или формат `update.txt` — меняй и `UpdateSource` (`update/data`) и `UpdateInfo` (`update/domain`), иначе
   уже установленные программы перестанут видеть обновления.
 
 ## Подводные камни
 
 - WiX (сборщик MSI) не принимает кириллицу в описании пакета, ошибка LGHT0311. Поэтому `description`
-  в `desktopApp/build.gradle.kts` на латинице. Название окна и тексты интерфейса — на русском, как везде.
+  в `desktopApp/build.gradle.kts` на латинице. Название окна и тексты интерфейса — из `strings.xml`,
+  на языке, выбранном пользователем.
+- Язык интерфейса один механизм, две реализации. Выбор помнит `LanguageSettings` (`platform/core`):
+  на сайте — `localStorage`, на Desktop — `Preferences`. Применяет его `applyPlatformLocale` (`shared`):
+  на Desktop это `Locale.setDefault`, на сайте — `window.__customLocale`, которым скрипт в `index.html`
+  подменяет `navigator.languages` (Compose берёт язык ресурсов оттуда). Скрипт из `index.html` не убирай:
+  без него сайт всегда будет на языке браузера.
+- Интерфейс Compose рисуется на холсте, поэтому `<title>` и `<meta name="description">` в `index.html`
+  от выбранного языка не зависят.
 - Версия MSI — `1.0.<номер сборки>` (`-PdesktopVersion` в workflow): новая версия заменяет старую
   установку, а не ставится рядом. `upgradeUuid` в `desktopApp/build.gradle.kts` не меняй.
 - Каталог компонентов `#showcase` открывается только на сайте: в настольной версии нет адреса страницы.

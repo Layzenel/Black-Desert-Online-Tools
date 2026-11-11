@@ -5,8 +5,10 @@ package com.layzen.bdotools.feature.portraitconstructor.presentation.state
  * на её конце картинки меняются, в фазе [Phase.In] вспышка гаснет уже над новыми картинками.
  */
 data class SwapAnimation(val first: String, val second: String, val phase: Phase) {
+    /** Фаза анимации обмена. */
     enum class Phase { Out, In }
 
+    /** Участвует ли портрет [characterId] в обмене. */
     fun involves(characterId: String) = characterId == first || characterId == second
 
     companion object {

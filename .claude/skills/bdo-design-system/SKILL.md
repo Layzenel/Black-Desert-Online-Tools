@@ -22,7 +22,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `icons/CharacterClassIcons.kt` | иконки и названия классов: `CharacterClass.icon` (SVG, белый силуэт `viewBox 0 0 64 64`, цвет — через `ColorFilter.tint`) и `CharacterClass.title`. Сам `CharacterClass` лежит в `platform/core` (`core.game`) |
 | `icons/LifeSkillIcons.kt` | то же для жизненных навыков: `LifeSkill.icon` и `LifeSkill.title` (алхимия, бартер, изготовление, кулинария, охота, рыбалка, сбор, судоходство, торговля, укрощение, урожай). Сам `LifeSkill` лежит в `platform/core` (`core.game`) |
 | `showcase/ComponentShowcase.kt` | живой каталог всех компонентов (`ShowcaseDimens.kt` — его размеры) |
-| `../../composeResources/values/strings.xml` | строки модуля, в том числе каталога |
+| `../../composeResources/values/strings.xml`, `values-<tag>/strings.xml` | строки модуля, в том числе каталога, на русском и на остальных языках приложения |
 
 Референсы (скриншоты окон меню, настроек и выбора персонажа) лежат локально в `.claude/references/ui/`
 и в Git не попадают. Все значения из них уже перенесены в токены, поэтому для работы скриншоты не нужны.
@@ -69,6 +69,10 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 11. **Подписи пунктов меню и кнопок — в одну строку.** Если подпись не влезает, её сокращают («Загрузить»
     вместо «Загрузить изображение»), а не переносят. `MenuAction` обрезает лишнее многоточием.
     Подробности действия — в описании секции (`SectionHeader(description = …)`).
+12. **Вёрстка не зависит от языка.** Интерфейс переводится (скилл `resources-externalization`, раздел «Языки»),
+    и перевод бывает длиннее русского текста. Не подгоняй ширину кнопки, колонки или окна под русскую подпись:
+    пусть элемент растягивается по содержимому или обрезает его многоточием. Каждый экран смотри на всех
+    языках приложения. Знаки новой письменности (не латиница и не кириллица) требуют своего шрифта — см. правило 9.
 
 Расположение частей редактора берём с garmoth.com (сайт тулз для BDO): без шапки, меню слева, инструменты
 над рабочей областью, рабочая область на всё оставшееся место. Цвета и стиль — свои, из этой системы.
@@ -214,7 +218,8 @@ fun EnhancementScreen(state: EnhancementState, onEvent: (EnhancementEvent) -> Un
 2. Состояние наружу (`value` + `onValueChange`), внутри — только визуальное: hover, expanded.
 3. Курсор-рука на всём кликабельном: `Modifier.pointerHoverIcon(PointerIcon.Hand)`. Ripple отключён
    (`indication = null`), а реакция на наведение — через `collectIsHoveredAsState()` (подложка или рамка светлеет).
-4. Добавь пример в `ComponentShowcase.kt`, его тексты — в `strings.xml` модуля uikit с префиксом `showcase_`.
+4. Добавь пример в `ComponentShowcase.kt`, его тексты — в `strings.xml` модуля uikit с префиксом `showcase_`,
+   на всех языках приложения.
 5. Проверь в браузере: запусти конфигурацию `webApp-wasm` из `.claude/launch.json`
    (`:webApp:wasmJsBrowserDevelopmentRun --continuous`, сервер на `http://localhost:8080`) и открой каталог
    по адресу `http://localhost:8080/#showcase` (во вкладках его нет). Сделай скриншот и сравни со скриншотами

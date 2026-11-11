@@ -8,9 +8,8 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_backups_deleted
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_decoration_saved
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_blocked
-import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_lobby_not_found
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_game_running
-import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_synced
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_lobby_not_found
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_network
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_not_game_folder
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_not_image
@@ -19,12 +18,14 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favor
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorite_applied
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorite_replaced
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_deleted
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_synced
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_reorder_banner
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restored
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_saved
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_swapped
 import org.jetbrains.compose.resources.stringResource
 
+/** Локализованный текст сообщения [notice]. */
 @Composable
 internal fun noticeText(notice: Notice): String = when (notice.kind) {
     NoticeKind.Saved -> stringResource(Res.string.portraits_saved, notice.argument)

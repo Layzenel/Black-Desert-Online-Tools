@@ -17,10 +17,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.SlotGroup
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
-import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.screen.position
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle

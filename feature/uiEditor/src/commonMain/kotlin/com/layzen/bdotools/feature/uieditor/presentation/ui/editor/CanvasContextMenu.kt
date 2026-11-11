@@ -1,16 +1,14 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.layzen.bdotools.feature.uieditor.domain.AlignEdge
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
-import com.layzen.bdotools.feature.uieditor.domain.SlotLabel
-import com.layzen.bdotools.feature.uieditor.resources.slots_label
-import com.layzen.bdotools.feature.uieditor.resources.slots_label_chars
-import com.layzen.bdotools.feature.uieditor.resources.slots_label_hint
-import com.layzen.bdotools.feature.uieditor.resources.tool_label
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.AlignEdge
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
+import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.menu_redo
 import com.layzen.bdotools.feature.uieditor.resources.menu_undo
@@ -19,12 +17,11 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_align_anchor_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_align_by_group
 import com.layzen.bdotools.feature.uieditor.resources.slots_align_by_slot
 import com.layzen.bdotools.feature.uieditor.resources.slots_align_group_hint
-import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle
-import com.layzen.bdotools.uikit.components.DescriptionText
-import com.layzen.bdotools.uikit.theme.AppTheme
-import androidx.compose.foundation.layout.padding
 import com.layzen.bdotools.feature.uieditor.resources.slots_distribute_horizontal
 import com.layzen.bdotools.feature.uieditor.resources.slots_distribute_vertical
+import com.layzen.bdotools.feature.uieditor.resources.slots_label
+import com.layzen.bdotools.feature.uieditor.resources.slots_label_chars
+import com.layzen.bdotools.feature.uieditor.resources.slots_label_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_redo
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance_value
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_step
@@ -35,10 +32,13 @@ import com.layzen.bdotools.feature.uieditor.resources.tool_chevron_right
 import com.layzen.bdotools.feature.uieditor.resources.tool_distribute_horizontal
 import com.layzen.bdotools.feature.uieditor.resources.tool_distribute_vertical
 import com.layzen.bdotools.feature.uieditor.resources.tool_grid_step
+import com.layzen.bdotools.feature.uieditor.resources.tool_label
 import com.layzen.bdotools.feature.uieditor.resources.tool_snap
 import com.layzen.bdotools.uikit.components.ActionMenuDivider
 import com.layzen.bdotools.uikit.components.ActionMenuItem
 import com.layzen.bdotools.uikit.components.ContextMenu
+import com.layzen.bdotools.uikit.components.DescriptionText
+import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 

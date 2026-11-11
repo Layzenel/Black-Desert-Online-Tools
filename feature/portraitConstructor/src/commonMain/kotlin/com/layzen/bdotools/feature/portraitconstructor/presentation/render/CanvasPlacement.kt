@@ -2,7 +2,7 @@ package com.layzen.bdotools.feature.portraitconstructor.presentation.render
 
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.domain.ImagePlacement
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.ImagePlacement
 
 /** Переводит систему координат из пикселей маски в пиксели изображения. Тот же порядок, что и в предпросмотре. */
 internal fun Canvas.applyPlacement(placement: ImagePlacement, image: ImageBitmap) {

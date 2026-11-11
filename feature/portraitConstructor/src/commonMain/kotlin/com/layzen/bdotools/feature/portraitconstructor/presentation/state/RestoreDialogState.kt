@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.domain.BackupInfo
+import com.layzen.bdotools.feature.portraitconstructor.domain.backup.BackupInfo
 
 /**
  * Окно восстановления из резервной копии.
@@ -21,6 +21,7 @@ data class RestoreDialogState(
     val marked: Set<String> = emptySet(),
     val confirmDelete: Boolean = false,
 ) {
+    /** Выбранная копия; `null`, если ни одна не выбрана. */
     val selectedBackup: BackupInfo? get() = backups.firstOrNull { it.name == selected }
 }
 

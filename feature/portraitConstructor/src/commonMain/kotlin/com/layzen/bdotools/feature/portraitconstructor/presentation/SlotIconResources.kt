@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation
 
-import com.layzen.bdotools.feature.portraitconstructor.domain.BadgeGroup
-import com.layzen.bdotools.feature.portraitconstructor.domain.SlotIcon
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.BadgeGroup
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.SlotIcon
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.badge_world_boss
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_badge_world_boss

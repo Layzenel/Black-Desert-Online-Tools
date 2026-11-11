@@ -1,0 +1,181 @@
+<resources>
+
+    <!-- Game folder access -->
+    <string name="portraits_checking_access">Checking access to the game folder…</string>
+    <string name="portraits_unsupported_title">Browser not supported</string>
+    <string name="portraits_unsupported_description">Portrait replacement only works in Chrome, Edge, Opera and Yandex Browser: other browsers can't write files to folders on your computer.</string>
+    <string name="portraits_unsupported_brave">This feature is disabled by default in Brave. Open brave://flags/#file-system-access-api, enable File System Access API, restart the browser and refresh the page.</string>
+    <string name="portraits_desktop_title">Windows app</string>
+    <string name="portraits_desktop_description">You can change portraits without a browser too: the BDO Tools app for Windows does everything the website does and works with the game folder directly.</string>
+    <string name="portraits_desktop_download">Download installer (.msi)</string>
+    <string name="portraits_folder_title">Game folder</string>
+    <string name="portraits_folder_description">Select the "Documents\\Black Desert" folder. The website will read portraits from FaceTexture and the character order from UserCache, and will be able to write new portraits.</string>
+    <string name="portraits_folder_description_desktop">Select the "Documents\\Black Desert" folder. The app will read portraits from FaceTexture and the character order from UserCache, and will be able to write new portraits. The folder is remembered until the next launch.</string>
+    <string name="portraits_folder_select">Select folder</string>
+    <string name="portraits_permission_description">The browser is asking for permission to access the "%1$s" folder again. Allow access to load the portraits.</string>
+    <string name="portraits_permission_request">Allow access</string>
+    <string name="portraits_folder_change">Change folder</string>
+
+    <!-- Portrait grid -->
+    <string name="portraits_loading">Loading portraits…</string>
+    <string name="portraits_empty">There are no portraits in the FaceTexture folder.</string>
+    <string name="portraits_grid_title">Characters: %1$d</string>
+    <string name="portraits_grid_description">Same order as in the character selection window. Hover over a portrait to replace or edit it.\nClose the character selection window in the game before editing.</string>
+    <string name="portraits_upload">Upload</string>
+    <string name="portraits_reload">Refresh</string>
+
+    <!-- Source selection -->
+    <string name="portraits_source_title_all">Image for all portraits</string>
+    <string name="portraits_source_title_one">Image for the portrait</string>
+    <string name="portraits_source_device">From device</string>
+    <string name="portraits_source_device_description">PNG, JPG, WEBP, BMP or GIF from this computer.</string>
+    <string name="portraits_source_device_pick">Choose file</string>
+    <string name="portraits_source_url">From link</string>
+    <string name="portraits_source_url_description">A direct link to an image.</string>
+    <string name="portraits_source_url_placeholder">https://…</string>
+    <string name="portraits_source_url_load">Load</string>
+    <string name="portraits_source_loading">Loading image…</string>
+    <string name="portraits_cancel">Cancel</string>
+
+    <!-- Fitting to the mask -->
+    <string name="portraits_editor_title_all">Fit image</string>
+    <string name="portraits_editor_title_one">Fit portrait</string>
+    <string name="portraits_editor_hint">Drag the image with the mouse, use the wheel to zoom. The gaps between cells will not appear in the game.</string>
+    <string name="portraits_editor_hint_cells">Click a cell to turn it off: that character's portrait will stay as it was. Click again to turn the cell back on.</string>
+    <string name="portraits_editor_zoom">Zoom, %</string>
+    <string name="portraits_editor_rotation">Rotation, °</string>
+    <string name="portraits_editor_reset">Reset</string>
+    <string name="portraits_editor_apply">Apply</string>
+    <string name="portraits_editor_saving">Saving portraits…</string>
+
+    <!-- Messages -->
+    <string name="portraits_saved">Portraits saved. Old files are in "%1$s". Reopen the character selection window to see the changes.</string>
+    <string name="portraits_error_not_game_folder">The selected folder has no FaceTexture. Select "Documents\\Black Desert".</string>
+    <string name="portraits_error_permission">The browser did not grant access to the folder. Try again and click "Allow".</string>
+    <string name="portraits_error_permission_desktop">Windows denied access to the files in the game folder. Make sure they are not read-only and try again.</string>
+    <string name="portraits_error_blocked">The site hosting the image doesn't allow downloading it from other sites. Save the image to your computer and upload it from your device.</string>
+    <string name="portraits_error_network">Couldn't download the image from the link. Check the address.</string>
+    <string name="portraits_error_not_image">This is not an image or the format is not supported.</string>
+    <string name="portraits_error_unknown">Something went wrong: %1$s</string>
+
+    <!-- Portrait menu -->
+    <string name="portraits_menu_upload">Upload</string>
+    <string name="portraits_menu_edit">Edit</string>
+    <string name="portraits_menu_restore">Restore</string>
+
+    <!-- Memo and badges window -->
+    <string name="portraits_decoration_title">Memo and badges</string>
+    <string name="portraits_decoration_hint">Click the memo to edit it. The "+" in the center adds a badge: a character class or a functional one; click a badge to replace it.</string>
+
+    <!-- Memo -->
+    <string name="portraits_caption_description">Up to 24 characters. A long memo wraps onto a second line and the font shrinks to make it fit.</string>
+    <string name="portraits_caption_placeholder">Fisher</string>
+
+    <!-- Badges -->
+    <string name="portraits_badge_add">Add badge</string>
+    <string name="portraits_badge_change">Replace badge</string>
+    <string name="portraits_badge_group_class">Class</string>
+    <string name="portraits_badge_group_functional">Functional</string>
+    <string name="portraits_badge_world_boss">World Boss</string>
+
+    <!-- Preview -->
+    <string name="portraits_decoration_loading">Loading portrait…</string>
+    <string name="portraits_decoration_saved">Portrait updated. The old file is in "%1$s". Reopen the character selection window to see the changes.</string>
+
+    <!-- Favorites -->
+    <string name="portraits_favorites_title">Favorites</string>
+    <string name="portraits_favorites_button">Favorites</string>
+    <string name="portraits_favorites_description">Sets of all portraits in the "BDO Tools\\portraitConstructor\\&lt;account&gt;\\Favorite FaceTexture" folder: each account has its own. They are saved and applied only for all portraits at once: "Apply" restores the portraits from the set to all current characters, along with memos and badges. The old portraits go to a backup.</string>
+    <string name="portraits_favorites_sets">Sets</string>
+    <string name="portraits_favorites_portraits">Portraits: %1$d</string>
+    <string name="portraits_favorites_empty">Favorites are empty for now. Save the current portraits with the button below.</string>
+    <string name="portraits_favorites_save">Save current portraits</string>
+    <string name="portraits_favorites_apply">Apply</string>
+    <string name="portraits_favorite_added">Portraits saved to favorites: "BDO Tools\\portraitConstructor\\%1$s".</string>
+    <string name="portraits_favorites_loading">Reading favorites…</string>
+    <string name="portraits_favorites_close">Close</string>
+    <string name="portraits_favorite_applied">Portraits from favorites applied. Old files are in "%1$s". Reopen the character selection window to see the changes.</string>
+    <string name="portraits_favorites_title_placeholder">Set name</string>
+    <string name="portraits_favorites_rename">Rename</string>
+    <string name="portraits_favorites_delete_title">Delete favorite sets?</string>
+    <string name="portraits_favorites_delete_text">Sets to be deleted: %1$d. The portraits in them can't be recovered.</string>
+    <string name="portraits_favorites_deleted">Favorite sets deleted: %1$d.</string>
+    <string name="portraits_favorites_replace">Replace selected</string>
+    <string name="portraits_favorites_replace_title">Replace the set with the current portraits?</string>
+    <string name="portraits_favorites_replace_text">The portraits in the set will be replaced with the current ones; the name stays. The old portraits from the set can't be recovered.</string>
+    <string name="portraits_favorites_replace_confirm">Replace</string>
+    <string name="portraits_favorite_replaced">The set "%1$s" was replaced with the current portraits.</string>
+
+    <!-- Backups -->
+    <string name="portraits_reorder_button">Order</string>
+    <string name="portraits_reorder_cancel">Cancel</string>
+    <string name="portraits_reorder_hotkey">Esc</string>
+    <string name="portraits_reorder_banner">Pick two portraits at a time to swap them. "Cancel" or Esc to exit.</string>
+    <string name="portraits_reorder_description">Pick two portraits at a time and their images are swapped right away, while memos and badges stay on their own portraits. The mode stays on until you click "Cancel" or press Esc. Useful if you swapped characters in the character selection window and the image sliced into portraits came apart. Both portraits are backed up before each swap.</string>
+    <string name="portraits_swapped">Portraits swapped. The previous files are saved in "%1$s". Reopen the character selection window to see the changes.</string>
+    <string name="portraits_restore_button">Backups</string>
+    <string name="portraits_restore_title_all">Backups</string>
+    <string name="portraits_restore_title_one">Portrait from backup</string>
+    <string name="portraits_restore_empty">No backups yet. They are created before each portrait write.</string>
+    <string name="portraits_restore_backups">Backups</string>
+    <string name="portraits_restore_portraits">Portraits in backup: %1$d</string>
+    <string name="portraits_restore_description_all">Checked portraits will replace the current ones.</string>
+    <string name="portraits_restore_description_one">Choose a portrait version.</string>
+    <string name="portraits_restore_warning">Memos and badges on restored portraits will be lost. They may remain drawn on the backup image, but you won't be able to edit them or keep them the next time you replace the image.</string>
+    <string name="portraits_restore_check_all">Check all</string>
+    <string name="portraits_restore_uncheck_all">Uncheck all</string>
+    <string name="portraits_restore_current">Current</string>
+    <string name="portraits_restore_apply">Restore</string>
+    <string name="portraits_restore_apply_count">Restore (%1$d)</string>
+    <string name="portraits_restore_loading">Loading previews…</string>
+    <string name="portraits_restored">Portraits restored. The previous files are saved in "%1$s". Reopen the character selection window to see the changes.</string>
+
+    <!-- Waiting -->
+    <string name="portraits_loading_progress">Loading portraits: %1$d of %2$d</string>
+    <string name="portraits_busy_rendering">Preparing portraits</string>
+    <string name="portraits_busy_saving">Saving portraits</string>
+    <string name="portraits_busy_restoring">Reading backup</string>
+    <string name="portraits_busy_progress">%1$d of %2$d</string>
+
+
+    <!-- Deleting backups -->
+    <string name="portraits_delete_marked">Delete (%1$d)</string>
+    <string name="portraits_backups_delete_title">Delete backups?</string>
+    <string name="portraits_backups_delete_text">Backups to be deleted: %1$d. The portraits in them can't be recovered.</string>
+    <string name="portraits_delete_confirm">Delete</string>
+    <string name="portraits_backups_deleted">Backups deleted: %1$d.</string>
+    <string name="portraits_busy_deleting">Deleting backups</string>
+    <string name="portraits_busy_saving_favorites">Saving portraits to favorites</string>
+    <string name="portraits_busy_reading_favorites">Reading favorites</string>
+
+    <string name="portraits_notes_button">Sync memos</string>
+    <string name="portraits_notes_title">Memo sync</string>
+    <string name="portraits_notes_description">Memos from the portraits will be written to the character memos in the "Account Character Overview" window. Characters with no memo on the portrait keep their in-game memos unchanged.</string>
+    <string name="portraits_notes_where_open">In game:</string>
+    <string name="portraits_notes_where_key">M</string>
+    <string name="portraits_notes_where_map">Map</string>
+    <string name="portraits_notes_where_window">"Account Character Overview"</string>
+    <string name="portraits_notes_warning">Close the game before syncing: while it is running, on character switch, teleport or exit it will overwrite the file with the memos from its memory. The website can't check whether the game is running.</string>
+    <string name="portraits_notes_game_closed">Game is closed</string>
+    <string name="portraits_notes_game_running">The game is running. Close it and click "Check again": while it is running, on character switch, teleport or exit it will overwrite the file with the memos from its memory.</string>
+    <string name="portraits_notes_recheck">Check again</string>
+    <string name="portraits_error_game_running">The game is running, memos were not written. Close the game and sync again.</string>
+    <string name="portraits_notes_changes">Memos to change (%1$d)</string>
+    <string name="portraits_notes_added">new memo</string>
+    <string name="portraits_notes_none">The memos in the game file already match the memos on the portraits.</string>
+    <string name="portraits_notes_none_hint">If you synced while the game was running, it will restore the previous memos on character switch, teleport or exit. In that case, close the game and open this window again.</string>
+    <string name="portraits_notes_loading">Reading memos…</string>
+    <string name="portraits_notes_backup">Before writing, a copy of gameVariable_lobby.xml will be saved to "BDO Tools\\portraitConstructor\\&lt;account&gt;\\lobby_backup".</string>
+    <string name="portraits_notes_apply">Sync</string>
+    <string name="portraits_notes_synced">Memos written. The previous file is in "%1$s". Launch the game to see them.</string>
+    <!-- Hints for the actions under the grid -->
+    <string name="portraits_folder_change_hint">Select a different "Documents\\Black Desert" folder.</string>
+    <string name="portraits_reload_hint">Re-read the portraits and character order from the game folder.</string>
+    <string name="portraits_reorder_hint">Swap portraits: pick two at a time. Exit with "Cancel" or Esc.</string>
+    <string name="portraits_reorder_cancel_hint">Exit reorder mode.</string>
+    <string name="portraits_restore_hint">Restore portraits from backups: they are created before each write.</string>
+    <string name="portraits_favorites_hint">Save the current portraits as a set or apply a saved set.</string>
+    <string name="portraits_notes_hint">Write the memos from the portraits to the character memos in the game.</string>
+    <string name="portraits_upload_hint">Upload one image and slice it into all the portraits.</string>
+    <string name="portraits_error_lobby_not_found">This account's memo file gameVariable_lobby.xml was not found. Log in to the game on this account and log out: the file will appear.</string>
+</resources>

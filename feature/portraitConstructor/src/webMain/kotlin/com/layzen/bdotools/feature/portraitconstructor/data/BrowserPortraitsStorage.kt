@@ -1,6 +1,8 @@
 package com.layzen.bdotools.feature.portraitconstructor.data
 
 import com.layzen.bdotools.core.folder.FolderAccess
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
 import kotlin.io.encoding.Base64
 
 private const val BMP_EXTENSION = ".bmp"

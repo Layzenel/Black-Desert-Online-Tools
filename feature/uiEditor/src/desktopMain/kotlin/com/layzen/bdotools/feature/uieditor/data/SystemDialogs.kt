@@ -18,9 +18,11 @@ internal class SystemDialogs {
     suspend fun pickFolder(): Path? =
         FileKit.openDirectoryPicker(directory = documents())?.file?.toPath()
 
+    /** Окно выбора картинки-подложки; `null`, если закрыли без выбора. */
     suspend fun pickImage(): Path? =
         FileKit.openFilePicker(type = FileKitType.File(imageExtensions))?.file?.toPath()
 
+    /** Окно выбора файла раскладки; `null`, если закрыли без выбора. */
     suspend fun pickLayout(): Path? =
         FileKit.openFilePicker(type = FileKitType.File(listOf(LAYOUT_EXTENSION)))?.file?.toPath()
 

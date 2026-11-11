@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitDecoration
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitOverlayLayout as Layout
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitTexture
-import com.layzen.bdotools.feature.portraitconstructor.domain.SlotIcon
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitDecoration
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitOverlayLayout as Layout
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.SlotIcon
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitTexture
 import com.layzen.bdotools.feature.portraitconstructor.presentation.allSlotIcons
 import com.layzen.bdotools.feature.portraitconstructor.presentation.drawable
 import com.layzen.bdotools.uikit.theme.AppColors

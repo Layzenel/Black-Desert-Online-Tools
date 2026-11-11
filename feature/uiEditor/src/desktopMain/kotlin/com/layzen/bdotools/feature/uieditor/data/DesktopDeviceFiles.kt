@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.data
 
+import com.layzen.bdotools.feature.uieditor.domain.file.DeviceFiles
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
 

@@ -1,12 +1,11 @@
 package com.layzen.bdotools.feature.uieditor.presentation.controller
 
 import com.layzen.bdotools.core.account.GameAccounts
-import com.layzen.bdotools.feature.uieditor.data.DeviceFiles
-import com.layzen.bdotools.feature.uieditor.data.SlotsError
-import com.layzen.bdotools.feature.uieditor.data.SlotsException
-import com.layzen.bdotools.feature.uieditor.data.SlotsRepository
-import com.layzen.bdotools.feature.uieditor.data.SlotsStorage
-import com.layzen.bdotools.feature.uieditor.domain.GamePreset
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
+import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
+import com.layzen.bdotools.feature.uieditor.domain.game.GameSettingsInteractor
+import com.layzen.bdotools.feature.uieditor.domain.preset.PresetsInteractor
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
 import com.layzen.bdotools.feature.uieditor.presentation.state.PresetRef
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
@@ -16,9 +15,8 @@ import org.jetbrains.compose.resources.decodeToImageBitmap
 /** Чтение и запись `gamevariable.xml`, выбор аккаунта и подложка редактора. */
 internal class GameController(
     private val context: SlotsContext,
-    private val storage: SlotsStorage,
-    private val repository: SlotsRepository,
-    private val device: DeviceFiles,
+    private val interactor: GameSettingsInteractor,
+    private val presets: PresetsInteractor,
     private val accounts: GameAccounts,
 ) {
 
@@ -28,7 +26,7 @@ internal class GameController(
      */
     suspend fun loadAll() {
         accounts.refresh()
-        load(accounts.state.value.selected?.id ?: repository.accounts().first())
+        load(accounts.state.value.selected?.id ?: interactor.accounts().first())
     }
 
     /** Открывает файл другого аккаунта, если страница уже читала папку. */
@@ -37,6 +35,7 @@ internal class GameController(
         if (loaded.account != account) context.launch(busy = true) { load(account) }
     }
 
+    /** Перечитывает файлы открытого аккаунта, теряя несохранённую раскладку. */
     fun reload() {
         val account = context.current.loaded?.account ?: return
         context.launch(busy = true) { load(account) }
@@ -56,6 +55,7 @@ internal class GameController(
         context.update { it.copy(dialog = SlotsDialog.ConfirmApply(edited)) }
     }
 
+    /** Меняет в диалоге применения набор позиций, в который запишется раскладка. */
     fun selectApplyTarget(preset: GamePreset) = context.update {
         if (it.dialog is SlotsDialog.ConfirmApply) it.copy(dialog = SlotsDialog.ConfirmApply(preset)) else it
     }
@@ -69,7 +69,7 @@ internal class GameController(
         val target = (context.current.dialog as? SlotsDialog.ConfirmApply)?.target ?: return@launch
         context.update { it.copy(dialog = null) }
         try {
-            val backup = repository.apply(loaded, context.current.layout, target)
+            val backup = interactor.apply(loaded, context.current.layout, target)
             refresh(loaded.account, target)
             context.update { it.copy(activePreset = PresetRef.Game, notice = SlotsNotice.Applied(backup)) }
         } catch (e: SlotsException) {
@@ -78,17 +78,19 @@ internal class GameController(
         }
     }
 
+    /** Даёт выбрать картинку-подложку, сохраняет её для аккаунта и показывает на холсте. */
     fun pickBackground() = context.launch {
         val account = context.current.loaded?.account ?: return@launch
-        val bytes = device.pickImage() ?: return@launch
+        val bytes = interactor.pickImage() ?: return@launch
         val image = decodeOrNull(bytes) ?: throw SlotsException(SlotsError.NotImage)
-        storage.writeBackground(account, bytes)
+        interactor.writeBackground(account, bytes)
         context.update { it.copy(background = image, backgroundShown = true) }
     }
 
     /** Спрятать подложку или показать снова: картинка остаётся загруженной, выбирать её заново не нужно. */
     fun toggleBackground() = context.update { it.copy(backgroundShown = !it.backgroundShown) }
 
+    /** Задаёт затемнение подложки в процентах. */
     fun setBackgroundDim(percent: Int) = context.update { it.copy(backgroundDim = percent) }
 
     /**
@@ -96,10 +98,9 @@ internal class GameController(
      * Пресеты и подложка из версий до аккаунтов сначала переезжают в аккаунт, который открыли первым.
      */
     private suspend fun load(account: String) {
-        val loaded = repository.load(account, context.current.loaded?.edited ?: GamePreset.General)
-        storage.adoptLooseFiles(account)
-        val presets = repository.presets(account)
-        val background = storage.readBackground(account)?.let(::decodeOrNull)
+        val loaded = interactor.load(account, context.current.loaded?.edited ?: GamePreset.General)
+        val presets = presets.presets(account)
+        val background = interactor.readBackground(account)?.let(::decodeOrNull)
         context.update {
             it.copy(
                 loaded = loaded,
@@ -117,7 +118,7 @@ internal class GameController(
 
     /** Перечитывает файл, не трогая раскладку в редакторе; в редакторе — набор [edited]. */
     private suspend fun refresh(account: String, edited: GamePreset) {
-        val loaded = repository.load(account, edited)
+        val loaded = interactor.refresh(account, edited)
         context.update { it.copy(loaded = loaded) }
     }
 

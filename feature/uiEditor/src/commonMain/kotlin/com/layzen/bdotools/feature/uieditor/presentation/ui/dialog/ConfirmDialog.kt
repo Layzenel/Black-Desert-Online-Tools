@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
 import com.layzen.bdotools.uikit.components.ActionButton

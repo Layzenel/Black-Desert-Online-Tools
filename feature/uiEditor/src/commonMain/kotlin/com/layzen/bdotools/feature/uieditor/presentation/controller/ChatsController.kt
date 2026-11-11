@@ -1,14 +1,14 @@
 package com.layzen.bdotools.feature.uieditor.presentation.controller
 
-import com.layzen.bdotools.feature.uieditor.domain.ChatWindow
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.SlotLayout
-import com.layzen.bdotools.feature.uieditor.domain.SnapGuides
-import com.layzen.bdotools.feature.uieditor.domain.SnapLines
-import com.layzen.bdotools.feature.uieditor.domain.nearestLine
-import com.layzen.bdotools.feature.uieditor.domain.snapLines
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.SnapGuides
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.SnapLines
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.nearestLine
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.snapLines
+import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
-import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
 import kotlin.math.roundToInt
 
 /**
@@ -34,6 +34,7 @@ internal class ChatsController(private val context: SlotsContext) {
         chat.resizedFromTopRight((right - bounds.right).roundToInt(), (top - bounds.top).roundToInt(), screen) to SnapGuides(lineX, lineY)
     }
 
+    /** Завершает правку окна чата: убирает направляющие и заносит правку в историю «Отменить». */
     fun endEdit() {
         val previous = origin ?: return
         origin = null

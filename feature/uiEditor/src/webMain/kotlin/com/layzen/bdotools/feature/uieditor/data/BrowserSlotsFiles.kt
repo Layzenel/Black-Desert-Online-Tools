@@ -1,6 +1,9 @@
 package com.layzen.bdotools.feature.uieditor.data
 
 import com.layzen.bdotools.core.folder.FolderAccess
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
+import com.layzen.bdotools.feature.uieditor.domain.game.GameFile
 import kotlin.io.encoding.Base64
 
 /** Доступ к файлам через File System Access API (Chrome, Edge, Opera, Яндекс.Браузер). */

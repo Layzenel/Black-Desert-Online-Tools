@@ -1,9 +1,11 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation
 
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitWrite
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitsRepository
-import com.layzen.bdotools.feature.portraitconstructor.data.StoredPortrait
+import com.layzen.bdotools.feature.portraitconstructor.domain.backup.BackupsInteractor
+import com.layzen.bdotools.feature.portraitconstructor.domain.favorite.FavoritesInteractor
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitWrite
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitsInteractor
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.StoredPortrait
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.PortraitImages
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.toBmp
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Busy
@@ -32,16 +34,22 @@ private const val FRAME_PAUSE_MS = 16L
  */
 internal class PortraitsContext(
     private val scope: CoroutineScope,
-    val repository: PortraitsRepository,
+    val portraits: PortraitsInteractor,
+    val backups: BackupsInteractor,
+    val favorites: FavoritesInteractor,
     val images: PortraitImages,
 ) {
     private val _state = MutableStateFlow(PortraitsState())
+    /** Состояние страницы для интерфейса; меняется только через [update]. */
     val state: StateFlow<PortraitsState> = _state.asStateFlow()
 
+    /** Текущее значение [state] для чтения внутри контроллеров. */
     val current: PortraitsState get() = _state.value
 
+    /** Атомарно заменяет состояние результатом [transform]. */
     fun update(transform: (PortraitsState) -> PortraitsState) = _state.update(transform)
 
+    /** Показывает сообщение; `null` игнорируется, убирает сообщение только событие закрытия. */
     fun showNotice(notice: Notice?) {
         if (notice != null) update { it.copy(notice = notice) }
     }
@@ -69,6 +77,7 @@ internal class PortraitsContext(
         }
     }
 
+    /** Обновляет прогресс окна ожидания: сделано [done] из [total]. */
     suspend fun setProgress(done: Int, total: Int) {
         update { it.copy(busy = it.busy?.copy(done = done, total = total)) }
         breathe()
@@ -92,12 +101,12 @@ internal class PortraitsContext(
 
     private suspend fun write(writes: List<PortraitWrite>): String {
         setProgress(0, writes.size)
-        val backup = repository.writePortraits(writes) { done, total -> setProgress(done, total) }
+        val backup = portraits.writePortraits(writes) { done, total -> setProgress(done, total) }
         val decorations = current.decorations.toMutableMap()
         writes.forEach {
             if (it.decoration.isEmpty) decorations -= it.characterId else decorations[it.characterId] = it.decoration
         }
-        val backups = repository.backups()
+        val backups = backups.backups()
         update { it.copy(decorations = decorations, backups = backups) }
         return backup
     }

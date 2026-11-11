@@ -1,9 +1,10 @@
 package com.layzen.bdotools.feature.uieditor.presentation.state
 
-import com.layzen.bdotools.feature.uieditor.data.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
 
 /** Всплывающее сообщение о результате действия. */
 sealed interface SlotsNotice {
+    /** Показывать ли сообщение как ошибку. */
     val isError: Boolean get() = false
 
     data class Applied(val backupPath: String) : SlotsNotice

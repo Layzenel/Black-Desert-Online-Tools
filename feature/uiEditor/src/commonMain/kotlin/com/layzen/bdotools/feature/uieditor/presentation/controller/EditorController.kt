@@ -1,19 +1,19 @@
 package com.layzen.bdotools.feature.uieditor.presentation.controller
 
-import com.layzen.bdotools.feature.uieditor.domain.AlignEdge
-import com.layzen.bdotools.feature.uieditor.domain.ScreenArea
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
-import com.layzen.bdotools.feature.uieditor.domain.SlotLabel
-import com.layzen.bdotools.feature.uieditor.domain.SlotLayout
-import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
-import com.layzen.bdotools.feature.uieditor.domain.SnapGuides
-import com.layzen.bdotools.feature.uieditor.domain.aligned
-import com.layzen.bdotools.feature.uieditor.domain.distributed
-import com.layzen.bdotools.feature.uieditor.domain.snapLines
-import com.layzen.bdotools.feature.uieditor.domain.snapToLines
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.AlignEdge
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.SnapGuides
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.aligned
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.distributed
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.snapLines
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.snapToLines
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenArea
+import com.layzen.bdotools.feature.uieditor.domain.screen.position
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
 import com.layzen.bdotools.feature.uieditor.presentation.state.GridStep
-import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import kotlin.math.roundToInt
 
 /** Шаг стрелки с Shift, если привязка к сетке выключена. */
@@ -33,6 +33,7 @@ internal class EditorController(private val context: SlotsContext) {
 
     private var drag: DragSession? = null
 
+    /** Клик по слоту: выбрать его одного, с [additive] — добавить к выбору или убрать из него. */
     fun select(id: SlotId, additive: Boolean) = context.update {
         it.copy(selection = it.selection.toggled(id, additive), selectedChats = if (additive) it.selectedChats else emptySet())
     }
@@ -42,6 +43,7 @@ internal class EditorController(private val context: SlotsContext) {
         it.copy(selectedChats = it.selectedChats.toggled(window, additive), selection = if (additive) it.selection else emptySet())
     }
 
+    /** Снимает выбор со слотов и окон чата. */
     fun clearSelection() = context.update { it.copy(selection = emptySet(), selectedChats = emptySet()) }
 
     /** Выбирает всё, что задела обводка; с [additive] — вместе с уже выбранным. */
@@ -99,6 +101,7 @@ internal class EditorController(private val context: SlotsContext) {
         context.update { it.copy(layout = layout, snapGuides = guides) }
     }
 
+    /** Конец перетаскивания: убирает направляющие и заносит перенос в историю «Отменить». */
     fun dragEnd() {
         val session = drag ?: return
         drag = null
@@ -120,41 +123,53 @@ internal class EditorController(private val context: SlotsContext) {
         return layout.moved(state.selection, state.selectedChats, result.dx.roundToInt(), result.dy.roundToInt()) to result.guides
     }
 
+    /** Сдвигает выбранное на шаг в [dx], [dy]; [byGrid] — на шаг сетки, иначе на 1 UI-px. */
     fun nudge(dx: Int, dy: Int, byGrid: Boolean) {
         val step = if (byGrid) context.current.gridSnapStep.takeIf { it > 0 } ?: NUDGE_WITHOUT_SNAP else 1
         val state = context.current
         context.editLayout { it.moved(state.selection, state.selectedChats, dx * step, dy * step) }
     }
 
+    /** Ставит слот [id] в позицию [position], например из полей ввода координат. */
     fun setPosition(id: SlotId, position: SlotPosition) = context.editLayout { it.withPosition(id, position) }
 
+    /** Возвращает раскладку, какой она была до последней правки. */
     fun undo() = context.update {
         val previous = it.history.lastOrNull() ?: return@update it
         it.copy(layout = previous, history = it.history.dropLast(1), future = it.future + it.layout, activePreset = null)
     }
 
+    /** Повторяет последнюю отменённую правку. */
     fun redo() = context.update {
         val next = it.future.lastOrNull() ?: return@update it
         it.copy(layout = next, history = it.history + it.layout, future = it.future.dropLast(1), activePreset = null)
     }
 
+    /** Выбирает вид сетки на холсте. */
     fun setGrid(step: GridStep) = context.update { it.copy(grid = step) }
 
+    /** Включает или выключает привязку к узлам сетки. */
     fun setSnapToGrid(enabled: Boolean) = context.update { it.copy(snapToGrid = enabled) }
 
+    /** Задаёт шаг привязки к узлам сетки, UI-px. */
     fun setSnapStep(step: Int) = context.update { it.copy(snapStep = step) }
 
+    /** Включает или выключает прилипание к соседним слотам. */
     fun setSnapToSlots(enabled: Boolean) = context.update { it.copy(snapToSlots = enabled) }
 
+    /** Задаёт расстояние, с которого рамка прилипает к линиям, UI-px. */
     fun setSnapDistance(distance: Int) = context.update { it.copy(snapDistance = distance) }
 
+    /** Выравнивает выбранные слоты по краю [edge]; [anchor] — слот, по которому равняются, иначе по рамке выбора. */
     fun align(edge: AlignEdge, anchor: SlotId?) = editSelection { layout, selection -> layout.aligned(selection, edge, anchor) }
 
+    /** Равномерно расставляет выбранные слоты по горизонтали или вертикали с заданным промежутком. */
     fun distribute(horizontal: Boolean) {
         val gap = context.current.distributeGap(horizontal)
         editSelection { layout, selection -> layout.distributed(selection, horizontal, gap) }
     }
 
+    /** Запоминает промежуток для расстановки по горизонтали ([horizontal]) или по вертикали. */
     fun setDistributeGap(gap: Int, horizontal: Boolean) = context.update {
         if (horizontal) it.copy(distributeGapX = gap) else it.copy(distributeGapY = gap)
     }
@@ -173,6 +188,7 @@ internal class EditorController(private val context: SlotsContext) {
         context.update { state -> state.copy(selection = state.selection.filterTo(mutableSetOf()) { it.isActiveWith(enabled) }) }
     }
 
+    /** Ставит слоту [id] заглушку надписи шириной [chars] символов; `null` убирает её. */
     fun setLabel(id: SlotId, chars: Int?) {
         if (SlotLabel.allowedFor(id)) context.editLayout { it.withLabel(id, chars) }
     }

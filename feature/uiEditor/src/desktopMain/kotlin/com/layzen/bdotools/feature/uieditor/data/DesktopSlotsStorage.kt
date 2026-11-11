@@ -2,6 +2,9 @@ package com.layzen.bdotools.feature.uieditor.data
 
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.core.folder.GameFolderSettings
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
+import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
+import com.layzen.bdotools.feature.uieditor.domain.game.GameFile
 import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

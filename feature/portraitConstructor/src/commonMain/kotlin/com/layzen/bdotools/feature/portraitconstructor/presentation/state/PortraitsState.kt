@@ -2,8 +2,8 @@ package com.layzen.bdotools.feature.portraitconstructor.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
 import com.layzen.bdotools.core.folder.FolderAccess
-import com.layzen.bdotools.feature.portraitconstructor.domain.BackupInfo
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitDecoration
+import com.layzen.bdotools.feature.portraitconstructor.domain.backup.BackupInfo
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitDecoration
 
 /** Всё, что показывает страница портретов: доступ к папке, портреты, открытые окна и ожидание. */
 data class PortraitsState(
@@ -29,8 +29,10 @@ data class PortraitsState(
     val busy: Busy? = null,
     val notice: Notice? = null,
 ) {
+    /** Есть ли хотя бы одна копия с портретом [characterId]. */
     fun hasBackups(characterId: String) = backups.any { characterId in it.characterIds }
 
+    /** Украшение персонажа [characterId] или пустое, если его нет. */
     fun decorationOf(characterId: String) = decorations[characterId] ?: PortraitDecoration()
 
     /** Заменяет картинки у перечисленных персонажей, порядок сетки не меняется. */

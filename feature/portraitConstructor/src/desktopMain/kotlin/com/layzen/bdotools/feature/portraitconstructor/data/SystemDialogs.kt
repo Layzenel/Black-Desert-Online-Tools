@@ -16,6 +16,7 @@ internal class SystemDialogs {
     suspend fun pickFolder(): Path? =
         FileKit.openDirectoryPicker(directory = documents())?.file?.toPath()
 
+    /** Выбор картинки для замены портрета. */
     suspend fun pickImage(): Path? =
         FileKit.openFilePicker(type = FileKitType.File(imageExtensions))?.file?.toPath()
 

@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.portraitconstructor.data
 
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
 import java.io.IOException
 import java.nio.file.AccessDeniedException
 import kotlinx.coroutines.Dispatchers

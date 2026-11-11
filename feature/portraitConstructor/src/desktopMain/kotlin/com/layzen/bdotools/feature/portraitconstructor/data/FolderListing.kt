@@ -20,6 +20,7 @@ internal const val PORTRAIT_EXTENSION = ".bmp"
 
 private val folderStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
 
+/** `true`, если имя файла оканчивается на `.bmp` без учёта регистра. */
 internal fun String.isBmpName(): Boolean = endsWith(PORTRAIT_EXTENSION, ignoreCase = true)
 
 /** Имена файлов в [dir]; пустой список, если папки нет. */

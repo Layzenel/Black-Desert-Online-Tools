@@ -59,6 +59,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
+/** Варианты режима экрана в примере окна настроек. */
 private enum class ScreenMode(val title: StringResource) {
     Fullscreen(Res.string.showcase_settings_mode_fullscreen),
     Borderless(Res.string.showcase_settings_mode_borderless),

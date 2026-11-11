@@ -5,10 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.layzen.bdotools.feature.uieditor.domain.CHAT_MIN_HEIGHT
-import com.layzen.bdotools.feature.uieditor.domain.CHAT_MIN_WIDTH
-import com.layzen.bdotools.feature.uieditor.domain.ChatWindow
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.layout.CHAT_MIN_HEIGHT
+import com.layzen.bdotools.feature.uieditor.domain.layout.CHAT_MIN_WIDTH
+import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.ui.chatTitle
 import com.layzen.bdotools.feature.uieditor.resources.Res

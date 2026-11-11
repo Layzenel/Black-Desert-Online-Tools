@@ -3,8 +3,9 @@ package com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
-import com.layzen.bdotools.feature.uieditor.domain.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotPosition
+import com.layzen.bdotools.feature.uieditor.domain.screen.position
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle

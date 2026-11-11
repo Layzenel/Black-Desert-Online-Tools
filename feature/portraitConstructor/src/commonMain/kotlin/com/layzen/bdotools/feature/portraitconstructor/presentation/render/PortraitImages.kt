@@ -1,10 +1,10 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.render
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitsError
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitsException
-import com.layzen.bdotools.feature.portraitconstructor.data.StoredPortrait
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitDecoration
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitDecoration
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.StoredPortrait
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -18,6 +18,7 @@ internal class PortraitImages {
 
     private val decorator = MutableStateFlow<PortraitDecorator?>(null)
 
+    /** Подставляет отрисовщик украшений, когда его создала композиция. */
     fun useDecorator(value: PortraitDecorator) {
         decorator.value = value
     }

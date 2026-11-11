@@ -15,11 +15,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.PreviewMode
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.presentation.ui.handleHistoryKeys
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.QuickSlotSettings
 import com.layzen.bdotools.feature.uieditor.resources.Res

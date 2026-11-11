@@ -1,11 +1,11 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.controller
 
-import com.layzen.bdotools.feature.portraitconstructor.data.CharacterMemosRepository
-import com.layzen.bdotools.feature.portraitconstructor.domain.memoChanges
+import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemosInteractor
+import com.layzen.bdotools.feature.portraitconstructor.domain.memo.memoChanges
 import com.layzen.bdotools.feature.portraitconstructor.presentation.PortraitsContext
+import com.layzen.bdotools.feature.portraitconstructor.presentation.state.NotesSyncDialogState
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Notice
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.NoticeKind
-import com.layzen.bdotools.feature.portraitconstructor.presentation.state.NotesSyncDialogState
 import com.layzen.bdotools.feature.portraitconstructor.presentation.toNotice
 
 /**
@@ -15,7 +15,7 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.toNotice
  */
 internal class NotesSyncController(
     private val context: PortraitsContext,
-    private val memos: CharacterMemosRepository,
+    private val memos: MemosInteractor,
 ) {
     /** Открывает окно или перечитывает его: заметки и то, запущена ли игра. */
     fun open() {
@@ -31,10 +31,13 @@ internal class NotesSyncController(
         }
     }
 
+    /** Запоминает отметку пользователя о том, что игра закрыта. */
     fun confirmGameClosed(checked: Boolean) = updateDialog { it.copy(gameClosedConfirmed = checked) }
 
+    /** Закрывает окно без записи. */
     fun close() = context.update { it.copy(notesSyncDialog = null) }
 
+    /** Записывает показанные изменения заметок, если [NotesSyncDialogState.canApply], и закрывает окно. */
     fun apply() {
         val account = context.current.accountId ?: return
         val dialog = context.current.notesSyncDialog ?: return

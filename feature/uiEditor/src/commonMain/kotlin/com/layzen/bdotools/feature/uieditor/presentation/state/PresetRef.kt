@@ -1,6 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.presentation.state
 
-import com.layzen.bdotools.feature.uieditor.domain.BuiltInLayout
+import com.layzen.bdotools.feature.uieditor.domain.preset.BuiltInLayout
 
 /** Какой пресет сейчас загружен в редактор. После любой правки руками — никакой (`null` в состоянии). */
 sealed interface PresetRef {

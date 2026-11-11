@@ -1,8 +1,8 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.domain.ImagePlacement
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitGrid
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.ImagePlacement
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitGrid
 
 /**
  * Подгонка картинки под маску: картинка, сетка ячеек и её текущее положение.

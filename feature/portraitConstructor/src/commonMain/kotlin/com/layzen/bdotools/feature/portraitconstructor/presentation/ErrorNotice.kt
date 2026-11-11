@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation
 
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitsError
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitsException
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsError
+import com.layzen.bdotools.feature.portraitconstructor.domain.error.PortraitsException
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Notice
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.NoticeKind
 

@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
-import com.layzen.bdotools.feature.portraitconstructor.domain.CellRect
-import com.layzen.bdotools.feature.portraitconstructor.domain.ImagePlacement
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.CellRect
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.ImagePlacement
 
 /**
  * Нарезает изображение по ячейкам маски. Каждая ячейка — отдельный портрет [CellRect.width] × [CellRect.height],
@@ -18,6 +18,7 @@ internal object PortraitRenderer {
     /** Фон под прозрачными и непокрытыми участками. В игре портреты всегда непрозрачные. */
     private val background = Color.Black
 
+    /** Вырезает ячейку [cell] из изображения, расположенного по [placement], в готовый портрет. */
     fun renderCell(image: ImageBitmap, placement: ImagePlacement, cell: CellRect): ImageBitmap {
         val target = ImageBitmap(cell.width, cell.height)
         val canvas = Canvas(target)

@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.data
 
+import com.layzen.bdotools.feature.uieditor.domain.file.DeviceFiles
+
 /** Файлы игры и файлы устройства в одном объекте: оба работают через один мост к браузеру. */
 internal interface SlotsFiles : SlotsStorage, DeviceFiles
 

@@ -30,12 +30,12 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_preview_summary
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_summary_scale
 import com.layzen.bdotools.feature.uieditor.resources.slots_redo
 import com.layzen.bdotools.feature.uieditor.resources.slots_undo
-import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.DescriptionText
+import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.theme.AppTheme
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.roundToInt
 
 /**
  * Низ левой колонки превью: отмена и повтор отметок, «Выбрать всё» и «Снять всё», сколько выбрано

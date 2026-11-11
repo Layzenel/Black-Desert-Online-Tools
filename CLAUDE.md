@@ -3,6 +3,8 @@
 Сайт с тулзами для Black Desert Online на Kotlin Multiplatform Compose (wasmJs + js) и настольная версия для Windows (JVM, таргет `desktop`).
 Сайт деплоится на GitHub Pages при пуше в `main` (`.github/workflows/deploy.yml`), там же собирается MSI и
 выкладывается в релиз `desktop-latest` (`.github/workflows/desktop.yml`). Общение — на русском.
+Интерфейс многоязычный: русский (`values/strings.xml`, он же запасной) и английский (`values-en/`), список
+языков — `AppLanguage` в `platform/core`; каждая строка переводится на все языки.
 
 ## Скиллы — обязательно
 
@@ -13,6 +15,7 @@
 |---|---|
 | Любой Kotlin-код: новый файл, правка, ревью | `clean-code` |
 | Любая правка UI: экран, компонент, цвет, отступ, шрифт | `bdo-design-system` и `resources-externalization` |
+| Любая строка интерфейса: новая, изменённая, удалённая; новый язык | `resources-externalization` (раздел «Языки») |
 | Новая фича или страница, перенос кода между модулями | `feature-module` и `platforms` |
 | Файлы, сеть, диалоги, адрес страницы и другие платформенные API; новая зависимость; правка `build.gradle.kts`; код не собирается под одну из платформ | `platforms` |
 | Новая или удалённая тулза, изменение того, что она умеет, платформ, установки, команд сборки; правка `README.md` | `readme-sync` |

@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar
 
 import androidx.compose.runtime.Composable
-import com.layzen.bdotools.feature.uieditor.domain.groupSpread
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.groupSpread
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.resources.Res

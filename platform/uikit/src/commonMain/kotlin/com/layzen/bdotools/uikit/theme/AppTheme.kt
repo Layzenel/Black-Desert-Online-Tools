@@ -47,10 +47,13 @@ fun AppTheme(
 
 /** Доступ к токенам темы из composable-функций: `AppTheme.colors`, `AppTheme.typography`, `AppTheme.dimens`. */
 object AppTheme {
+    /** Палитра текущей темы. */
     val colors: AppColors
         @Composable @ReadOnlyComposable get() = LocalAppColors.current
+    /** Текстовые стили текущей темы; цвет в них не заложен. */
     val typography: AppTypography
         @Composable @ReadOnlyComposable get() = LocalAppTypography.current
+    /** Общие отступы и размеры компонентов. */
     val dimens: AppDimens
         @Composable @ReadOnlyComposable get() = LocalAppDimens.current
 }

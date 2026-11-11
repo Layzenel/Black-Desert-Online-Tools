@@ -17,9 +17,10 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import com.layzen.bdotools.feature.uieditor.domain.ChatWindow
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 

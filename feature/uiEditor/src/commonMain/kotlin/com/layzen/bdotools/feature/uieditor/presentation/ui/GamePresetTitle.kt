@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui
 
 import androidx.compose.runtime.Composable
-import com.layzen.bdotools.feature.uieditor.domain.GamePreset
+import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_game_preset_general
 import com.layzen.bdotools.feature.uieditor.resources.slots_game_preset_number

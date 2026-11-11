@@ -1,10 +1,9 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.controller
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.portraitconstructor.data.ImageSource
-import com.layzen.bdotools.feature.portraitconstructor.data.PortraitWrite
-import com.layzen.bdotools.feature.portraitconstructor.domain.ImagePlacement
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitGrid
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.ImagePlacement
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitGrid
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitWrite
 import com.layzen.bdotools.feature.portraitconstructor.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.PortraitRenderer
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.toBmp
@@ -20,32 +19,39 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.toNotice
  * Замена портретов: выбор картинки (файл или ссылка), подгонка под маску и запись.
  * Новые портреты становятся чистой основой, а надпись и значки персонажа рисуются поверх них заново.
  */
-internal class ReplacementController(
-    private val context: PortraitsContext,
-    private val imageSource: ImageSource,
-) {
+internal class ReplacementController(private val context: PortraitsContext) {
+    /** Открывает окно выбора картинки для замены [target]. */
     fun openSource(target: ReplaceTarget) = context.update { it.copy(sourceDialog = SourceDialogState(target)) }
 
+    /** Закрывает окно выбора картинки. */
     fun closeSource() = context.update { it.copy(sourceDialog = null) }
 
+    /** Меняет введённую ссылку и сбрасывает ошибку. */
     fun changeUrl(url: String) = updateSource { it.copy(url = url, error = null) }
 
-    fun pickFromDevice() = loadImage { imageSource.pickFromDevice() }
+    /** Загружает картинку из файла на устройстве. */
+    fun pickFromDevice() = loadImage { context.portraits.pickImage() }
 
+    /** Загружает картинку по введённой ссылке; пустая ссылка игнорируется. */
     fun loadFromUrl() {
         val url = context.current.sourceDialog?.url?.trim().orEmpty()
-        if (url.isNotEmpty()) loadImage { imageSource.download(url) }
+        if (url.isNotEmpty()) loadImage { context.portraits.downloadImage(url) }
     }
 
+    /** Меняет положение изображения в редакторе через [transform]. */
     fun updatePlacement(transform: (ImagePlacement) -> ImagePlacement) =
         updateEditor { it.copy(placement = transform(it.placement)) }
 
+    /** Возвращает исходное положение изображения. */
     fun resetPlacement() = updateEditor { it.copy(placement = it.initialPlacement) }
 
+    /** Включает или отключает ячейку маски [index]: портрет отключённой ячейки не заменяется. */
     fun toggleCell(index: Int) = updateEditor { it.toggledCell(index) }
 
+    /** Закрывает редактор без записи. */
     fun closeEditor() = context.update { it.copy(editor = null) }
 
+    /** Нарезает изображение по включённым ячейкам, записывает портреты и показывает их в сетке. */
     fun apply() {
         val editor = context.current.editor ?: return
         val ids = when (editor.target) {

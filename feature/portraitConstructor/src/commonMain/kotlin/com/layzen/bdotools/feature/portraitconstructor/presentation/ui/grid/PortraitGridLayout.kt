@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitTexture
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitTexture
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**

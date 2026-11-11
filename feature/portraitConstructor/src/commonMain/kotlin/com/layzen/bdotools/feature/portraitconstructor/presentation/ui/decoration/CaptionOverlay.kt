@@ -24,9 +24,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitDecoration
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitOverlayLayout as Layout
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitTexture
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitDecoration
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitOverlayLayout as Layout
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitTexture
 import com.layzen.bdotools.feature.portraitconstructor.presentation.event.PortraitsEvent
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.PortraitDecorator
 import com.layzen.bdotools.uikit.theme.AppTheme

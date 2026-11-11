@@ -2,15 +2,16 @@ package com.layzen.bdotools.feature.uieditor.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.layzen.bdotools.feature.uieditor.data.DeviceFiles
 import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.folder.FolderAccess
-import com.layzen.bdotools.feature.uieditor.data.SlotsRepository
-import com.layzen.bdotools.feature.uieditor.data.SlotsStorage
+import com.layzen.bdotools.feature.uieditor.domain.file.LayoutFilesInteractor
+import com.layzen.bdotools.feature.uieditor.domain.game.GameSettingsInteractor
+import com.layzen.bdotools.feature.uieditor.domain.preset.PresetsInteractor
+import com.layzen.bdotools.feature.uieditor.domain.screen.position
 import com.layzen.bdotools.feature.uieditor.presentation.controller.ChatsController
-import com.layzen.bdotools.feature.uieditor.presentation.controller.GroupSpreadController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.EditorController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.GameController
+import com.layzen.bdotools.feature.uieditor.presentation.controller.GroupSpreadController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.LayoutFilesController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.PresetsController
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
@@ -23,9 +24,9 @@ import kotlinx.coroutines.launch
 
 /** Страница раскладки слотов: сама отвечает за доступ к папке, остальное раздаёт контроллерам. */
 class SlotsViewModel(
-    private val storage: SlotsStorage,
-    device: DeviceFiles,
-    repository: SlotsRepository,
+    private val gameSettings: GameSettingsInteractor,
+    userPresets: PresetsInteractor,
+    layoutFiles: LayoutFilesInteractor,
     private val accounts: GameAccounts,
 ) : ViewModel() {
 
@@ -33,15 +34,16 @@ class SlotsViewModel(
     private val editor = EditorController(context)
     private val chats = ChatsController(context)
     private val spread = GroupSpreadController(context)
-    private val presets = PresetsController(context, repository)
-    private val files = LayoutFilesController(context, repository, device)
-    private val game = GameController(context, storage, repository, device, accounts)
+    private val presets = PresetsController(context, userPresets)
+    private val files = LayoutFilesController(context, layoutFiles)
+    private val game = GameController(context, gameSettings, userPresets, accounts)
 
+    /** Состояние экрана; экран его только читает. */
     val state: StateFlow<SlotsState> = context.state
 
     init {
         context.launch(busy = true) {
-            val access = storage.access()
+            val access = gameSettings.access()
             context.update { it.copy(access = access) }
             if (access is FolderAccess.Granted) game.loadAll()
         }
@@ -50,10 +52,11 @@ class SlotsViewModel(
         }
     }
 
+    /** Единая точка входа для действий экрана: раздаёт [event] нужному контроллеру. */
     fun onEvent(event: SlotsEvent) {
         when (event) {
-            SlotsEvent.SelectFolder -> grantAccess { storage.selectFolder() }
-            SlotsEvent.RequestPermission -> grantAccess { storage.requestPermission() }
+            SlotsEvent.SelectFolder -> grantAccess { gameSettings.selectFolder() }
+            SlotsEvent.RequestPermission -> grantAccess { gameSettings.requestPermission() }
             SlotsEvent.Reload -> game.reload()
             is SlotsEvent.SelectGamePreset -> game.selectGamePreset(event.preset)
 

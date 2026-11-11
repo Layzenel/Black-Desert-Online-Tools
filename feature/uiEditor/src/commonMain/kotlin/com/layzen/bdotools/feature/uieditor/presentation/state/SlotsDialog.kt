@@ -1,10 +1,10 @@
 package com.layzen.bdotools.feature.uieditor.presentation.state
 
-import com.layzen.bdotools.feature.uieditor.domain.GamePreset
-import com.layzen.bdotools.feature.uieditor.domain.LayoutError
-import com.layzen.bdotools.feature.uieditor.domain.NamedLayout
-import com.layzen.bdotools.feature.uieditor.domain.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.file.LayoutError
+import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
+import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
+import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 
 /** Открытое модальное окно страницы. */
 sealed interface SlotsDialog {

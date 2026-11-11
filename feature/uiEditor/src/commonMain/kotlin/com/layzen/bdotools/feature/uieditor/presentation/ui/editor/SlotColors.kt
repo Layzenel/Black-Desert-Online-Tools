@@ -2,7 +2,7 @@ package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.layzen.bdotools.feature.uieditor.domain.SlotGroup
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /** Цвет рамки элемента группы: на холсте и в легенде одинаковый. Перезарядка — красный, хотбар — синий, классовый ресурс — жёлтый, прочие — приглушённый бежевый. */

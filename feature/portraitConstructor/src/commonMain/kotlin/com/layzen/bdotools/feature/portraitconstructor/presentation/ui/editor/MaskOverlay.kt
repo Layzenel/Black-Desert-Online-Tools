@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
-import com.layzen.bdotools.feature.portraitconstructor.domain.PortraitGrid
+import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitGrid
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.uikit.theme.AppTheme
 
