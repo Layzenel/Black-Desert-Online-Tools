@@ -18,6 +18,7 @@ internal class GameController(
     private val interactor: GameSettingsInteractor,
     private val presets: PresetsInteractor,
     private val accounts: GameAccounts,
+    private val skills: SkillsController,
 ) {
 
     /**
@@ -46,7 +47,7 @@ internal class GameController(
         val loaded = context.current.loaded?.takeIf { preset in it.presets } ?: return
         val switched = loaded.copy(edited = preset)
         context.update { it.copy(loaded = switched) }
-        context.editLayout(PresetRef.Game) { switched.game.layout }
+        context.editLayout(PresetRef.Game) { it.withSkillsOf(switched.game.layout) }
     }
 
     /** По умолчанию раскладка пишется в тот набор, который открыт в редакторе. */
@@ -70,6 +71,7 @@ internal class GameController(
         context.update { it.copy(dialog = null) }
         try {
             val backup = interactor.apply(loaded, context.current.layout, target)
+            skills.write(loaded.account)
             refresh(loaded.account, target)
             context.update { it.copy(activePreset = PresetRef.Game, notice = SlotsNotice.Applied(backup)) }
         } catch (e: SlotsException) {
@@ -95,6 +97,7 @@ internal class GameController(
 
     /**
      * Читает файл аккаунта, его пресеты и подложку; открытым остаётся тот же набор позиций, если он есть в файле.
+     * Навыки персонажей грузятся следом в фоне ([SkillsController.load]).
      * Пресеты и подложка из версий до аккаунтов сначала переезжают в аккаунт, который открыли первым.
      */
     private suspend fun load(account: String) {
@@ -114,6 +117,7 @@ internal class GameController(
                 background = background,
             )
         }
+        skills.load(account)
     }
 
     /** Перечитывает файл, не трогая раскладку в редакторе; в редакторе — набор [edited]. */

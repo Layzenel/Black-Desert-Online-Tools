@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -36,7 +37,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Выпадающий список: тёмное поле со значением по центру и треугольником справа. Повторный клик по полю закрывает список.
  * [fieldText] — постоянная подпись поля вместо выбранного значения (список действий вроде «Готовые пресеты»);
  * [selected] тогда может быть `null` — в списке ничего не подсвечено. [trailing] — элемент справа от варианта в списке,
- * как у [OptionsMenu].
+ * как у [OptionsMenu]. [icon] — картинка слева от названия варианта: в списке и в поле у выбранного (портрет персонажа).
  */
 @Composable
 fun <T> DropdownSelect(
@@ -47,6 +48,7 @@ fun <T> DropdownSelect(
     modifier: Modifier = Modifier,
     fieldText: String? = null,
     trailing: (@Composable (T) -> Unit)? = null,
+    icon: (@Composable (T) -> Unit)? = null,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -68,6 +70,10 @@ fun <T> DropdownSelect(
                 .padding(horizontal = dimens.spaceM),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            if (fieldText == null && selected != null && icon != null) {
+                icon(selected)
+                Spacer(Modifier.width(dimens.spaceS))
+            }
             Text(
                 fieldText ?: selected?.let { label(it) }.orEmpty(),
                 style = AppTheme.typography.bodyBold,
@@ -97,6 +103,7 @@ fun <T> DropdownSelect(
             selected = selected,
             onSelect = onSelect,
             label = label,
+            icon = icon,
             trailing = trailing,
             modifier = if (anchorWidth != Dp.Unspecified) Modifier.width(anchorWidth) else Modifier,
         )

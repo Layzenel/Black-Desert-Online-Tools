@@ -18,6 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ImageBitmap
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
+import com.layzen.bdotools.feature.uieditor.presentation.state.SkillsState
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.SkillSlotContent
+import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.SlotLabelStub
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
@@ -48,11 +52,13 @@ import kotlin.math.roundToInt
  * под элементами, отмечаются кликом, как и они ([includedChats]). Невыбранные
  * элементы приглушены, не влезающие на экран — с красной заливкой. Клик по рамке отмечает элемент или снимает отметку,
  * обводка отмечает задетые элементы, а если все они уже отмечены — снимает. [background] — подложка под рамками, затенённая на [backgroundDim] %.
- * Ctrl+Z и Ctrl+Shift+Z (или Ctrl+Y) отменяют и повторяют отметки.
+ * Ctrl+Z и Ctrl+Shift+Z (или Ctrl+Y) отменяют и повторяют отметки. Навыки слотов перезарядки — иконками из [skills],
+ * их надписи — под слотами, если раскладка их переносит.
  */
 @Composable
 internal fun PreviewCanvas(
     layout: AnchoredLayout,
+    skills: SkillsState,
     included: Set<SlotId>,
     includedChats: Set<Int>,
     screen: ScreenSpace,
@@ -84,7 +90,11 @@ internal fun PreviewCanvas(
             }
         }
         layout.positions.filterKeys { layout.isActive(it) }.forEach { (id, anchored) ->
-            PreviewFrame(id, anchored.placeOn(screen), screen, scale, id in included) {
+            val position = anchored.placeOn(screen)
+            val skill = layout.skills?.get(id)
+            val memo = skill?.let { layout.memos?.get(it) }
+            if (memo != null) SlotLabelStub(id, position, screen, scale, memo.length.coerceIn(SlotLabel.CHARS_RANGE), id in included, memo)
+            PreviewFrame(id, position, screen, scale, id in included, skill?.let(skills::iconOf)) {
                 focus.requestFocus()
                 onEvent(SlotsEvent.PreviewInclude(setOf(id), id !in included))
             }
@@ -93,7 +103,15 @@ internal fun PreviewCanvas(
 }
 
 @Composable
-private fun PreviewFrame(id: SlotId, position: SlotPosition, screen: ScreenSpace, scale: Float, included: Boolean, onToggle: () -> Unit) {
+private fun PreviewFrame(
+    id: SlotId,
+    position: SlotPosition,
+    screen: ScreenSpace,
+    scale: Float,
+    included: Boolean,
+    skillIcon: ImageBitmap?,
+    onToggle: () -> Unit,
+) {
     val density = LocalDensity.current
     val fill = if (screen.fits(id, position)) AppTheme.colors.backgroundDeep else AppTheme.colors.danger
     val label = when (id.group) {
@@ -112,7 +130,9 @@ private fun PreviewFrame(id: SlotId, position: SlotPosition, screen: ScreenSpace
             .clickable(remember { MutableInteractionSource() }, indication = null, onClick = onToggle),
         contentAlignment = Alignment.Center,
     ) {
-        if (label != null) {
+        if (skillIcon != null) {
+            SkillSlotContent(skillIcon, label, AppTheme.typography.badge)
+        } else if (label != null) {
             Text(
                 label,
                 style = AppTheme.typography.badge,

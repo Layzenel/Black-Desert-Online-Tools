@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +66,8 @@ fun MenuItem(
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceM),
     ) {
         if (icon != null) {
-            Box(Modifier.size(dimens.menuIconBoxSize), contentAlignment = Alignment.Center) {
+            // Не меньше квадрата иконки, но шире, если в слоте больше (отметка и портрет)
+            Box(Modifier.sizeIn(minWidth = dimens.menuIconBoxSize, minHeight = dimens.menuIconBoxSize), contentAlignment = Alignment.Center) {
                 CompositionLocalProvider(LocalContentColor provides textColor) { icon() }
             }
         }

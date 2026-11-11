@@ -5,6 +5,7 @@ import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
 
 /** Открытое модальное окно страницы. */
 sealed interface SlotsDialog {
@@ -27,6 +28,10 @@ sealed interface SlotsDialog {
         val includedChats: Set<Int> = emptySet(),
         val past: List<PreviewChoice> = emptyList(),
         val future: List<PreviewChoice> = emptyList(),
+        /** «Умения в слотах»: переносятся ли навыки; есть смысл, только если они есть в [layout]. */
+        val includeSkills: Boolean = true,
+        /** «Заметки под слотами»: переносятся ли надписи навыков; без навыков — нет. */
+        val includeMemos: Boolean = true,
     ) : SlotsDialog {
 
         private val choice: PreviewChoice get() = PreviewChoice(included, includedChats)
@@ -57,6 +62,27 @@ sealed interface SlotsDialog {
     data class ConfirmApply(val target: GamePreset) : SlotsDialog
 
     data class ConfirmDelete(val name: String) : SlotsDialog
+
+    /** Надпись навыка [skillNo]: [text] — что введено сейчас, [existing] — была ли надпись до правки. */
+    data class EditMemo(val skillNo: Int, val text: String, val existing: Boolean) : SlotsDialog
+
+    /**
+     * Выбор навыка для слота перезарядки [slot] с поиском [query]: навыки последнего ранга класса [classKey]
+     * в стойке [stance]. [hideAbsolute] — у наследия без «Абсолюта», у которого есть вариант «Мощь».
+     */
+    data class PickSkill(
+        val slot: SlotId,
+        val classKey: String,
+        val stance: SkillStance,
+        val hideAbsolute: Boolean = true,
+        val query: String = "",
+    ) : SlotsDialog
+
+    /**
+     * Импорт с навыками: чьи навыки заменить. [layout] — что импортируется, уже без невыбранного; [classKey] — класс
+     * навыков импорта (`null` — не определить, тогда предлагаются все персонажи); [chosen] — отмеченные персонажи (`CharacterNo`).
+     */
+    data class ImportCharacter(val layout: NamedLayout, val classKey: String?, val chosen: Set<String> = emptySet()) : SlotsDialog
 
     /** Ввод размера окна чата [window] руками. */
 }

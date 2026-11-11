@@ -1,5 +1,8 @@
 package com.layzen.bdotools.feature.uieditor.domain.layout
 
+import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
+import com.layzen.bdotools.feature.uieditor.domain.skill.cooldownSkills
+
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
 
 /**
@@ -14,6 +17,10 @@ import com.layzen.bdotools.feature.uieditor.domain.screen.position
  *
  * [splitHp] — «Разделение HP» игры: `true` — здоровье, PVP и гнев Чёрного духа отдельными элементами, `false` —
  * одна неподвижная панель слева вверху ([FixedElement.CombinedHp]); `null` — раскладка её не задаёт и не меняет.
+ *
+ * [skills] — `SkillNo` в слотах перезарядки (пустых слотов нет); `null` — раскладка навыки не задаёт и не меняет.
+ * [memos] — надписи по `SkillNo`: в игре надпись принадлежит навыку и видна под ним в любом слоте; `null` — не задаёт.
+ * Навыки и надписи берутся из файла выбранного персонажа и пишутся в него же.
  */
 data class SlotLayout(
     val positions: Map<SlotId, SlotPosition> = emptyMap(),
@@ -22,6 +29,8 @@ data class SlotLayout(
     val customQuickSlots: Boolean? = null,
     val chats: Map<Int, ChatWindow> = emptyMap(),
     val splitHp: Boolean? = null,
+    val skills: Map<SlotId, Int>? = null,
+    val memos: Map<Int, String>? = null,
 ) {
 
     /** Позиция элемента [id]; `null`, если его нет в раскладке. */
@@ -33,7 +42,8 @@ data class SlotLayout(
     /**
      * Позиции, видимость и надписи из [other] поверх текущих. Видимость и надписи меняются только у элементов,
      * которые есть в [other]. Окна чата берутся только те, что уже есть здесь: у игрока свой набор чатов,
-     * и чужие окна у него не появляются.
+     * и чужие окна у него не появляются. Если [other] задаёт навыки, у его слотов они заменяются (слот без навыка
+     * в [other] становится пустым); надписи [other] дополняют текущие.
      */
     fun overlaidWith(other: SlotLayout) = SlotLayout(
         positions = positions + other.positions,
@@ -42,7 +52,49 @@ data class SlotLayout(
         customQuickSlots = other.customQuickSlots ?: customQuickSlots,
         chats = chats + other.chats.filterKeys { it in chats },
         splitHp = other.splitHp ?: splitHp,
+        skills = other.skills?.let { (skills.orEmpty() - other.positions.keys) + it } ?: skills,
+        memos = other.memos?.let { memos.orEmpty() + it } ?: memos,
     )
+
+    /** `SkillNo` в слоте [id] или `null`, если навыка там нет. */
+    fun skillAt(id: SlotId): Int? = skills?.get(id)
+
+    /** Надпись навыка в слоте [id] или `null`, если навыка или надписи нет. */
+    fun memoAt(id: SlotId): String? = skillAt(id)?.let { memos?.get(it) }
+
+    /** Раскладка, где в слоте перезарядки [id] стоит навык [skillNo]; `null` очищает слот. */
+    fun withSkill(id: SlotId, skillNo: Int?): SlotLayout {
+        if (id.group != SlotGroup.Cooldown) return this
+        val others = skills.orEmpty() - id
+        return copy(skills = if (skillNo == null) others else others + (id to skillNo))
+    }
+
+    /**
+     * Навык слота [from] — в слот [to], а навык [to], если он есть, — в [from]. Надписи едут вместе с навыками:
+     * они привязаны к навыку, а не к слоту. Слоты не из перезарядки и слот без навыка в [from] ничего не меняют.
+     */
+    fun withSkillMoved(from: SlotId, to: SlotId): SlotLayout {
+        val moving = skillAt(from) ?: return this
+        if (from == to || to.group != SlotGroup.Cooldown) return this
+        return withSkill(from, skillAt(to)).withSkill(to, moving)
+    }
+
+    /** Навыки и надписи персонажа [character] вместо текущих; `null` — раскладка без навыков. */
+    fun withCharacterSkills(character: CharacterSkills?) =
+        copy(skills = character?.cooldownSkills, memos = character?.memos)
+
+    /** Отличаются ли навыки или надписи от файла персонажа [character]; не заданные (`null`) не сравниваются. */
+    fun skillsDifferFrom(character: CharacterSkills): Boolean =
+        (skills != null && skills != character.cooldownSkills) || (memos != null && memos != character.memos)
+
+    /** Раскладка [other] с навыками и надписями этой: так меняют расположение, не трогая навыки персонажа. */
+    fun withSkillsOf(other: SlotLayout) = other.copy(skills = skills, memos = memos)
+
+    /** Раскладка, где у навыка [skillNo] надпись [memo]; `null` или пустая строка убирает надпись. */
+    fun withMemo(skillNo: Int, memo: String?): SlotLayout {
+        val others = memos.orEmpty() - skillNo
+        return copy(memos = if (memo.isNullOrBlank()) others else others + (skillNo to memo))
+    }
 
     /** Есть ли элемент [id] на экране игры при настройках этой раскладки, см. [SlotId.isActiveWith]. */
     fun isActive(id: SlotId): Boolean = id.isActiveWith(customQuickSlots, splitHp)

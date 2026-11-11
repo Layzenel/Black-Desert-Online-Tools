@@ -14,6 +14,9 @@ import com.layzen.bdotools.feature.uieditor.presentation.controller.GameControll
 import com.layzen.bdotools.feature.uieditor.presentation.controller.GroupSpreadController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.LayoutFilesController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.PresetsController
+import com.layzen.bdotools.feature.uieditor.presentation.controller.SkillEditController
+import com.layzen.bdotools.feature.uieditor.presentation.controller.SkillsController
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillsInteractor
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +30,7 @@ class SlotsViewModel(
     private val gameSettings: GameSettingsInteractor,
     userPresets: PresetsInteractor,
     layoutFiles: LayoutFilesInteractor,
+    skillsInteractor: SkillsInteractor,
     private val accounts: GameAccounts,
 ) : ViewModel() {
 
@@ -35,8 +39,10 @@ class SlotsViewModel(
     private val chats = ChatsController(context)
     private val spread = GroupSpreadController(context)
     private val presets = PresetsController(context, userPresets)
-    private val files = LayoutFilesController(context, layoutFiles)
-    private val game = GameController(context, gameSettings, userPresets, accounts)
+    private val skills = SkillsController(context, skillsInteractor, accounts)
+    private val skillEdit = SkillEditController(context, skills)
+    private val files = LayoutFilesController(context, layoutFiles, skills)
+    private val game = GameController(context, gameSettings, userPresets, accounts, skills)
 
     /** Состояние экрана; экран его только читает. */
     val state: StateFlow<SlotsState> = context.state
@@ -93,6 +99,24 @@ class SlotsViewModel(
             is SlotsEvent.SetLabel -> editor.setLabel(event.id, event.chars)
             is SlotsEvent.SetCustomQuickSlots -> editor.setCustomQuickSlots(event.enabled)
             is SlotsEvent.SetSplitHp -> editor.setSplitHp(event.enabled)
+            is SlotsEvent.SelectCharacter -> skills.select(event.characterNo)
+            is SlotsEvent.OpenMemo -> skillEdit.openMemo(event.id)
+            is SlotsEvent.MemoChanged -> skillEdit.changeMemo(event.text)
+            SlotsEvent.ConfirmMemo -> skillEdit.confirmMemo()
+            is SlotsEvent.DeleteMemo -> skillEdit.deleteMemo(event.id)
+            is SlotsEvent.OpenSkillPicker -> skillEdit.openSkillPicker(event.id)
+            is SlotsEvent.SkillQueryChanged -> skillEdit.changeQuery(event.query)
+            is SlotsEvent.SkillStanceChanged -> skillEdit.changeStance(event.stance)
+            is SlotsEvent.SkillHideAbsoluteChanged -> skillEdit.changeHideAbsolute(event.hide)
+            is SlotsEvent.PickSkill -> skillEdit.pickSkill(event.skillNo)
+            is SlotsEvent.RemoveSkill -> skillEdit.removeSkill(event.id)
+            is SlotsEvent.RequestSkillDetails -> skills.loadDetails(event.skillNo)
+            is SlotsEvent.SkillDragStart -> skillEdit.startSkillDrag(event.id)
+            is SlotsEvent.SkillDragBy -> skillEdit.skillDragBy(event.dx, event.dy)
+            SlotsEvent.SkillDragEnd -> skillEdit.endSkillDrag()
+            is SlotsEvent.ToggleImportCharacter -> files.toggleImportCharacter(event.characterNo)
+            is SlotsEvent.ConfirmImportCharacters -> files.confirmImportCharacters()
+            is SlotsEvent.ImportWithoutSkills -> files.importWithoutSkills()
 
             SlotsEvent.UseGameLayout -> presets.useGameLayout()
             is SlotsEvent.UseBuiltIn -> presets.useBuiltIn(event.layout)
@@ -112,6 +136,8 @@ class SlotsViewModel(
             is SlotsEvent.PreviewScreen -> files.setPreviewScreen(event.screen)
             is SlotsEvent.PreviewCustomQuickSlots -> files.setPreviewQuickSlots(event.enabled)
             is SlotsEvent.PreviewSplitHp -> files.setPreviewSplitHp(event.enabled)
+            is SlotsEvent.PreviewSkills -> files.setPreviewSkills(event.enabled)
+            is SlotsEvent.PreviewMemos -> files.setPreviewMemos(event.enabled)
             SlotsEvent.PreviewUndo -> files.undoPreview()
             SlotsEvent.PreviewRedo -> files.redoPreview()
             SlotsEvent.ConfirmPreview -> files.confirmPreview()

@@ -30,6 +30,10 @@ data class LayoutFile(
     /** Окна чата; при импорте меняются только те, что есть у игрока. */
     val chats: List<LayoutChat> = emptyList(),
     @EncodeDefault(EncodeDefault.Mode.NEVER) val splitHp: Boolean? = null,
+    /** Переносит ли файл навыки слотов перезарядки ([LayoutSlot.skill]); тогда слот без `skill` — пустой. */
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val skills: Boolean? = null,
+    /** Переносит ли файл надписи навыков ([LayoutSlot.memo]). */
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val memos: Boolean? = null,
 ) {
     /** Элементы группы [group] из файла. */
     fun slotsOf(group: SlotGroup): List<LayoutSlot> = when (group) {

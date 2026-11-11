@@ -10,6 +10,8 @@ import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_delete_confirm
 import com.layzen.bdotools.feature.uieditor.resources.slots_delete_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_delete_title
+import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language
+import com.layzen.bdotools.feature.uieditor.resources.slots_skill_number
 import org.jetbrains.compose.resources.stringResource
 
 /** Открытое окно страницы, если оно есть. */
@@ -21,9 +23,19 @@ internal fun SlotsDialogs(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
         is SlotsDialog.SaveAs -> SaveAsDialog(dialog, state.presets.map { it.name }, onEvent)
         is SlotsDialog.Import -> ImportDialog(dialog, onEvent)
         is SlotsDialog.Preview -> state.loaded?.game?.screen?.let {
-            LayoutPreviewDialog(dialog, it, state.background, state.backgroundShown, state.backgroundDim, onEvent)
+            LayoutPreviewDialog(dialog, state.skills, it, state.background, state.backgroundShown, state.backgroundDim, onEvent)
         }
-        is SlotsDialog.ConfirmApply -> ApplyDialog(dialog, state.loaded?.presets?.keys?.sorted().orEmpty(), onEvent)
+        is SlotsDialog.ConfirmApply -> {
+            val skillTargets = state.skills.skillTargets(state.skillsChanged)
+            ApplyDialog(dialog, state.loaded?.presets?.keys?.sorted().orEmpty(), skillTargets, state.skills, onEvent)
+        }
+        is SlotsDialog.EditMemo -> {
+            val language = stringResource(Res.string.slots_skill_names_language)
+            val name = state.skills.skill(dialog.skillNo)?.name(language) ?: stringResource(Res.string.slots_skill_number, dialog.skillNo)
+            MemoDialog(dialog, name, onEvent)
+        }
+        is SlotsDialog.PickSkill -> SkillPickerDialog(dialog, state.skills, onEvent)
+        is SlotsDialog.ImportCharacter -> ImportCharacterDialog(dialog, state.skills, onEvent)
         is SlotsDialog.ConfirmDelete -> ConfirmDialog(
             title = stringResource(Res.string.slots_delete_title),
             text = stringResource(Res.string.slots_delete_description, dialog.name),

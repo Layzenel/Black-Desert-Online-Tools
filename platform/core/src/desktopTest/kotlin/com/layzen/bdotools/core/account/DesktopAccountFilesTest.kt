@@ -51,4 +51,15 @@ class DesktopAccountFilesTest {
         assertContentEquals(byteArrayOf(1), files.readPortrait("101"))
         assertNull(files.readPortrait("102"))
     }
+
+    @Test
+    fun readsPortraitDecorationsOfAccountOnly() = runTest {
+        val current = game / "BDO Tools" / "portraitConstructor" / "3537922" / "Current portraits"
+        current.createDirectories()
+        (current / "101.txt").writeText("caption=Рыбак\nbadge=fishing\n")
+        (current / "101.bmp").writeBytes(byteArrayOf(1))
+
+        assertEquals(mapOf("101" to "caption=Рыбак\nbadge=fishing\n"), files.readPortraitDecorations("3537922"))
+        assertTrue(files.readPortraitDecorations("777").isEmpty())
+    }
 }

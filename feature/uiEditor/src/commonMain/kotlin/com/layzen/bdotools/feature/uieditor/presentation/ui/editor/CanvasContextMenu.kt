@@ -19,8 +19,6 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_align_by_slot
 import com.layzen.bdotools.feature.uieditor.resources.slots_align_group_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_distribute_horizontal
 import com.layzen.bdotools.feature.uieditor.resources.slots_distribute_vertical
-import com.layzen.bdotools.feature.uieditor.resources.slots_label
-import com.layzen.bdotools.feature.uieditor.resources.slots_label_chars
 import com.layzen.bdotools.feature.uieditor.resources.slots_label_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_redo
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance_value
@@ -32,7 +30,6 @@ import com.layzen.bdotools.feature.uieditor.resources.tool_chevron_right
 import com.layzen.bdotools.feature.uieditor.resources.tool_distribute_horizontal
 import com.layzen.bdotools.feature.uieditor.resources.tool_distribute_vertical
 import com.layzen.bdotools.feature.uieditor.resources.tool_grid_step
-import com.layzen.bdotools.feature.uieditor.resources.tool_label
 import com.layzen.bdotools.feature.uieditor.resources.tool_snap
 import com.layzen.bdotools.uikit.components.ActionMenuDivider
 import com.layzen.bdotools.uikit.components.ActionMenuItem
@@ -47,7 +44,7 @@ private const val ARRANGE_MIN = 2
 
 /**
  * Меню правого клика по холсту: отмена и повтор; «Выровнять» (справа выезжает список выравниваний); распределение (клик распределяет,
- * справа выезжает промежуток между рамками); «Надпись» у слота перезарядки, «Шаг привязки» и «Связка слотов»
+ * справа выезжает промежуток между рамками); у слота перезарядки — «Заметка» и навык ([CooldownSlotMenu]), «Шаг привязки» и «Связка слотов»
  * (клик включает, при включённой справа выезжает слайдер).
  * Недоступные пункты серые; пункт действия сам закрывает меню, настройки — нет. [anchor] — элемент, по которому открыли
  * меню: выравнивание идёт по нему, без него — по рамке всех выбранных; надпись ставится ему.
@@ -93,6 +90,7 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
                     )
                     SubmenuSlider(labelChars, SlotLabel.CHARS_RANGE) { onEvent(SlotsEvent.SetLabel(labelSlot, it)) }
                 }
+                ContextSubmenu.Memo -> if (labelSlot != null) MemoSubmenu(state, labelSlot, ::run)
             }
         },
     ) { trigger ->
@@ -142,18 +140,10 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
             trailingText = gapYText.takeIf { canDistribute },
             trailingIcon = painterResource(Res.drawable.tool_chevron_right),
         )
-        // Только у слота перезарядки, по которому открыли меню: клик ставит или убирает, справа выезжает ширина
+        // Только у слота перезарядки, по которому открыли меню: заметка и навык
         if (labelSlot != null) {
             ActionMenuDivider()
-            ActionMenuItem(
-                stringResource(Res.string.slots_label),
-                onClick = { onEvent(SlotsEvent.SetLabel(labelSlot, if (labelChars == null) SlotLabel.DEFAULT_CHARS else null)) },
-                modifier = if (labelChars != null) trigger(ContextSubmenu.LabelWidth) else Modifier,
-                icon = painterResource(Res.drawable.tool_label),
-                trailingText = labelChars?.let { stringResource(Res.string.slots_label_chars, it) },
-                trailingIcon = if (labelChars != null) painterResource(Res.drawable.tool_chevron_right) else null,
-                toggled = labelChars != null,
-            )
+            CooldownSlotMenu(state, labelSlot, trigger, ::run, onEvent)
         }
         ActionMenuDivider()
         // Порог показан, только пока связка включена

@@ -78,7 +78,7 @@
     <string name="character_class_musa">Musa</string>
     <string name="character_class_maehwa">Maehwa</string>
     <string name="character_class_deadeye">Deadeye</string>
-    <string name="character_class_mystic">Mystic</string>
+    <string name="character_class_mystic">Tamer</string>
     <string name="character_class_sage">Sage</string>
     <string name="character_class_maegu">Maegu</string>
     <string name="character_class_ninja">Ninja</string>
@@ -90,7 +90,7 @@
     <string name="character_class_dark_knight">Dark Knight</string>
     <string name="character_class_dosa">Dosa</string>
     <string name="character_class_woosa">Woosa</string>
-    <string name="character_class_fury">Fury</string>
+    <string name="character_class_fury">Mystic</string>
     <string name="character_class_hashashin">Hashashin</string>
     <string name="character_class_shai">Shai</string>
 

@@ -13,6 +13,7 @@ class GameAccountsTest {
         var list: List<AccountFile> = emptyList()
         override suspend fun accountFiles() = list
         override suspend fun readPortrait(characterId: String): ByteArray? = null
+        override suspend fun readPortraitDecorations(accountId: String): Map<String, String> = emptyMap()
     }
 
     private val choice = object : AccountChoice {

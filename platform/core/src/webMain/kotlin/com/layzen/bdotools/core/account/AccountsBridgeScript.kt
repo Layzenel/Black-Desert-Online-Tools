@@ -7,7 +7,10 @@ internal const val ACCOUNT_SEPARATOR = "\n<!--bdo-split-->\n"
  * Методы списка аккаунтов для общего моста к папке `Black Desert` ([com.layzen.bdotools.core.folder.FolderBridge]).
  * - `accounts` → записи «папка\nвремя изменения\nкусок CharacterOrderList» через [ACCOUNT_SEPARATOR]: сам файл
  *   большой, а нужен только список персонажей;
- * - `face(имя)` → портрет из `FaceTexture` в base64 или пустая строка, если файла нет.
+ * - `face(имя)` → портрет из `FaceTexture` в base64 или пустая строка, если файла нет;
+ * - `decorations(аккаунт)` → файлы украшений «Конструктора портретов»
+ *   (`BDO Tools\portraitConstructor\<аккаунт>\Current portraits\*.txt`): записи «номер персонажа\nтекст»
+ *   через [ACCOUNT_SEPARATOR]; папки нет — пустая строка.
  */
 internal const val ACCOUNTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64 }) => {
     const SPLIT = '\n<!--bdo-split-->\n';
@@ -36,6 +39,20 @@ internal const val ACCOUNTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64 }) 
             try {
                 const faces = await child(await savedRoot(), 'FaceTexture');
                 return 'OK:' + await toBase64(await (await faces.getFileHandle(name)).getFile());
+            } catch (e) {
+                return 'OK:';
+            }
+        },
+        async decorations(account) {
+            try {
+                let folder = await savedRoot();
+                for (const name of ['BDO Tools', 'portraitConstructor', account, 'Current portraits']) folder = await child(folder, name);
+                const records = [];
+                for await (const [name, handle] of folder.entries()) {
+                    if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.txt')) continue;
+                    records.push(name.slice(0, -4) + '\n' + await (await handle.getFile()).text());
+                }
+                return 'OK:' + records.join(SPLIT);
             } catch (e) {
                 return 'OK:';
             }

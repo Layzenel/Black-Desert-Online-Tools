@@ -46,6 +46,32 @@ class LayoutCodecTest {
     }
 
     @Test
+    fun skillsAndMemosRoundTripOnlyWhenIncluded() {
+        val slot = SlotId(SlotGroup.Cooldown, 1)
+        val withSkills = layout.copy(layout = layout.layout.copy(skills = mapOf(slot to 5338), memos = mapOf(5338 to "ЛКМ", 1 to "чужая")))
+
+        val decoded = LayoutCodec.decode(LayoutCodec.encode(withSkills)).layout
+
+        assertEquals(mapOf(slot to 5338), decoded.skills)
+        assertEquals(mapOf(5338 to "ЛКМ"), decoded.memos) // надпись навыка не из слотов в файл не попадает
+        val noMemos = withSkills.copy(layout = withSkills.layout.withSkillsIncluded(withSkills = true, withMemos = false))
+        assertEquals(null, LayoutCodec.decode(LayoutCodec.encode(noMemos)).layout.memos)
+        assertEquals(null, LayoutCodec.decode(LayoutCodec.encode(layout)).layout.skills)
+    }
+
+    @Test
+    fun onlyKeepsMemosOfKeptSkills() {
+        val slot1 = SlotId(SlotGroup.Cooldown, 1)
+        val slot20 = SlotId(SlotGroup.Cooldown, 20)
+        val anchored = layout.layout.copy(skills = mapOf(slot1 to 1, slot20 to 2), memos = mapOf(1 to "a", 2 to "b"))
+
+        val part = anchored.only(setOf(slot20), emptySet())
+
+        assertEquals(mapOf(slot20 to 2), part.skills)
+        assertEquals(mapOf(2 to "b"), part.memos)
+    }
+
+    @Test
     fun writesAnchorOfEverySlot() {
         val text = LayoutCodec.encode(layout)
         assertEquals(3, Regex(""""anchor": "crosshair"""").findAll(text).count())

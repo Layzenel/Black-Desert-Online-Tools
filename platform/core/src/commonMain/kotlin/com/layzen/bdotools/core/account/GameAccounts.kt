@@ -42,6 +42,18 @@ class GameAccounts(private val files: AccountFiles, private val choice: AccountC
     /** Портрет персонажа из `FaceTexture` для окна выбора аккаунта; `null`, если файла нет. */
     suspend fun readPortrait(characterId: String): ByteArray? = files.readPortrait(characterId)
 
+    /**
+     * Подписи персонажей аккаунта [accountId] из «Конструктора портретов»: `CharacterNo` → [CharacterLabel].
+     * Нет файлов или их не прочитать — пусто: подписи только помогают узнать персонажа.
+     */
+    suspend fun readCharacterLabels(accountId: String): Map<String, CharacterLabel> = try {
+        files.readPortraitDecorations(accountId).mapValues { (_, text) -> CharacterLabel.parse(text) }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        emptyMap()
+    }
+
     private fun toAccount(file: AccountFile): GameAccount? {
         val order = parseCharacterOrder(file.gameVariable)
         return if (order.isEmpty()) null else GameAccount(file.id, order, file.modified)
