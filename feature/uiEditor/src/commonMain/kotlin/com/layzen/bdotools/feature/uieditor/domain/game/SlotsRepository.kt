@@ -35,6 +35,13 @@ interface SlotsRepository {
      */
     suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String
 
+    /**
+     * Возвращает файлы аккаунта [account] — `gamevariable.xml` и файлы персонажей — к текстам до последнего [apply]
+     * этого сеанса, с учётом записей навыков после него. Перед записью тоже делаются резервные копии.
+     * `false` — откатывать нечего.
+     */
+    suspend fun undoLastApply(account: String): Boolean
+
     /** Навыки слотов перезарядки и надписи всех персонажей аккаунта [account], у которых есть файл. */
     suspend fun characterSkills(account: String): List<CharacterSkills>
 

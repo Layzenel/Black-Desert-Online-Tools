@@ -13,6 +13,9 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_delete_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_delete_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_number
+import com.layzen.bdotools.feature.uieditor.resources.slots_undo_apply_confirm
+import com.layzen.bdotools.feature.uieditor.resources.slots_undo_apply_description
+import com.layzen.bdotools.feature.uieditor.resources.slots_undo_apply_title
 import org.jetbrains.compose.resources.stringResource
 
 /** Открытое окно страницы, если оно есть. */
@@ -43,6 +46,13 @@ internal fun SlotsDialogs(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             confirm = stringResource(Res.string.slots_delete_confirm),
             onCancel = close,
             onConfirm = { onEvent(SlotsEvent.ConfirmDelete) },
+        )
+        SlotsDialog.ConfirmUndoApply -> ConfirmDialog(
+            title = stringResource(Res.string.slots_undo_apply_title),
+            text = stringResource(Res.string.slots_undo_apply_description),
+            confirm = stringResource(Res.string.slots_undo_apply_confirm),
+            onCancel = close,
+            onConfirm = { onEvent(SlotsEvent.ConfirmUndoApply) },
         )
     }
 }

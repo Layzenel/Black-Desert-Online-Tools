@@ -26,8 +26,17 @@ object LayoutCodec {
         ignoreUnknownKeys = true
     }
 
-    /** Превращает раскладку [layout] в JSON-текст файла `*.json` для экспорта и папки пресетов. */
-    fun encode(layout: NamedLayout): String = json.encodeToString(
+    /** Тот же формат одной строкой и без значений по умолчанию: короче, чтобы вставить в сообщение чата. */
+    private val compactJson = Json(json) {
+        prettyPrint = false
+        encodeDefaults = false
+    }
+
+    /**
+     * Превращает раскладку [layout] в JSON-текст файла `*.json` для экспорта и папки пресетов; [compact] — одной
+     * строкой для буфера обмена. [decode] читает оба вида.
+     */
+    fun encode(layout: NamedLayout, compact: Boolean = false): String = (if (compact) compactJson else json).encodeToString(
         LayoutFile.serializer(),
         LayoutFile(
             name = layout.name,

@@ -34,11 +34,12 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 /**
  * Надпись на предпросмотре — сразу поле ввода: тот же шрифт, размер, тень и место, что у надписи,
  * которую отрисовщик пишет в файл (затемнение под ней рисует сам предпросмотр). Клик по надписи
- * ставит курсор, пустое поле показывает [hint] тем же стилем. У непустой надписи справа — крестик.
+ * ставит курсор, пустое поле показывает [hint] тем же стилем. [color] — цвет надписи, `null` — по умолчанию. У непустой надписи справа — крестик.
  */
 @Composable
 internal fun BoxScope.CaptionOverlay(
     caption: String,
+    color: Int?,
     hint: String,
     decorator: PortraitDecorator,
     onEvent: (PortraitsEvent) -> Unit,
@@ -49,7 +50,7 @@ internal fun BoxScope.CaptionOverlay(
     val density = LocalDensity.current
     BoxWithConstraints(Modifier.matchParentSize()) {
         val texturePixel = maxWidth / PortraitTexture.WIDTH
-        val style = decorator.captionStyle(fontSize).scaled(texturePixel, density)
+        val style = decorator.captionStyle(fontSize, color).scaled(texturePixel, density)
         val left = texturePixel * Layout.CAPTION_PADDING_HORIZONTAL
         val width = maxWidth - left * 2
         val bottom = texturePixel * (Layout.CAPTION_BOTTOM - Layout.CAPTION_PADDING_VERTICAL)

@@ -92,4 +92,18 @@ class PortraitDecorationTest {
         assertTrue(PortraitOverlayLayout.BADGE_CENTER_X - half >= 0 && PortraitOverlayLayout.BADGE_CENTER_X + half <= PortraitTexture.WIDTH)
         assertTrue(PortraitOverlayLayout.BADGE_CENTER_Y - half >= PortraitOverlayLayout.GAME_TOP_STRIP_BOTTOM, "значок задевает верхнюю полосу игры")
     }
+
+    @Test
+    fun colorsSurviveFileRoundTrip() {
+        val decoration = PortraitDecoration("Рыбак", SlotIcon.WorldBoss, captionColor = 0xF8C038, badgeColor = 0x00A0FF)
+        val text = encodeDecoration(decoration)
+        assertTrue("caption-color=#F8C038" in text && "badge-color=#00A0FF" in text)
+        assertEquals(decoration, decodeDecoration(text))
+    }
+
+    @Test
+    fun defaultColorsAreNotWrittenAndBadColorsIgnored() {
+        assertTrue("color" !in encodeDecoration(PortraitDecoration("Рыбак")))
+        assertEquals(null, decodeDecoration("caption=Рыбак\ncaption-color=red\n").captionColor)
+    }
 }

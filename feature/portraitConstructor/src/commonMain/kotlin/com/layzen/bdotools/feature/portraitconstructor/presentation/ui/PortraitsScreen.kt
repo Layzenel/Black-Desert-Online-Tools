@@ -13,6 +13,7 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.PortraitsVie
 import com.layzen.bdotools.feature.portraitconstructor.presentation.event.PortraitsEvent
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.rememberPortraitDecorator
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.PortraitsState
+import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.decoration.DecorationColorsDialog
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.decoration.DecorationDialog
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.editor.MaskEditor
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.favorites.FavoritesDialog
@@ -52,12 +53,14 @@ fun PortraitsScreen(state: PortraitsState, onEvent: (PortraitsEvent) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
         ) {
             AccessContent(state, onEvent)
+            if (state.access != null) PortraitsIntro()
         }
     }
 
     state.sourceDialog?.let { SourceDialog(it, onEvent) }
     state.editor?.let { MaskEditor(it, onEvent) }
     state.decorationDialog?.let { DecorationDialog(it, decorator, onEvent) }
+    state.decorationColors?.let { DecorationColorsDialog(it, decorator, onEvent) }
     state.restoreDialog?.let { RestoreDialog(it, state.portraits, onEvent) }
     state.favoritesDialog?.let { FavoritesDialog(it, onEvent) }
     state.notesSyncDialog?.let { NotesSyncDialog(it, state.portraits, onEvent) }

@@ -11,6 +11,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.BackgroundDimSlider
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.menu_cancel
+import com.layzen.bdotools.feature.uieditor.resources.menu_copy
 import com.layzen.bdotools.feature.uieditor.resources.menu_export
 import com.layzen.bdotools.feature.uieditor.resources.menu_hide
 import com.layzen.bdotools.feature.uieditor.resources.menu_import
@@ -23,6 +24,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_background_hide_prev
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_show_preview
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_confirm
+import com.layzen.bdotools.feature.uieditor.resources.slots_preview_copy
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_exclude_all
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_export_confirm
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_include_all
@@ -83,6 +85,17 @@ internal fun PreviewActions(
         if (backgroundShown) BackgroundDimSlider(backgroundDim, onEvent)
     }
     DescriptionText(summary(dialog))
+    if (dialog.mode == PreviewMode.Export) {
+        ButtonRow {
+            MenuAction(
+                stringResource(Res.string.slots_preview_copy),
+                { onEvent(SlotsEvent.CopyPreview) },
+                Modifier.weight(1f),
+                painterResource(Res.drawable.menu_copy),
+                enabled = dialog.hasIncluded,
+            )
+        }
+    }
     ButtonRow {
         MenuAction(stringResource(Res.string.slots_cancel), { onEvent(SlotsEvent.CloseDialog) }, Modifier.weight(1f), painterResource(Res.drawable.menu_cancel))
         MenuAction(

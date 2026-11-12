@@ -115,5 +115,11 @@
     <string name="showcase_page_undo">Undo</string>
     <string name="showcase_page_tool">Snapping</string>
     <string name="showcase_page_apply">Apply</string>
+    <string name="showcase_intro_first">What the tool does, in one line.</string>
+    <string name="showcase_intro_second">Second point: why it needs file access.</string>
+    <string name="showcase_intro_image">Example tool picture</string>
+    <string name="showcase_tooltip_section">Tooltip section</string>
+    <string name="showcase_palette_default">Default color</string>
+    <string name="showcase_tooltip_section_body">A plate in a thin frame inside the double tooltip frame.</string>
     <string name="showcase_page_body">A page without a window header: the menu on the left spans the full height, and actions live in the menu or in the bar above the content. Right-click opens the context menu.</string>
 </resources>

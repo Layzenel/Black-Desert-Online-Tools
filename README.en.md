@@ -44,6 +44,8 @@ Your own images instead of the portraits in the character selection window.
 
 - A memo on the portrait — up to 24 characters.
 - A character class badge or a functional badge (world boss, professions).
+- Memo and badge color — for one portrait in its "Memo and badges" window, for all at once with the "Memo and
+  badge colors of all portraits" icon next to the title.
 - "Sync memos" — memos from the portraits go to the character memos in the "Account Character Overview" window.
 
 **Order and sets**
@@ -69,7 +71,9 @@ Lay out cooldown slots and other interface elements on a canvas instead of dragg
 - Fixed game elements — tips and the menu bar at the bottom, the health bar at the top left without "Split HP" —
   are filled with translucent red, as in the game's edit mode, so you don't put slots on them.
 - Backdrop — your own game screenshot to see how the layout will look in the game, or another player's
-  screenshot to place elements like they do.
+  screenshot to place elements like they do. If the screenshot's aspect ratio differs from the game screen, the
+  editor warns you.
+- Undo and redo — Ctrl+Z and Ctrl+Y (or Ctrl+Shift+Z).
 
 ### Presets
 
@@ -98,9 +102,10 @@ show their skills and labels. The character's class is determined by their skill
   - the title shows the number of the slot you are picking for;
   - top-rank skills of the class with the "Succession" or "Awakening" stance (Ascension classes have no stances)
     and search by name;
-  - skills already in slots come first (by slot number), then the rest alphabetically;
-  - on the right of each skill there is a bar: slot number | protection effects (Super Armor, Invincible, Forward
-    Guard) | crowd controls. Hovering an icon shows its line from the skill description;
+  - skills already in slots come first (the slot number is to the left of the icon), then the rest alphabetically;
+  - on the right of each skill there is a bar: protection effects (Super Armor, Invincible, Forward Guard) |
+    crowd controls. Hovering an icon shows its line from the skill description;
+  - click a skill to put it in the slot;
   - "Hide Absolute skills" — for Succession, if the class has Prime skills;
   - "Hide PvE controls" (on) — keeps only the crowd controls that work in PvP.
 
@@ -109,7 +114,8 @@ show their skills and labels. The character's class is determined by their skill
 - **One skill — one slot.** A skill picked from another slot moves together with its label.
   Shift+drag swaps the skills of two slots.
 - **Skill hover tooltip** — the name, protection effects and PvP crowd controls; with Alt held — the description
-  as in the game (requirements, cooldown, command with the character's keys, effects).
+  as in the game, in framed blocks (description, requirements and cooldown, command with the character's keys,
+  effects).
 - **Labels under slots** — up to the game's character limit. Right-click → "Label" adds, edits or deletes a
   skill's label.
 - **"Cooldown slot transparency"** — fades the frame of slots with skills so the icons look as in the game.
@@ -118,12 +124,15 @@ Portraits and captions from the "Portrait Constructor" are re-read every time yo
 
 > [!NOTE]
 > The skill database and icons come from the open data of [bdolytics.com](https://bdolytics.com), so an internet
-> connection is needed. Without it skills are shown as numbers only.
+> connection is needed. Without it skills are shown as numbers only; the Windows program shows them from the copy
+> saved on its previous run.
 
 ### Import and export
 
-- **Export** — share your layout with other players.
-- **Import** — apply another player's layout.
+The "Import", "Export" and "Save as preset" buttons are at the bottom of the left menu.
+
+- **Export** — share your layout with other players: as a file or with "Copy as text" — a line for chat (Discord).
+- **Import** — apply another player's layout: from a file or by pasting the text.
 - **Preview** before import and export — choose which elements go into the layout.
   - "Skills in slots" and "Labels under slots" carry over cooldown slot skills and their labels.
   - When importing skills, characters of their class or with empty slots get checked: the first one is selected in
@@ -132,13 +141,17 @@ Portraits and captions from the "Portrait Constructor" are re-read every time yo
 
 ### Applying to the game
 
-"Apply to game" writes the layout to `gamevariable.xml` and saves a backup.
+"Apply to game" writes the layout to `gamevariable.xml` and saves a backup. The button shows how many changes are
+not written yet.
 
 ![Apply to game](docs/screenshots/uiEditor-apply.en.png)
 
 - You can choose where to write: the general set or "Preset 1–3".
 - If skills or labels in slots changed, the window shows which characters change and what exactly.
   Uncheck a character to leave their file as it is.
+- The Windows program detects a running game and won't write until you close it.
+- **"Undo apply"** — restores the game files to how they were before the last apply (while the page stays open);
+  the layout stays in the editor.
 
 ---
 
@@ -195,7 +208,7 @@ the choice is remembered.
 |---|---|---|
 | Installation | not needed | MSI or portable ZIP |
 | Browser | Chrome, Edge, Opera, Yandex Browser | not needed |
-| Access to the game folder | via browser permission | direct |
+| Access to the game folder | via browser permission | direct, finds `Documents\Black Desert` by itself |
 | Updates | when the page is reloaded | the app offers to update itself |
 
 The website needs the File System Access API, which only Chromium-based browsers have. In Firefox and Safari

@@ -27,11 +27,10 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Плашка справа у навыка в окне выбора: эффекты защиты | контроли. Колонка защиты всегда шириной на все её значки,
  * поэтому контроли у всех навыков стоят друг под другом. [effects] `null` — подробности ещё не скачались: пустая плашка.
  * [text] — тултип навыка на языке интерфейса для подсказок значков, [keys] — клавиши в нём.
- * [hidePveControls] — без контролей, которые недоступны в PvP. Слева — [slotNumber], номер слота перезарядки, где навык
- * уже стоит (колонка есть всегда, пустая у навыков не в слотах).
+ * [hidePveControls] — без контролей, которые недоступны в PvP. Номер слота — слева у иконки навыка (`SkillChoice`).
  */
 @Composable
-internal fun SkillEffectsPlate(slotNumber: Int?, effects: SkillEffects?, text: SkillText?, keys: KeyBindings, hidePveControls: Boolean) {
+internal fun SkillEffectsPlate(effects: SkillEffects?, text: SkillText?, keys: KeyBindings, hidePveControls: Boolean) {
     Row(
         Modifier
             .background(AppTheme.colors.backgroundSurface)
@@ -41,14 +40,6 @@ internal fun SkillEffectsPlate(slotNumber: Int?, effects: SkillEffects?, text: S
         horizontalArrangement = Arrangement.spacedBy(SlotsDimens.effectPlatePadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.width(SlotsDimens.slotNumberWidth), contentAlignment = Alignment.Center) {
-            if (slotNumber != null) {
-                HoverTooltip(stringResource(Res.string.slots_skill_slot_number_hint)) {
-                    Text(slotNumber.toString(), style = AppTheme.typography.bodyBold, color = AppTheme.colors.accentGold)
-                }
-            }
-        }
-        EffectDivider()
         EffectRow(Modifier.width(SlotsDimens.defenseColumnWidth)) { DefenseIcons(effects?.defenses.orEmpty(), text, keys) }
         EffectDivider()
         val controls = effects?.let { if (hidePveControls) it.pvpControls else it.controls }.orEmpty()

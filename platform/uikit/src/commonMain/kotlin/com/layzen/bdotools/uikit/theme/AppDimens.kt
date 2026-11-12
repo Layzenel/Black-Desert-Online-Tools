@@ -24,6 +24,7 @@ data class AppDimens(
     val topNavigationHeight: Dp = 48.dp,
     val contentMaxWidth: Dp = 760.dp,
     val sidebarWidth: Dp = 180.dp,
+    val introImageMaxHeight: Dp = 480.dp,
 
     // Окно
     val titleBarHeight: Dp = 40.dp,
@@ -47,6 +48,8 @@ data class AppDimens(
     val tooltipMaxWidth: Dp = 260.dp,
     val groupedMenuOptionsWidth: Dp = 220.dp,
     val menuShadow: Dp = 3.dp,
+    val tooltipFrameGap: Dp = 2.dp,
+    val swatchSize: Dp = 22.dp,
     val scrollbarWidth: Dp = 4.dp,
     val scrollbarInset: Dp = 2.dp,
     val closeIconSize: Dp = 12.dp,

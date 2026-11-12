@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.data.skill
 
+import com.layzen.bdotools.core.folder.GameFolderSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -31,5 +32,9 @@ internal class DesktopSkillDownloads(private val client: HttpClient) : SkillDown
     }
 }
 
-internal actual fun createSkillDownloads(): SkillDownloads =
-    DesktopSkillDownloads(HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build())
+internal actual fun createSkillDownloads(): SkillDownloads {
+    val settings = GameFolderSettings()
+    return CachedSkillDownloads(
+        DesktopSkillDownloads(HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build()),
+    ) { settings.folder?.resolve("BDO Tools")?.resolve("uiEditor")?.resolve("skillCache") }
+}

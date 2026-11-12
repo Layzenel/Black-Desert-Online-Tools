@@ -8,6 +8,7 @@ import com.layzen.bdotools.feature.uieditor.domain.file.LayoutFilesInteractor
 import com.layzen.bdotools.feature.uieditor.domain.game.GameSettingsInteractor
 import com.layzen.bdotools.feature.uieditor.domain.preset.PresetsInteractor
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillsInteractor
 import com.layzen.bdotools.feature.uieditor.presentation.controller.ChatsController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.EditorController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.GameController
@@ -16,8 +17,9 @@ import com.layzen.bdotools.feature.uieditor.presentation.controller.LayoutFilesC
 import com.layzen.bdotools.feature.uieditor.presentation.controller.PresetsController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.SkillEditController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.SkillsController
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillsInteractor
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
+import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
+import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsNotice
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -149,6 +151,10 @@ class SlotsViewModel(
             is SlotsEvent.SelectApplyTarget -> game.selectApplyTarget(event.preset)
             is SlotsEvent.ToggleApplyCharacter -> game.toggleApplyCharacter(event.characterNo)
             SlotsEvent.ConfirmApply -> game.confirmApply()
+            SlotsEvent.OpenUndoApply -> context.update { it.copy(dialog = SlotsDialog.ConfirmUndoApply) }
+            SlotsEvent.ConfirmUndoApply -> game.confirmUndoApply()
+            SlotsEvent.CopyPreview -> files.copyPreview()
+            SlotsEvent.LayoutCopied -> context.update { it.copy(copiedLayout = null, notice = SlotsNotice.LayoutCopied) }
             SlotsEvent.PickBackground -> game.pickBackground()
             SlotsEvent.ToggleBackground -> game.toggleBackground()
             is SlotsEvent.SetBackgroundDim -> game.setBackgroundDim(event.percent)

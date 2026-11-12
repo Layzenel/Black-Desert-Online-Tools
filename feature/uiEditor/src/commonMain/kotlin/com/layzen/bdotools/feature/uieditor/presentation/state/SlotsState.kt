@@ -29,6 +29,8 @@ import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
  * @property skillFrameTransparency прозрачность рамки и фона слотов с навыком в процентах: 100 — видны только иконка и номер, как в игре.
  * @property skills навыки выбранного персонажа в слотах перезарядки.
  * @property skillDrag навык, который сейчас перетаскивают между слотами (Shift+ЛКМ); `null` — не тащат.
+ * @property canUndoApply можно ли вернуть файлы игры к состоянию до последнего «Применить в игру» в этом сеансе.
+ * @property copiedLayout текст раскладки, который страница должна положить в буфер обмена; `null` — нечего.
  */
 data class SlotsState(
     val access: FolderAccess? = null,
@@ -57,13 +59,22 @@ data class SlotsState(
     val notice: SlotsNotice? = null,
     val skills: SkillsState = SkillsState(),
     val skillDrag: SkillDrag? = null,
+    val canUndoApply: Boolean = false,
+    val copiedLayout: String? = null,
 ) {
-    /** Есть ли в редакторе изменения, которых ещё нет в файле игры. */
-    val hasChanges: Boolean
+    /**
+     * Сколько изменений редактора ещё нет в файле игры: элементы, окна чата, каждая из двух настроек и персонажи
+     * с другими умениями или заметками. Показывается на «Применить в игру».
+     */
+    val changeCount: Int
         get() = loaded?.game?.let {
-            it.changedEntries(layout).isNotEmpty() || it.quickSlotsChanged(layout) || it.splitHpChanged(layout) ||
-                it.changedChats(layout).isNotEmpty() || skillsChanged
-        } == true
+            it.changedEntries(layout).size + it.changedChats(layout).size +
+                listOf(it.quickSlotsChanged(layout), it.splitHpChanged(layout)).count { changed -> changed } +
+                skills.skillTargets(layout).size
+        } ?: 0
+
+    /** Есть ли в редакторе изменения, которых ещё нет в файле игры. */
+    val hasChanges: Boolean get() = changeCount > 0 || skillsChanged
 
     /**
      * Класс навыков в редакторе (ключ `CharacterClass.key`): по навыкам в слотах, а если по ним не понять — по файлу

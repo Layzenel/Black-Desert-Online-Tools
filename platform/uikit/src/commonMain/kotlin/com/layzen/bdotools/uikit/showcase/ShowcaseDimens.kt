@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 internal object ShowcaseDimens {
     val menuWindowWidth = 300.dp
     val tilesWindowWidth = 420.dp
+    val introWidth = 360.dp
     val numberFieldWidth = 80.dp
     val tileSize = 92.dp
     val toolPageWidth = 640.dp

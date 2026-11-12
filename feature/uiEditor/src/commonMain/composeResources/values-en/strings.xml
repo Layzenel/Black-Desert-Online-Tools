@@ -75,7 +75,7 @@
     <string name="slots_defense_forward_guard">Forward Guard</string>
     <!-- Skill tooltip -->
     <string name="slots_tooltip_alt_hint">Hold Alt for details</string>
-    <string name="slots_skill_picker_tooltip_hint">Hover an icon or hold Alt to see skill details</string>
+    <string name="slots_skill_picker_tooltip_hint">Click a skill to put it in the slot. Hover an icon or hold Alt for skill details</string>
     <string name="slots_tooltip_loading">Loading details…</string>
     <string name="slots_tooltip_failed">Skill details did not load</string>
     <string name="slots_tooltip_description">Description</string>
@@ -179,7 +179,6 @@
     <string name="slots_reload">Reload file</string>
     <string name="slots_screen">Game screen: %1$d × %2$d, UI scale %3$s. Grid and coordinates are measured from the crosshair.</string>
     <string name="slots_off_screen">Elements off screen: %1$d — in game they will end up beyond the edge.</string>
-    <string name="slots_game_closed_hint">Before making changes, save your settings in the game (Settings -> Settings Archive -> Save) so you can restore the interface afterwards. Close the game and press "Reload file". Apply changes with the game closed too: a running game overwrites the file with its own settings, and your changes will be lost.</string>
 
     <!-- Group spread -->
     <string name="slots_spread_description">Groups are elements and chat windows that touch each other. The sliders push groups apart from the center between them, in UI px.</string>
@@ -213,9 +212,6 @@
     </string-array>
 
     <!-- Action bar -->
-    <string name="slots_import">Import</string>
-    <string name="slots_export">Export</string>
-    <string name="slots_save_as">Save as preset</string>
     <string name="slots_apply">Apply to game</string>
 
     <!-- Dialogs -->
@@ -282,4 +278,44 @@
     <string name="slots_error_file_changed">The game changed the file while the page was open — it is probably running. Close the game and apply again.</string>
     <string name="slots_error_not_image">This is not an image.</string>
     <string name="slots_error_unknown">Something went wrong. Please try again.</string>
+
+    <!-- What the editor does: under the folder prompt -->
+    <string name="slots_intro_layout">Lay out cooldown slots, the hotbar, chats and other interface elements on a canvas: box selection, alignment, a grid and a screenshot backdrop.</string>
+    <string name="slots_intro_skills">Skills and labels in each character's cooldown slots, with protection effects and crowd control.</string>
+    <string name="slots_intro_share">Presets, ready-made layouts, import and export as a file or as text for Discord.</string>
+    <string name="slots_intro_safety">A copy of gamevariable.xml is saved before every write, and the last apply can be undone.</string>
+    <string name="slots_intro_image">Example of the interface editor page</string>
+
+    <!-- Left menu sections -->
+    <string name="slots_game_settings">Game settings</string>
+    <string name="slots_view">View</string>
+    <string name="slots_background_aspect">The %1$d×%2$d screenshot has a different aspect ratio than the %3$d×%4$d game screen: the backdrop won't match the layout.</string>
+
+    <!-- Bottom of the left menu -->
+    <string name="slots_apply_count">Apply to game (%1$d)</string>
+    <string name="slots_reload_hint">Read gamevariable.xml again, e.g. after playing. Unsaved edits are lost.</string>
+    <string name="slots_undo_apply">Undo apply</string>
+    <string name="slots_undo_apply_hint">Restore the game files to how they were before the last "Apply to game".</string>
+    <string name="slots_undo_apply_title">Undo apply</string>
+    <string name="slots_undo_apply_description">The game files return to how they were before the last "Apply to game": layout, element visibility, character skills and memos. The game must be closed. The layout stays in the editor so you can apply it again.</string>
+    <string name="slots_undo_apply_confirm">Game is closed, undo</string>
+    <string name="slots_notice_apply_undone">The game files are restored to how they were before applying.</string>
+
+    <!-- Tooltips: edit history and layout file actions -->
+    <string name="slots_undo_tooltip">Undo (Ctrl+Z)</string>
+    <string name="slots_redo_tooltip">Redo (Ctrl+Y or Ctrl+Shift+Z)</string>
+    <string name="slots_import_tooltip">Import: another player's layout from a file or text</string>
+    <string name="slots_export_tooltip">Export: your layout as a file or as text for Discord</string>
+    <string name="slots_save_as_tooltip">Save as a preset in My presets</string>
+    <string name="slots_import">Import</string>
+    <string name="slots_export">Export</string>
+    <string name="slots_save_as">Save as preset</string>
+
+    <!-- Export as text -->
+    <string name="slots_preview_copy">Copy as text</string>
+    <string name="slots_notice_layout_copied">Layout copied. Paste it in chat; the other player pastes the text into Import.</string>
+
+    <!-- Applying while the game is running -->
+    <string name="slots_apply_game_running">The game is running. Close it completely and press the button again, otherwise it will overwrite the file.</string>
+    <string name="slots_apply_archive_hint">To restore your interface without BDO Tools, save it in the game first: Settings → Settings Archive → Save.</string>
 </resources>

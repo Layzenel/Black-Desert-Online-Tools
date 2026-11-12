@@ -9,6 +9,15 @@ sealed interface SlotsNotice {
 
     data class Applied(val backupPath: String) : SlotsNotice
 
+    data object ApplyUndone : SlotsNotice
+
+    data object LayoutCopied : SlotsNotice
+
+    /** Откат не начался: игра запущена и перезапишет файлы. */
+    data object GameRunning : SlotsNotice {
+        override val isError: Boolean get() = true
+    }
+
     data class PresetSaved(val name: String) : SlotsNotice
 
     data class PresetDeleted(val name: String) : SlotsNotice

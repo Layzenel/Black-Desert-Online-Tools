@@ -134,9 +134,8 @@ internal class LayoutFilesController(
      */
     fun confirmPreview() {
         val preview = context.current.dialog as? SlotsDialog.Preview ?: return
-        val chosen = preview.layout.layout.only(preview.included, preview.includedChats)
-            .withSkillsIncluded(preview.includeSkills, preview.includeMemos)
-        val layout = preview.layout.copy(layout = chosen)
+        val layout = chosenLayout(preview)
+        val chosen = layout.layout
         when (preview.mode) {
             PreviewMode.Import -> {
                 val importedSkills = chosen.skills
@@ -155,6 +154,19 @@ internal class LayoutFilesController(
             }
         }
     }
+
+    /** Экспорт текстом: отмеченное в превью — в буфер обмена (его кладёт страница), окно закрывается. */
+    fun copyPreview() {
+        val preview = context.current.dialog as? SlotsDialog.Preview ?: return
+        val text = interactor.shareText(chosenLayout(preview))
+        context.update { it.copy(dialog = null, copiedLayout = text) }
+    }
+
+    /** Раскладка превью без неотмеченных элементов, окон чата, навыков и надписей. */
+    private fun chosenLayout(preview: SlotsDialog.Preview): NamedLayout = preview.layout.copy(
+        layout = preview.layout.layout.only(preview.included, preview.includedChats)
+            .withSkillsIncluded(preview.includeSkills, preview.includeMemos),
+    )
 
     private fun openImportPreview(text: String) {
         val screen = screen() ?: return

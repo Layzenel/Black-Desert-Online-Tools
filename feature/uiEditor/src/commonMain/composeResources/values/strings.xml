@@ -75,7 +75,7 @@
     <string name="slots_defense_forward_guard">Защита от атак спереди</string>
     <!-- Тултип навыка -->
     <string name="slots_tooltip_alt_hint">Alt — подробнее</string>
-    <string name="slots_skill_picker_tooltip_hint">Наведите на иконку или зажмите Alt, чтобы увидеть описание умения</string>
+    <string name="slots_skill_picker_tooltip_hint">Нажмите на умение, чтобы поставить его в слот. Наведите на иконку или зажмите Alt — описание умения</string>
     <string name="slots_tooltip_loading">Загрузка описания…</string>
     <string name="slots_tooltip_failed">Описание навыка не загрузилось</string>
     <string name="slots_tooltip_description">Описание</string>
@@ -179,7 +179,6 @@
     <string name="slots_reload">Перечитать файл</string>
     <string name="slots_screen">Экран игры: %1$d × %2$d, масштаб интерфейса %3$s. Сетка и координаты — от прицела.</string>
     <string name="slots_off_screen">Элементов за краем экрана: %1$d — в игре они уедут за край.</string>
-    <string name="slots_game_closed_hint">Перед изменениями сохраните настройки в игре(Настройки -> Архив настроек -> Сохранить) для того, чтобы иметь возможность восстановить интерфейс после изменений, закройте игру и нажмите «Перечитать файл», а применяйте тоже при закрытой игре: запущенная игра перезапишет файл своими настройками, и изменения не сохранятся.</string>
 
     <!-- Отдаление групп -->
     <string name="slots_spread_description">Группы — касающиеся друг друга элементы и окна чата. Слайдеры разносят группы от центра между ними, UI-px.</string>
@@ -213,9 +212,6 @@
     </string-array>
 
     <!-- Панель действий -->
-    <string name="slots_import">Импорт</string>
-    <string name="slots_export">Экспорт</string>
-    <string name="slots_save_as">Сохранить как пресет</string>
     <string name="slots_apply">Применить в игру</string>
 
     <!-- Окна -->
@@ -282,4 +278,44 @@
     <string name="slots_error_file_changed">Игра изменила файл, пока страница была открыта — скорее всего, она запущена. Закройте игру и примените ещё раз.</string>
     <string name="slots_error_not_image">Это не картинка.</string>
     <string name="slots_error_unknown">Что-то пошло не так. Попробуйте ещё раз.</string>
+
+    <!-- Что умеет редактор: под просьбой выбрать папку -->
+    <string name="slots_intro_layout">Раскладка слотов перезарядки, хотбара, чатов и других элементов интерфейса на холсте: выделение рамкой, выравнивание, сетка и подложка из скриншота.</string>
+    <string name="slots_intro_skills">Умения и заметки в слотах перезарядки у каждого персонажа, с эффектами защиты и контролями.</string>
+    <string name="slots_intro_share">Пресеты, готовые раскладки, импорт и экспорт файлом или текстом для Discord.</string>
+    <string name="slots_intro_safety">Перед каждой записью сохраняется копия gamevariable.xml, последнее применение можно откатить.</string>
+    <string name="slots_intro_image">Пример страницы редактора интерфейса</string>
+
+    <!-- Разделы меню слева -->
+    <string name="slots_game_settings">Настройки как в игре</string>
+    <string name="slots_view">Вид</string>
+    <string name="slots_background_aspect">Скриншот %1$d×%2$d снят не в том соотношении сторон, что экран игры %3$d×%4$d: подложка не совпадёт с раскладкой.</string>
+
+    <!-- Низ меню слева -->
+    <string name="slots_apply_count">Применить в игру (%1$d)</string>
+    <string name="slots_reload_hint">Прочитать gamevariable.xml заново, например после игры. Несохранённые правки пропадут.</string>
+    <string name="slots_undo_apply">Откатить применение</string>
+    <string name="slots_undo_apply_hint">Вернуть файлы игры к состоянию до последнего «Применить в игру».</string>
+    <string name="slots_undo_apply_title">Откатить применение</string>
+    <string name="slots_undo_apply_description">Файлы игры вернутся к состоянию до последнего «Применить в игру»: раскладка, видимость элементов, умения и заметки персонажей. Игра должна быть закрыта. Раскладка в редакторе останется — её можно применить снова.</string>
+    <string name="slots_undo_apply_confirm">Игра закрыта, откатить</string>
+    <string name="slots_notice_apply_undone">Файлы игры возвращены к состоянию до применения.</string>
+
+    <!-- Подсказки: история правок и работа с файлом раскладки -->
+    <string name="slots_undo_tooltip">Отменить (Ctrl+Z)</string>
+    <string name="slots_redo_tooltip">Повторить (Ctrl+Y или Ctrl+Shift+Z)</string>
+    <string name="slots_import_tooltip">Импорт: раскладка из файла или текста другого игрока</string>
+    <string name="slots_export_tooltip">Экспорт: раскладка файлом или текстом для Discord</string>
+    <string name="slots_save_as_tooltip">Сохранить как пресет в «Мои пресеты»</string>
+    <string name="slots_import">Импорт</string>
+    <string name="slots_export">Экспорт</string>
+    <string name="slots_save_as">Сохранить как пресет</string>
+
+    <!-- Экспорт текстом -->
+    <string name="slots_preview_copy">Копировать текстом</string>
+    <string name="slots_notice_layout_copied">Раскладка скопирована. Вставьте её в чат — другой игрок вставит текст в «Импорт».</string>
+
+    <!-- Применение при запущенной игре -->
+    <string name="slots_apply_game_running">Игра запущена. Полностью закройте её и нажмите кнопку ещё раз: иначе она перезапишет файл.</string>
+    <string name="slots_apply_archive_hint">Чтобы вернуть интерфейс как было и без BDO Tools, заранее сохраните его в игре: Настройки → Архив настроек → Сохранить.</string>
 </resources>

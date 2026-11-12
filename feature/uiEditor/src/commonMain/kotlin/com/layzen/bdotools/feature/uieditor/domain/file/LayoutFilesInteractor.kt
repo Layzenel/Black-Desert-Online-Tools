@@ -14,4 +14,7 @@ class LayoutFilesInteractor(
 
     /** Скачивает [layout] файлом раскладки; имя файла — название раскладки (см. [SlotsRepository.fileName]). */
     suspend fun export(layout: NamedLayout) = device.download(repository.fileName(layout.name), LayoutCodec.encode(layout))
+
+    /** Раскладка [layout] короткой строкой для чата (Discord): её вставляют в «Импорт» как текст файла. */
+    fun shareText(layout: NamedLayout): String = LayoutCodec.encode(layout, compact = true)
 }

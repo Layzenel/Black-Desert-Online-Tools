@@ -1,19 +1,17 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.dialog
 
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -26,6 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
@@ -33,15 +33,15 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.SkillsState
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.character.className
-import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillTooltip
 import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillEffectsPlate
+import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillTooltip
 import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.rememberAltPressed
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
-import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language
-import com.layzen.bdotools.feature.uieditor.resources.slots_skill_nothing_found
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_hide_absolute
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_hide_pve_controls
+import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language
+import com.layzen.bdotools.feature.uieditor.resources.slots_skill_nothing_found
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_picker_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_picker_tooltip_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_search
@@ -51,9 +51,9 @@ import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect
-import com.layzen.bdotools.uikit.components.TooltipPanel
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.ModalWindow
+import com.layzen.bdotools.uikit.components.TooltipPanel
 import com.layzen.bdotools.uikit.components.verticalScrollbar
 import com.layzen.bdotools.uikit.icons.icon
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -110,10 +110,10 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
                     key(skillNo) {
                         SkillChoice(
                             name = skill.name(language),
+                            slotNumber = slotted[skillNo],
                             icon = skills.icons[skill.icon],
                             effects = {
                                 SkillEffectsPlate(
-                                    slotted[skillNo],
                                     skills.effectsOf(skillNo),
                                     skills.details[skillNo]?.text(language),
                                     skills.keyBindings,

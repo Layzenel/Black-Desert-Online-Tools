@@ -36,6 +36,17 @@ sealed interface PortraitsEvent {
     data object CloseDecoration : PortraitsEvent
     data object ApplyDecoration : PortraitsEvent
 
+    /** Цвет надписи или значка в окне одного портрета, `0xRRGGBB`; `null` — по умолчанию. */
+    data class CaptionColorChanged(val color: Int?) : PortraitsEvent
+    data class BadgeColorChanged(val color: Int?) : PortraitsEvent
+
+    // Цвет заметок и значков всех портретов
+    data object OpenDecorationColors : PortraitsEvent
+    data class AllCaptionColorChanged(val color: Int?) : PortraitsEvent
+    data class AllBadgeColorChanged(val color: Int?) : PortraitsEvent
+    data object CloseDecorationColors : PortraitsEvent
+    data object ApplyDecorationColors : PortraitsEvent
+
     data class OpenRestore(val target: ReplaceTarget) : PortraitsEvent
     data class SelectBackup(val name: String) : PortraitsEvent
     data class ToggleRestorePortrait(val characterId: String) : PortraitsEvent

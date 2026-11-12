@@ -32,7 +32,7 @@ class DesktopSlotsStorageTest {
     private val documents: Path = Files.createTempDirectory("bdo-slots-test")
     private val game: Path = (documents / "Black Desert").createDirectories()
     private val preferences = Preferences.userRoot().node("com/layzen/bdotools/test/slots/${System.nanoTime()}")
-    private val storage = DesktopSlotsStorage(GameFolderSettings(preferences)) { documents }
+    private val storage = DesktopSlotsStorage(GameFolderSettings(preferences) { null }) { documents }
 
     private val accountFile: Path = (game / "UserCache" / "3537922").createDirectories() / "gamevariable.xml"
 
