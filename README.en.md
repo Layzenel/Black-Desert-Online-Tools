@@ -117,7 +117,8 @@ show their skills and labels. The character's class is determined by their skill
   as in the game, in framed blocks (description, requirements and cooldown, command with the character's keys,
   effects).
 - **Labels under slots** — up to the game's character limit. Right-click → "Label" adds, edits or deletes a
-  skill's label.
+  skill's label. Below, under "Fill from skill description", is the first key combination from the skill's
+  "Command" block (the green one, with the character's keys, e.g. "Shift + Q"): click it to put it in the label.
 - **"Cooldown slot transparency"** — fades the frame of slots with skills so the icons look as in the game.
 
 Portraits and captions from the "Portrait Constructor" are re-read every time you open the page.

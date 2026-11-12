@@ -74,9 +74,13 @@ internal fun CooldownSlotMenu(
     }
 }
 
-/** Панель «Заметки» слота с навыком: добавить или изменить надпись в окне и удалить её. */
+/**
+ * Панель «Заметки» слота с навыком: добавить или изменить надпись в окне, удалить её и заполнить действием
+ * из описания навыка ([MemoFromSkillItem]).
+ */
 @Composable
-internal fun MemoSubmenu(state: SlotsState, slot: SlotId, run: (SlotsEvent) -> () -> Unit) {
+internal fun MemoSubmenu(state: SlotsState, slot: SlotId, run: (SlotsEvent) -> () -> Unit, onEvent: (SlotsEvent) -> Unit) {
+    val skillNo = state.layout.skillAt(slot) ?: return
     val hasMemo = state.layout.memoAt(slot) != null
     ActionMenuItem(
         stringResource(if (hasMemo) Res.string.slots_memo_edit else Res.string.slots_memo_add),
@@ -89,4 +93,5 @@ internal fun MemoSubmenu(state: SlotsState, slot: SlotId, run: (SlotsEvent) -> (
         enabled = hasMemo,
         icon = painterResource(Res.drawable.menu_delete),
     )
+    MemoFromSkillItem(state, slot, skillNo, run, onEvent)
 }
