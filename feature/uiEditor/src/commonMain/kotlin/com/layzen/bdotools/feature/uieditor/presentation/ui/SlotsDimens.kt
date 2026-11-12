@@ -47,6 +47,9 @@ internal object SlotsDimens {
     /** Затемнение подложки номера слота поверх иконки навыка. */
     const val SKILL_NUMBER_BACKDROP_ALPHA = 0.65f
 
+    /** Какую долю рамки слота занимает иконка навыка: в игре вокруг неё ровный отступ. */
+    const val SKILL_ICON_SHARE = 0.8f
+
     /** Прозрачность иконки навыка, который тащат между слотами. */
     const val SKILL_DRAG_ALPHA = 0.8f
 

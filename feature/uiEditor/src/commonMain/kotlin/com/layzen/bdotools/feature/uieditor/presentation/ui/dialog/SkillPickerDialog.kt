@@ -20,9 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.pointer.isAltPressed
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.graphics.ColorFilter
 import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
@@ -32,6 +29,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.character.className
 import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillTooltip
+import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.rememberAltPressed
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language
@@ -59,7 +57,6 @@ import org.jetbrains.compose.resources.stringResource
  * «Добавить умение»: навыки последнего ранга класса и стойки персонажа в редакторе из справочника, с поиском по
  * названию на языке интерфейса (без учёта регистра). Клик по навыку ставит его в слот; наведение на иконку или Alt + наведение — его тултип слева от окна.
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsState, onEvent: (SlotsEvent) -> Unit) {
     val close = { onEvent(SlotsEvent.CloseDialog) }
@@ -91,7 +88,7 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
                 placeholder = stringResource(Res.string.slots_skill_search),
             )
             DescriptionText(stringResource(Res.string.slots_skill_picker_tooltip_hint))
-            val altPressed = LocalWindowInfo.current.keyboardModifiers.isAltPressed
+            val altPressed = rememberAltPressed()
             val scroll = rememberScrollState()
             Column(Modifier.heightIn(max = SlotsDimens.skillListHeight).verticalScrollbar(scroll).verticalScroll(scroll)) {
                 found.forEach { (skillNo, skill) ->

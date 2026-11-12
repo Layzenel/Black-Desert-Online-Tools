@@ -187,6 +187,12 @@
         <item>The eye in the frame hides or shows the element in game.</item>
         <item>Ctrl+Z undoes, Ctrl+Shift+Z or Ctrl+Y redoes.</item>
     </string-array>
+    <string-array name="slots_help_skill_items">
+        <item>Double-click a cooldown slot to pick a skill. Right-click it to add, replace or remove a skill, or edit the label under the slot.</item>
+        <item>Shift + drag a skill onto another cooldown slot to swap the skills (when at most one slot is selected).</item>
+        <item>Hover a skill to see its name, hold Alt for the full in-game description.</item>
+        <item>In the skill picker: hover an icon, or hold Alt and hover a row, to see the skill description.</item>
+    </string-array>
 
     <!-- Action bar -->
     <string name="slots_import">Import</string>
