@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,6 +37,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SlotsRoute(viewModel: SlotsViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    // ViewModel переживает уход со страницы, а портреты и подписи могли поменять в «Конструкторе портретов»
+    LaunchedEffect(viewModel) { viewModel.onEvent(SlotsEvent.Shown) }
     SlotsScreen(state, viewModel::onEvent)
 }
 

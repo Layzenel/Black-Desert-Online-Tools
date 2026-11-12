@@ -26,6 +26,7 @@ import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
  * @property snapGuides линии, к которым двигаемый элемент прилип сейчас; пусты вне перетаскивания.
  * @property backgroundShown видна ли подложка [background] на холсте: её можно спрятать, не убирая картинку.
  * @property backgroundDim затенение подложки в процентах, общее для редактора и превью; 0 — без затенения.
+ * @property skillFrameTransparency прозрачность рамки и фона слотов с навыком в процентах: 100 — видны только иконка и номер, как в игре.
  * @property skills навыки выбранного персонажа в слотах перезарядки.
  * @property skillDrag навык, который сейчас перетаскивают между слотами (Shift+ЛКМ); `null` — не тащат.
  */
@@ -50,6 +51,7 @@ data class SlotsState(
     val background: ImageBitmap? = null,
     val backgroundShown: Boolean = true,
     val backgroundDim: Int = 50,
+    val skillFrameTransparency: Int = 0,
     val dialog: SlotsDialog? = null,
     val busy: Boolean = false,
     val notice: SlotsNotice? = null,
@@ -110,6 +112,9 @@ data class SlotsState(
 
         /** Допустимое затенение подложки, %: 0 — картинка как есть, 100 — совсем тёмная. */
         val BACKGROUND_DIM_RANGE = 0..100
+
+        /** Допустимая прозрачность рамки слотов с навыком, %. */
+        val SKILL_FRAME_TRANSPARENCY_RANGE = 0..100
 
         /** Допустимое расстояние прилипания к элементам, UI-px. */
         val SNAP_DISTANCE_RANGE = 2..25

@@ -38,12 +38,12 @@
     <string name="slots_background_dim">Затенение, %</string>
 
     <!-- Выбранный слот -->
-    <string name="slots_character">Персонаж</string>
-    <string name="slots_character_description">Навыки и надписи в слотах перезарядки — этого персонажа. Позиции слотов общие для всего аккаунта.</string>
-    <string name="slots_character_none">Не выбран</string>
+    <string name="slots_frame_transparency">Прозрачность слотов перезарядки, %</string>
+    <string name="slots_character_hint">Умения и заметки в слотах перезарядки — у каждого персонажа свои. Позиции слотов общие для всего аккаунта.</string>
+    <string name="slots_character_none">Выбрать персонажа</string>
     <string name="slots_character_item">%1$s\nнавыков: %2$d</string>
     <string name="slots_character_item_memo">%1$s (%2$s)\nнавыков: %3$d</string>
-    <string name="slots_character_class_unknown">класс не определён</string>
+    <string name="slots_character_class_unknown">не определён</string>
     <string name="slots_skills_unavailable">Справочник навыков не загрузился — проверьте интернет. Без него навыки видны только номерами.</string>
     <string name="slots_skill_names_language">ru</string>
     <string name="slots_skill_number">SkillNo %1$d</string>
@@ -90,7 +90,10 @@
     <string name="slots_import_character_none">Подходящего персонажа нет: класс персонажа узнаётся по умениям в его слотах.</string>
     <string name="slots_import_without_skills">Без умений</string>
     <string name="slots_import_characters_confirm">Импортировать</string>
-    <string name="slots_apply_skills">Слоты перезарядки этих персонажей изменятся: умения и заметки запишутся в их файлы.</string>
+    <string name="slots_apply_skills">Слоты перезарядки у выбранных персонажей изменились. Снимите метку, чтобы не применять изменения.</string>
+    <string name="slots_apply_changed_skills">Умения</string>
+    <string name="slots_apply_changed_memos">Заметки</string>
+    <string name="slots_apply_changed_both">Умения и заметки</string>
     <string name="slots_preview_skills">Умения в слотах</string>
     <string name="slots_preview_skills_description">Переносить умения в слотах перезарядки.</string>
     <string name="slots_preview_memos">Заметки под слотами</string>
@@ -221,6 +224,9 @@
     <string name="slots_apply_confirm">Игра закрыта, применить</string>
     <string name="slots_apply_target">Куда записать</string>
     <string name="slots_game_preset">Пресеты в игре</string>
+    <string name="slots_game_preset_hint">Наборы позиций из окна «Редактирование интерфейса» игры: общий или «Пресет 1–3». Выбранный откроется в редакторе.</string>
+    <string name="slots_presets_hint">Раскладка из файла игры и готовые раскладки слотов перезарядки.</string>
+    <string name="slots_user_presets_hint">Раскладки, которые вы сохранили для этого аккаунта.</string>
     <string name="slots_game_preset_general">Общий</string>
     <string name="slots_game_preset_number">Пресет %1$d</string>
     <string name="slots_preview_import_title">Превью импорта</string>

@@ -87,8 +87,13 @@ data class SlotLayout(
         copy(skills = character?.cooldownSkills, memos = character?.memos)
 
     /** Отличаются ли навыки или надписи от файла персонажа [character]; не заданные (`null`) не сравниваются. */
-    fun skillsDifferFrom(character: CharacterSkills): Boolean =
-        (skills != null && skills != character.cooldownSkills) || (memos != null && memos != character.memos)
+    fun skillsDifferFrom(character: CharacterSkills): Boolean = slotSkillsDifferFrom(character) || memosDifferFrom(character)
+
+    /** Отличаются ли навыки в слотах от файла персонажа [character]; не заданные (`null`) не сравниваются. */
+    fun slotSkillsDifferFrom(character: CharacterSkills): Boolean = skills != null && skills != character.cooldownSkills
+
+    /** Отличаются ли надписи навыков от файла персонажа [character]; не заданные (`null`) не сравниваются. */
+    fun memosDifferFrom(character: CharacterSkills): Boolean = memos != null && memos != character.memos
 
     /** Раскладка [other] с навыками и надписями этой: так меняют расположение, не трогая навыки персонажа. */
     fun withSkillsOf(other: SlotLayout) = other.copy(skills = skills, memos = memos)

@@ -2,6 +2,7 @@ package com.layzen.bdotools.feature.uieditor.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
 import com.layzen.bdotools.core.account.CharacterLabel
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
 import com.layzen.bdotools.feature.uieditor.domain.skill.KeyBindings
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillDetails
@@ -58,11 +59,11 @@ data class SkillsState(
         classKey == null || character.slots.isEmpty() || classOf(character) == classKey
 
     /**
-     * Кому «Применить» запишет навыки и надписи редактора: выбранному персонажу, если они изменились ([changed]),
-     * и всем из [alsoApplyTo].
+     * Кому «Применить» может записать навыки и надписи раскладки [layout]: выбранному персонажу и всем из [alsoApplyTo],
+     * если у них в файле не то же самое.
      */
-    fun skillTargets(changed: Boolean): List<CharacterSkills> =
-        characters.filter { (changed && it.characterNo == selected) || it.characterNo in alsoApplyTo }
+    fun skillTargets(layout: SlotLayout): List<CharacterSkills> =
+        characters.filter { (it.characterNo == selected || it.characterNo in alsoApplyTo) && layout.skillsDifferFrom(it) }
 
     /** Навык из справочника или `null`. */
     fun skill(skillNo: Int): Skill? = catalog?.get(skillNo)

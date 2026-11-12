@@ -120,6 +120,7 @@ private fun CanvasContent(
             pickSkillOnDoubleClick = id.group == SlotGroup.Cooldown && state.skills.catalog != null && state.skillsClass != null,
             skillTooltip = skill?.takeIf { state.skills.skill(it) != null && state.skillDrag == null }
                 ?.let { skillNo -> { SkillSlotTooltip(skillNo, state.skills, onEvent) } },
+            skillFrameAlpha = 1f - state.skillFrameTransparency / 100f,
         )
     }
     state.skillDrag?.let { drag ->
