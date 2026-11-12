@@ -28,7 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Надпись и значки одного портрета — прямо на живом предпросмотре: надпись редактируется на своём месте
- * и выглядит как в игре, «+» на местах значков. Клик мимо надписи убирает курсор.
+ * и выглядит как в игре, «+» на местах значков. Под предпросмотром — цвет заметки и цвет значка. Клик мимо надписи убирает курсор.
  */
 @Composable
 internal fun DecorationDialog(
@@ -60,8 +60,15 @@ internal fun DecorationDialog(
         ) {
             DecorationPreview(state, decorator, captionGlow = state.draft.caption.ifBlank { hint }) {
                 BadgeOverlay(state.draft.badge, onEvent)
-                CaptionOverlay(state.draft.caption, hint, decorator, onEvent)
+                CaptionOverlay(state.draft.caption, state.draft.captionColor, hint, decorator, onEvent)
             }
+            DecorationColorsPicker(
+                captionColor = state.draft.captionColor,
+                badgeColor = state.draft.badgeColor,
+                decorator = decorator,
+                onCaptionColor = { onEvent(PortraitsEvent.CaptionColorChanged(it)) },
+                onBadgeColor = { onEvent(PortraitsEvent.BadgeColorChanged(it)) },
+            )
             DescriptionText(stringResource(Res.string.portraits_decoration_hint))
             DescriptionText(stringResource(Res.string.portraits_caption_description))
         }

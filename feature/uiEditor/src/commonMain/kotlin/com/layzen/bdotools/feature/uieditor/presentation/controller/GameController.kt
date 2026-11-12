@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.presentation.controller
 
 import com.layzen.bdotools.core.account.GameAccounts
+import com.layzen.bdotools.core.game.isGameRunning
 import com.layzen.bdotools.feature.uieditor.domain.error.SlotsError
 import com.layzen.bdotools.feature.uieditor.domain.error.SlotsException
 import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
@@ -53,7 +54,7 @@ internal class GameController(
     /** По умолчанию раскладка пишется в тот набор, который открыт в редакторе. */
     fun openApply() {
         val edited = context.current.loaded?.edited ?: return
-        context.update { it.copy(dialog = SlotsDialog.ConfirmApply(edited)) }
+        context.update { it.copy(dialog = SlotsDialog.ConfirmApply(edited, gameRunning = isGameRunning() == true)) }
     }
 
     /** Меняет в диалоге применения набор позиций, в который запишется раскладка. */
@@ -71,17 +72,39 @@ internal class GameController(
     fun confirmApply() = context.launch(busy = true) {
         val loaded = context.current.loaded ?: return@launch
         val dialog = context.current.dialog as? SlotsDialog.ConfirmApply ?: return@launch
+        if (isGameRunning() == true) {
+            // Игра перезапишет файл при выходе: окно остаётся открытым с предупреждением, пока её не закроют
+            context.update { it.copy(dialog = dialog.copy(gameRunning = true)) }
+            return@launch
+        }
         val target = dialog.target
         context.update { it.copy(dialog = null) }
         try {
             val backup = interactor.apply(loaded, context.current.layout, target)
             skills.write(loaded.account, dialog.skipped)
             refresh(loaded.account, target)
-            context.update { it.copy(activePreset = PresetRef.Game, notice = SlotsNotice.Applied(backup)) }
+            context.update { it.copy(activePreset = PresetRef.Game, notice = SlotsNotice.Applied(backup), canUndoApply = true) }
         } catch (e: SlotsException) {
             if (e.error == SlotsError.FileChanged) refresh(loaded.account, loaded.edited)
             throw e
         }
+    }
+
+    /**
+     * Возвращает файлы игры к состоянию до последнего применения и перечитывает их; раскладка в редакторе
+     * остаётся, её можно применить снова.
+     */
+    fun confirmUndoApply() = context.launch(busy = true) {
+        val loaded = context.current.loaded ?: return@launch
+        context.update { it.copy(dialog = null) }
+        if (isGameRunning() == true) {
+            context.update { it.copy(notice = SlotsNotice.GameRunning) }
+            return@launch
+        }
+        interactor.undoLastApply(loaded.account)
+        refresh(loaded.account, loaded.edited)
+        skills.load(loaded.account)
+        context.update { it.copy(canUndoApply = false, notice = SlotsNotice.ApplyUndone) }
     }
 
     /** Даёт выбрать картинку-подложку, сохраняет её для аккаунта и показывает на холсте. */
@@ -119,6 +142,7 @@ internal class GameController(
                 activePreset = PresetRef.Game,
                 presets = presets,
                 background = background,
+                canUndoApply = it.canUndoApply && it.loaded?.account == account,
             )
         }
         skills.load(account)

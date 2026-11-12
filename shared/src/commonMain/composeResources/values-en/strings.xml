@@ -1,5 +1,7 @@
 <resources>
     <string name="app_title">BDO Tools</string>
+    <!-- Browser tab title: the page and the app name -->
+    <string name="page_title">%1$s — %2$s</string>
 
     <!-- Top navigation tabs -->
     <!-- Tab label — up to two lines -->
@@ -30,6 +32,7 @@
     <string name="account_option">%1$s · %2$d chars.</string>
 
     <!-- Disclaimer at the bottom of the window: the wording is required by the Pearl Abyss Fan Content Guidelines -->
+    <string name="app_disclaimer_short">Unofficial fan project, not affiliated with Pearl Abyss. Hover to read in full.</string>
     <string name="app_disclaimer">This is an unofficial fan project and is not affiliated with Pearl Abyss. Genuine content that includes trademarks and/or works whose intellectual property rights belong to Pearl Abyss is not official. BDO Tools only modifies settings files in "Documents\\Black Desert" and does not touch the game client.</string>
 
     <!-- Version in the top navigation -->

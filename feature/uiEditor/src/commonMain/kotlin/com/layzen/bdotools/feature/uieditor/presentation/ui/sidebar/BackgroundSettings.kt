@@ -13,6 +13,7 @@ import com.layzen.bdotools.feature.uieditor.resources.menu_hide
 import com.layzen.bdotools.feature.uieditor.resources.menu_image
 import com.layzen.bdotools.feature.uieditor.resources.menu_show
 import com.layzen.bdotools.feature.uieditor.resources.slots_background
+import com.layzen.bdotools.feature.uieditor.resources.slots_background_aspect
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_hide
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_pick
@@ -23,13 +24,30 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Своя картинка под редактором — например, скриншот из игры с персонажем — и её затенение. */
+/** Насколько могут расходиться соотношения сторон скриншота и экрана игры, чтобы подложка совпала с раскладкой. */
+private const val ASPECT_TOLERANCE = 0.02
+
+/** Совпадает ли соотношение сторон картинки [width]×[height] с экраном [screenWidth]×[screenHeight]. */
+private fun sameAspect(width: Int, height: Int, screenWidth: Int, screenHeight: Int): Boolean =
+    kotlin.math.abs(width.toDouble() / height / (screenWidth.toDouble() / screenHeight) - 1) <= ASPECT_TOLERANCE
+
+/**
+ * Своя картинка под редактором — например, скриншот из игры с персонажем — и её затенение. Если скриншот снят
+ * не в том соотношении сторон, что экран в файле игры, — предупреждение: подложка не совпадёт с раскладкой.
+ */
 @Composable
 internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
+        val screen = state.loaded?.game?.screen
+        val image = state.background
         SectionHeader(
             stringResource(Res.string.slots_background),
             description = stringResource(Res.string.slots_background_description),
+            warning = if (screen != null && image != null && !sameAspect(image.width, image.height, screen.resolutionWidth, screen.resolutionHeight)) {
+                stringResource(Res.string.slots_background_aspect, image.width, image.height, screen.resolutionWidth, screen.resolutionHeight)
+            } else {
+                null
+            },
         )
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
             MenuAction(

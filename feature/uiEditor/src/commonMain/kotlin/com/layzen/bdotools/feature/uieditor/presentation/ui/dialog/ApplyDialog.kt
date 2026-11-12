@@ -19,17 +19,20 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.character.CharacterP
 import com.layzen.bdotools.feature.uieditor.presentation.ui.character.characterTitle
 import com.layzen.bdotools.feature.uieditor.presentation.ui.gamePresetTitle
 import com.layzen.bdotools.feature.uieditor.resources.Res
+import com.layzen.bdotools.feature.uieditor.resources.slots_apply_archive_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_changed_both
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_changed_memos
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_changed_skills
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_confirm
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_description
+import com.layzen.bdotools.feature.uieditor.resources.slots_apply_game_running
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_skills
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_target
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.CheckBox
+import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.OptionGroup
@@ -71,7 +74,9 @@ internal fun ApplyDialog(
                     skillTargets.forEach { character -> ApplyCharacterRow(character, layout, skills, dialog.skipped, onEvent) }
                 }
             }
+            if (dialog.gameRunning) WarningText(stringResource(Res.string.slots_apply_game_running))
             WarningText(stringResource(Res.string.slots_apply_description))
+            DescriptionText(stringResource(Res.string.slots_apply_archive_hint))
         }
     }
 }

@@ -38,6 +38,12 @@ internal class DecorationController(private val context: PortraitsContext) {
     /** Меняет значок черновика; `null` убирает его. */
     fun changeBadge(icon: SlotIcon?) = updateDraft { it.withBadge(icon) }
 
+    /** Меняет цвет надписи черновика; `null` — цвет по умолчанию. */
+    fun changeCaptionColor(color: Int?) = updateDraft { it.copy(captionColor = color) }
+
+    /** Меняет цвет значка черновика; `null` — цвет по умолчанию. */
+    fun changeBadgeColor(color: Int?) = updateDraft { it.copy(badgeColor = color) }
+
     /** Закрывает окно без сохранения. */
     fun close() {
         baseBytes = null

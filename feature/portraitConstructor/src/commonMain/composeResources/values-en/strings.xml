@@ -12,9 +12,14 @@
     <string name="portraits_folder_description">Select the "Documents\\Black Desert" folder. The website will read portraits from FaceTexture and the character order from UserCache, and will be able to write new portraits.</string>
     <string name="portraits_folder_description_desktop">Select the "Documents\\Black Desert" folder. The app will read portraits from FaceTexture and the character order from UserCache, and will be able to write new portraits. The folder is remembered until the next launch.</string>
     <string name="portraits_folder_select">Select folder</string>
+    <!-- What the tool does: under the folder prompt -->
+    <string name="portraits_intro_pictures">Your own pictures instead of portraits in the character selection window: from your computer or a link, with cropping.</string>
+    <string name="portraits_intro_notes">A memo and a class or life skill icon on the portrait; memos go to the account characters window.</string>
+    <string name="portraits_intro_sets">Portrait order, sets in Favorites and a backup before every replacement.</string>
+    <string name="portraits_intro_safety">Only files in "Documents\\Black Desert" change; the game client is never touched.</string>
+    <string name="portraits_intro_image">Example of the portrait constructor page</string>
     <string name="portraits_permission_description">The browser is asking for permission to access the "%1$s" folder again. Allow access to load the portraits.</string>
     <string name="portraits_permission_request">Allow access</string>
-    <string name="portraits_folder_change">Change folder</string>
 
     <!-- Portrait grid -->
     <string name="portraits_loading">Loading portraits…</string>
@@ -22,7 +27,6 @@
     <string name="portraits_grid_title">Characters: %1$d</string>
     <string name="portraits_grid_description">Same order as in the character selection window. Hover over a portrait to replace or edit it.\nClose the character selection window in the game before editing.</string>
     <string name="portraits_upload">Upload</string>
-    <string name="portraits_reload">Refresh</string>
 
     <!-- Source selection -->
     <string name="portraits_source_title_all">Image for all portraits</string>
@@ -65,6 +69,12 @@
 
     <!-- Memo and badges window -->
     <string name="portraits_decoration_title">Memo and badges</string>
+    <string name="portraits_caption_color">Memo color</string>
+    <string name="portraits_badge_color">Icon color</string>
+    <string name="portraits_color_default">Default color</string>
+    <string name="portraits_colors_title">Memo and badge colors</string>
+    <string name="portraits_colors_description">The memo and badge color of every portrait that has them. Memos and badges themselves stay the same, and a backup is saved first. To color one portrait, use its "Memo and badges" window.</string>
+    <string name="portraits_colors_hint">Memo and badge colors of all portraits</string>
     <string name="portraits_decoration_hint">Click the memo to edit it. The "+" in the center adds a badge: a character class or a functional one; click a badge to replace it.</string>
 
     <!-- Memo -->

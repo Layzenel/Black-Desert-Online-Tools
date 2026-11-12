@@ -19,6 +19,7 @@ data class PortraitsState(
     val sourceDialog: SourceDialogState? = null,
     val editor: EditorState? = null,
     val decorationDialog: DecorationDialogState? = null,
+    val decorationColors: DecorationColorsState? = null,
     val restoreDialog: RestoreDialogState? = null,
     val favoritesDialog: FavoritesDialogState? = null,
     val notesSyncDialog: NotesSyncDialogState? = null,

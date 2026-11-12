@@ -18,13 +18,13 @@ import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.menu_redo
 import com.layzen.bdotools.feature.uieditor.resources.menu_undo
 import com.layzen.bdotools.feature.uieditor.resources.slots_help_button
-import com.layzen.bdotools.feature.uieditor.resources.slots_redo
+import com.layzen.bdotools.feature.uieditor.resources.slots_redo_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance_value
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_step
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_step_caption
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_to_slots
-import com.layzen.bdotools.feature.uieditor.resources.slots_undo
+import com.layzen.bdotools.feature.uieditor.resources.slots_undo_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.tool_grid_step
 import com.layzen.bdotools.feature.uieditor.resources.tool_help
 import com.layzen.bdotools.feature.uieditor.resources.tool_snap
@@ -40,7 +40,8 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Панель над холстом: история правок, привязка к сетке и прилипание к слотам. Выравнивание — в контекстном
- * меню холста. Работа с файлами — внизу меню слева. Последней — «?»: окно «Справка».
+ * меню холста. Импорт, экспорт и пресет — внизу меню слева. У каждой кнопки подсказка, у истории — с горячими клавишами.
+ * Последней — «?»: окно «Справка».
  */
 @Composable
 internal fun EditorToolbar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
@@ -85,13 +86,13 @@ private fun HistoryTools(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     ToolGroup {
         ToolbarButton(
             painterResource(Res.drawable.menu_undo),
-            stringResource(Res.string.slots_undo),
+            stringResource(Res.string.slots_undo_tooltip),
             onClick = { onEvent(SlotsEvent.Undo) },
             enabled = state.history.isNotEmpty(),
         )
         ToolbarButton(
             painterResource(Res.drawable.menu_redo),
-            stringResource(Res.string.slots_redo),
+            stringResource(Res.string.slots_redo_tooltip),
             onClick = { onEvent(SlotsEvent.Redo) },
             enabled = state.future.isNotEmpty(),
         )

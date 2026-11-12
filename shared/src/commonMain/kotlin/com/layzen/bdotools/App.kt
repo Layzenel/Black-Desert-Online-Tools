@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -24,15 +25,19 @@ import com.layzen.bdotools.core.language.AppLanguages
 import com.layzen.bdotools.core.language.languageModule
 import com.layzen.bdotools.feature.portraitconstructor.di.portraitsModule
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsRoute
+import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.preloadPortraitsStrings
 import com.layzen.bdotools.feature.uieditor.di.slotsModule
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsRoute
+import com.layzen.bdotools.feature.uieditor.presentation.ui.preloadSlotsStrings
 import com.layzen.bdotools.language.LanguageEnvironment
 import com.layzen.bdotools.language.LanguageSwitcher
 import com.layzen.bdotools.navigation.AppTab
 import com.layzen.bdotools.navigation.Destination
+import com.layzen.bdotools.navigation.PageTitle
 import com.layzen.bdotools.navigation.PlatformNavigation
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.app_title
+import com.layzen.bdotools.resources.page_title
 import com.layzen.bdotools.uikit.components.TopNavigation
 import com.layzen.bdotools.uikit.showcase.ComponentShowcase
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -80,6 +85,14 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
     val accounts = koinInject<GameAccounts>()
     val accountsState by accounts.state.collectAsState()
     val selectedAccount = accountsState.selected
+    val appTitle = stringResource(Res.string.app_title)
+    val tabTitle = (current as? Destination.Tab)?.let { stringResource(it.tab.title).replace('\n', ' ') }
+    PageTitle(tabTitle?.let { stringResource(Res.string.page_title, it, appTitle) } ?: appTitle)
+    // Строки фич грузятся при первом показе; заранее — чтобы вкладка не мелькала пустыми кнопками
+    LaunchedEffect(language) {
+        preloadPortraitsStrings()
+        preloadSlotsStrings()
+    }
 
     Column(Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep)) {
         TopNavigation(

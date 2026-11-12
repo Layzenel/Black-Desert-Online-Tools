@@ -43,6 +43,9 @@ private val UNSAFE_FILE_CHARS = Regex("""[\\/:*?"<>|]""")
 /** Сценарии работы с файлами: загрузка настроек игры, запись раскладки и пресеты пользователя. */
 class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
 
+    /** Что переписало последнее применение; `null` — в этом сеансе ничего не применяли или уже откатили. */
+    private var journal: ApplyJournal? = null
+
     override suspend fun accounts(): List<String> = storage.accounts().ifEmpty { throw SlotsException(SlotsError.NoGameVariable) }
 
     override suspend fun load(account: String, edited: GamePreset): LoadedGame {
@@ -68,6 +71,7 @@ class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
         val companions = companionVisibility(quickSlots, splitHp)
         if (target == GamePreset.General) text = writeVisibility(text, companions)
         val backup = storage.writeGameVariable(loaded.account, text, loaded.file.modified)
+        journal = ApplyJournal(loaded.account, loaded.file.text)
         if (target != GamePreset.General) return backup
         val visibility = entries
             .filter { it.isShow != game.uiData.getValue(it.index).isShow }
@@ -89,7 +93,7 @@ class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
         storage.characterFiles(account).forEach { path ->
             val text = storage.readCharacterFile(account, path)
             val changed = writeChatVisibility(writeVisibility(text, visibility), chatOrder, chats)
-            if (changed != text) storage.writeCharacterFile(account, path, changed)
+            if (changed != text) writeCharacter(account, path, text, changed)
         }
     }
 
@@ -102,7 +106,21 @@ class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
         val path = storage.characterFiles(account).firstOrNull { characterNoOf(it) == characterNo } ?: return
         val text = storage.readCharacterFile(account, path)
         val changed = writeCharacterSkills(text, slots, memos)
-        if (changed != text) storage.writeCharacterFile(account, path, changed)
+        if (changed != text) writeCharacter(account, path, text, changed)
+    }
+
+    /** Пишет файл персонажа, запомнив прежний текст [old] для отката применения. */
+    private suspend fun writeCharacter(account: String, path: String, old: String, text: String) {
+        journal?.takeIf { it.account == account }?.rememberCharacter(path, old)
+        storage.writeCharacterFile(account, path, text)
+    }
+
+    override suspend fun undoLastApply(account: String): Boolean {
+        val last = journal?.takeIf { it.account == account } ?: return false
+        storage.writeGameVariable(account, last.gameVariable, storage.readGameVariable(account).modified)
+        last.characterFiles.forEach { (path, text) -> storage.writeCharacterFile(account, path, text) }
+        journal = null
+        return true
     }
 
     /** Путь файла персонажа — `11/<CharacterNo>/gamevariable.xml`: номер персонажа — имя папки. */

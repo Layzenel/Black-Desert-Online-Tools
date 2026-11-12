@@ -33,7 +33,7 @@ class DesktopPortraitsStorageTest {
     private val game = (documents / "Black Desert").also { (it / "FaceTexture").createDirectories() }
     private val preferences = Preferences.userRoot().node("com/layzen/bdotools/test/${System.nanoTime()}")
     private var picked: Path? = documents
-    private val storage = DesktopPortraitsStorage(GameFolderSettings(preferences)) { picked }
+    private val storage = DesktopPortraitsStorage(GameFolderSettings(preferences) { null }) { picked }
 
     @AfterTest
     fun cleanUp() {

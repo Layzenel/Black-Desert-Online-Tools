@@ -62,10 +62,14 @@ sealed interface SlotsDialog {
     /**
      * Подтверждение записи в файл игры: игра должна быть закрыта. [target] — в какой набор позиций писать,
      * [skipped] — персонажи (`CharacterNo`), с которых сняли отметку: их навыки и надписи не запишутся.
+     * [gameRunning] — игра запущена (видно только на Desktop): запись не начнётся, пока её не закроют.
      */
-    data class ConfirmApply(val target: GamePreset, val skipped: Set<String> = emptySet()) : SlotsDialog
+    data class ConfirmApply(val target: GamePreset, val skipped: Set<String> = emptySet(), val gameRunning: Boolean = false) : SlotsDialog
 
     data class ConfirmDelete(val name: String) : SlotsDialog
+
+    /** Подтверждение отката последнего «Применить в игру». */
+    data object ConfirmUndoApply : SlotsDialog
 
     /** Надпись навыка [skillNo]: [text] — что введено сейчас, [existing] — была ли надпись до правки. */
     data class EditMemo(val skillNo: Int, val text: String, val existing: Boolean) : SlotsDialog

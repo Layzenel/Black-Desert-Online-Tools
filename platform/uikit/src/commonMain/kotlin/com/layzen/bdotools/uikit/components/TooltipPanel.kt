@@ -10,16 +10,21 @@ import androidx.compose.ui.draw.shadow
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
- * Подложка подсказки: панель с рамкой, как у тултипов игры, с небольшой тенью, как у меню: так она отделяется
- * от того, над чем всплыла. Её рисуют [HoverTooltip] и `aside` у [ModalWindow].
+ * Подложка подсказки, как у тултипов игры: тёмное тело в двойной рамке — внешняя бронзовая, внутренняя тонкая
+ * графитовая с зазором, — и небольшая тень, как у меню: так подсказка отделяется от того, над чем всплыла.
+ * Её рисуют [HoverTooltip] и `aside` у [ModalWindow]; крупные блоки внутри — [TooltipSection].
  */
 @Composable
 fun TooltipPanel(content: @Composable () -> Unit) {
+    val dimens = AppTheme.dimens
+    val colors = AppTheme.colors
     Box(
         Modifier
-            .shadow(AppTheme.dimens.menuShadow)
-            .background(AppTheme.colors.backgroundRaised)
-            .border(AppTheme.dimens.borderWidth, AppTheme.colors.border)
-            .padding(horizontal = AppTheme.dimens.spaceS, vertical = AppTheme.dimens.spaceXs),
+            .shadow(dimens.menuShadow)
+            .background(colors.backgroundDeep)
+            .border(dimens.borderWidth, colors.borderSelected)
+            .padding(dimens.tooltipFrameGap)
+            .border(dimens.borderWidth, colors.border)
+            .padding(horizontal = dimens.spaceS, vertical = dimens.spaceXs),
     ) { content() }
 }

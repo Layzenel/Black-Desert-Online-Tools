@@ -182,6 +182,16 @@ sealed interface SlotsEvent {
     /** Отметка персонажа [characterNo] в диалоге применения: записывать ли ему навыки и надписи. */
     data class ToggleApplyCharacter(val characterNo: String) : SlotsEvent
     data object ConfirmApply : SlotsEvent
+
+    /** «Откатить применение»: спросить, вернуть ли файлы игры к состоянию до последнего «Применить в игру». */
+    data object OpenUndoApply : SlotsEvent
+    data object ConfirmUndoApply : SlotsEvent
+
+    /** В превью экспорта: положить раскладку текстом в буфер обмена, а не сохранять файлом. */
+    data object CopyPreview : SlotsEvent
+
+    /** Страница положила [SlotsState.copiedLayout] в буфер обмена. */
+    data object LayoutCopied : SlotsEvent
     data object PickBackground : SlotsEvent
     data object ToggleBackground : SlotsEvent
 

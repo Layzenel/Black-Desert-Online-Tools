@@ -8,6 +8,7 @@ import com.layzen.bdotools.feature.portraitconstructor.domain.backup.BackupsInte
 import com.layzen.bdotools.feature.portraitconstructor.domain.favorite.FavoritesInteractor
 import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemosInteractor
 import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitsInteractor
+import com.layzen.bdotools.feature.portraitconstructor.presentation.controller.DecorationColorsController
 import com.layzen.bdotools.feature.portraitconstructor.presentation.controller.DecorationController
 import com.layzen.bdotools.feature.portraitconstructor.presentation.controller.FavoritesController
 import com.layzen.bdotools.feature.portraitconstructor.presentation.controller.NotesSyncController
@@ -40,6 +41,7 @@ class PortraitsViewModel(
     private val context = PortraitsContext(viewModelScope, portraits, backups, favorites, PortraitImages())
     private val replacement = ReplacementController(context)
     private val decoration = DecorationController(context)
+    private val decorationColors = DecorationColorsController(context)
     private val restore = RestoreController(context)
     private val favorites = FavoritesController(context)
     private val reorder = ReorderController(context)
@@ -88,6 +90,13 @@ class PortraitsViewModel(
             is PortraitsEvent.BadgeChanged -> decoration.changeBadge(event.icon)
             PortraitsEvent.CloseDecoration -> decoration.close()
             PortraitsEvent.ApplyDecoration -> decoration.apply()
+            is PortraitsEvent.CaptionColorChanged -> decoration.changeCaptionColor(event.color)
+            is PortraitsEvent.BadgeColorChanged -> decoration.changeBadgeColor(event.color)
+            PortraitsEvent.OpenDecorationColors -> decorationColors.open()
+            is PortraitsEvent.AllCaptionColorChanged -> decorationColors.changeCaptionColor(event.color)
+            is PortraitsEvent.AllBadgeColorChanged -> decorationColors.changeBadgeColor(event.color)
+            PortraitsEvent.CloseDecorationColors -> decorationColors.close()
+            PortraitsEvent.ApplyDecorationColors -> decorationColors.apply()
 
             is PortraitsEvent.OpenRestore -> restore.open(event.target)
             is PortraitsEvent.SelectBackup -> restore.select(event.name)

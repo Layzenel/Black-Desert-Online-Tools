@@ -36,6 +36,8 @@ import com.layzen.bdotools.uikit.theme.AppColors
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 
+/** Непрозрачный альфа-канал для цвета украшения `0xRRGGBB`. */
+private const val OPAQUE = 0xFF000000.toInt()
 private const val GLOW_CENTER_ALPHA = 0.82f
 private const val GLOW_MIDDLE_ALPHA = 0.62f
 private const val GLOW_SOLID_STOP = 0.55f
@@ -72,8 +74,8 @@ class PortraitDecorator internal constructor(
             // раскладка задана для 624×804; если файл другого размера, растягиваем её
             scale(base.width / PortraitTexture.WIDTH.toFloat(), base.height / PortraitTexture.HEIGHT.toFloat(), pivot = Offset.Zero) {
                 // значок крупный и может заходить под надпись, поэтому надпись рисуется поверх
-                decoration.badge?.let { drawBadge(it) }
-                if (decoration.caption.isNotBlank()) drawCaption(decoration.caption.trim(), drawCaptionText)
+                decoration.badge?.let { drawBadge(it, decoration.badgeColor) }
+                if (decoration.caption.isNotBlank()) drawCaption(decoration.caption.trim(), decoration.captionColor, drawCaptionText)
             }
         }
         return target
@@ -83,8 +85,8 @@ class PortraitDecorator internal constructor(
      * Надпись над нижней полосой игры. Под ней — овальное затемнение: плотное в центре текста
      * и растворяющееся к краям со всех сторон, поэтому нет резкой тёмной полосы.
      */
-    private fun DrawScope.drawCaption(caption: String, withText: Boolean) {
-        val text = measure(caption, captionFontSize(caption))
+    private fun DrawScope.drawCaption(caption: String, color: Int?, withText: Boolean) {
+        val text = measure(caption, captionFontSize(caption), color)
         val blockHeight = text.size.height + Layout.CAPTION_PADDING_VERTICAL * 2f
         val blockTop = Layout.CAPTION_BOTTOM - blockHeight
         val center = Offset(PortraitTexture.WIDTH / 2f, blockTop + blockHeight / 2)
@@ -123,9 +125,12 @@ class PortraitDecorator internal constructor(
         } ?: Layout.CAPTION_FONT_SIZES.last()
     }
 
-    /** Стиль надписи при шрифте [fontSize] в пикселях текстуры: 1 sp здесь равен 1 пикселю. */
-    fun captionStyle(fontSize: Int): TextStyle = TextStyle(
-        color = colors.textPrimary,
+    /**
+     * Стиль надписи при шрифте [fontSize] в пикселях текстуры: 1 sp здесь равен 1 пикселю. [color] — цвет
+     * надписи `0xRRGGBB`, `null` — кремовый цвет текста по умолчанию.
+     */
+    fun captionStyle(fontSize: Int, color: Int? = null): TextStyle = TextStyle(
+        color = decorationColor(color),
         fontSize = fontSize.sp,
         lineHeight = (fontSize * Layout.CAPTION_LINE_HEIGHT_RATIO).sp,
         fontWeight = FontWeight.Bold,
@@ -133,17 +138,20 @@ class PortraitDecorator internal constructor(
         shadow = Shadow(Color.Black.copy(alpha = TEXT_SHADOW_ALPHA), Offset(0f, TEXT_SHADOW_OFFSET), TEXT_SHADOW_BLUR),
     )
 
-    private fun measure(caption: String, fontSize: Int): TextLayoutResult = textMeasurer.measure(
+    private fun measure(caption: String, fontSize: Int, color: Int? = null): TextLayoutResult = textMeasurer.measure(
         text = caption,
-        style = captionStyle(fontSize),
+        style = captionStyle(fontSize, color),
         overflow = TextOverflow.Ellipsis,
         maxLines = PortraitDecoration.CAPTION_MAX_LINES,
         constraints = Constraints.fixedWidth(PortraitTexture.WIDTH - Layout.CAPTION_PADDING_HORIZONTAL * 2),
         density = TexturePixels,
     )
 
+    /** Цвет украшения `0xRRGGBB` или кремовый цвет текста темы, если [rgb] `null`. */
+    fun decorationColor(rgb: Int?): Color = rgb?.let { Color(OPAQUE or it) } ?: colors.textPrimary
+
     /** Значок — крупная иконка без кольца по центру портрета. Под ней мягкая тень, как под надписью. */
-    private fun DrawScope.drawBadge(icon: SlotIcon) {
+    private fun DrawScope.drawBadge(icon: SlotIcon, color: Int?) {
         val center = Offset(Layout.BADGE_CENTER_X.toFloat(), Layout.BADGE_CENTER_Y.toFloat())
         val size = Layout.BADGE_SIZE.toFloat()
         val shadowRadius = size * BADGE_SHADOW_SCALE
@@ -159,7 +167,7 @@ class PortraitDecorator internal constructor(
             radius = shadowRadius,
             center = center,
         )
-        drawIcon(icons.getValue(icon), center, size, colors.textPrimary)
+        drawIcon(icons.getValue(icon), center, size, decorationColor(color))
     }
 }
 

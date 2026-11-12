@@ -1,6 +1,8 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.ui
 
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +23,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_grid_
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_reorder_description
 import com.layzen.bdotools.uikit.components.ContentFrame
 import com.layzen.bdotools.uikit.components.SectionHeader
+import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -44,10 +47,14 @@ internal fun PortraitsPage(state: PortraitsState, onEvent: (PortraitsEvent) -> U
                 cancel
             },
     ) {
-        SectionHeader(
-            stringResource(Res.string.portraits_grid_title, state.portraits.size),
-            description = stringResource(if (reordering) Res.string.portraits_reorder_description else Res.string.portraits_grid_description),
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL)) {
+            SectionHeader(
+                stringResource(Res.string.portraits_grid_title, state.portraits.size),
+                Modifier.weight(1f),
+                description = stringResource(if (reordering) Res.string.portraits_reorder_description else Res.string.portraits_grid_description),
+            )
+            PortraitsFolderTools(state, onEvent)
+        }
         PortraitsContent(state, onEvent)
         PortraitsActions(state, onEvent)
     }

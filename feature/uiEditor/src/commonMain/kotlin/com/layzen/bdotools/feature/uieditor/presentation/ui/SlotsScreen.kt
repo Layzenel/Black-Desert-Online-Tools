@@ -1,13 +1,18 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsViewModel
@@ -49,9 +54,22 @@ fun SlotsScreen(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     if (ready) {
         SlotsContent(state, onEvent, Modifier.fillMaxSize())
     } else {
-        Column(Modifier.widthIn(max = AppTheme.dimens.contentMaxWidth).padding(AppTheme.dimens.spaceXl)) { AccessContent(state, onEvent) }
+        Column(
+            Modifier.widthIn(max = AppTheme.dimens.contentMaxWidth).verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceXl),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM),
+        ) {
+            AccessContent(state, onEvent)
+            if (state.access != null && !state.busy) SlotsIntro()
+        }
     }
 
+    val clipboard = LocalClipboardManager.current
+    LaunchedEffect(state.copiedLayout) {
+        state.copiedLayout?.let {
+            clipboard.setText(AnnotatedString(it))
+            onEvent(SlotsEvent.LayoutCopied)
+        }
+    }
     SlotsDialogs(state, onEvent)
     if (state.busy && ready) BusyOverlay(stringResource(Res.string.slots_busy))
     val notice = state.notice
