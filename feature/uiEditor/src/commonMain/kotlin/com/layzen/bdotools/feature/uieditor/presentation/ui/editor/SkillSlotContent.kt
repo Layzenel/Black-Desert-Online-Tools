@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,12 +17,18 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
- * Иконка навыка во всю рамку слота и поверх неё номер слота [number] на затенённой подложке, чтобы номер
+ * Иконка навыка в рамке слота (с отступом, как в игре) и поверх неё номер слота [number] на затенённой подложке, чтобы номер
  * читался на любой иконке. Так слот выглядит и на холсте редактора, и в превью импорта и экспорта.
  */
 @Composable
 internal fun BoxScope.SkillSlotContent(icon: ImageBitmap, number: String?, style: TextStyle) {
-    Image(icon, contentDescription = null, modifier = Modifier.matchParentSize(), contentScale = ContentScale.Crop)
+    // Как в игре: иконка меньше рамки слота и стоит по центру с ровным отступом
+    Image(
+        icon,
+        contentDescription = null,
+        modifier = Modifier.align(Alignment.Center).fillMaxSize(SlotsDimens.SKILL_ICON_SHARE),
+        contentScale = ContentScale.Crop,
+    )
     if (number == null) return
     Box(
         Modifier

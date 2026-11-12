@@ -3,9 +3,6 @@ package com.layzen.bdotools.feature.uieditor.presentation.ui.skill
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.pointer.isAltPressed
-import androidx.compose.ui.platform.LocalWindowInfo
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SkillsState
 import com.layzen.bdotools.feature.uieditor.resources.Res
@@ -16,12 +13,11 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Подсказка над навыком [skillNo] в слоте: название, а пока зажат Alt — полный [SkillTooltip].
- * Alt читается с окна, поэтому тултип меняется сразу, без движения курсора.
+ * Alt ([rememberAltPressed]) меняет тултип сразу, без движения курсора.
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun SkillSlotTooltip(skillNo: Int, skills: SkillsState, onEvent: (SlotsEvent) -> Unit) {
-    if (LocalWindowInfo.current.keyboardModifiers.isAltPressed) {
+    if (rememberAltPressed()) {
         SkillTooltip(skillNo, skills, onEvent)
         return
     }

@@ -17,6 +17,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_help
 import com.layzen.bdotools.feature.uieditor.resources.slots_help_controls
 import com.layzen.bdotools.feature.uieditor.resources.slots_help_item
 import com.layzen.bdotools.feature.uieditor.resources.slots_help_items
+import com.layzen.bdotools.feature.uieditor.resources.slots_help_skill_items
 import com.layzen.bdotools.feature.uieditor.resources.slots_help_legend
 import com.layzen.bdotools.feature.uieditor.resources.slots_screen
 import com.layzen.bdotools.uikit.components.DescriptionText
@@ -28,10 +29,11 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Окно «Справка» по кнопке «?» на панели инструментов: управление по пунктам, цвета рамок ([EditorLegend])
- * и экран игры [screen]. Ширина — по содержимому, но не шире [SlotsDimens.helpDialogMaxWidth]: длинные пункты переносятся.
+ * и экран игры [screen]. Пункты про умения в слотах перезарядки — только при выбранном персонаже ([skillsShown]).
+ * Ширина — по содержимому, но не шире [SlotsDimens.helpDialogMaxWidth]: длинные пункты переносятся.
  */
 @Composable
-internal fun HelpDialog(screen: ScreenSpace?, onDismiss: () -> Unit) {
+internal fun HelpDialog(screen: ScreenSpace?, skillsShown: Boolean, onDismiss: () -> Unit) {
     ModalWindow(
         title = stringResource(Res.string.slots_help),
         onDismissRequest = onDismiss,
@@ -47,7 +49,8 @@ internal fun HelpDialog(screen: ScreenSpace?, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
         ) {
             HelpHeading(stringResource(Res.string.slots_help_controls))
-            stringArrayResource(Res.array.slots_help_items).forEachIndexed { index, item ->
+            val skillItems = if (skillsShown) stringArrayResource(Res.array.slots_help_skill_items) else emptyList()
+            (stringArrayResource(Res.array.slots_help_items) + skillItems).forEachIndexed { index, item ->
                 DescriptionText(stringResource(Res.string.slots_help_item, index + 1, item))
             }
             HelpHeading(stringResource(Res.string.slots_help_legend))

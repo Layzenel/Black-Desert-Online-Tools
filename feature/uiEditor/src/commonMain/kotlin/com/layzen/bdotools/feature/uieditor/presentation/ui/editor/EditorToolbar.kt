@@ -77,7 +77,7 @@ internal fun EditorToolbar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
 private fun HelpTool(state: SlotsState) {
     var open by remember { mutableStateOf(false) }
     ToolbarButton(painterResource(Res.drawable.tool_help), stringResource(Res.string.slots_help_button), onClick = { open = true })
-    if (open) HelpDialog(state.loaded?.game?.screen, onDismiss = { open = false })
+    if (open) HelpDialog(state.loaded?.game?.screen, skillsShown = state.skills.selected != null, onDismiss = { open = false })
 }
 
 @Composable
