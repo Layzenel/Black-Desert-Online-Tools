@@ -76,9 +76,10 @@ class PortraitsViewModel(
             PortraitsEvent.CloseSource -> replacement.closeSource()
             is PortraitsEvent.UrlChanged -> replacement.changeUrl(event.url)
             PortraitsEvent.PickFromDevice -> replacement.pickFromDevice()
+            PortraitsEvent.PasteFromClipboard -> replacement.pasteFromClipboard()
             PortraitsEvent.LoadFromUrl -> replacement.loadFromUrl()
             is PortraitsEvent.MoveImage -> replacement.updatePlacement { it.movedBy(event.dx, event.dy) }
-            is PortraitsEvent.ZoomImage -> replacement.updatePlacement { it.zoomedTo(event.scale) }
+            is PortraitsEvent.ZoomImage -> replacement.zoom(event.scale)
             is PortraitsEvent.RotateImage -> replacement.updatePlacement { it.rotatedTo(event.degrees) }
             PortraitsEvent.ResetPlacement -> replacement.resetPlacement()
             is PortraitsEvent.ToggleMaskCell -> replacement.toggleCell(event.index)
@@ -88,13 +89,12 @@ class PortraitsViewModel(
             is PortraitsEvent.OpenDecoration -> decoration.open(event.characterId)
             is PortraitsEvent.CaptionChanged -> decoration.changeCaption(event.text)
             is PortraitsEvent.BadgeChanged -> decoration.changeBadge(event.icon)
+            is PortraitsEvent.BadgeWithCaption -> decoration.changeBadgeAndCaption(event.icon, event.caption)
             PortraitsEvent.CloseDecoration -> decoration.close()
             PortraitsEvent.ApplyDecoration -> decoration.apply()
-            is PortraitsEvent.CaptionColorChanged -> decoration.changeCaptionColor(event.color)
-            is PortraitsEvent.BadgeColorChanged -> decoration.changeBadgeColor(event.color)
+            is PortraitsEvent.StyleChanged -> decoration.changeStyle(event.style)
             PortraitsEvent.OpenDecorationColors -> decorationColors.open()
-            is PortraitsEvent.AllCaptionColorChanged -> decorationColors.changeCaptionColor(event.color)
-            is PortraitsEvent.AllBadgeColorChanged -> decorationColors.changeBadgeColor(event.color)
+            is PortraitsEvent.AllStyleChanged -> decorationColors.changeStyle(event.style)
             PortraitsEvent.CloseDecorationColors -> decorationColors.close()
             PortraitsEvent.ApplyDecorationColors -> decorationColors.apply()
 

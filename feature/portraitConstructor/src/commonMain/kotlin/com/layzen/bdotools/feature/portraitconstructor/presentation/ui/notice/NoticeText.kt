@@ -13,6 +13,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_network
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_not_game_folder
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_not_image
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_no_clipboard_image
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_error_unknown
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorite_added
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorite_applied
@@ -46,5 +47,6 @@ internal fun noticeText(notice: Notice): String = when (notice.kind) {
     NoticeKind.Blocked -> stringResource(Res.string.portraits_error_blocked)
     NoticeKind.Network -> stringResource(Res.string.portraits_error_network)
     NoticeKind.NotImage -> stringResource(Res.string.portraits_error_not_image)
+    NoticeKind.NoClipboardImage -> stringResource(Res.string.portraits_error_no_clipboard_image)
     NoticeKind.Unknown -> stringResource(Res.string.portraits_error_unknown, notice.argument)
 }

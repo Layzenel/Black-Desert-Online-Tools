@@ -31,7 +31,6 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.stringResource
 
-private val ZOOM_PERCENT_RANGE = 10..400
 private val ROTATION_RANGE = -180..180
 
 /**
@@ -66,9 +65,9 @@ internal fun MaskEditor(state: EditorState, onEvent: (PortraitsEvent) -> Unit) {
                 Column(Modifier.weight(1f)) {
                     SectionHeader(stringResource(Res.string.portraits_editor_zoom))
                     ValueSlider(
-                        value = zoomPercent.coerceIn(ZOOM_PERCENT_RANGE),
+                        value = zoomPercent.coerceIn(EditorState.ZOOM_PERCENT_RANGE),
                         onValueChange = { onEvent(PortraitsEvent.ZoomImage(state.initialPlacement.scale * it / 100f)) },
-                        range = ZOOM_PERCENT_RANGE,
+                        range = EditorState.ZOOM_PERCENT_RANGE,
                     )
                 }
                 Column(Modifier.weight(1f)) {

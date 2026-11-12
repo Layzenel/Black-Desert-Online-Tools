@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.event
 
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.DecorationStyle
 import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.SlotIcon
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.PortraitDecorator
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.ReplaceTarget
@@ -18,6 +19,7 @@ sealed interface PortraitsEvent {
     data object CloseSource : PortraitsEvent
     data class UrlChanged(val url: String) : PortraitsEvent
     data object PickFromDevice : PortraitsEvent
+    data object PasteFromClipboard : PortraitsEvent
     data object LoadFromUrl : PortraitsEvent
 
     /** Сдвиг в пикселях маски. */
@@ -33,17 +35,18 @@ sealed interface PortraitsEvent {
     data class OpenDecoration(val characterId: String) : PortraitsEvent
     data class CaptionChanged(val text: String) : PortraitsEvent
     data class BadgeChanged(val icon: SlotIcon?) : PortraitsEvent
+
+    /** Значок [icon] и его название [caption] в заметку — правый клик по значку в списке. */
+    data class BadgeWithCaption(val icon: SlotIcon, val caption: String) : PortraitsEvent
     data object CloseDecoration : PortraitsEvent
     data object ApplyDecoration : PortraitsEvent
 
-    /** Цвет надписи или значка в окне одного портрета, `0xRRGGBB`; `null` — по умолчанию. */
-    data class CaptionColorChanged(val color: Int?) : PortraitsEvent
-    data class BadgeColorChanged(val color: Int?) : PortraitsEvent
+    /** Цвета и затенение в окне одного портрета. */
+    data class StyleChanged(val style: DecorationStyle) : PortraitsEvent
 
     // Цвет заметок и значков всех портретов
     data object OpenDecorationColors : PortraitsEvent
-    data class AllCaptionColorChanged(val color: Int?) : PortraitsEvent
-    data class AllBadgeColorChanged(val color: Int?) : PortraitsEvent
+    data class AllStyleChanged(val style: DecorationStyle) : PortraitsEvent
     data object CloseDecorationColors : PortraitsEvent
     data object ApplyDecorationColors : PortraitsEvent
 

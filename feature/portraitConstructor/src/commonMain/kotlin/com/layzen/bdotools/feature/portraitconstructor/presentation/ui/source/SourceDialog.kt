@@ -16,6 +16,9 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.Portraits
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.notice.noticeText
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_clipboard
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_clipboard_description
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_clipboard_paste
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_device
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_device_description
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_device_pick
@@ -36,7 +39,7 @@ import com.layzen.bdotools.uikit.components.WarningText
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
-/** Выбор, откуда взять новое изображение: файл с устройства или ссылка. */
+/** Выбор, откуда взять новое изображение: файл с устройства, буфер обмена или ссылка. */
 @Composable
 internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) -> Unit) {
     val title = when (state.target) {
@@ -69,6 +72,19 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                 ActionButton(
                     stringResource(Res.string.portraits_source_device_pick),
                     onClick = { onEvent(PortraitsEvent.PickFromDevice) },
+                    enabled = !state.isLoading,
+                )
+            }
+            SectionDivider()
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
+                SectionHeader(
+                    stringResource(Res.string.portraits_source_clipboard),
+                    Modifier.weight(1f),
+                    description = stringResource(Res.string.portraits_source_clipboard_description),
+                )
+                ActionButton(
+                    stringResource(Res.string.portraits_source_clipboard_paste),
+                    onClick = { onEvent(PortraitsEvent.PasteFromClipboard) },
                     enabled = !state.isLoading,
                 )
             }

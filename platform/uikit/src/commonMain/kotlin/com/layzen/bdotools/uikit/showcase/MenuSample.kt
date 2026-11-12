@@ -1,6 +1,7 @@
 package com.layzen.bdotools.uikit.showcase
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,10 +9,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.GameWindow
+import com.layzen.bdotools.uikit.components.GroupedOptionsMenu
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.LabelBadge
 import com.layzen.bdotools.uikit.components.LabelBadgeKind
@@ -19,6 +23,9 @@ import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.uikit.resources.Res
 import com.layzen.bdotools.uikit.resources.showcase_badge_hot
 import com.layzen.bdotools.uikit.resources.showcase_badge_new
+import com.layzen.bdotools.uikit.resources.showcase_grouped_first
+import com.layzen.bdotools.uikit.resources.showcase_grouped_open
+import com.layzen.bdotools.uikit.resources.showcase_grouped_rest
 import com.layzen.bdotools.uikit.resources.showcase_menu_character
 import com.layzen.bdotools.uikit.resources.showcase_menu_game_info
 import com.layzen.bdotools.uikit.resources.showcase_menu_recent
@@ -43,7 +50,7 @@ private val menuEntries = listOf(
     MenuEntry(Res.string.showcase_menu_settings, "F10"),
 )
 
-/** Пример окна «Меню»: поиск, пункты с горячими клавишами и плашками. */
+/** Пример окна «Меню»: поиск, пункты с горячими клавишами и плашками, внизу — двухуровневый список с поиском. */
 @Composable
 internal fun MenuSample(modifier: Modifier) {
     var selected by remember { mutableIntStateOf(0) }
@@ -67,6 +74,7 @@ internal fun MenuSample(modifier: Modifier) {
                     onClick = { selected = index },
                 )
             }
+            GroupedPick(selected) { selected = it }
         }
     }
 }
@@ -74,4 +82,25 @@ internal fun MenuSample(modifier: Modifier) {
 private fun LabelBadgeKind.label() = when (this) {
     LabelBadgeKind.New -> Res.string.showcase_badge_new
     LabelBadgeKind.Hot -> Res.string.showcase_badge_hot
+}
+
+/** Двухуровневый список с поиском [GroupedOptionsMenu]: те же пункты меню в двух группах. */
+@Composable
+private fun GroupedPick(selected: Int, onSelect: (Int) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val half = menuEntries.size / 2
+    Box(Modifier.padding(AppTheme.dimens.spaceS)) {
+        ActionButton(stringResource(Res.string.showcase_grouped_open), onClick = { expanded = true })
+        GroupedOptionsMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            groups = listOf(0 until half, half until menuEntries.size),
+            groupLabel = { stringResource(if (it.first == 0) Res.string.showcase_grouped_first else Res.string.showcase_grouped_rest) },
+            options = { it.toList() },
+            selected = selected,
+            onSelect = onSelect,
+            label = { stringResource(menuEntries[it].title) },
+            searchPlaceholder = stringResource(Res.string.showcase_menu_search),
+        )
+    }
 }

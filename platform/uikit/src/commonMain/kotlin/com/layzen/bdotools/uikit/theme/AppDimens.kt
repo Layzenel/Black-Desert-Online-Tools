@@ -51,6 +51,7 @@ data class AppDimens(
     val tooltipFrameGap: Dp = 2.dp,
     val swatchSize: Dp = 22.dp,
     val scrollbarWidth: Dp = 4.dp,
+    val scrollbarHoverWidth: Dp = 8.dp,
     val scrollbarInset: Dp = 2.dp,
     val closeIconSize: Dp = 12.dp,
 

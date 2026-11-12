@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.controller
 
 import androidx.compose.ui.graphics.ImageBitmap
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.DecorationStyle
 import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitWrite
 import com.layzen.bdotools.feature.portraitconstructor.presentation.PortraitsContext
 import com.layzen.bdotools.feature.portraitconstructor.presentation.render.toBmp
@@ -15,18 +16,23 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Notice
  */
 internal class DecorationColorsController(private val context: PortraitsContext) {
 
-    /** Открывает окно с цветами первого портрета с заметкой или значком: обычно они у всех одинаковые. */
+    /**
+     * Открывает окно со стилем первого портрета с заметкой или значком (обычно он у всех одинаковый) и в фоне
+     * читает его чистую основу для превью. Не прочиталась — окно работает и без превью.
+     */
     fun open() {
         val first = context.current.portraits.map { it.characterId }.firstOrNull { !context.current.decorationOf(it).isEmpty }
         val decoration = first?.let(context.current::decorationOf)
-        context.update { it.copy(decorationColors = DecorationColorsState(decoration?.captionColor, decoration?.badgeColor)) }
+        context.update { it.copy(decorationColors = DecorationColorsState(decoration?.style ?: DecorationStyle(), decoration)) }
+        if (first == null) return
+        context.launch(onError = {}) {
+            val base = context.images.decode(context.portraits.readCleanBase(first))
+            updateDialog { it.copy(previewBase = base) }
+        }
     }
 
-    /** Меняет цвет заметок; `null` — цвет по умолчанию. */
-    fun changeCaptionColor(color: Int?) = updateDialog { it.copy(captionColor = color) }
-
-    /** Меняет цвет значков; `null` — цвет по умолчанию. */
-    fun changeBadgeColor(color: Int?) = updateDialog { it.copy(badgeColor = color) }
+    /** Меняет цвета и затенение для всех портретов. */
+    fun changeStyle(style: DecorationStyle) = updateDialog { it.copy(style = style) }
 
     /** Закрывает окно без записи. */
     fun close() = context.update { it.copy(decorationColors = null) }
@@ -38,7 +44,7 @@ internal class DecorationColorsController(private val context: PortraitsContext)
         val targets = context.current.portraits.map { it.characterId }
             .map { it to context.current.decorationOf(it) }
             .filter { (_, decoration) -> !decoration.isEmpty }
-            .map { (id, decoration) -> id to decoration.copy(captionColor = dialog.captionColor, badgeColor = dialog.badgeColor) }
+            .map { (id, decoration) -> id to decoration.copy(style = dialog.style) }
             .filter { (id, decoration) -> decoration != context.current.decorationOf(id) }
         if (targets.isEmpty()) return
         context.launch {

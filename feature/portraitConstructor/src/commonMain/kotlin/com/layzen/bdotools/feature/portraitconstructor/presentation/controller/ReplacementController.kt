@@ -32,6 +32,9 @@ internal class ReplacementController(private val context: PortraitsContext) {
     /** Загружает картинку из файла на устройстве. */
     fun pickFromDevice() = loadImage { context.portraits.pickImage() }
 
+    /** Загружает картинку из буфера обмена. */
+    fun pasteFromClipboard() = loadImage { context.portraits.pasteImage() }
+
     /** Загружает картинку по введённой ссылке; пустая ссылка игнорируется. */
     fun loadFromUrl() {
         val url = context.current.sourceDialog?.url?.trim().orEmpty()
@@ -41,6 +44,9 @@ internal class ReplacementController(private val context: PortraitsContext) {
     /** Меняет положение изображения в редакторе через [transform]. */
     fun updatePlacement(transform: (ImagePlacement) -> ImagePlacement) =
         updateEditor { it.copy(placement = transform(it.placement)) }
+
+    /** Масштаб изображения в пределах шкалы зума редактора ([EditorState.zoomedTo]). */
+    fun zoom(scale: Float) = updateEditor { it.zoomedTo(scale) }
 
     /** Возвращает исходное положение изображения. */
     fun resetPlacement() = updateEditor { it.copy(placement = it.initialPlacement) }

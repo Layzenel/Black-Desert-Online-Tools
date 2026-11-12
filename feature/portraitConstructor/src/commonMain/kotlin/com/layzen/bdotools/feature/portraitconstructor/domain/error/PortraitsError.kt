@@ -8,6 +8,7 @@ enum class PortraitsError {
     Blocked,
     Network,
     NotImage,
+    NoClipboardImage,
     /** В папке аккаунта нет `gameVariable_lobby.xml` с заметками персонажей. */
     LobbyNotFound,
     /** Игра запущена: записанные файлы настроек она перезапишет при смене персонажа, телепорте или выходе. */

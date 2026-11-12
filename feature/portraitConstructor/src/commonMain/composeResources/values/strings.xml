@@ -34,6 +34,9 @@
     <string name="portraits_source_device">С устройства</string>
     <string name="portraits_source_device_description">PNG, JPG, WEBP, BMP или GIF с этого компьютера.</string>
     <string name="portraits_source_device_pick">Выбрать файл</string>
+    <string name="portraits_source_clipboard">Из буфера обмена</string>
+    <string name="portraits_source_clipboard_description">Скопированное изображение (из браузера, «Ножниц», редактора) или файл картинки.</string>
+    <string name="portraits_source_clipboard_paste">Вставить</string>
     <string name="portraits_source_url">По ссылке</string>
     <string name="portraits_source_url_description">Прямая ссылка на картинку.</string>
     <string name="portraits_source_url_placeholder">https://…</string>
@@ -60,6 +63,7 @@
     <string name="portraits_error_blocked">Сайт с картинкой не разрешает скачивать её с других сайтов. Сохраните картинку на компьютер и загрузите её с устройства.</string>
     <string name="portraits_error_network">Не удалось скачать картинку по ссылке. Проверьте адрес.</string>
     <string name="portraits_error_not_image">Это не изображение или формат не поддерживается.</string>
+    <string name="portraits_error_no_clipboard_image">В буфере обмена нет картинки. Скопируйте изображение или файл картинки и нажмите ещё раз; если браузер спросил разрешение — разрешите.</string>
     <string name="portraits_error_unknown">Что-то пошло не так: %1$s</string>
 
     <!-- Меню портрета -->
@@ -69,12 +73,16 @@
 
     <!-- Окно заметки и значков -->
     <string name="portraits_decoration_title">Заметка и значки</string>
+    <string name="portraits_badge_search">Поиск: класс или профессия</string>
     <string name="portraits_caption_color">Цвет заметки</string>
     <string name="portraits_badge_color">Цвет иконки</string>
+    <string name="portraits_shade_color">Цвет затенения</string>
+    <string name="portraits_shade_strength">Затенение, %</string>
+    <string name="portraits_shade_size">Область затенения, %</string>
     <string name="portraits_color_default">Цвет по умолчанию</string>
-    <string name="portraits_colors_title">Цвет заметок и значков</string>
-    <string name="portraits_colors_description">Цвет заметок и значков у всех портретов, где они есть. Сами заметки и значки не меняются, перед записью сохранится копия. Цвет одного портрета — в его окне «Заметка и значки».</string>
-    <string name="portraits_colors_hint">Цвет заметок и значков всех портретов</string>
+    <string name="portraits_colors_title">Цвет заметок, значков и затенения</string>
+    <string name="portraits_colors_description">Цвет заметок, значков и затенения под ними у всех портретов, где они есть. Сами заметки и значки не меняются, перед записью сохранится копия. Цвет одного портрета — в его окне «Заметка и значки».</string>
+    <string name="portraits_colors_hint">Цвет заметок, значков и затенения всех портретов</string>
     <string name="portraits_decoration_hint">Нажмите на заметку, чтобы изменить её. «+» в центре ставит значок: класс персонажа или функциональный; клик по значку его заменяет.</string>
 
     <!-- Заметка -->

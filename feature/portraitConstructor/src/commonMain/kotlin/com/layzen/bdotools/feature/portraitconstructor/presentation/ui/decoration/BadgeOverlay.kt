@@ -20,6 +20,7 @@ internal fun BoxScope.BadgeOverlay(badge: SlotIcon?, onEvent: (PortraitsEvent) -
         BadgeButton(
             icon = badge,
             onSelect = { onEvent(PortraitsEvent.BadgeChanged(it)) },
+            onSelectWithCaption = { icon, caption -> onEvent(PortraitsEvent.BadgeWithCaption(icon, caption)) },
             modifier = Modifier
                 .offset(
                     x = texturePixel * Layout.BADGE_CENTER_X - size / 2,

@@ -98,6 +98,7 @@ class SlotsViewModel(
             is SlotsEvent.DetachChat -> chats.detach(event.window)
             is SlotsEvent.CombineChat -> chats.combine(event.window)
             is SlotsEvent.SetDistributeGap -> editor.setDistributeGap(event.gap, event.horizontal)
+            SlotsEvent.DistributeGapFinished -> editor.endDistributeGap()
             is SlotsEvent.ToggleVisibility -> editor.toggleVisibility(event.id)
             is SlotsEvent.SetSelectionVisibility -> editor.setSelectionVisibility(event.visible)
             is SlotsEvent.SetLabel -> editor.setLabel(event.id, event.chars)

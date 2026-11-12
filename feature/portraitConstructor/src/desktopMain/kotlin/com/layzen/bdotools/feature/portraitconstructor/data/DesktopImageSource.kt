@@ -49,6 +49,10 @@ internal class DesktopImageSource(
         response.body()
     }
 
+    override suspend fun pasteFromClipboard(): ByteArray = withContext(Dispatchers.IO) {
+        readClipboardImage() ?: throw PortraitsException(PortraitsError.NoClipboardImage)
+    }
+
     private fun request(url: String): HttpRequest =
         try {
             HttpRequest.newBuilder(URI(url.trim())).header("User-Agent", USER_AGENT).GET().build()
