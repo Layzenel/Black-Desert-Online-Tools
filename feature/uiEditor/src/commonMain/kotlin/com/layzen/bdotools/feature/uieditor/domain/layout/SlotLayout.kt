@@ -62,10 +62,13 @@ data class SlotLayout(
     /** Надпись навыка в слоте [id] или `null`, если навыка или надписи нет. */
     fun memoAt(id: SlotId): String? = skillAt(id)?.let { memos?.get(it) }
 
-    /** Раскладка, где в слоте перезарядки [id] стоит навык [skillNo]; `null` очищает слот. */
+    /**
+     * Раскладка, где в слоте перезарядки [id] стоит навык [skillNo]; `null` очищает слот. Навык стоит только в одном
+     * слоте, как в игре: из другого слота он переезжает сюда, тот слот пустеет. Надпись едет с навыком сама.
+     */
     fun withSkill(id: SlotId, skillNo: Int?): SlotLayout {
         if (id.group != SlotGroup.Cooldown) return this
-        val others = skills.orEmpty() - id
+        val others = skills.orEmpty().filter { (slot, no) -> slot != id && no != skillNo }
         return copy(skills = if (skillNo == null) others else others + (id to skillNo))
     }
 

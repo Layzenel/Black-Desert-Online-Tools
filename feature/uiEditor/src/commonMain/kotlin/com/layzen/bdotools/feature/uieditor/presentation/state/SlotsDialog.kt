@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.presentation.state
 
+import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.feature.uieditor.domain.file.LayoutError
 import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
@@ -76,7 +77,10 @@ sealed interface SlotsDialog {
         val stance: SkillStance,
         val hideAbsolute: Boolean = true,
         val query: String = "",
-    ) : SlotsDialog
+    ) : SlotsDialog {
+        /** Стойка для отбора навыков; у класса «Освобождения» стоек нет — `null`, все навыки класса. */
+        val filterStance: SkillStance? get() = stance.takeUnless { CharacterClass.fromKey(classKey)?.ascension == true }
+    }
 
     /**
      * Импорт с навыками: чьи навыки заменить. [layout] — что импортируется, уже без невыбранного; [classKey] — класс

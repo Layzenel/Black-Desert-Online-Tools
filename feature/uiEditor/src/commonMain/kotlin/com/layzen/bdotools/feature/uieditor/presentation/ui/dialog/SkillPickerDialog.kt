@@ -61,8 +61,8 @@ import org.jetbrains.compose.resources.stringResource
 internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsState, onEvent: (SlotsEvent) -> Unit) {
     val close = { onEvent(SlotsEvent.CloseDialog) }
     val language = stringResource(Res.string.slots_skill_names_language)
-    val choices = remember(skills.catalog, dialog.classKey, dialog.stance, dialog.hideAbsolute, language) {
-        skills.catalog?.choicesFor(dialog.classKey, dialog.stance, dialog.hideAbsolute).orEmpty()
+    val choices = remember(skills.catalog, dialog.classKey, dialog.filterStance, dialog.hideAbsolute, language) {
+        skills.catalog?.choicesFor(dialog.classKey, dialog.filterStance, dialog.hideAbsolute).orEmpty()
             .entries.sortedBy { it.value.name(language).lowercase() }
     }
     val found = choices.filter { it.value.name(language).contains(dialog.query.trim(), ignoreCase = true) }
@@ -111,7 +111,8 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
 }
 
 /**
- * Шапка выбора: иконка и название класса персонажа, стойка списком и у наследия — «Скрыть умения «Абсолют»»,
+ * Шапка выбора: иконка и название класса персонажа, стойка списком (у класса «Освобождения» её нет) и у наследия —
+ * «Скрыть умения «Абсолют»»,
  * если у класса есть «Абсолют» с вариантом «Мощь» ([showHideAbsolute]). У пробуждения «Мощи» нет и так:
  * её прячет сама стойка.
  */
@@ -127,15 +128,18 @@ private fun PickerFilters(dialog: SlotsDialog.PickSkill, showHideAbsolute: Boole
             )
         }
         Text(className(dialog.classKey), style = AppTheme.typography.bodyBold, color = AppTheme.colors.textPrimary, modifier = Modifier.weight(1f))
-        DropdownSelect(
-            selected = dialog.stance,
-            options = SkillStance.entries,
-            onSelect = { onEvent(SlotsEvent.SkillStanceChanged(it)) },
-            label = { stanceTitle(it) },
-            modifier = Modifier.width(SlotsDimens.stanceSelectWidth),
-        )
+        // У класса «Освобождения» стоек нет: выбирать нечего
+        if (dialog.filterStance != null) {
+            DropdownSelect(
+                selected = dialog.stance,
+                options = SkillStance.entries,
+                onSelect = { onEvent(SlotsEvent.SkillStanceChanged(it)) },
+                label = { stanceTitle(it) },
+                modifier = Modifier.width(SlotsDimens.stanceSelectWidth),
+            )
+        }
     }
-    if (dialog.stance == SkillStance.Succession && showHideAbsolute) {
+    if (dialog.filterStance == SkillStance.Succession && showHideAbsolute) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
             CheckBox(dialog.hideAbsolute, onCheckedChange = { onEvent(SlotsEvent.SkillHideAbsoluteChanged(it)) })
             Text(stringResource(Res.string.slots_skill_hide_absolute), style = AppTheme.typography.bodyBold, color = AppTheme.colors.textBeige)

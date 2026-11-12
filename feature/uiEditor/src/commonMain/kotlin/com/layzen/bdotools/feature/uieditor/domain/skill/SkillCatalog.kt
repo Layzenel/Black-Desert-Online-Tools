@@ -14,11 +14,12 @@ data class SkillCatalog(val skills: Map<Int, Skill>) {
     /**
      * Навыки последнего ранга, которые можно поставить персонажу класса [classKey] в стойке [stance], включая общие
      * для нескольких классов: у пробуждения нет «Мощи», у наследия — навыков пробуждения. [hideAbsoluteWithPrime] —
-     * у наследия ещё и без «Абсолюта», у которого есть вариант «Мощь».
+     * у наследия ещё и без «Абсолюта», у которого есть вариант «Мощь». [stance] = `null` — все навыки класса
+     * (класс «Освобождения» без стоек).
      */
-    fun choicesFor(classKey: String, stance: SkillStance, hideAbsoluteWithPrime: Boolean): Map<Int, Skill> =
+    fun choicesFor(classKey: String, stance: SkillStance?, hideAbsoluteWithPrime: Boolean): Map<Int, Skill> =
         skills.filterValues { skill ->
-            skill.max && classKey in skill.classes && skill.fitsStance(stance) &&
+            skill.max && classKey in skill.classes && (stance == null || skill.fitsStance(stance)) &&
                 !(hideAbsoluteWithPrime && stance == SkillStance.Succession && skill.hasPrimeVariant)
         }
 

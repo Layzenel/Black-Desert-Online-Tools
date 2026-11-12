@@ -72,7 +72,7 @@ internal class SkillEditController(
 
     private fun loadChoiceIcons() {
         val dialog = context.current.dialog as? SlotsDialog.PickSkill ?: return
-        val choices = context.current.skills.catalog?.choicesFor(dialog.classKey, dialog.stance, hideAbsoluteWithPrime = false)
+        val choices = context.current.skills.catalog?.choicesFor(dialog.classKey, dialog.filterStance, hideAbsoluteWithPrime = false)
         skills.loadIcons(choices?.keys.orEmpty())
     }
 
