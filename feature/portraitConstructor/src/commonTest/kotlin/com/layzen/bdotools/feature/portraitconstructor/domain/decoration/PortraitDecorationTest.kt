@@ -95,15 +95,19 @@ class PortraitDecorationTest {
 
     @Test
     fun colorsSurviveFileRoundTrip() {
-        val decoration = PortraitDecoration("Рыбак", SlotIcon.WorldBoss, captionColor = 0xF8C038, badgeColor = 0x00A0FF)
+        val style = DecorationStyle(captionColor = 0xF8C038, badgeColor = 0x00A0FF, shadeColor = 0x101010, shadeStrength = 40, shadeSize = 150)
+        val decoration = PortraitDecoration("Рыбак", SlotIcon.WorldBoss, style)
         val text = encodeDecoration(decoration)
-        assertTrue("caption-color=#F8C038" in text && "badge-color=#00A0FF" in text)
+        assertTrue("caption-color=#F8C038" in text && "badge-color=#00A0FF" in text && "shade-color=#101010" in text && "shade-strength=40" in text && "shade-size=150" in text)
         assertEquals(decoration, decodeDecoration(text))
     }
 
     @Test
     fun defaultColorsAreNotWrittenAndBadColorsIgnored() {
-        assertTrue("color" !in encodeDecoration(PortraitDecoration("Рыбак")))
-        assertEquals(null, decodeDecoration("caption=Рыбак\ncaption-color=red\n").captionColor)
+        val plain = encodeDecoration(PortraitDecoration("Рыбак"))
+        assertTrue("color" !in plain && "shade" !in plain)
+        val bad = decodeDecoration("caption=Рыбак\ncaption-color=red\nshade-strength=500\n").style
+        assertEquals(DecorationStyle(), bad)
+        assertEquals(1f, bad.shadeFactor)
     }
 }

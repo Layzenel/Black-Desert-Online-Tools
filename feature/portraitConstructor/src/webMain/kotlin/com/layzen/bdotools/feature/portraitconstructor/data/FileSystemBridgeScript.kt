@@ -237,5 +237,20 @@ internal const val BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromBase64,
             if (!blob.type.startsWith('image/')) return 'ERR:NOT_IMAGE';
             return 'OK:' + await toBase64(blob);
         },
+        // Картинка из буфера обмена: браузер может спросить разрешение; нет картинки или запретили — NO_CLIPBOARD_IMAGE
+        async pasteImage() {
+            if (!navigator.clipboard || !navigator.clipboard.read) return 'ERR:NO_CLIPBOARD_IMAGE';
+            let items;
+            try {
+                items = await navigator.clipboard.read();
+            } catch (e) {
+                return 'ERR:NO_CLIPBOARD_IMAGE';
+            }
+            for (const item of items) {
+                const type = item.types.find(t => t.startsWith('image/'));
+                if (type) return 'OK:' + await toBase64(await item.getType(type));
+            }
+            return 'ERR:NO_CLIPBOARD_IMAGE';
+        },
     };
 }"""

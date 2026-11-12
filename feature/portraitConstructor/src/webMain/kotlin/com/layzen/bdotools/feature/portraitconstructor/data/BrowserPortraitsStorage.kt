@@ -106,6 +106,8 @@ internal class BrowserPortraitsStorage : GameFiles {
         }
 
     override suspend fun download(url: String): ByteArray = Base64.decode(fileSystemBridge.call("download", url))
+
+    override suspend fun pasteFromClipboard(): ByteArray = Base64.decode(fileSystemBridge.call("pasteImage"))
 }
 
 internal actual fun createGameFiles(): GameFiles = BrowserPortraitsStorage()

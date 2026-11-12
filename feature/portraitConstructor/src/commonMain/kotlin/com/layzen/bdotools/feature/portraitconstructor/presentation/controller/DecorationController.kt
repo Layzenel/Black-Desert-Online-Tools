@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.portraitconstructor.presentation.controller
 
+import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.DecorationStyle
 import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.PortraitDecoration
 import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.SlotIcon
 import com.layzen.bdotools.feature.portraitconstructor.domain.portrait.PortraitWrite
@@ -38,11 +39,11 @@ internal class DecorationController(private val context: PortraitsContext) {
     /** Меняет значок черновика; `null` убирает его. */
     fun changeBadge(icon: SlotIcon?) = updateDraft { it.withBadge(icon) }
 
-    /** Меняет цвет надписи черновика; `null` — цвет по умолчанию. */
-    fun changeCaptionColor(color: Int?) = updateDraft { it.copy(captionColor = color) }
+    /** Ставит значок [icon] и заметку [caption] (название значка) одним действием. */
+    fun changeBadgeAndCaption(icon: SlotIcon, caption: String) = updateDraft { it.withBadge(icon).withCaption(caption) }
 
-    /** Меняет цвет значка черновика; `null` — цвет по умолчанию. */
-    fun changeBadgeColor(color: Int?) = updateDraft { it.copy(badgeColor = color) }
+    /** Меняет цвета и затенение черновика. */
+    fun changeStyle(style: DecorationStyle) = updateDraft { it.copy(style = style) }
 
     /** Закрывает окно без сохранения. */
     fun close() {

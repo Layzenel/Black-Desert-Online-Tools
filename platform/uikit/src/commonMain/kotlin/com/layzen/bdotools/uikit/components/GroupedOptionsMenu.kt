@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +18,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,6 +36,9 @@ internal const val SUBMENU_CLOSE_DELAY_MS = 150L
  * Когда курсор уходит и с групп, и с вариантов, варианты прячутся.
  * Обе колонки — в одном всплывающем окне, поэтому клик по варианту не закрывает список раньше времени.
  * Колонка вариантов не выше `optionsMenuMaxHeight` и прокручивается с полосой прокрутки.
+ * С [searchPlaceholder] сверху строка поиска: печатать можно сразу ([TypeToSearch]), набранное ищет по названиям
+ * вариантов всех групп (без учёта регистра), и справа видны только подходящие.
+ * [onSecondarySelect] — правый клик по варианту: другое действие с ним (список тоже закрывается).
  */
 @Composable
 fun <G, T> GroupedOptionsMenu(
@@ -48,7 +53,14 @@ fun <G, T> GroupedOptionsMenu(
     modifier: Modifier = Modifier,
     groupIcon: (@Composable (G) -> Unit)? = null,
     icon: (@Composable (T) -> Unit)? = null,
+    searchPlaceholder: String? = null,
+    onSecondarySelect: ((T) -> Unit)? = null,
 ) {
+    var query by remember(expanded) { mutableStateOf("") }
+    val text = query.trim()
+    // при поиске справа — подходящие варианты всех групп вместо раскрытой группы
+    val matches = if (searchPlaceholder == null || text.isEmpty()) null
+    else groups.flatMap(options).filter { label(it).contains(text, ignoreCase = true) }
     var open by remember(expanded) { mutableStateOf<G?>(null) }
     var hoveredGroup by remember(expanded) { mutableStateOf<G?>(null) }
     val optionsHover = remember { MutableInteractionSource() }
@@ -64,24 +76,42 @@ fun <G, T> GroupedOptionsMenu(
             open = null
         }
     }
+    if (searchPlaceholder != null) TypeToSearch(expanded, query, { query = it }, onEscape = onDismissRequest)
     // у каждой колонки своя панель: колонка групп не растягивается до высоты длинного списка вариантов
-    MenuPopup(expanded = expanded, onDismissRequest = onDismissRequest, modifier = modifier, framed = false) {
+    MenuPopup(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        framed = false,
+    ) {
         Row(verticalAlignment = Alignment.Top) {
-            Column(Modifier.width(IntrinsicSize.Max).menuPanel()) {
-                groups.forEach { group ->
-                    GroupItem(
-                        text = groupLabel(group),
-                        open = group == open,
-                        icon = groupIcon?.let { { it(group) } },
-                        onOpen = { open = group },
-                        onHoverChange = { hovered ->
-                            if (hovered) hoveredGroup = group else if (hoveredGroup == group) hoveredGroup = null
-                        },
-                    )
+            // строка поиска и группы — одной ширины: по более широкой из них
+            Column(Modifier.width(IntrinsicSize.Max)) {
+                if (searchPlaceholder != null) MenuSearchLine(query, searchPlaceholder, Modifier.fillMaxWidth(), onClear = { query = "" })
+                Column(Modifier.fillMaxWidth().menuPanel()) {
+                    groups.forEach { group ->
+                        GroupItem(
+                            text = groupLabel(group),
+                            open = group == open,
+                            icon = groupIcon?.let { { it(group) } },
+                            onOpen = { open = group },
+                            onHoverChange = { hovered ->
+                                if (hovered) hoveredGroup = group else if (hoveredGroup == group) hoveredGroup = null
+                            },
+                        )
+                    }
                 }
             }
-            open?.let { group ->
-                OptionsColumn(options(group), selected, label, icon, Modifier.hoverable(optionsHover)) { option ->
+            val shown = matches ?: open?.let(options)
+            if (!shown.isNullOrEmpty()) {
+                OptionsColumn(
+                    shown,
+                    selected,
+                    label,
+                    icon,
+                    Modifier.hoverable(optionsHover),
+                    onSecondaryClick = onSecondarySelect?.let { secondary -> { option -> onDismissRequest(); secondary(option) } },
+                ) { option ->
                     onDismissRequest()
                     onSelect(option)
                 }
@@ -98,6 +128,7 @@ private fun <T> OptionsColumn(
     label: @Composable (T) -> String,
     icon: (@Composable (T) -> Unit)?,
     modifier: Modifier,
+    onSecondaryClick: ((T) -> Unit)?,
     onClick: (T) -> Unit,
 ) {
     val scroll = rememberScrollState()
@@ -110,11 +141,15 @@ private fun <T> OptionsColumn(
             .verticalScroll(scroll),
     ) {
         options.forEach { option ->
-            DropdownMenuItem(
-                text = { MenuOptionText(label(option), highlighted = option == selected) },
-                leadingIcon = icon?.let { { it(option) } },
-                onClick = { onClick(option) },
-            )
+            // ключ — сам вариант: при поиске строки меняются, и правый клик не должен достаться соседу
+            key(option) {
+                DropdownMenuItem(
+                    text = { MenuOptionText(label(option), highlighted = option == selected) },
+                    leadingIcon = icon?.let { { it(option) } },
+                    onClick = { onClick(option) },
+                    modifier = onSecondaryClick?.let { secondary -> Modifier.onSecondaryClick { secondary(option) } } ?: Modifier,
+                )
+            }
         }
     }
 }
@@ -158,3 +193,4 @@ private fun SubmenuArrow() {
         )
     }
 }
+

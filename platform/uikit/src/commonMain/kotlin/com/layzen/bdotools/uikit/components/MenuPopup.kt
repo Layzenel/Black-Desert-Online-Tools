@@ -31,7 +31,8 @@ internal fun MenuPopup(
 ) {
     DropdownMenu(
         expanded = expanded,
-        onDismissRequest = onDismissRequest,
+        // курсор, уехавший за край при перетаскивании полосы прокрутки, — не клик мимо списка
+        onDismissRequest = { if (!ScrollbarDrag.blocksDismiss) onDismissRequest() },
         modifier = modifier,
         scrollState = scrollState,
         containerColor = if (framed) AppTheme.colors.backgroundRaised else Color.Transparent,
@@ -39,7 +40,8 @@ internal fun MenuPopup(
         tonalElevation = 0.dp,
         shadowElevation = if (framed) AppTheme.dimens.menuShadow else 0.dp,
         border = if (framed) BorderStroke(AppTheme.dimens.borderWidth, AppTheme.colors.border) else null,
-        // фокусируемое окно в веб-сборке после закрытия съедает следующий клик по странице или модалке
+        // фокусируемое окно в веб-сборке после закрытия съедает следующий клик по странице или модалке;
+        // набор для поиска ловит [TypeToSearch] на странице
         properties = PopupProperties(focusable = false),
         content = content,
     )

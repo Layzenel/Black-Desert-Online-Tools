@@ -2,6 +2,9 @@
     <!-- Каталог компонентов: окно «Меню» -->
     <string name="showcase_menu_title">Меню</string>
     <string name="showcase_menu_search">Что хотите найти?</string>
+    <string name="showcase_grouped_open">Выбрать из списка</string>
+    <string name="showcase_grouped_first">Первые</string>
+    <string name="showcase_grouped_rest">Остальные</string>
     <string name="showcase_menu_recent">Недавнее меню</string>
     <string name="showcase_menu_game_info">Информация об игре</string>
     <string name="showcase_menu_character">Персонаж</string>

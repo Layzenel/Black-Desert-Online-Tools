@@ -79,7 +79,11 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
                 }
                 ContextSubmenu.DistributeHorizontal, ContextSubmenu.DistributeVertical -> {
                     val horizontal = submenu == ContextSubmenu.DistributeHorizontal
-                    SubmenuSlider(state.distributeGap(horizontal), SlotsState.DISTRIBUTE_GAP_RANGE) {
+                    SubmenuSlider(
+                        state.distributeGap(horizontal),
+                        SlotsState.DISTRIBUTE_GAP_RANGE,
+                        onChangeFinished = { onEvent(SlotsEvent.DistributeGapFinished) },
+                    ) {
                         onEvent(SlotsEvent.SetDistributeGap(it, horizontal))
                     }
                 }
@@ -122,7 +126,7 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
             else stringResource(if (alignAnchor != null) Res.string.slots_align_by_slot else Res.string.slots_align_by_group),
             trailingIcon = painterResource(Res.drawable.tool_chevron_right),
         )
-        // Клик распределяет, справа выезжает промежуток между рамками
+        // Клик распределяет, справа выезжает промежуток между рамками: его слайдер сразу переставляет выбранное
         val canDistribute = selected >= ARRANGE_MIN
         val gapXText = stringResource(Res.string.slots_snap_distance_value, state.distributeGapX)
         val gapYText = stringResource(Res.string.slots_snap_distance_value, state.distributeGapY)

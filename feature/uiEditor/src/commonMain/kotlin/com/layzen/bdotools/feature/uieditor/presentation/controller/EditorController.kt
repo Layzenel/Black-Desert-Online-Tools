@@ -22,6 +22,9 @@ private const val NUDGE_WITHOUT_SNAP = 10
 /** Выбор и перемещение слотов и окон чата, отмена, сетка. */
 internal class EditorController(private val context: SlotsContext) {
 
+    /** Раскладка до начала жеста слайдера промежутка «Распределить»; `null` — жеста нет. */
+    private var distributeOrigin: SlotLayout? = null
+
     /**
      * Перетаскивание: раскладка до начала, точка схваченного под курсором ([lead]: центр слота, у окна чата —
      * левый нижний угол, как при растягивании) и накопленный сдвиг в UI-px.
@@ -169,9 +172,24 @@ internal class EditorController(private val context: SlotsContext) {
         editSelection { layout, selection -> layout.distributed(selection, horizontal, gap) }
     }
 
-    /** Запоминает промежуток для расстановки по горизонтали ([horizontal]) или по вертикали. */
-    fun setDistributeGap(gap: Int, horizontal: Boolean) = context.update {
-        if (horizontal) it.copy(distributeGapX = gap) else it.copy(distributeGapY = gap)
+    /**
+     * Запоминает промежуток для расстановки по горизонтали ([horizontal]) или по вертикали и сразу расставляет
+     * выбранное с ним. Каждый шаг жеста слайдера считается от раскладки на его начало, в «Отменить» жест
+     * попадает одним шагом ([endDistributeGap]).
+     */
+    fun setDistributeGap(gap: Int, horizontal: Boolean) {
+        context.update { if (horizontal) it.copy(distributeGapX = gap) else it.copy(distributeGapY = gap) }
+        val state = context.current
+        if (state.selection.isEmpty()) return
+        val start = distributeOrigin ?: state.layout.also { distributeOrigin = it }
+        context.update { it.copy(layout = start.distributed(state.selection, horizontal, gap)) }
+    }
+
+    /** Конец жеста слайдера промежутка: заносит расстановку в историю «Отменить». */
+    fun endDistributeGap() {
+        val previous = distributeOrigin ?: return
+        distributeOrigin = null
+        context.commitEdit(previous)
     }
 
     private fun editSelection(change: (SlotLayout, Set<SlotId>) -> SlotLayout) {

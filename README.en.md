@@ -37,15 +37,21 @@ Your own images instead of the portraits in the character selection window.
 **Images**
 
 - A grid of portraits in the same order as in the character selection window.
-- Load an image from your computer (PNG, JPG, WEBP, BMP, GIF) or by link — for one portrait or for all at once.
-- Frame editor: drag the image and zoom with the mouse wheel.
+- Load an image from your computer (PNG, JPG, WEBP, BMP, GIF), from the clipboard or by link — for one portrait
+  or for all at once.
+- Frame editor: drag the image and zoom with the mouse wheel (10 to 400%).
 
 **Memos and badges**
 
 - A memo on the portrait — up to 24 characters.
-- A character class badge or a functional badge (world boss, professions).
-- Memo and badge color — for one portrait in its "Memo and badges" window, for all at once with the "Memo and
-  badge colors of all portraits" icon next to the title.
+- A character class badge or a functional badge (world boss, professions). The badge list has search at the top —
+  just start typing; left click sets the badge, right click sets the badge and puts its name in the memo.
+- Under the badge and memo there is one soft shade along their outline. Icon and memo color, shade color,
+  strength and area — for one portrait in its "Memo and badges" window,
+  for all at once with the "Memo, badge and shade colors of all portraits" icon next to the title.
+
+  ![Memo and badges](docs/screenshots/portraitConstructor-decoration.en.png)
+
 - "Sync memos" — memos from the portraits go to the character memos in the "Account Character Overview" window.
 
 **Order and sets**
@@ -65,7 +71,8 @@ Lay out cooldown slots and other interface elements on a canvas instead of dragg
 
 ### Arranging elements
 
-- Box selection, aligning and distributing elements, snapping to the grid and to each other.
+- Box selection, aligning and distributing elements (the gap slider moves the selection right away), snapping
+  to the grid and to each other.
 - The eye on an element hides or shows it; for a selected group — "Hide group" / "Show group" in the right-click
   menu.
 - Fixed game elements — tips and the menu bar at the bottom, the health bar at the top left without "Split HP" —

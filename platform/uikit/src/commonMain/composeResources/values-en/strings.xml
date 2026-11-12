@@ -2,6 +2,9 @@
     <!-- Component catalog: "Menu" window -->
     <string name="showcase_menu_title">Menu</string>
     <string name="showcase_menu_search">What are you looking for?</string>
+    <string name="showcase_grouped_open">Pick from list</string>
+    <string name="showcase_grouped_first">First</string>
+    <string name="showcase_grouped_rest">Others</string>
     <string name="showcase_menu_recent">Recent Menu</string>
     <string name="showcase_menu_game_info">Game Info</string>
     <string name="showcase_menu_character">Character</string>

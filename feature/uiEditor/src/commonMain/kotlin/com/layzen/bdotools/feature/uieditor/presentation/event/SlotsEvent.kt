@@ -73,6 +73,9 @@ sealed interface SlotsEvent {
     /** Отдельное окно чата [window] — во вкладку главного окна. */
     data class CombineChat(val window: Int) : SlotsEvent
     data class SetDistributeGap(val gap: Int, val horizontal: Boolean) : SlotsEvent
+
+    /** Отпустили слайдер промежутка «Распределить»: расстановка ложится в «Отменить» одним шагом. */
+    data object DistributeGapFinished : SlotsEvent
     data class ToggleVisibility(val id: SlotId) : SlotsEvent
 
     /** «Скрыть группу» / «Показать группу»: всем выбранным элементам с глазиком — видимость [visible]. */

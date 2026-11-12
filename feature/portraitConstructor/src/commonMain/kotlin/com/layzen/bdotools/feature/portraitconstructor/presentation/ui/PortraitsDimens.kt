@@ -10,6 +10,8 @@ internal object PortraitsDimens {
     val maskBorderWidth = 1.dp
     val urlButtonMinWidth = 110.dp
     val decorationDialogWidth = 360.dp
+    val colorsDialogWidth = 600.dp
+    val colorsPreviewWidth = 200.dp
     val badgeLineWidth = 3.dp
     val swapGlowEdgeWidth = 2.dp
     val swapGlowDepth = 12.dp

@@ -20,5 +20,6 @@ enum class NoticeKind {
     Blocked,
     Network,
     NotImage,
+    NoClipboardImage,
     Unknown,
 }

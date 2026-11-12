@@ -51,4 +51,7 @@ class PortraitsInteractor(
 
     /** См. [ImageSource.download]. */
     suspend fun downloadImage(url: String): ByteArray = imageSource.download(url)
+
+    /** См. [ImageSource.pasteFromClipboard]. */
+    suspend fun pasteImage(): ByteArray = imageSource.pasteFromClipboard()
 }

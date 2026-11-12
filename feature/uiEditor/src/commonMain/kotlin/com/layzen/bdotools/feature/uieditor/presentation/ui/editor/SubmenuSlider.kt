@@ -7,8 +7,11 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.components.ValueSlider
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Содержимое выезжающей панели меню: слайдер с крайними значениями по бокам и текущим по центру. */
+/**
+ * Содержимое выезжающей панели меню: слайдер с крайними значениями по бокам и текущим по центру.
+ * [onChangeFinished] — конец жеста (отпустили или кликнули), чтобы правка по ходу жеста легла в историю одним шагом.
+ */
 @Composable
-internal fun SubmenuSlider(value: Int, range: IntRange, onChange: (Int) -> Unit) {
-    ValueSlider(value, onChange, range, Modifier.fillMaxWidth().padding(AppTheme.dimens.spaceM))
+internal fun SubmenuSlider(value: Int, range: IntRange, onChangeFinished: () -> Unit = {}, onChange: (Int) -> Unit) {
+    ValueSlider(value, onChange, range, Modifier.fillMaxWidth().padding(AppTheme.dimens.spaceM), onValueChangeFinished = onChangeFinished)
 }

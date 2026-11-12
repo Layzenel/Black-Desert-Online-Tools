@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.BadgeGroup
 import com.layzen.bdotools.feature.portraitconstructor.domain.decoration.SlotIcon
+import com.layzen.bdotools.feature.portraitconstructor.presentation.allSlotIcons
+import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.presentation.drawable
 import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
@@ -20,6 +22,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_badge
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_badge_change
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_badge_group_class
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_badge_group_functional
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_badge_search
 import com.layzen.bdotools.uikit.components.GroupedOptionsMenu
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
@@ -27,10 +30,18 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Значок на предпросмотре: клик открывает список «Класс» / «Функциональные», наведение на группу
- * раскрывает её значки. Пустой значок — «+», у поставленного справа сверху крестик, который его убирает.
+ * раскрывает её значки; сверху поиск по названию — можно сразу печатать. Пустой значок — «+», у поставленного
+ * справа сверху крестик, который его убирает. Левый клик по значку в списке ставит значок, правый — значок
+ * и его название в заметку ([onSelectWithCaption]).
  */
 @Composable
-internal fun BadgeButton(icon: SlotIcon?, onSelect: (SlotIcon?) -> Unit, modifier: Modifier = Modifier) {
+internal fun BadgeButton(
+    icon: SlotIcon?,
+    onSelect: (SlotIcon?) -> Unit,
+    onSelectWithCaption: (SlotIcon, String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val titles = allSlotIcons.associateWith { stringResource(it.label) }
     var expanded by remember { mutableStateOf(false) }
     Box(modifier) {
         BadgeTarget(
@@ -50,6 +61,8 @@ internal fun BadgeButton(icon: SlotIcon?, onSelect: (SlotIcon?) -> Unit, modifie
             onSelect = onSelect,
             label = { stringResource(it.label) },
             icon = { BadgeMenuIcon(it) },
+            searchPlaceholder = stringResource(Res.string.portraits_badge_search),
+            onSecondarySelect = { onSelectWithCaption(it, titles.getValue(it)) },
         )
     }
 }

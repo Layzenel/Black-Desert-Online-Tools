@@ -20,6 +20,7 @@ private fun portraitsException(code: String) = PortraitsException(
         "BLOCKED" -> PortraitsError.Blocked
         "NETWORK" -> PortraitsError.Network
         "NOT_IMAGE" -> PortraitsError.NotImage
+        "NO_CLIPBOARD_IMAGE" -> PortraitsError.NoClipboardImage
         else -> PortraitsError.Unknown
     },
     details = code,
