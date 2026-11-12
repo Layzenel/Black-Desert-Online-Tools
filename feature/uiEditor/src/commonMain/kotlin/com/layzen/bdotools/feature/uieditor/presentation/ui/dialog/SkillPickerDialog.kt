@@ -1,7 +1,12 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.dialog
 
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,12 +34,14 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.character.className
 import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillTooltip
+import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillEffectsPlate
 import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.rememberAltPressed
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_nothing_found
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_hide_absolute
+import com.layzen.bdotools.feature.uieditor.resources.slots_skill_hide_pve_controls
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_picker_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_picker_tooltip_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_search
@@ -54,24 +61,32 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * «Добавить умение»: навыки последнего ранга класса и стойки персонажа в редакторе из справочника, с поиском по
+ * «Добавить умение» (в заголовке — номер слота, для которого выбирают): навыки последнего ранга класса и стойки персонажа в редакторе из справочника, с поиском по
  * названию на языке интерфейса (без учёта регистра). Клик по навыку ставит его в слот; наведение на иконку или Alt + наведение — его тултип слева от окна.
+ * Сначала — навыки, которые уже стоят в слотах перезарядки ([slotted]: `SkillNo` → номер слота), по номеру слота
+ * (номер — на плашке); за ними остальные по алфавиту.
  */
 @Composable
-internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsState, onEvent: (SlotsEvent) -> Unit) {
+internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsState, slotted: Map<Int, Int>, onEvent: (SlotsEvent) -> Unit) {
     val close = { onEvent(SlotsEvent.CloseDialog) }
     val language = stringResource(Res.string.slots_skill_names_language)
-    val choices = remember(skills.catalog, dialog.classKey, dialog.filterStance, dialog.hideAbsolute, language) {
+    val choices = remember(skills.catalog, dialog.classKey, dialog.filterStance, dialog.hideAbsolute, language, slotted) {
         skills.catalog?.choicesFor(dialog.classKey, dialog.filterStance, dialog.hideAbsolute).orEmpty()
-            .entries.sortedBy { it.value.name(language).lowercase() }
+            .entries.sortedWith(compareBy({ slotted[it.key] ?: Int.MAX_VALUE }, { it.value.name(language).lowercase() }))
     }
     val found = choices.filter { it.value.name(language).contains(dialog.query.trim(), ignoreCase = true) }
     // Навык, чей тултип слева от окна; только вид, поэтому не в состоянии экрана
     var tooltipSkill by remember { mutableStateOf<Int?>(null) }
+    // Окно — по самому длинному навыку и не уже обычного; только растёт, чтобы не дёргаться при вводе поиска
+    var widest by remember { mutableStateOf(SlotsDimens.dialogWidth) }
+    val density = LocalDensity.current
     ModalWindow(
-        title = stringResource(Res.string.slots_skill_picker_title),
+        title = stringResource(Res.string.slots_skill_picker_title, dialog.slot.number),
         onDismissRequest = close,
-        modifier = Modifier.width(SlotsDimens.dialogWidth),
+        modifier = Modifier
+            .widthIn(min = widest)
+            .width(IntrinsicSize.Max)
+            .onSizeChanged { size -> with(density) { size.width.toDp() }.let { if (it > widest) widest = it } },
         footer = { ActionButton(stringResource(Res.string.slots_cancel), onClick = close) },
         aside = tooltipSkill?.let { skillNo -> { TooltipPanel { SkillTooltip(skillNo, skills, onEvent) } } },
     ) {
@@ -87,7 +102,7 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = stringResource(Res.string.slots_skill_search),
             )
-            DescriptionText(stringResource(Res.string.slots_skill_picker_tooltip_hint))
+            DescriptionText(stringResource(Res.string.slots_skill_picker_tooltip_hint), Modifier.ignoreIntrinsicWidth())
             val altPressed = rememberAltPressed()
             val scroll = rememberScrollState()
             Column(Modifier.heightIn(max = SlotsDimens.skillListHeight).verticalScrollbar(scroll).verticalScroll(scroll)) {
@@ -96,6 +111,15 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
                         SkillChoice(
                             name = skill.name(language),
                             icon = skills.icons[skill.icon],
+                            effects = {
+                                SkillEffectsPlate(
+                                    slotted[skillNo],
+                                    skills.effectsOf(skillNo),
+                                    skills.details[skillNo]?.text(language),
+                                    skills.keyBindings,
+                                    dialog.hidePveControls,
+                                )
+                            },
                             altPressed = altPressed,
                             onPick = { onEvent(SlotsEvent.PickSkill(skillNo)) },
                             onTooltip = { show ->
@@ -112,7 +136,7 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
 
 /**
  * Шапка выбора: иконка и название класса персонажа, стойка списком (у класса «Освобождения» её нет) и у наследия —
- * «Скрыть умения «Абсолют»»,
+ * «Скрыть умения «Абсолют»» и всегда — «Скрыть PvE контроли» для плашек навыков,
  * если у класса есть «Абсолют» с вариантом «Мощь» ([showHideAbsolute]). У пробуждения «Мощи» нет и так:
  * её прячет сама стойка.
  */
@@ -139,11 +163,23 @@ private fun PickerFilters(dialog: SlotsDialog.PickSkill, showHideAbsolute: Boole
             )
         }
     }
-    if (dialog.filterStance == SkillStance.Succession && showHideAbsolute) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-            CheckBox(dialog.hideAbsolute, onCheckedChange = { onEvent(SlotsEvent.SkillHideAbsoluteChanged(it)) })
-            Text(stringResource(Res.string.slots_skill_hide_absolute), style = AppTheme.typography.bodyBold, color = AppTheme.colors.textBeige)
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL)) {
+        if (dialog.filterStance == SkillStance.Succession && showHideAbsolute) {
+            PickerCheckBox(stringResource(Res.string.slots_skill_hide_absolute), dialog.hideAbsolute) {
+                onEvent(SlotsEvent.SkillHideAbsoluteChanged(it))
+            }
         }
+        PickerCheckBox(stringResource(Res.string.slots_skill_hide_pve_controls), dialog.hidePveControls) {
+            onEvent(SlotsEvent.SkillHidePveControlsChanged(it))
+        }
+    }
+}
+
+@Composable
+private fun PickerCheckBox(text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
+        CheckBox(checked, onCheckedChange = onCheckedChange)
+        Text(text, style = AppTheme.typography.bodyBold, color = AppTheme.colors.textBeige)
     }
 }
 

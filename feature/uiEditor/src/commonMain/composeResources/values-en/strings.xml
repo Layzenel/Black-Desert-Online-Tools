@@ -54,12 +54,25 @@
     <string name="slots_skill_add">Add skill</string>
     <string name="slots_skill_replace">Replace skill</string>
     <string name="slots_skill_remove">Remove skill</string>
-    <string name="slots_skill_picker_title">Class skills</string>
+    <string name="slots_skill_picker_title">Class skills — slot %1$d</string>
     <string name="slots_stance_succession">Succession</string>
     <string name="slots_stance_awakening">Awakening</string>
     <string name="slots_skill_search">Search by name</string>
     <string name="slots_skill_nothing_found">Nothing found</string>
     <string name="slots_skill_hide_absolute">Hide Absolute skills</string>
+    <string name="slots_skill_hide_pve_controls">Hide PvE controls</string>
+    <string name="slots_skill_slot_number_hint">Number of the slot the skill is placed in</string>
+    <string name="slots_control_stun">Stun</string>
+    <string name="slots_control_knockdown">Knockdown</string>
+    <string name="slots_control_bound">Bound</string>
+    <string name="slots_control_stiffness">Stiffness</string>
+    <string name="slots_control_floating">Floating</string>
+    <string name="slots_control_knockback">Knockback</string>
+    <string name="slots_control_freezing">Freezing</string>
+    <string name="slots_control_pve_only">%1$s (PvE only)</string>
+    <string name="slots_defense_super_armor">Super Armor</string>
+    <string name="slots_defense_invincible">Invincible</string>
+    <string name="slots_defense_forward_guard">Forward Guard</string>
     <!-- Skill tooltip -->
     <string name="slots_tooltip_alt_hint">Hold Alt for details</string>
     <string name="slots_skill_picker_tooltip_hint">Hover an icon or hold Alt to see skill details</string>
@@ -161,6 +174,8 @@
     <string name="slots_align_bottom">Align bottom</string>
     <string name="slots_distribute_horizontal">Distribute horizontally</string>
     <string name="slots_distribute_vertical">Distribute vertically</string>
+    <string name="slots_selection_hide">Hide group</string>
+    <string name="slots_selection_show">Show group</string>
     <string name="slots_reload">Reload file</string>
     <string name="slots_screen">Game screen: %1$d × %2$d, UI scale %3$s. Grid and coordinates are measured from the crosshair.</string>
     <string name="slots_off_screen">Elements off screen: %1$d — in game they will end up beyond the edge.</string>

@@ -182,6 +182,12 @@ internal class EditorController(private val context: SlotsContext) {
     /** Глазик на иконке: скрыть или показать элемент в игре. */
     fun toggleVisibility(id: SlotId) = context.editLayout { it.withVisibility(id, !it.isVisible(id)) }
 
+    /** Прячет или показывает все выбранные элементы одним шагом «Отменить». */
+    fun setSelectionVisibility(visible: Boolean) {
+        val selection = context.current.selection
+        context.editLayout { layout -> selection.fold(layout) { result, id -> result.withVisibility(id, visible) } }
+    }
+
     /** Переключает «Настройку быстрых слотов»; элементы, пропавшие с экрана, снимаются с выбора. */
     fun setCustomQuickSlots(enabled: Boolean) {
         context.editLayout { it.withCustomQuickSlots(enabled) }
