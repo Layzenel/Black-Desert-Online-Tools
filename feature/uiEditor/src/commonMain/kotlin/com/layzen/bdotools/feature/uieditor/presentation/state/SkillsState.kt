@@ -6,6 +6,7 @@ import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
 import com.layzen.bdotools.feature.uieditor.domain.skill.KeyBindings
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillDetails
+import com.layzen.bdotools.feature.uieditor.domain.skill.SkillEffects
 import com.layzen.bdotools.feature.uieditor.domain.skill.Skill
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillCatalog
 
@@ -67,6 +68,9 @@ data class SkillsState(
 
     /** Навык из справочника или `null`. */
     fun skill(skillNo: Int): Skill? = catalog?.get(skillNo)
+
+    /** Эффекты защиты и контроли навыка [skillNo]; `null`, пока его подробности не скачались. */
+    fun effectsOf(skillNo: Int): SkillEffects? = details[skillNo]?.let(SkillEffects::of)
 
     /** Иконка навыка [skillNo], если она уже скачана. */
     fun iconOf(skillNo: Int): ImageBitmap? = skill(skillNo)?.let { icons[it.icon] }

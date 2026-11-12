@@ -80,6 +80,8 @@ sealed interface SlotsDialog {
         val stance: SkillStance,
         val hideAbsolute: Boolean = true,
         val query: String = "",
+        /** «Скрыть PvE контроли»: на плашках навыков только контроли, которые действуют и в PvP. */
+        val hidePveControls: Boolean = true,
     ) : SlotsDialog {
         /** Стойка для отбора навыков; у класса «Освобождения» стоек нет — `null`, все навыки класса. */
         val filterStance: SkillStance? get() = stance.takeUnless { CharacterClass.fromKey(classKey)?.ascension == true }

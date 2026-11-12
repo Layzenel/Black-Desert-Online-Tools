@@ -10,7 +10,9 @@ import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle
 import com.layzen.bdotools.feature.uieditor.resources.Res
+import com.layzen.bdotools.feature.uieditor.resources.menu_hide
 import com.layzen.bdotools.feature.uieditor.resources.menu_redo
+import com.layzen.bdotools.feature.uieditor.resources.menu_show
 import com.layzen.bdotools.feature.uieditor.resources.menu_undo
 import com.layzen.bdotools.feature.uieditor.resources.slots_align
 import com.layzen.bdotools.feature.uieditor.resources.slots_align_anchor_hint
@@ -21,6 +23,8 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_distribute_horizonta
 import com.layzen.bdotools.feature.uieditor.resources.slots_distribute_vertical
 import com.layzen.bdotools.feature.uieditor.resources.slots_label_hint
 import com.layzen.bdotools.feature.uieditor.resources.slots_redo
+import com.layzen.bdotools.feature.uieditor.resources.slots_selection_hide
+import com.layzen.bdotools.feature.uieditor.resources.slots_selection_show
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance_value
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_step
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_to_slots
@@ -45,7 +49,7 @@ private const val ARRANGE_MIN = 2
 /**
  * Меню правого клика по холсту: отмена и повтор; «Выровнять» (справа выезжает список выравниваний); распределение (клик распределяет,
  * справа выезжает промежуток между рамками); у слота перезарядки — «Заметка» и навык ([CooldownSlotMenu]), «Шаг привязки» и «Связка слотов»
- * (клик включает, при включённой справа выезжает слайдер).
+ * (клик включает, при включённой справа выезжает слайдер). У группы из нескольких элементов — «Скрыть группу» или «Показать группу».
  * Недоступные пункты серые; пункт действия сам закрывает меню, настройки — нет. [anchor] — элемент, по которому открыли
  * меню: выравнивание идёт по нему, без него — по рамке всех выбранных; надпись ставится ему.
  */
@@ -140,6 +144,16 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
             trailingText = gapYText.takeIf { canDistribute },
             trailingIcon = painterResource(Res.drawable.tool_chevron_right),
         )
+        // Группа: если виден хоть один выбранный элемент с глазиком — прячем все, иначе показываем
+        val toggleable = state.selection.filter { it.hasVisibilityToggle }
+        if (selected >= ARRANGE_MIN && toggleable.isNotEmpty()) {
+            val hide = toggleable.any(state.layout::isVisible)
+            ActionMenuItem(
+                stringResource(if (hide) Res.string.slots_selection_hide else Res.string.slots_selection_show),
+                run(SlotsEvent.SetSelectionVisibility(visible = !hide)),
+                icon = painterResource(if (hide) Res.drawable.menu_hide else Res.drawable.menu_show),
+            )
+        }
         // Только у слота перезарядки, по которому открыли меню: заметка и навык
         if (labelSlot != null) {
             ActionMenuDivider()

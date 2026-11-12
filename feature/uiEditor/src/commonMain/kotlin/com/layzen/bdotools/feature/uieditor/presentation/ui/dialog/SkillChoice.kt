@@ -15,12 +15,14 @@ import com.layzen.bdotools.uikit.components.MenuItem
 
 /**
  * Навык в списке выбора: иконка и название, клик — [onPick]. [onTooltip] говорит, показывать ли его тултип:
- * курсор над иконкой или над строкой с зажатым Alt ([altPressed]).
+ * курсор над иконкой или над строкой с зажатым Alt ([altPressed]). Справа — плашка эффектов защиты и контролей
+ * [effects] (плашка `SkillEffectsPlate`).
  */
 @Composable
 internal fun SkillChoice(
     name: String,
     icon: ImageBitmap?,
+    effects: @Composable () -> Unit,
     altPressed: Boolean,
     onPick: () -> Unit,
     onTooltip: (Boolean) -> Unit,
@@ -36,6 +38,11 @@ internal fun SkillChoice(
         onDispose { if (tooltip) onTooltip(false) }
     }
     Box(Modifier.hoverable(row)) {
-        MenuItem(name, onClick = onPick, icon = { Box(Modifier.hoverable(iconArea)) { SkillIcon(icon) } })
+        MenuItem(
+            name,
+            onClick = onPick,
+            icon = { Box(Modifier.hoverable(iconArea)) { SkillIcon(icon) } },
+            badge = effects,
+        )
     }
 }

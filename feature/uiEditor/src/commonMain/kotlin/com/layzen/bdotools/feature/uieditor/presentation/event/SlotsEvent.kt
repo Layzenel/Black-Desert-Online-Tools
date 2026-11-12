@@ -75,6 +75,9 @@ sealed interface SlotsEvent {
     data class SetDistributeGap(val gap: Int, val horizontal: Boolean) : SlotsEvent
     data class ToggleVisibility(val id: SlotId) : SlotsEvent
 
+    /** «Скрыть группу» / «Показать группу»: всем выбранным элементам с глазиком — видимость [visible]. */
+    data class SetSelectionVisibility(val visible: Boolean) : SlotsEvent
+
     /** Заглушка надписи под слотом шириной [chars] символов; `null` — убрать. */
     data class SetLabel(val id: SlotId, val chars: Int?) : SlotsEvent
 
@@ -105,6 +108,9 @@ sealed interface SlotsEvent {
 
     /** «Скрыть умения «Абсолют»» у наследия: прятать «Абсолют», у которого есть вариант «Мощь». */
     data class SkillHideAbsoluteChanged(val hide: Boolean) : SlotsEvent
+
+    /** «Скрыть PvE контроли» в окне выбора навыка. */
+    data class SkillHidePveControlsChanged(val hide: Boolean) : SlotsEvent
 
     data class PickSkill(val skillNo: Int) : SlotsEvent
 

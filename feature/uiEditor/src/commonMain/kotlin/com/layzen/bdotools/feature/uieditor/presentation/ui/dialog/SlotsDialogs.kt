@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.dialog
 
 import androidx.compose.runtime.Composable
+import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
@@ -31,7 +32,10 @@ internal fun SlotsDialogs(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             val name = state.skills.skill(dialog.skillNo)?.name(language) ?: stringResource(Res.string.slots_skill_number, dialog.skillNo)
             MemoDialog(dialog, name, onEvent)
         }
-        is SlotsDialog.PickSkill -> SkillPickerDialog(dialog, state.skills, onEvent)
+        is SlotsDialog.PickSkill -> {
+            val slotted = state.layout.skills.orEmpty().filterKeys { it.group == SlotGroup.Cooldown }.entries.associate { (id, skillNo) -> skillNo to id.number }
+            SkillPickerDialog(dialog, state.skills, slotted, onEvent)
+        }
         is SlotsDialog.ImportCharacter -> ImportCharacterDialog(dialog, state.skills, onEvent)
         is SlotsDialog.ConfirmDelete -> ConfirmDialog(
             title = stringResource(Res.string.slots_delete_title),

@@ -55,7 +55,7 @@ internal class SkillEditController(
         val classKey = state.skillsClass ?: return
         // Стойка — по навыкам в слотах; стоят только общие — наследие, его выбирают чаще
         context.update { it.copy(dialog = SlotsDialog.PickSkill(id, classKey, state.skillsStance ?: SkillStance.Succession)) }
-        loadChoiceIcons()
+        loadChoiceData()
     }
 
     /** Строка поиска навыка по названию. */
@@ -64,16 +64,22 @@ internal class SkillEditController(
     /** Навыки другой стойки в окне выбора. */
     fun changeStance(stance: SkillStance) {
         updatePicker { it.copy(stance = stance) }
-        loadChoiceIcons()
+        loadChoiceData()
     }
 
     /** Прятать ли у наследия «Абсолют», у которого есть вариант «Мощь». */
     fun changeHideAbsolute(hide: Boolean) = updatePicker { it.copy(hideAbsolute = hide) }
 
-    private fun loadChoiceIcons() {
+    /** Прятать ли на плашках навыков контроли, которые недоступны в PvP. */
+    fun changeHidePveControls(hide: Boolean) = updatePicker { it.copy(hidePveControls = hide) }
+
+    // Подробности нужны плашкам эффектов у всех навыков списка, а не только тултипу
+    private fun loadChoiceData() {
         val dialog = context.current.dialog as? SlotsDialog.PickSkill ?: return
         val choices = context.current.skills.catalog?.choicesFor(dialog.classKey, dialog.filterStance, hideAbsoluteWithPrime = false)
-        skills.loadIcons(choices?.keys.orEmpty())
+            ?.keys.orEmpty()
+        skills.loadIcons(choices)
+        choices.forEach(skills::loadDetails)
     }
 
     /** Ставит навык [skillNo] в слот, для которого открыт выбор. */

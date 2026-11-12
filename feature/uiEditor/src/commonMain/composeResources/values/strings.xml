@@ -54,12 +54,25 @@
     <string name="slots_skill_add">Добавить умение</string>
     <string name="slots_skill_replace">Заменить умение</string>
     <string name="slots_skill_remove">Убрать умение</string>
-    <string name="slots_skill_picker_title">Умения класса</string>
+    <string name="slots_skill_picker_title">Умения класса — слот %1$d</string>
     <string name="slots_stance_succession">Наследие</string>
     <string name="slots_stance_awakening">Пробуждение</string>
     <string name="slots_skill_search">Поиск по названию</string>
     <string name="slots_skill_nothing_found">Ничего не нашлось</string>
     <string name="slots_skill_hide_absolute">Скрыть умения «Абсолют»</string>
+    <string name="slots_skill_hide_pve_controls">Скрыть PvE контроли</string>
+    <string name="slots_skill_slot_number_hint">Номер слота, в котором установлено умение</string>
+    <string name="slots_control_stun">Оглушение</string>
+    <string name="slots_control_knockdown">Нокдаун</string>
+    <string name="slots_control_bound">Опрокидывание</string>
+    <string name="slots_control_stiffness">Ошеломление</string>
+    <string name="slots_control_floating">Подбрасывание</string>
+    <string name="slots_control_knockback">Отталкивание</string>
+    <string name="slots_control_freezing">Заморозка</string>
+    <string name="slots_control_pve_only">%1$s (недоступно в PvP)</string>
+    <string name="slots_defense_super_armor">Устойчивость</string>
+    <string name="slots_defense_invincible">Невредимость</string>
+    <string name="slots_defense_forward_guard">Защита от атак спереди</string>
     <!-- Тултип навыка -->
     <string name="slots_tooltip_alt_hint">Alt — подробнее</string>
     <string name="slots_skill_picker_tooltip_hint">Наведите на иконку или зажмите Alt, чтобы увидеть описание умения</string>
@@ -161,6 +174,8 @@
     <string name="slots_align_bottom">Выровнять по нижнему краю</string>
     <string name="slots_distribute_horizontal">Распределить по горизонтали</string>
     <string name="slots_distribute_vertical">Распределить по вертикали</string>
+    <string name="slots_selection_hide">Скрыть группу</string>
+    <string name="slots_selection_show">Показать группу</string>
     <string name="slots_reload">Перечитать файл</string>
     <string name="slots_screen">Экран игры: %1$d × %2$d, масштаб интерфейса %3$s. Сетка и координаты — от прицела.</string>
     <string name="slots_off_screen">Элементов за краем экрана: %1$d — в игре они уедут за край.</string>

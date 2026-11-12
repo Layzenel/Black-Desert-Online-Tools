@@ -31,6 +31,18 @@ internal object SlotsDimens {
     /** Высота списков в меню (пресеты, персонаж): как у текста в две-три строки, влезает портрет персонажа. */
     val sidebarSelectHeight = 56.dp
     val skillIcon = 32.dp
+
+    /** Значок эффекта защиты или контроля на плашке навыка и в подсказке слота. */
+    val effectIcon = 20.dp
+    val effectGap = 2.dp
+    val effectPlatePadding = 4.dp
+
+    /** Номер слота перед плашкой у навыка, который уже стоит в слоте: на две цифры. */
+    val slotNumberWidth = 20.dp
+
+    /** Колонка защиты на плашке — на все три эффекта защиты, чтобы контроли у всех навыков стояли друг под другом. */
+    val defenseColumnWidth = effectIcon * 3 + effectGap * 2
+    val controlColumnMinWidth = effectIcon * 3 + effectGap * 2
     val skillListHeight = 420.dp
     val skillNumberPadding = 2.dp
     val classIcon = 22.dp
