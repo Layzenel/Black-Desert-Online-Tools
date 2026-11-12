@@ -49,6 +49,8 @@ class SkillCatalogTest {
         assertEquals(setOf(1, 3), striker.choicesFor("striker", SkillStance.Succession, hideAbsoluteWithPrime = true).keys)
         // «Абсолют» с вариантом «Мощь» — основной навык пробуждения: там он остаётся всегда
         assertEquals(setOf(1, 4, 6), striker.choicesFor("striker", SkillStance.Awakening, hideAbsoluteWithPrime = true).keys)
+        // Класс «Освобождения» без стоек — все навыки последнего ранга
+        assertEquals(setOf(1, 3, 4, 6), striker.choicesFor("striker", stance = null, hideAbsoluteWithPrime = false).keys)
         assertEquals(SkillStance.Awakening, striker.stanceOf(listOf(1, 4)))
         assertNull(striker.stanceOf(listOf(1, 2)))
     }

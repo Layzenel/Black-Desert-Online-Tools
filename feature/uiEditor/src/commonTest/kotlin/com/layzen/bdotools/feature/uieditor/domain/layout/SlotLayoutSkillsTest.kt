@@ -24,6 +24,15 @@ class SlotLayoutSkillsTest {
     }
 
     @Test
+    fun skillAlreadyInAnotherSlotMovesWithItsMemo() {
+        val layout = SlotLayout().withCharacterSkills(character).withSkill(slot2, 100)
+
+        assertEquals(mapOf(slot2 to 100), layout.skills)
+        assertEquals("A", layout.memoAt(slot2))
+        assertEquals(layout, layout.withSkill(slot2, 100))
+    }
+
+    @Test
     fun editsChangeSkillsAndMemos() {
         val layout = SlotLayout().withCharacterSkills(character)
             .withSkill(slot2, null)
