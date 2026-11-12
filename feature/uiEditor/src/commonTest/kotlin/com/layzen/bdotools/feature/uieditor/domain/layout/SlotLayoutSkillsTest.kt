@@ -45,6 +45,18 @@ class SlotLayoutSkillsTest {
     }
 
     @Test
+    fun tellsSkillChangesFromMemoChanges() {
+        val layout = SlotLayout().withCharacterSkills(character)
+        val memoOnly = layout.withMemo(100, "B")
+        val skillOnly = layout.withSkill(slot2, null)
+
+        assertFalse(memoOnly.slotSkillsDifferFrom(character))
+        assertTrue(memoOnly.memosDifferFrom(character))
+        assertTrue(skillOnly.slotSkillsDifferFrom(character))
+        assertFalse(skillOnly.memosDifferFrom(character))
+    }
+
+    @Test
     fun layoutWithoutSkillsDoesNotDifferAndKeepsSkillsWhenReplaced() {
         val withSkills = SlotLayout().withCharacterSkills(character)
         val fromGameFile = SlotLayout(positions = mapOf(slot1 to SlotPosition(1, 1)))

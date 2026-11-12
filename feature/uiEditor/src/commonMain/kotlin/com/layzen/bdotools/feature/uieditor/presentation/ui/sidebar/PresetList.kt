@@ -16,6 +16,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
 import com.layzen.bdotools.feature.uieditor.domain.preset.BuiltInLayout
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
+import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.state.PresetRef
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
@@ -30,6 +31,9 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_preset_ring
 import com.layzen.bdotools.feature.uieditor.resources.slots_preset_sides
 import com.layzen.bdotools.feature.uieditor.resources.slots_preset_wings
 import com.layzen.bdotools.feature.uieditor.resources.slots_presets
+import com.layzen.bdotools.feature.uieditor.resources.slots_presets_hint
+import com.layzen.bdotools.feature.uieditor.resources.slots_user_presets_hint
+import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_user_preset_delete
 import com.layzen.bdotools.feature.uieditor.resources.slots_user_presets
 import com.layzen.bdotools.feature.uieditor.resources.slots_user_presets_empty
@@ -43,19 +47,23 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Списки «Готовые пресеты» (раскладка из файла игры и готовые раскладки слотов перезарядки) и «Мои пресеты»
  * (сохранённые раскладки, у каждой — корзина удаления). Пока своих пресетов нет — подсказка, где они лежат.
+ * При наведении на список — всплывающая подсказка, что в нём.
  */
 @Composable
 internal fun PresetList(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     BuiltInPresets(onEvent)
-    DropdownSelect(
-        selected = null,
-        options = state.presets.map { it.name },
-        onSelect = { onEvent(SlotsEvent.UseUserPreset(it)) },
-        label = { it },
-        modifier = Modifier.fillMaxWidth(),
-        fieldText = stringResource(Res.string.slots_user_presets),
-        trailing = { name -> DeleteButton { onEvent(SlotsEvent.RequestDelete(name)) } },
-    )
+    HoverTooltip(stringResource(Res.string.slots_user_presets_hint), Modifier.fillMaxWidth()) {
+        DropdownSelect(
+            selected = null,
+            options = state.presets.map { it.name },
+            onSelect = { onEvent(SlotsEvent.UseUserPreset(it)) },
+            label = { it },
+            modifier = Modifier.fillMaxWidth(),
+            fieldText = stringResource(Res.string.slots_user_presets),
+            minHeight = SlotsDimens.sidebarSelectHeight,
+            trailing = { name -> DeleteButton { onEvent(SlotsEvent.RequestDelete(name)) } },
+        )
+    }
     if (state.presets.isEmpty()) DescriptionText(stringResource(Res.string.slots_user_presets_empty))
 }
 
@@ -80,14 +88,17 @@ private fun DeleteButton(onClick: () -> Unit) {
 @Composable
 private fun BuiltInPresets(onEvent: (SlotsEvent) -> Unit) {
     val options = listOf<PresetRef>(PresetRef.Game) + BuiltInLayout.entries.map { PresetRef.BuiltIn(it) }
-    DropdownSelect(
-        selected = null,
-        options = options,
-        onSelect = { ref -> onEvent(if (ref is PresetRef.BuiltIn) SlotsEvent.UseBuiltIn(ref.layout) else SlotsEvent.UseGameLayout) },
-        label = { ref -> stringResource(if (ref is PresetRef.BuiltIn) ref.layout.title else Res.string.slots_preset_game) },
-        modifier = Modifier.fillMaxWidth(),
-        fieldText = stringResource(Res.string.slots_presets),
-    )
+    HoverTooltip(stringResource(Res.string.slots_presets_hint), Modifier.fillMaxWidth()) {
+        DropdownSelect(
+            selected = null,
+            options = options,
+            onSelect = { ref -> onEvent(if (ref is PresetRef.BuiltIn) SlotsEvent.UseBuiltIn(ref.layout) else SlotsEvent.UseGameLayout) },
+            label = { ref -> stringResource(if (ref is PresetRef.BuiltIn) ref.layout.title else Res.string.slots_preset_game) },
+            modifier = Modifier.fillMaxWidth(),
+            fieldText = stringResource(Res.string.slots_presets),
+            minHeight = SlotsDimens.sidebarSelectHeight,
+        )
+    }
 }
 
 private val BuiltInLayout.title: StringResource

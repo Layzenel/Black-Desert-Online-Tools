@@ -17,6 +17,9 @@ sealed interface SlotsEvent {
     data object SelectFolder : SlotsEvent
     data object RequestPermission : SlotsEvent
     data object Reload : SlotsEvent
+
+    /** Страницу снова открыли: перечитать портреты и подписи персонажей. */
+    data object Shown : SlotsEvent
     data class SelectGamePreset(val preset: GamePreset) : SlotsEvent
 
     // Редактор
@@ -169,12 +172,18 @@ sealed interface SlotsEvent {
     // Запись в игру и подложка
     data object OpenApply : SlotsEvent
     data class SelectApplyTarget(val preset: GamePreset) : SlotsEvent
+
+    /** Отметка персонажа [characterNo] в диалоге применения: записывать ли ему навыки и надписи. */
+    data class ToggleApplyCharacter(val characterNo: String) : SlotsEvent
     data object ConfirmApply : SlotsEvent
     data object PickBackground : SlotsEvent
     data object ToggleBackground : SlotsEvent
 
     /** Затенение подложки в процентах: 0 — картинка как есть. */
     data class SetBackgroundDim(val percent: Int) : SlotsEvent
+
+    /** Прозрачность слотов перезарядки с навыком в процентах: 100 — видна только иконка. */
+    data class SetSkillFrameTransparency(val percent: Int) : SlotsEvent
 
     data object CloseDialog : SlotsEvent
     data object DismissNotice : SlotsEvent

@@ -57,8 +57,11 @@ internal class GameController(
     }
 
     /** Меняет в диалоге применения набор позиций, в который запишется раскладка. */
-    fun selectApplyTarget(preset: GamePreset) = context.update {
-        if (it.dialog is SlotsDialog.ConfirmApply) it.copy(dialog = SlotsDialog.ConfirmApply(preset)) else it
+    fun selectApplyTarget(preset: GamePreset) = updateApplyDialog { it.copy(target = preset) }
+
+    /** Снимает или ставит в диалоге применения отметку персонажа [characterNo]: без отметки его слоты не запишутся. */
+    fun toggleApplyCharacter(characterNo: String) = updateApplyDialog {
+        it.copy(skipped = if (characterNo in it.skipped) it.skipped - characterNo else it.skipped + characterNo)
     }
 
     /**
@@ -67,11 +70,12 @@ internal class GameController(
      */
     fun confirmApply() = context.launch(busy = true) {
         val loaded = context.current.loaded ?: return@launch
-        val target = (context.current.dialog as? SlotsDialog.ConfirmApply)?.target ?: return@launch
+        val dialog = context.current.dialog as? SlotsDialog.ConfirmApply ?: return@launch
+        val target = dialog.target
         context.update { it.copy(dialog = null) }
         try {
             val backup = interactor.apply(loaded, context.current.layout, target)
-            skills.write(loaded.account)
+            skills.write(loaded.account, dialog.skipped)
             refresh(loaded.account, target)
             context.update { it.copy(activePreset = PresetRef.Game, notice = SlotsNotice.Applied(backup)) }
         } catch (e: SlotsException) {
@@ -124,6 +128,11 @@ internal class GameController(
     private suspend fun refresh(account: String, edited: GamePreset) {
         val loaded = interactor.refresh(account, edited)
         context.update { it.copy(loaded = loaded) }
+    }
+
+    private fun updateApplyDialog(change: (SlotsDialog.ConfirmApply) -> SlotsDialog.ConfirmApply) = context.update {
+        val dialog = it.dialog as? SlotsDialog.ConfirmApply
+        if (dialog == null) it else it.copy(dialog = change(dialog))
     }
 
     private fun decodeOrNull(bytes: ByteArray) = try {

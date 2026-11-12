@@ -64,6 +64,7 @@ class SlotsViewModel(
             SlotsEvent.SelectFolder -> grantAccess { gameSettings.selectFolder() }
             SlotsEvent.RequestPermission -> grantAccess { gameSettings.requestPermission() }
             SlotsEvent.Reload -> game.reload()
+            SlotsEvent.Shown -> skills.refreshLabels()
             is SlotsEvent.SelectGamePreset -> game.selectGamePreset(event.preset)
 
             is SlotsEvent.Select -> editor.select(event.id, event.additive)
@@ -144,10 +145,12 @@ class SlotsViewModel(
 
             SlotsEvent.OpenApply -> game.openApply()
             is SlotsEvent.SelectApplyTarget -> game.selectApplyTarget(event.preset)
+            is SlotsEvent.ToggleApplyCharacter -> game.toggleApplyCharacter(event.characterNo)
             SlotsEvent.ConfirmApply -> game.confirmApply()
             SlotsEvent.PickBackground -> game.pickBackground()
             SlotsEvent.ToggleBackground -> game.toggleBackground()
             is SlotsEvent.SetBackgroundDim -> game.setBackgroundDim(event.percent)
+            is SlotsEvent.SetSkillFrameTransparency -> context.update { it.copy(skillFrameTransparency = event.percent) }
 
             SlotsEvent.CloseDialog -> context.update { it.copy(dialog = null) }
             SlotsEvent.DismissNotice -> context.update { it.copy(notice = null) }

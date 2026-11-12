@@ -27,6 +27,9 @@ internal object SlotsDimens {
     val chatTabPaddingVertical = 2.dp
     val portraitWidth = 40.dp
     val portraitHeight = 52.dp
+
+    /** Высота списков в меню (пресеты, персонаж): как у текста в две-три строки, влезает портрет персонажа. */
+    val sidebarSelectHeight = 56.dp
     val skillIcon = 32.dp
     val skillListHeight = 420.dp
     val skillNumberPadding = 2.dp

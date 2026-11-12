@@ -25,10 +25,7 @@ internal fun SlotsDialogs(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
         is SlotsDialog.Preview -> state.loaded?.game?.screen?.let {
             LayoutPreviewDialog(dialog, state.skills, it, state.background, state.backgroundShown, state.backgroundDim, onEvent)
         }
-        is SlotsDialog.ConfirmApply -> {
-            val skillTargets = state.skills.skillTargets(state.skillsChanged)
-            ApplyDialog(dialog, state.loaded?.presets?.keys?.sorted().orEmpty(), skillTargets, state.skills, onEvent)
-        }
+        is SlotsDialog.ConfirmApply -> ApplyDialog(dialog, state.loaded?.presets?.keys?.sorted().orEmpty(), state.layout, state.skills, onEvent)
         is SlotsDialog.EditMemo -> {
             val language = stringResource(Res.string.slots_skill_names_language)
             val name = state.skills.skill(dialog.skillNo)?.name(language) ?: stringResource(Res.string.slots_skill_number, dialog.skillNo)

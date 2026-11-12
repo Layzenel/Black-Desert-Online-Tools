@@ -39,16 +39,30 @@ internal class SkillsController(
         show(selected)
         loadCatalog()
         loadIcons()
-        characters.forEach { character -> context.launch { loadPortrait(character.characterNo) } }
+        loadPortraits(characters)
     }
 
     /**
-     * Записывает выбранному персонажу навыки и надписи редактора, если они отличаются от его файла, и перечитывает
+     * Перечитывает подписи и портреты персонажей открытого аккаунта: их могли поменять в «Конструкторе портретов»,
+     * пока страница была закрыта. Навыки и раскладку не трогает.
+     */
+    fun refreshLabels() {
+        val account = context.current.loaded?.account ?: return
+        context.launch {
+            val labels = accounts.readCharacterLabels(account)
+            if (context.current.loaded?.account != account) return@launch
+            updateSkills { it.copy(labels = labels) }
+            loadPortraits(context.current.skills.characters)
+        }
+    }
+
+    /**
+     * Записывает персонажам из [SkillsState.skillTargets], кроме [skipped], навыки и надписи редактора и перечитывает
      * файлы персонажей: навыки в редакторе остаются, меняется только то, с чем их сравнивать.
      */
-    suspend fun write(account: String) {
+    suspend fun write(account: String, skipped: Set<String>) {
         val state = context.current
-        val targets = state.skills.skillTargets(state.skillsChanged)
+        val targets = state.skills.skillTargets(state.layout).filterNot { it.characterNo in skipped }
         if (targets.isEmpty()) return
         targets.forEach { character ->
             // Не заданное в раскладке (`null`) остаётся как в файле персонажа
@@ -128,9 +142,12 @@ internal class SkillsController(
 
     // Портрет необязателен: нет файла или он битый — у персонажа пустая ячейка
     private suspend fun loadPortrait(characterNo: String) {
-        val image = accounts.readPortrait(characterNo)?.let(::decodeOrNull)?.thumbnail() ?: return
-        context.update { it.copy(skills = it.skills.copy(portraits = it.skills.portraits + (characterNo to image))) }
+        val image = accounts.readPortrait(characterNo)?.let(::decodeOrNull)?.thumbnail()
+        updateSkills { it.copy(portraits = if (image == null) it.portraits - characterNo else it.portraits + (characterNo to image)) }
     }
+
+    private fun loadPortraits(characters: List<CharacterSkills>) =
+        characters.forEach { character -> context.launch { loadPortrait(character.characterNo) } }
 
     private fun decodeOrNull(bytes: ByteArray) = try {
         bytes.decodeToImageBitmap()

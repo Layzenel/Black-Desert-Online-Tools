@@ -59,8 +59,11 @@ sealed interface SlotsDialog {
         private fun chosen(choice: PreviewChoice) = copy(included = choice.slots, includedChats = choice.chats)
     }
 
-    /** Подтверждение записи в файл игры: игра должна быть закрыта. [target] — в какой набор позиций писать. */
-    data class ConfirmApply(val target: GamePreset) : SlotsDialog
+    /**
+     * Подтверждение записи в файл игры: игра должна быть закрыта. [target] — в какой набор позиций писать,
+     * [skipped] — персонажи (`CharacterNo`), с которых сняли отметку: их навыки и надписи не запишутся.
+     */
+    data class ConfirmApply(val target: GamePreset, val skipped: Set<String> = emptySet()) : SlotsDialog
 
     data class ConfirmDelete(val name: String) : SlotsDialog
 

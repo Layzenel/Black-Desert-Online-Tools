@@ -37,7 +37,8 @@ import kotlin.math.roundToInt
  * Скрытый в игре элемент нарисован приглушённым. [anchor] — опора выравнивания, пока открыто меню: золотая рамка.
  * [skillIcon] — иконка навыка в слоте перезарядки: во всю рамку, номер слота — поверх неё ([SkillSlotContent]).
  * [skillDraggable] — Shift+ЛКМ тащит навык в другой слот, а не сам слот; [pickSkillOnDoubleClick] — двойной клик
- * открывает выбор навыка. [skillTooltip] — подсказка навыка при наведении на слот.
+ * открывает выбор навыка. [skillTooltip] — подсказка навыка при наведении на слот. [skillFrameAlpha] — непрозрачность
+ * рамки и фона невыбранного слота с навыком: 0 — видны только иконка и номер.
  */
 @Composable
 internal fun SlotFrame(
@@ -54,14 +55,19 @@ internal fun SlotFrame(
     skillDraggable: Boolean = false,
     pickSkillOnDoubleClick: Boolean = false,
     skillTooltip: (@Composable () -> Unit)? = null,
+    skillFrameAlpha: Float = 1f,
 ) {
+    // Рамку слота с навыком можно приглушить, чтобы видеть иконки как в игре; выбранный слот виден всегда
+    val frameAlpha = if (skillIcon != null && !selected && !anchor) skillFrameAlpha else 1f
     val border = when {
         anchor -> AppTheme.colors.accentGold
         selected -> AppTheme.colors.textPrimary
-        else -> id.group.frameColor()
+        else -> id.group.frameColor().let { it.copy(alpha = it.alpha * frameAlpha) }
     }
     // За краем экрана — красная заливка; рамка остаётся цветом группы, чтобы было видно, что это за элемент
-    val fill = if (screen.fits(id, position)) AppTheme.colors.backgroundDeep else AppTheme.colors.danger
+    val fits = screen.fits(id, position)
+    val fill = if (fits) AppTheme.colors.backgroundDeep else AppTheme.colors.danger
+    val fillAlpha = SlotsDimens.SLOT_FILL_ALPHA * if (fits) frameAlpha else 1f
     val density = LocalDensity.current
     val iconWidth = with(density) { (id.width * scale).toDp() }
     // У больших окон глазик в игре такой же, как у слота, а не во всю ширину
@@ -82,7 +88,7 @@ internal fun SlotFrame(
                 Modifier
                     .fillMaxSize()
                     .alpha(if (visible) 1f else SlotsDimens.HIDDEN_ALPHA)
-                    .background(fill.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
+                    .background(fill.copy(alpha = fillAlpha))
                     .border(if (selected) SlotsDimens.selectedSlotBorder else SlotsDimens.slotBorder, border)
                     .pointerHoverIcon(PointerIcon.Hand)
                     .elementGestures(
