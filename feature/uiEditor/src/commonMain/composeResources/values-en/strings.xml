@@ -94,6 +94,7 @@
     <string name="slots_memo_add">Add</string>
     <string name="slots_memo_edit">Edit</string>
     <string name="slots_memo_delete">Delete</string>
+    <string name="slots_memo_from_skill">Fill from skill description:</string>
     <string name="slots_memo_add_title">New label</string>
     <string name="slots_memo_edit_title">Label</string>
     <string name="slots_memo_placeholder">For example, Shift+LMB</string>

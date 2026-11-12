@@ -108,6 +108,7 @@ class SlotsViewModel(
             is SlotsEvent.MemoChanged -> skillEdit.changeMemo(event.text)
             SlotsEvent.ConfirmMemo -> skillEdit.confirmMemo()
             is SlotsEvent.DeleteMemo -> skillEdit.deleteMemo(event.id)
+            is SlotsEvent.SetMemo -> skillEdit.setMemo(event.id, event.text)
             is SlotsEvent.OpenSkillPicker -> skillEdit.openSkillPicker(event.id)
             is SlotsEvent.SkillQueryChanged -> skillEdit.changeQuery(event.query)
             is SlotsEvent.SkillStanceChanged -> skillEdit.changeStance(event.stance)

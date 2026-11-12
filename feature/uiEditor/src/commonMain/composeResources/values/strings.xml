@@ -94,6 +94,7 @@
     <string name="slots_memo_add">Добавить</string>
     <string name="slots_memo_edit">Редактировать</string>
     <string name="slots_memo_delete">Удалить</string>
+    <string name="slots_memo_from_skill">Заполнить из описания умения:</string>
     <string name="slots_memo_add_title">Новая заметка</string>
     <string name="slots_memo_edit_title">Заметка</string>
     <string name="slots_memo_placeholder">Например, Shift+ЛКМ</string>

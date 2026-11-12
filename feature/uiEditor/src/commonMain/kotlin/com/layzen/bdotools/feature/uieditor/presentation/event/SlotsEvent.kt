@@ -99,6 +99,9 @@ sealed interface SlotsEvent {
     /** Убрать надпись навыка в слоте [id]. */
     data class DeleteMemo(val id: SlotId) : SlotsEvent
 
+    /** Ставит надпись навыка в слоте [id] сразу, без окна: например, действие из описания навыка. */
+    data class SetMemo(val id: SlotId, val text: String) : SlotsEvent
+
     /** Открыть выбор навыка для слота перезарядки [id]. */
     data class OpenSkillPicker(val id: SlotId) : SlotsEvent
     data class SkillQueryChanged(val query: String) : SlotsEvent

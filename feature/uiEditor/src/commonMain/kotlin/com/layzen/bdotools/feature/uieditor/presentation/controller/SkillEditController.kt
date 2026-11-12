@@ -39,6 +39,16 @@ internal class SkillEditController(
         context.update { it.copy(dialog = null) }
     }
 
+    /**
+     * Ставит навыку в слоте [id] надпись [text] без окна, по тем же правилам, что и в окне: только знаки
+     * Windows-1251 и не длиннее, чем позволяет игра. Пустая надпись убирает её.
+     */
+    fun setMemo(id: SlotId, text: String) {
+        val skillNo = context.current.layout.skillAt(id) ?: return
+        val memo = text.filter(::isCp1251).take(SlotLabel.MAX_CHARS).trim()
+        context.editLayout { it.withMemo(skillNo, memo.ifEmpty { null }) }
+    }
+
     /** Убирает надпись навыка в слоте [id]. */
     fun deleteMemo(id: SlotId) {
         val skillNo = context.current.layout.skillAt(id) ?: return

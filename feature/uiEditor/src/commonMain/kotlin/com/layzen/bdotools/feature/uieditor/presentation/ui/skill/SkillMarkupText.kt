@@ -22,18 +22,10 @@ import org.jetbrains.compose.resources.stringResource
  */
 @Composable
 internal fun skillMarkupText(markup: String, keys: KeyBindings): AnnotatedString {
-    val translated = mapOf(
-        1 to stringResource(Res.string.slots_key_lmb),
-        2 to stringResource(Res.string.slots_key_rmb),
-        4 to stringResource(Res.string.slots_key_mmb),
-        32 to stringResource(Res.string.slots_key_space),
-    )
+    val label = rememberPartLabel(keys)
     return buildAnnotatedString {
         parseSkillMarkup(markup).forEach { part ->
-            val text = when (part) {
-                is SkillTextPart.Plain -> part.text
-                is SkillTextPart.Key -> keys[part.action]?.let { translated[it] ?: keyName(it) } ?: part.action
-            }
+            val text = label(part)
             val color = part.color
             if (color == null) append(text) else withStyle(SpanStyle(color = Color(0xFF000000 or color.toLong()))) { append(text) }
         }
@@ -54,3 +46,27 @@ private val NAMED_KEYS = mapOf(
     8 to "Backspace", 9 to "Tab", 13 to "Enter", 16 to "Shift", 17 to "Ctrl", 18 to "Alt", 20 to "Caps Lock",
     27 to "Esc", 37 to "Left", 38 to "Up", 39 to "Right", 40 to "Down", 192 to "~",
 )
+
+/** Куски тултипа [parts] одной строкой без цветов: `{KeyBind:…}` — подписью клавиши из [keys], как в тултипе. */
+@Composable
+internal fun skillPartsText(parts: List<SkillTextPart>, keys: KeyBindings): String {
+    val label = rememberPartLabel(keys)
+    return parts.joinToString("") { label(it) }
+}
+
+/** Текст куска: обычный — как есть, клавиша — её подпись (кнопки мыши и пробел — на языке интерфейса). */
+@Composable
+private fun rememberPartLabel(keys: KeyBindings): (SkillTextPart) -> String {
+    val translated = mapOf(
+        1 to stringResource(Res.string.slots_key_lmb),
+        2 to stringResource(Res.string.slots_key_rmb),
+        4 to stringResource(Res.string.slots_key_mmb),
+        32 to stringResource(Res.string.slots_key_space),
+    )
+    return { part ->
+        when (part) {
+            is SkillTextPart.Plain -> part.text
+            is SkillTextPart.Key -> keys[part.action]?.let { translated[it] ?: keyName(it) } ?: part.action
+        }
+    }
+}

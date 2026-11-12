@@ -94,7 +94,7 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
                     )
                     SubmenuSlider(labelChars, SlotLabel.CHARS_RANGE) { onEvent(SlotsEvent.SetLabel(labelSlot, it)) }
                 }
-                ContextSubmenu.Memo -> if (labelSlot != null) MemoSubmenu(state, labelSlot, ::run)
+                ContextSubmenu.Memo -> if (labelSlot != null) MemoSubmenu(state, labelSlot, ::run, onEvent)
             }
         },
     ) { trigger ->
