@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.uieditor.domain.arrangement.AlignEdge
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.distributionGap
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
@@ -80,8 +81,8 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
                 ContextSubmenu.DistributeHorizontal, ContextSubmenu.DistributeVertical -> {
                     val horizontal = submenu == ContextSubmenu.DistributeHorizontal
                     SubmenuSlider(
-                        state.distributeGap(horizontal),
-                        SlotsState.DISTRIBUTE_GAP_RANGE,
+                        selectionGap(state, horizontal),
+                        state.distributeGapRange(horizontal),
                         onChangeFinished = { onEvent(SlotsEvent.DistributeGapFinished) },
                     ) {
                         onEvent(SlotsEvent.SetDistributeGap(it, horizontal))
@@ -128,8 +129,8 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
         )
         // Клик распределяет, справа выезжает промежуток между рамками: его слайдер сразу переставляет выбранное
         val canDistribute = selected >= ARRANGE_MIN
-        val gapXText = stringResource(Res.string.slots_snap_distance_value, state.distributeGapX)
-        val gapYText = stringResource(Res.string.slots_snap_distance_value, state.distributeGapY)
+        val gapXText = stringResource(Res.string.slots_snap_distance_value, selectionGap(state, horizontal = true))
+        val gapYText = stringResource(Res.string.slots_snap_distance_value, selectionGap(state, horizontal = false))
         ActionMenuItem(
             stringResource(Res.string.slots_distribute_horizontal),
             run(SlotsEvent.Distribute(horizontal = true)),
@@ -186,3 +187,7 @@ internal fun CanvasContextMenu(state: SlotsState, anchor: SlotId?, onDismiss: ()
         )
     }
 }
+
+/** Промежуток для слайдера «Распределить»: текущий у выбранной группы, а если по оси она в одну линию — запомненный. */
+private fun selectionGap(state: SlotsState, horizontal: Boolean): Int =
+    (state.layout.distributionGap(state.selection, horizontal) ?: state.distributeGap(horizontal)).coerceIn(state.distributeGapRange(horizontal))

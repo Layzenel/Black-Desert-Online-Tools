@@ -4,6 +4,7 @@ import com.layzen.bdotools.feature.uieditor.domain.arrangement.AlignEdge
 import com.layzen.bdotools.feature.uieditor.domain.arrangement.SnapGuides
 import com.layzen.bdotools.feature.uieditor.domain.arrangement.aligned
 import com.layzen.bdotools.feature.uieditor.domain.arrangement.distributed
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.distributionGap
 import com.layzen.bdotools.feature.uieditor.domain.arrangement.snapLines
 import com.layzen.bdotools.feature.uieditor.domain.arrangement.snapToLines
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
@@ -168,7 +169,9 @@ internal class EditorController(private val context: SlotsContext) {
 
     /** Равномерно расставляет выбранные слоты по горизонтали или вертикали с заданным промежутком. */
     fun distribute(horizontal: Boolean) {
-        val gap = context.current.distributeGap(horizontal)
+        val state = context.current
+        // Промежуток — текущий у группы: клик выравнивает шаг, не меняя его
+        val gap = state.layout.distributionGap(state.selection, horizontal) ?: state.distributeGap(horizontal)
         editSelection { layout, selection -> layout.distributed(selection, horizontal, gap) }
     }
 

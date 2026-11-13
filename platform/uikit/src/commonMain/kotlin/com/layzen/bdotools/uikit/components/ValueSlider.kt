@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
@@ -29,6 +30,8 @@ import kotlin.math.roundToInt
  * Слайдер как «Масштаб интерфейса»: подписи min/max по краям, текущее значение
  * золотом по центру, тонкая тёмная дорожка и белый ромб-ползунок. [onValueChangeFinished] — палец отпустили
  * (конец перетаскивания или клик): для правок, которые по ходу жеста не копятся в историю отмены.
+ * Колесо мыши над слайдером меняет значение на шаг (сотая диапазона, не меньше 1) и не прокручивает страницу;
+ * каждый щелчок колеса — законченная правка: [onValueChange], затем [onValueChangeFinished].
  */
 @Composable
 fun ValueSlider(
@@ -43,7 +46,26 @@ fun ValueSlider(
     val dimens = AppTheme.dimens
     val currentOnChange by rememberUpdatedState(onValueChange)
     val currentOnFinished by rememberUpdatedState(onValueChangeFinished)
-    Column(modifier) {
+    val currentValue by rememberUpdatedState(value)
+    // Колесо вверх — больше; шаг — сотая диапазона, но не меньше 1. Каждый щелчок — законченная правка
+    val wheelStep = ((range.last - range.first) / WHEEL_STEPS).coerceAtLeast(1)
+    Column(
+        modifier.pointerInput(range) {
+            awaitPointerEventScope {
+                while (true) {
+                    val event = awaitPointerEvent()
+                    if (event.type != PointerEventType.Scroll) continue
+                    val delta = event.changes.first().scrollDelta.y
+                    if (delta == 0f) continue
+                    val next = (currentValue + if (delta < 0) wheelStep else -wheelStep).coerceIn(range)
+                    event.changes.forEach { it.consume() }
+                    if (next == currentValue) continue
+                    currentOnChange(next)
+                    currentOnFinished()
+                }
+            }
+        },
+    ) {
         if (showLabels) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                 Text(range.first.toString(), style = AppTheme.typography.bodyBold, color = colors.textPrimary)
@@ -92,3 +114,6 @@ fun ValueSlider(
         }
     }
 }
+
+/** На сколько шагов колеса делится диапазон слайдера. */
+private const val WHEEL_STEPS = 100

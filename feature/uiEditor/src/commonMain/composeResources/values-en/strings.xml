@@ -181,11 +181,6 @@
     <string name="slots_screen">Game screen: %1$d × %2$d, UI scale %3$s. Grid and coordinates are measured from the crosshair.</string>
     <string name="slots_off_screen">Elements off screen: %1$d — in game they will end up beyond the edge.</string>
 
-    <!-- Group spread -->
-    <string name="slots_spread_description">Groups are elements and chat windows that touch each other. The sliders push groups apart from the center between them, in UI px.</string>
-    <string name="slots_spread_horizontal">Horizontal spread</string>
-    <string name="slots_spread_vertical">Vertical spread</string>
-
     <!-- Help: the "?" button on the toolbar -->
     <string name="slots_help">Help</string>
     <string name="slots_help_button">Help</string>
