@@ -3,9 +3,9 @@ package com.layzen.bdotools.feature.portraitconstructor.presentation.render
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -39,9 +39,13 @@ import org.jetbrains.compose.resources.painterResource
 
 /** Непрозрачный альфа-канал для цвета украшения `0xRRGGBB`. */
 private const val OPAQUE = 0xFF000000.toInt()
+private const val GLOW_CENTER_ALPHA = 0.82f
+private const val GLOW_MIDDLE_ALPHA = 0.62f
+private const val GLOW_SOLID_STOP = 0.55f
 private const val TEXT_SHADOW_ALPHA = 0.85f
 private const val TEXT_SHADOW_OFFSET = 3f
 private const val TEXT_SHADOW_BLUR = 6f
+private const val BADGE_SHADOW_SCALE = 0.75f
 
 /** 1 sp = 1 px: рисуем в пикселях текстуры. */
 private val TexturePixels = Density(1f)
@@ -61,8 +65,7 @@ class PortraitDecorator internal constructor(
         get() = icons.values.all { it.intrinsicSize.isSpecified && it.intrinsicSize.width > 0f }
 
     /**
-     * Портрет с украшениями: одна мягкая тень по контуру значка и надписи ([drawDecorationShade]), поверх значок
-     * и надпись. Без [drawCaptionText] под надписью рисуется только тень:
+     * Портрет с украшениями. Без [drawCaptionText] под надписью рисуется только затемнение:
      * сам текст на предпросмотре показывает поле ввода тем же стилем ([captionStyle]).
      */
     fun decorate(base: ImageBitmap, decoration: PortraitDecoration, drawCaptionText: Boolean = true): ImageBitmap {
@@ -71,39 +74,45 @@ class PortraitDecorator internal constructor(
             drawImage(base)
             // раскладка задана для 624×804; если файл другого размера, растягиваем её
             scale(base.width / PortraitTexture.WIDTH.toFloat(), base.height / PortraitTexture.HEIGHT.toFloat(), pivot = Offset.Zero) {
-                val style = decoration.style
-                val caption = decoration.caption.trim().takeIf { it.isNotEmpty() }?.let { measure(it, captionFontSize(it), style.captionColor) }
-                val shapes = listOfNotNull(decoration.badge?.let { badgeBounds() }, caption?.let(::captionBounds))
-                drawDecorationShade(shapes, shadeColor(style), style.shadeFactor, Layout.SHADE_SPREAD * style.shadeSizeFactor)
                 // значок крупный и может заходить под надпись, поэтому надпись рисуется поверх
-                decoration.badge?.let {
-                    drawIcon(icons.getValue(it), badgeBounds().center, Layout.BADGE_SIZE.toFloat(), decorationColor(style.badgeColor))
-                }
-                if (caption != null && drawCaptionText) {
-                    drawText(caption, topLeft = Offset(Layout.CAPTION_PADDING_HORIZONTAL.toFloat(), captionTop(caption)))
-                }
+                decoration.badge?.let { drawBadge(it, decoration.style) }
+                if (decoration.caption.isNotBlank()) drawCaption(decoration.caption.trim(), decoration.style, drawCaptionText)
             }
         }
         return target
     }
 
-    /** Верх строк надписи: надпись стоит над нижней полосой игры. */
-    private fun captionTop(text: TextLayoutResult): Float =
-        Layout.CAPTION_BOTTOM - Layout.CAPTION_PADDING_VERTICAL - text.size.height.toFloat()
+    /**
+     * Надпись над нижней полосой игры. Под ней — овальное затемнение: плотное в центре текста
+     * и растворяющееся к краям со всех сторон, поэтому нет резкой тёмной полосы.
+     */
+    private fun DrawScope.drawCaption(caption: String, style: DecorationStyle, withText: Boolean) {
+        val text = measure(caption, captionFontSize(caption), style.captionColor)
+        val blockHeight = text.size.height + Layout.CAPTION_PADDING_VERTICAL * 2f
+        val blockTop = Layout.CAPTION_BOTTOM - blockHeight
+        val center = Offset(PortraitTexture.WIDTH / 2f, blockTop + blockHeight / 2)
+        val radiusX = PortraitTexture.WIDTH / 2f + Layout.CAPTION_GLOW_EXTRA_X
+        val radiusY = blockHeight / 2 + Layout.CAPTION_GLOW_EXTRA_Y
+        val shade = shadeColor(style)
 
-    /** Рамка строк надписи по самой широкой строке, по центру портрета: под неё ложится тень. */
-    private fun captionBounds(text: TextLayoutResult): Rect {
-        val width = (0 until text.lineCount).maxOf { text.getLineRight(it) - text.getLineLeft(it) }
-        val left = (PortraitTexture.WIDTH - width) / 2
-        val top = captionTop(text)
-        return Rect(left, top, left + width, top + text.size.height)
+        // радиальный градиент круглый, поэтому рисуем круг и сжимаем его по вертикали в овал
+        scale(1f, radiusY / radiusX, pivot = center) {
+            drawCircle(
+                Brush.radialGradient(
+                    0f to shade.copy(alpha = GLOW_CENTER_ALPHA),
+                    GLOW_SOLID_STOP to shade.copy(alpha = GLOW_MIDDLE_ALPHA),
+                    1f to Color.Transparent,
+                    center = center,
+                    radius = radiusX,
+                ),
+                radius = radiusX,
+                center = center,
+            )
+        }
+        if (withText) {
+            drawText(text, topLeft = Offset(Layout.CAPTION_PADDING_HORIZONTAL.toFloat(), blockTop + Layout.CAPTION_PADDING_VERTICAL))
+        }
     }
-
-    /** Рамка значка: квадрат по центру портрета. */
-    private fun badgeBounds(): Rect = Rect(
-        Offset(Layout.BADGE_CENTER_X.toFloat(), Layout.BADGE_CENTER_Y.toFloat()),
-        Layout.BADGE_SIZE / 2f,
-    )
 
     /**
      * Самый крупный шрифт (в пикселях текстуры), при котором надпись влезает в две строки и не поднимается
@@ -145,6 +154,25 @@ class PortraitDecorator internal constructor(
     /** Цвет затенения под надписью и значком: из [style] или почти чёрный фон темы. */
     fun shadeColor(style: DecorationStyle): Color = style.shadeColor?.let { Color(OPAQUE or it) } ?: colors.backgroundDeep
 
+    /** Значок — крупная иконка без кольца по центру портрета. Под ней мягкая тень, как под надписью. */
+    private fun DrawScope.drawBadge(icon: SlotIcon, style: DecorationStyle) {
+        val center = Offset(Layout.BADGE_CENTER_X.toFloat(), Layout.BADGE_CENTER_Y.toFloat())
+        val size = Layout.BADGE_SIZE.toFloat()
+        val shadowRadius = size * BADGE_SHADOW_SCALE
+        val shade = shadeColor(style)
+        drawCircle(
+            Brush.radialGradient(
+                0f to shade.copy(alpha = GLOW_CENTER_ALPHA),
+                GLOW_SOLID_STOP to shade.copy(alpha = GLOW_MIDDLE_ALPHA),
+                1f to Color.Transparent,
+                center = center,
+                radius = shadowRadius,
+            ),
+            radius = shadowRadius,
+            center = center,
+        )
+        drawIcon(icons.getValue(icon), center, size, decorationColor(style.badgeColor))
+    }
 }
 
 /** Отрисовщик украшений с текущими шрифтами, SVG-значками и цветами темы. */

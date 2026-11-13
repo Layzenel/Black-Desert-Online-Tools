@@ -77,8 +77,6 @@
     <string name="portraits_caption_color">Memo color</string>
     <string name="portraits_badge_color">Icon color</string>
     <string name="portraits_shade_color">Shade color</string>
-    <string name="portraits_shade_strength">Shade, %</string>
-    <string name="portraits_shade_size">Shade area, %</string>
     <string name="portraits_color_default">Default color</string>
     <string name="portraits_colors_title">Memo, badge and shade colors</string>
     <string name="portraits_colors_description">The memo, badge and shade colors of every portrait that has a memo or badge. Memos and badges themselves stay the same, and a backup is saved first. To color one portrait, use its "Memo and badges" window.</string>

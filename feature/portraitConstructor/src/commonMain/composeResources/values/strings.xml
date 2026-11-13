@@ -77,8 +77,6 @@
     <string name="portraits_caption_color">Цвет заметки</string>
     <string name="portraits_badge_color">Цвет иконки</string>
     <string name="portraits_shade_color">Цвет затенения</string>
-    <string name="portraits_shade_strength">Затенение, %</string>
-    <string name="portraits_shade_size">Область затенения, %</string>
     <string name="portraits_color_default">Цвет по умолчанию</string>
     <string name="portraits_colors_title">Цвет заметок, значков и затенения</string>
     <string name="portraits_colors_description">Цвет заметок, значков и затенения под ними у всех портретов, где они есть. Сами заметки и значки не меняются, перед записью сохранится копия. Цвет одного портрета — в его окне «Заметка и значки».</string>

@@ -46,9 +46,7 @@ Your own images instead of the portraits in the character selection window.
 - A memo on the portrait — up to 24 characters.
 - A character class badge or a functional badge (world boss, professions). The badge list has search at the top —
   just start typing; left click sets the badge, right click sets the badge and puts its name in the memo.
-- Under the badge and memo there is one soft shade along their outline. Icon and memo color, shade color,
-  strength and area — for one portrait in its "Memo and badges" window,
-  for all at once with the "Memo, badge and shade colors of all portraits" icon next to the title.
+- Icon, memo and shade colors — for one portrait in its "Memo and badges" window, for all at once with the "Memo, badge and shade colors of all portraits" icon next to the title.
 
   ![Memo and badges](docs/screenshots/portraitConstructor-decoration.en.png)
 
