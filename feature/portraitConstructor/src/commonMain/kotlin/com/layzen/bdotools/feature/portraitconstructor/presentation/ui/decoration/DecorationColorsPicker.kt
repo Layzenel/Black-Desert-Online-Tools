@@ -13,17 +13,14 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_badge
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_caption_color
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_color_default
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_shade_color
-import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_shade_size
-import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_shade_strength
 import com.layzen.bdotools.uikit.components.ColorPalette
-import com.layzen.bdotools.uikit.components.ValueSlider
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 /**
  * Стиль украшения: цвет иконки (значка), цвет заметки и цвет затенения под ними из [DecorationPalette] — первый
- * квадрат каждой палитры цвет по умолчанию (`null`), — , сила и область затенения, %. Нужен и окну одного портрета,
- * и окну всех портретов; каждое изменение отдаёт новый стиль в [onChange].
+ * квадрат каждой палитры цвет по умолчанию (`null`). Нужен и окну одного портрета, и окну всех портретов;
+ * каждое изменение отдаёт новый стиль в [onChange].
  */
 @Composable
 internal fun DecorationColorsPicker(style: DecorationStyle, decorator: PortraitDecorator, onChange: (DecorationStyle) -> Unit) {
@@ -32,22 +29,6 @@ internal fun DecorationColorsPicker(style: DecorationStyle, decorator: PortraitD
     ColorRow(stringResource(Res.string.portraits_caption_color), style.captionColor, default, decorator) { onChange(style.copy(captionColor = it)) }
     ColorRow(stringResource(Res.string.portraits_shade_color), style.shadeColor, decorator.shadeColor(DecorationStyle()), decorator) {
         onChange(style.copy(shadeColor = it))
-    }
-    // значение по умолчанию — `null`: в файл украшения попадает, только если его меняли
-    PercentSlider(stringResource(Res.string.portraits_shade_strength), style.shadeStrength, DecorationStyle.DEFAULT_SHADE_STRENGTH, DecorationStyle.SHADE_RANGE) {
-        onChange(style.copy(shadeStrength = it))
-    }
-    PercentSlider(stringResource(Res.string.portraits_shade_size), style.shadeSize, DecorationStyle.DEFAULT_SHADE_SIZE, DecorationStyle.SHADE_SIZE_RANGE) {
-        onChange(style.copy(shadeSize = it))
-    }
-}
-
-/** Слайдер процентов с заголовком; значение [default] отдаётся как `null` — «по умолчанию». */
-@Composable
-private fun PercentSlider(title: String, value: Int?, default: Int, range: IntRange, onChange: (Int?) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-        Text(title, style = AppTheme.typography.bodyBold, color = AppTheme.colors.textBeige)
-        ValueSlider(value = value ?: default, onValueChange = { onChange(it.takeIf { percent -> percent != default }) }, range = range)
     }
 }
 

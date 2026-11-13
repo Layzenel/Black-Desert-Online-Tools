@@ -95,10 +95,10 @@ class PortraitDecorationTest {
 
     @Test
     fun colorsSurviveFileRoundTrip() {
-        val style = DecorationStyle(captionColor = 0xF8C038, badgeColor = 0x00A0FF, shadeColor = 0x101010, shadeStrength = 40, shadeSize = 150)
+        val style = DecorationStyle(captionColor = 0xF8C038, badgeColor = 0x00A0FF, shadeColor = 0x101010)
         val decoration = PortraitDecoration("Рыбак", SlotIcon.WorldBoss, style)
         val text = encodeDecoration(decoration)
-        assertTrue("caption-color=#F8C038" in text && "badge-color=#00A0FF" in text && "shade-color=#101010" in text && "shade-strength=40" in text && "shade-size=150" in text)
+        assertTrue("caption-color=#F8C038" in text && "badge-color=#00A0FF" in text && "shade-color=#101010" in text)
         assertEquals(decoration, decodeDecoration(text))
     }
 
@@ -108,6 +108,5 @@ class PortraitDecorationTest {
         assertTrue("color" !in plain && "shade" !in plain)
         val bad = decodeDecoration("caption=Рыбак\ncaption-color=red\nshade-strength=500\n").style
         assertEquals(DecorationStyle(), bad)
-        assertEquals(1f, bad.shadeFactor)
     }
 }
