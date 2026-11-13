@@ -80,4 +80,20 @@ class SlotArrangementTest {
         // Два элемента вплотную: b встаёт сразу справа от a
         assertEquals(SlotPosition(-50, 40), layout.distributed(setOf(a, b), horizontal = true, gap = 0)[b])
     }
+
+    @Test
+    fun distributionGapIsCurrentAverageAndMatchesDistributed() {
+        // Рамки 50 шириной: промежутки 50 и 200 — средний 125
+        assertEquals(125, layout.distributionGap(all, horizontal = true))
+        assertEquals(10, layout.distributed(all, horizontal = true, gap = 10).distributionGap(all, horizontal = true))
+        assertEquals(null, layout.distributionGap(setOf(a), horizontal = true))
+    }
+
+    @Test
+    fun minDistributionGapKeepsColumnsApart() {
+        // Слоты 50 шириной: перекрытие больше половины слило бы колонки в одну
+        val min = layout.minDistributionGap(all, horizontal = true)
+        assertEquals(-25, min)
+        assertEquals(min, layout.distributed(all, horizontal = true, gap = min).distributionGap(all, horizontal = true))
+    }
 }

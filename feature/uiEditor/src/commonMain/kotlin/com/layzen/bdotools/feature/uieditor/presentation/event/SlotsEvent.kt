@@ -57,11 +57,6 @@ sealed interface SlotsEvent {
     /** Центр окна чата [window] от центра экрана, введённый руками. */
     data class SetChatPosition(val window: Int, val center: SlotPosition) : SlotsEvent
 
-    /** Шаг слайдера «Отдаление»: группы выбранного на [value] UI-px от центра между ними по оси. */
-    data class SpreadGroups(val horizontal: Boolean, val value: Int) : SlotsEvent
-
-    /** Слайдер «Отдаление» отпустили: прежняя раскладка уходит в «Отменить» одним шагом. */
-    data object SpreadGroupsEnd : SlotsEvent
 
     /** Перетаскивание или растягивание окна чата закончилось: прежняя раскладка уходит в «Отменить». */
     data object ChatEditEnd : SlotsEvent

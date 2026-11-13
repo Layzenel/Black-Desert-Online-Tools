@@ -12,7 +12,6 @@ import com.layzen.bdotools.feature.uieditor.domain.skill.SkillsInteractor
 import com.layzen.bdotools.feature.uieditor.presentation.controller.ChatsController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.EditorController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.GameController
-import com.layzen.bdotools.feature.uieditor.presentation.controller.GroupSpreadController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.LayoutFilesController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.PresetsController
 import com.layzen.bdotools.feature.uieditor.presentation.controller.SkillEditController
@@ -39,7 +38,6 @@ class SlotsViewModel(
     private val context = SlotsContext(viewModelScope)
     private val editor = EditorController(context)
     private val chats = ChatsController(context)
-    private val spread = GroupSpreadController(context)
     private val presets = PresetsController(context, userPresets)
     private val skills = SkillsController(context, skillsInteractor, accounts)
     private val skillEdit = SkillEditController(context, skills)
@@ -91,8 +89,6 @@ class SlotsViewModel(
             is SlotsEvent.ResizeChat -> chats.resize(event.window, event.dx, event.dy)
             is SlotsEvent.SetChatSize -> chats.setSize(event.window, event.width, event.height)
             is SlotsEvent.SetChatPosition -> chats.setPosition(event.window, event.center)
-            is SlotsEvent.SpreadGroups -> spread.spread(event.horizontal, event.value)
-            SlotsEvent.SpreadGroupsEnd -> spread.end()
             SlotsEvent.ChatEditEnd -> chats.endEdit()
             is SlotsEvent.ToggleChatVisibility -> chats.toggleVisibility(event.window)
             is SlotsEvent.DetachChat -> chats.detach(event.window)

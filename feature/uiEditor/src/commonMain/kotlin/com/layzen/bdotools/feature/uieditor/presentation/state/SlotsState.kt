@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.uieditor.presentation.state
 import androidx.compose.ui.graphics.ImageBitmap
 import com.layzen.bdotools.core.folder.FolderAccess
 import com.layzen.bdotools.feature.uieditor.domain.arrangement.SnapGuides
+import com.layzen.bdotools.feature.uieditor.domain.arrangement.minDistributionGap
 import com.layzen.bdotools.feature.uieditor.domain.game.LoadedGame
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
@@ -105,6 +106,9 @@ data class SlotsState(
     /** Промежуток «Распределить» по горизонтали ([horizontal]) или по вертикали. */
     fun distributeGap(horizontal: Boolean): Int = if (horizontal) distributeGapX else distributeGapY
 
+    /** Диапазон слайдера «Распределить» для выбранного: от наибольшего перекрытия, при котором колонки ещё не сливаются. */
+    fun distributeGapRange(horizontal: Boolean): IntRange = layout.minDistributionGap(selection, horizontal)..DISTRIBUTE_GAP_MAX
+
     companion object {
         /** Шаг привязки по умолчанию, UI-px. */
         const val DEFAULT_SNAP_STEP = 5
@@ -118,8 +122,8 @@ data class SlotsState(
         /** Промежуток между рамками при распределении по умолчанию, UI-px: вплотную, как слоты в игре. */
         const val DEFAULT_DISTRIBUTE_GAP = 0
 
-        /** Допустимый промежуток при распределении, UI-px. */
-        val DISTRIBUTE_GAP_RANGE = 0..100
+        /** Наибольший промежуток при распределении, UI-px; наименьший зависит от выбранного (`minDistributionGap`). */
+        const val DISTRIBUTE_GAP_MAX = 100
 
         /** Допустимое затенение подложки, %: 0 — картинка как есть, 100 — совсем тёмная. */
         val BACKGROUND_DIM_RANGE = 0..100
