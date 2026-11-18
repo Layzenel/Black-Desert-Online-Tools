@@ -6,7 +6,13 @@ import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
  * Что показывать поверх игры.
  *
  * @property ping пинг в миллисекундах; `null` — не узнать или пинг не показывают
+ * @property needsAdmin пинг не собрать без прав администратора — подсказка во вкладке
  * @property settings как показывать пинг
  * @property movable пинг в режиме перемещения: обведён рамкой и тянется мышью
  */
-data class GameInfoState(val ping: Int? = null, val settings: PingSettings = PingSettings(), val movable: Boolean = false)
+data class GameInfoState(
+    val ping: Int? = null,
+    val needsAdmin: Boolean = false,
+    val settings: PingSettings = PingSettings(),
+    val movable: Boolean = false,
+)

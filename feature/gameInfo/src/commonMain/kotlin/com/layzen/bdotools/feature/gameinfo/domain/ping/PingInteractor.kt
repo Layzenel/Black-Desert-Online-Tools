@@ -13,7 +13,7 @@ class PingInteractor(private val source: GamePingSource, private val settings: P
     val supported: Boolean get() = source.supported
 
     /** См. [GamePingSource.watch]. */
-    fun watch(): Flow<Int?> = source.watch()
+    fun watch(): Flow<PingReading> = source.watch()
 
     /** См. [PingSettingsRepository.settings]. */
     suspend fun settings(): PingSettings = settings.settings()
