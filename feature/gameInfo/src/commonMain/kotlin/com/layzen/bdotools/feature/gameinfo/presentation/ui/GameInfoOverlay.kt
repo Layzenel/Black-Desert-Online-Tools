@@ -15,6 +15,7 @@ import com.layzen.bdotools.feature.gameinfo.presentation.event.GameInfoEvent
 import com.layzen.bdotools.feature.gameinfo.resources.Res
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_move
+import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_needs_admin
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_opacity
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_scale
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_show
@@ -22,6 +23,7 @@ import com.layzen.bdotools.feature.gameinfo.resources.game_info_tab
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToggleSwitch
 import com.layzen.bdotools.uikit.components.ValueSlider
+import com.layzen.bdotools.uikit.components.WarningText
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -57,6 +59,8 @@ private fun InfoTab(viewModel: GameInfoViewModel) {
     val onEvent = viewModel::onEvent
     SectionHeader(stringResource(Res.string.game_info_ping))
     ToggleSwitch(settings.shown, { onEvent(GameInfoEvent.TogglePing) }, label = stringResource(Res.string.game_info_ping_show))
+    // без прав администратора задержку нового подключения игры не собрать: пинг пустой, а почему — здесь
+    if (settings.shown && state.needsAdmin) WarningText(stringResource(Res.string.game_info_ping_needs_admin))
     if (!settings.shown) return
     ToggleSwitch(state.movable, { onEvent(GameInfoEvent.ToggleMove) }, label = stringResource(Res.string.game_info_ping_move))
     SectionHeader(stringResource(Res.string.game_info_ping_scale, settings.scale))

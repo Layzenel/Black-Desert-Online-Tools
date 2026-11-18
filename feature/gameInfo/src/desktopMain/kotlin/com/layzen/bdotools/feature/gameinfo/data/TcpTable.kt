@@ -18,6 +18,8 @@ private interface IpHelper : Library {
         ros: Pointer?, rosVersion: Int, rosSize: Int,
         rod: Pointer?, rodVersion: Int, rodSize: Int,
     ): Int
+
+    fun SetPerTcpConnectionEStats(row: Pointer, type: Int, rw: Pointer, rwVersion: Int, rwSize: Int, offset: Int): Int
 }
 
 private val ipHelper: IpHelper by lazy { Native.load("iphlpapi", IpHelper::class.java) }
@@ -48,17 +50,36 @@ internal fun tcpConnections(pid: Long): List<TcpConnection> {
 }
 
 /**
- * Сглаженная задержка подключения [connection] по статистике Windows, мс, или `null`, если её не собирают. Включить
- * сбор может только администратор; его включает, например, открытый «Монитор ресурсов» — тогда читать можно всем.
+ * Сглаженная задержка подключения [connection] по статистике Windows, мс, или `null`, если её не собирают или
+ * замеров ещё нет. Собирать её Windows начинает только по просьбе ([enableRtt]).
  */
 internal fun smoothedRtt(connection: TcpConnection): Int? {
-    val row = Memory(MIB_TCPROW_FIELDS * 4L).apply { write(0, connection.row, 0, MIB_TCPROW_FIELDS) }
     val rw = Memory(1).apply { setByte(0, 0) }
     val rod = Memory(PATH_ROD_SIZE)
-    val result = ipHelper.GetPerTcpConnectionEStats(row, ESTATS_PATH, rw, 0, 1, null, 0, 0, rod, 0, PATH_ROD_SIZE.toInt())
+    val result = ipHelper.GetPerTcpConnectionEStats(rowOf(connection), ESTATS_PATH, rw, 0, 1, null, 0, 0, rod, 0, PATH_ROD_SIZE.toInt())
     if (result != 0 || rw.getByte(0).toInt() == 0) return null
     return rod.getInt(SMOOTHED_RTT_OFFSET).takeIf { it > 0 }
 }
+
+/** Собирает ли Windows задержку подключения [connection]. */
+internal fun isRttCollected(connection: TcpConnection): Boolean {
+    val rw = Memory(1).apply { setByte(0, 0) }
+    val result = ipHelper.GetPerTcpConnectionEStats(rowOf(connection), ESTATS_PATH, rw, 0, 1, null, 0, 0, null, 0, 0)
+    return result == 0 && rw.getByte(0).toInt() != 0
+}
+
+/**
+ * Просит Windows собирать задержку подключения [connection]; `false` — нет прав: так может только программа,
+ * запущенная от администратора (как «Монитор ресурсов»).
+ */
+internal fun enableRtt(connection: TcpConnection): Boolean {
+    val rw = Memory(1).apply { setByte(0, 1) }
+    return ipHelper.SetPerTcpConnectionEStats(rowOf(connection), ESTATS_PATH, rw, 0, 1, 0) == 0
+}
+
+/** Запись `MIB_TCPROW` подключения для запросов статистики. */
+private fun rowOf(connection: TcpConnection): Memory =
+    Memory(MIB_TCPROW_FIELDS * 4L).apply { write(0, connection.row, 0, MIB_TCPROW_FIELDS) }
 
 /** Порт из записи таблицы: младшие два байта в сетевом порядке. */
 private fun networkPort(raw: Int): Int = ((raw and 0xFF) shl 8) or ((raw shr 8) and 0xFF)

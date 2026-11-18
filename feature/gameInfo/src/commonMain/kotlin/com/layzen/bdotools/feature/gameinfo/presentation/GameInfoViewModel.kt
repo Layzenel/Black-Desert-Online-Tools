@@ -57,11 +57,15 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
     /** Мерить, пока пинг показывают и платформа умеет; иначе остановить замер. */
     private fun updateWatching() {
         if (mutableState.value.settings.shown && interactor.supported) {
-            if (watcher?.isActive != true) watcher = viewModelScope.launch { interactor.watch().collect { ping -> mutableState.update { it.copy(ping = ping) } } }
+            if (watcher?.isActive != true) {
+                watcher = viewModelScope.launch {
+                    interactor.watch().collect { reading -> mutableState.update { it.copy(ping = reading.ms, needsAdmin = reading.needsAdmin) } }
+                }
+            }
         } else {
             watcher?.cancel()
             watcher = null
-            mutableState.update { it.copy(ping = null) }
+            mutableState.update { it.copy(ping = null, needsAdmin = false) }
         }
     }
 }
