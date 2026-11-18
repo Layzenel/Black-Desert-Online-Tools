@@ -3,7 +3,7 @@ package com.layzen.bdotools.feature.uieditor.presentation.controller
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotBounds
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
+import com.layzen.bdotools.core.skill.domain.SkillStance
 import com.layzen.bdotools.feature.uieditor.presentation.state.SkillDrag
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
 import com.layzen.bdotools.feature.uieditor.domain.skill.isCp1251

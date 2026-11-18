@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import com.layzen.bdotools.core.game.CharacterClass
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
+import com.layzen.bdotools.core.skill.domain.SkillStance
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SkillsState
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog

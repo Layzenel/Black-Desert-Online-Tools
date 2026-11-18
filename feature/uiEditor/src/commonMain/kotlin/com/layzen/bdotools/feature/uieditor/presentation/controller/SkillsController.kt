@@ -3,7 +3,7 @@ package com.layzen.bdotools.feature.uieditor.presentation.controller
 import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
-import com.layzen.bdotools.feature.uieditor.domain.skill.Skill
+import com.layzen.bdotools.core.skill.domain.Skill
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillsInteractor
 import com.layzen.bdotools.feature.uieditor.domain.skill.cooldownSkills
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext

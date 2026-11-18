@@ -8,7 +8,7 @@ import com.layzen.bdotools.feature.uieditor.domain.preset.BuiltInLayout
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenArea
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
+import com.layzen.bdotools.core.skill.domain.SkillStance
 import com.layzen.bdotools.feature.uieditor.presentation.state.GridStep
 
 /** Действия пользователя на странице слотов. Сдвиги — в UI-px игры, а не в пикселях страницы. */

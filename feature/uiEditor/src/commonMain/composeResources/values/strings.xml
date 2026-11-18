@@ -76,21 +76,6 @@
     <!-- Тултип навыка -->
     <string name="slots_tooltip_alt_hint">Alt — подробнее</string>
     <string name="slots_skill_picker_tooltip_hint">Нажмите на умение, чтобы поставить его в слот. Наведите на иконку или зажмите Alt — описание умения</string>
-    <string name="slots_tooltip_loading">Загрузка описания…</string>
-    <string name="slots_tooltip_failed">Описание навыка не загрузилось</string>
-    <string name="slots_tooltip_description">Описание</string>
-    <string name="slots_tooltip_requirements">Требования</string>
-    <string name="slots_tooltip_level">Уровень персонажа: %1$d</string>
-    <string name="slots_tooltip_skill_points">Очки навыков: %1$d</string>
-    <string name="slots_tooltip_resource">Расход ресурса: %1$d</string>
-    <string name="slots_tooltip_stamina">Расход выносливости: %1$d</string>
-    <string name="slots_tooltip_cooldown">Перезарядка: %1$s сек.</string>
-    <string name="slots_tooltip_command">Команда</string>
-    <string name="slots_tooltip_effects">Эффекты</string>
-    <string name="slots_key_lmb">ЛКМ</string>
-    <string name="slots_key_rmb">ПКМ</string>
-    <string name="slots_key_mmb">СКМ</string>
-    <string name="slots_key_space">Пробел</string>
     <string name="slots_memo_add">Добавить</string>
     <string name="slots_memo_edit">Редактировать</string>
     <string name="slots_memo_delete">Удалить</string>

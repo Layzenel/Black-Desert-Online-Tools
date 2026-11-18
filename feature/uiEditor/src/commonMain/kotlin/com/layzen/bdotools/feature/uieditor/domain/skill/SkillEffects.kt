@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
+import com.layzen.bdotools.core.skill.domain.SkillDetails
+
 /**
  * Эффекты защиты и контроли навыка — то, что видно на плашке у навыка. Каждый тип — один раз и в порядке своего
  * `enum`, даже если в тултипе он встречается в нескольких строках («Устойчивость → Невредимость → Устойчивость»).

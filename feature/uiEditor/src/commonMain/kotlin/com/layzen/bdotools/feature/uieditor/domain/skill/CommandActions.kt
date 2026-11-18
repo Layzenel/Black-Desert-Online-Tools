@@ -1,5 +1,8 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
+import com.layzen.bdotools.core.skill.domain.parseSkillMarkup
+import com.layzen.bdotools.core.skill.domain.SkillTextPart
+
 private const val RED_SHIFT = 16
 private const val GREEN_SHIFT = 8
 private const val CHANNEL = 0xFF

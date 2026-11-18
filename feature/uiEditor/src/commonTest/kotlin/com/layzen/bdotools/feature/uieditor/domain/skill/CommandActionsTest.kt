@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
+import com.layzen.bdotools.core.skill.domain.SkillTextPart
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

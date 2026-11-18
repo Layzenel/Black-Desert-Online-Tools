@@ -6,7 +6,7 @@ import com.layzen.bdotools.feature.uieditor.domain.game.GamePreset
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
+import com.layzen.bdotools.core.skill.domain.SkillStance
 
 /** Открытое модальное окно страницы. */
 sealed interface SlotsDialog {

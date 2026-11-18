@@ -39,6 +39,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * [selected] тогда может быть `null` — в списке ничего не подсвечено. [trailing] — элемент справа от варианта в списке,
  * как у [OptionsMenu]. [icon] — картинка слева от названия варианта: в списке и в поле у выбранного (портрет персонажа).
  * [minHeight] — наименьшая высота поля: так соседние списки делают одной высоты, даже если в одном из них портрет.
+ * [searchPlaceholder] — строка поиска наверху списка, как у [OptionsMenu].
  */
 @Composable
 fun <T> DropdownSelect(
@@ -51,6 +52,7 @@ fun <T> DropdownSelect(
     trailing: (@Composable (T) -> Unit)? = null,
     icon: (@Composable (T) -> Unit)? = null,
     minHeight: Dp = AppTheme.dimens.inputHeight,
+    searchPlaceholder: String? = null,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -107,6 +109,7 @@ fun <T> DropdownSelect(
             label = label,
             icon = icon,
             trailing = trailing,
+            searchPlaceholder = searchPlaceholder,
             modifier = if (anchorWidth != Dp.Unspecified) Modifier.width(anchorWidth) else Modifier,
         )
     }

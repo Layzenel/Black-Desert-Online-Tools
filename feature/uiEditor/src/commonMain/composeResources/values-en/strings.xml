@@ -76,21 +76,6 @@
     <!-- Skill tooltip -->
     <string name="slots_tooltip_alt_hint">Hold Alt for details</string>
     <string name="slots_skill_picker_tooltip_hint">Click a skill to put it in the slot. Hover an icon or hold Alt for skill details</string>
-    <string name="slots_tooltip_loading">Loading details…</string>
-    <string name="slots_tooltip_failed">Skill details did not load</string>
-    <string name="slots_tooltip_description">Description</string>
-    <string name="slots_tooltip_requirements">Requirements</string>
-    <string name="slots_tooltip_level">Character level: %1$d</string>
-    <string name="slots_tooltip_skill_points">Skill points: %1$d</string>
-    <string name="slots_tooltip_resource">Resource cost: %1$d</string>
-    <string name="slots_tooltip_stamina">Stamina cost: %1$d</string>
-    <string name="slots_tooltip_cooldown">Cooldown: %1$ss</string>
-    <string name="slots_tooltip_command">Command</string>
-    <string name="slots_tooltip_effects">Effects</string>
-    <string name="slots_key_lmb">LMB</string>
-    <string name="slots_key_rmb">RMB</string>
-    <string name="slots_key_mmb">MMB</string>
-    <string name="slots_key_space">Space</string>
     <string name="slots_memo_add">Add</string>
     <string name="slots_memo_edit">Edit</string>
     <string name="slots_memo_delete">Delete</string>

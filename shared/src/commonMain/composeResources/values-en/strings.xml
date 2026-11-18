@@ -1,5 +1,9 @@
 <resources>
     <string name="app_title">BDO Tools</string>
+    <string name="window_close_title">Close the app?</string>
+    <string name="window_close_text">Minimized to the tray, the app keeps running and the combo overlay stays on top of the game. Click the tray icon to open it.</string>
+    <string name="window_close_tray">Minimize to tray</string>
+    <string name="window_close_exit">Close</string>
     <!-- Browser tab title: the page and the app name -->
     <string name="page_title">%1$s — %2$s</string>
 
@@ -7,6 +11,7 @@
     <!-- Tab label — up to two lines -->
     <string name="tab_portraits">Portrait\nConstructor</string>
     <string name="tab_slots">Interface\nEditor</string>
+    <string name="tab_combo">Combo\nAssist</string>
     <string name="tab_3">Tab 3</string>
     <string name="tab_4">Tab 4</string>
     <string name="tab_5">Tab 5</string>

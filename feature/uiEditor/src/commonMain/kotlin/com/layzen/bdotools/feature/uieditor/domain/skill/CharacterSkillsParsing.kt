@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
-import com.layzen.bdotools.feature.uieditor.domain.game.attributesOf
+import com.layzen.bdotools.core.skill.domain.parseKeyBindings
+import com.layzen.bdotools.core.xml.attributesOf
 
 private val SLOT = Regex("""<SkillCoolTimeSlot\s+SlotNo="\d+"[^>]*/>""")
 private val MEMO = Regex("""<SkillCoolTimeMemo\s+SkillNo="\d+"[^>]*/>""")

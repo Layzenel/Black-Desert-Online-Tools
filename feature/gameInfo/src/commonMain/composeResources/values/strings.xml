@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Меню оверлея: вкладка «Информация» -->
+    <string name="game_info_tab">Информация</string>
+    <string name="game_info_ping">Пинг</string>
+    <string name="game_info_ping_show">Показывать пинг игры</string>
+    <string name="game_info_ping_move">Переместить пинг</string>
+    <string name="game_info_ping_scale">Размер пинга: %1$d %</string>
+    <string name="game_info_ping_opacity">Непрозрачность пинга: %1$d %</string>
+
+    <!-- Пинг поверх игры -->
+    <string name="game_info_ping_ms">%1$d мс</string>
+    <string name="game_info_ping_unknown">— мс</string>
+</resources>

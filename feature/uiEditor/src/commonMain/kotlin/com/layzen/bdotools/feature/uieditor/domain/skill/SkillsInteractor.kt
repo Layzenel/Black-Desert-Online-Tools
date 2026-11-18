@@ -1,5 +1,9 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
+import com.layzen.bdotools.core.skill.domain.SkillDetails
+import com.layzen.bdotools.core.skill.domain.SkillCatalogRepository
+import com.layzen.bdotools.core.skill.domain.SkillCatalog
+import com.layzen.bdotools.core.skill.domain.Skill
 import com.layzen.bdotools.feature.uieditor.domain.game.SlotsRepository
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 

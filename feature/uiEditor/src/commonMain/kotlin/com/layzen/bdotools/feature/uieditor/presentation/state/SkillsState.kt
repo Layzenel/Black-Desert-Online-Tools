@@ -4,11 +4,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.layzen.bdotools.core.account.CharacterLabel
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
-import com.layzen.bdotools.feature.uieditor.domain.skill.KeyBindings
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillDetails
+import com.layzen.bdotools.core.skill.domain.KeyBindings
+import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillEffects
-import com.layzen.bdotools.feature.uieditor.domain.skill.Skill
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillCatalog
+import com.layzen.bdotools.core.skill.domain.Skill
+import com.layzen.bdotools.core.skill.domain.SkillCatalog
 
 /**
  * Персонажи для навыков в слотах перезарядки, справочник и картинки. Сами навыки и надписи редактора лежат

@@ -24,6 +24,8 @@ kotlin {
             implementation(project(":platform:composable"))
             implementation(project(":feature:portraitConstructor"))
             implementation(project(":feature:uiEditor"))
+            implementation(project(":feature:comboAssist"))
+            implementation(project(":feature:gameInfo"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

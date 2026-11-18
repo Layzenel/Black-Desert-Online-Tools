@@ -1,6 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
-import com.layzen.bdotools.feature.uieditor.domain.game.attributesOf
+import com.layzen.bdotools.core.xml.attributesOf
 
 // Так же терпимо к порядку и лишним атрибутам, как разбор: меняется только значение SkillNo
 private val SLOT_LINE = Regex("""<SkillCoolTimeSlot\s[^>]*?SlotNo="(\d+)"[^>]*/>""")

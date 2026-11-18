@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
+import com.layzen.bdotools.core.skill.domain.SkillText
+
 /**
  * Эффект защиты навыка.
  *

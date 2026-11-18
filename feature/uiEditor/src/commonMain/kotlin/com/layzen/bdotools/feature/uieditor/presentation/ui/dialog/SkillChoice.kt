@@ -15,7 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillIcon
+import com.layzen.bdotools.composable.skill.SkillIcon
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_slot_number_hint
@@ -57,7 +57,7 @@ internal fun SkillChoice(
             icon = {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
                     SlotNumber(slotNumber)
-                    Box(Modifier.hoverable(iconArea)) { SkillIcon(icon) }
+                    Box(Modifier.hoverable(iconArea)) { SkillIcon(icon, SlotsDimens.skillIcon) }
                 }
             },
             badge = effects,

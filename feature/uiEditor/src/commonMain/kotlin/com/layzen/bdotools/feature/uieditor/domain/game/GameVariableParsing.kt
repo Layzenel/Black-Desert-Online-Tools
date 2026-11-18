@@ -1,12 +1,12 @@
 package com.layzen.bdotools.feature.uieditor.domain.game
 
+import com.layzen.bdotools.core.xml.attributesOf
 import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotPosition
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import kotlin.math.roundToInt
 
-private val ATTRIBUTE = Regex("""(\w+)="([^"]*)"""")
 private val RESOLUTION = Regex("""<Resolution\s+Width="(\d+)"\s+Height="(\d+)"""")
 private val UI_SCALE = Regex("""<UiScale\s+Value="([\d.]+)"""")
 
@@ -54,10 +54,6 @@ fun parseGamePresets(text: String): Map<GamePreset, GameVariable> {
     }
     return mapOf(GamePreset.General to general) + presets
 }
-
-/** Атрибуты XML-тега [tag] в виде «имя → значение». */
-internal fun attributesOf(tag: String): Map<String, String> =
-    ATTRIBUTE.findAll(tag).associate { it.groupValues[1] to it.groupValues[2] }
 
 /**
  * Все чаты (`Index="32"`) по `WindowIndex`: главное окно ([ChatWindow.MAIN]), отдельные окна и вкладки главного
