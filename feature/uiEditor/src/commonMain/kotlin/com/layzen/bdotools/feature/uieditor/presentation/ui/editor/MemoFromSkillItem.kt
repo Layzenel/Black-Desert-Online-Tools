@@ -9,7 +9,7 @@ import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLabel
 import com.layzen.bdotools.feature.uieditor.domain.skill.commandActions
 import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
-import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.skillPartsText
+import com.layzen.bdotools.composable.skill.skillPartsText
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_memo_from_skill
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language

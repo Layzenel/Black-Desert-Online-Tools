@@ -1,0 +1,18 @@
+<resources>
+    <string name="skill_tooltip_loading">Загрузка описания…</string>
+    <string name="skill_tooltip_failed">Описание навыка не загрузилось</string>
+    <string name="skill_tooltip_description">Описание</string>
+    <string name="skill_tooltip_requirements">Требования</string>
+    <string name="skill_tooltip_level">Уровень персонажа: %1$d</string>
+    <string name="skill_tooltip_skill_points">Очки навыков: %1$d</string>
+    <string name="skill_tooltip_resource">Расход ресурса: %1$d</string>
+    <string name="skill_tooltip_stamina">Расход выносливости: %1$d</string>
+    <string name="skill_tooltip_cooldown">Перезарядка: %1$s сек.</string>
+    <string name="skill_tooltip_command">Команда</string>
+    <string name="skill_tooltip_effects">Эффекты</string>
+    <string name="skill_key_lmb">ЛКМ</string>
+    <string name="skill_key_rmb">ПКМ</string>
+    <string name="skill_key_mmb">СКМ</string>
+    <string name="skill_key_space">Пробел</string>
+    <string name="overlay_panel_title">BDO Tools оверлей</string>
+</resources>

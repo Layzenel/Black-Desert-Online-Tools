@@ -49,13 +49,15 @@ fun HoverTooltip(text: String, modifier: Modifier = Modifier, content: @Composab
  * Подсказка с любым содержимым [tooltip] (карточка навыка, предмета) под [content]: появляется сразу, пока над ним
  * курсор, и пропадает, как только курсор ушёл или элемент нажали (до следующего наведения). Ширину задаёт [tooltip].
  * [enabled] = `false` прячет подсказку, а [content] остаётся тем же: её можно выключать посреди жеста
- * или по клавише-модификатору, не пересоздавая элемент.
+ * или по клавише-модификатору, не пересоздавая элемент. [beside] — справа от элемента, а не под ним
+ * (строки списка в меню: подсказка встаёт справа от меню и не закрывает соседние строки).
  */
 @Composable
 fun HoverTooltip(
     tooltip: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    beside: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val interaction = remember { MutableInteractionSource() }
@@ -77,7 +79,9 @@ fun HoverTooltip(
     ) {
         content()
         if (enabled && hovered && !pressed) {
-            Popup(popupPositionProvider = rememberBelowAnchor(), properties = PopupProperties(focusable = false)) {
+            val gap = with(LocalDensity.current) { AppTheme.dimens.spaceXs.roundToPx() }
+            val position = remember(gap, beside) { if (beside) EndAnchorPositionProvider(gap) else BelowAnchorPositionProvider(gap) }
+            Popup(popupPositionProvider = position, properties = PopupProperties(focusable = false)) {
                 TooltipPanel(tooltip)
             }
         }

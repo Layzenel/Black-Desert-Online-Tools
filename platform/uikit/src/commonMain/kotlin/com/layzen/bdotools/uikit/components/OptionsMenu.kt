@@ -10,7 +10,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.theme.AppTheme
 
@@ -20,6 +25,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * (например, кнопка удаления варианта: её нажатие не выбирает вариант). Его центр стоит на оси стрелки [DropdownSelect],
  * если список шириной с поле.
  * Список не выше `optionsMenuMaxHeight`; длинный прокручивается, справа видна полоса прокрутки.
+ * С [searchPlaceholder] сверху строка поиска: печатать можно сразу ([TypeToSearch]), видны только варианты,
+ * в названии которых есть набранное (без учёта регистра).
  */
 @Composable
 fun <T> OptionsMenu(
@@ -32,8 +39,13 @@ fun <T> OptionsMenu(
     modifier: Modifier = Modifier,
     icon: (@Composable (T) -> Unit)? = null,
     trailing: (@Composable (T) -> Unit)? = null,
+    searchPlaceholder: String? = null,
 ) {
     val scroll = rememberScrollState()
+    var query by remember(expanded) { mutableStateOf("") }
+    val text = query.trim()
+    val shown = if (text.isEmpty()) options else options.filter { label(it).contains(text, ignoreCase = true) }
+    if (searchPlaceholder != null) TypeToSearch(expanded, query, { query = it }, onEscape = onDismissRequest)
     val dimens = AppTheme.dimens
     // Конец пункта — так, чтобы середина элемента справа совпала с серединой стрелки поля
     val trailingPadding = PaddingValues(
@@ -46,7 +58,8 @@ fun <T> OptionsMenu(
         modifier = modifier.heightIn(max = AppTheme.dimens.optionsMenuMaxHeight).verticalScrollbar(scroll),
         scrollState = scroll,
     ) {
-        options.forEach { option ->
+        if (searchPlaceholder != null) MenuSearchLine(query, searchPlaceholder, Modifier.fillMaxWidth(), onClear = { query = "" })
+        shown.forEach { option ->
             DropdownMenuItem(
                 text = { MenuOptionText(label(option), highlighted = option == selected) },
                 leadingIcon = icon?.let { { it(option) } },

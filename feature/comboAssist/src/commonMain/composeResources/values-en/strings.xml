@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Language of skill names in the catalog -->
+    <string name="combo_names_language">en</string>
+
+    <!-- Menu -->
+    <string name="combo_section_class">Class</string>
+    <string name="combo_section_class_description">Pick a class to create or edit its combos.</string>
+    <string name="combo_section_combo">Saved combos</string>
+    <string name="combo_section_combo_description">A combo belongs to a class and fits all of its characters.</string>
+    <string name="combo_none">No combos</string>
+    <string name="combo_new">New combo</string>
+    <string name="combo_untitled">Untitled</string>
+    <string name="combo_name_placeholder">Combo name</string>
+    <string name="combo_stance_succession">Succession</string>
+    <string name="combo_stance_awakening">Awakening</string>
+    <string name="combo_stance_all">All</string>
+    <string name="combo_class_search">Search classes</string>
+    <string name="combo_section_skills">Skills</string>
+    <string name="combo_search">Search skills</string>
+    <string name="combo_suggest_title">Can follow</string>
+    <string name="combo_suggest_chain">chain</string>
+    <string name="combo_section_fillers_count">Fillers: %1$d</string>
+    <string name="combo_fillers_description">The overlay suggests them while the next step is on cooldown.</string>
+    <string name="combo_fillers_search">Search fillers</string>
+    <string name="combo_save">Save</string>
+    <string name="combo_save_dirty">Save *</string>
+    <string name="combo_delete">Delete combo</string>
+    <string name="combo_export">Export combo</string>
+    <string name="combo_import">Import combos</string>
+    <string name="combo_import_failed">This file is not a BDO Tools combo.</string>
+    <string name="combo_loading">Loading skills</string>
+    <string name="combo_catalog_failed">The skill catalog did not download. Check your connection and open the tab again.</string>
+
+    <!-- Editor -->
+    <string name="combo_mode_editor">Editor</string>
+    <string name="combo_mode_training">Training</string>
+    <string name="combo_make_fork">Make a fork</string>
+    <string name="combo_add_lane">+ branch</string>
+    <string name="combo_add_lane_action">Add branch</string>
+    <string name="combo_link_fork">Same branch as the previous fork: enter 1.2, get 4.2 next</string>
+    <string name="combo_warning_linked">Fork %1$s is linked to the previous one, but they have a different number of branches: where they do not match, the hint picks by cooldowns.</string>
+    <string name="combo_add_cell">Add a cell at the end</string>
+    <string name="combo_grow_lane">Extend branch</string>
+    <string name="combo_empty_hint">Select a cell and click a skill in the menu on the left: a new cell appears after it, and the list shows what usually follows. Drag an icon onto another cell to swap them. Right-click a cell to delete it.</string>
+    <string name="combo_cell">Cell %1$s</string>
+    <string name="combo_cell_empty">Empty cell</string>
+    <string name="combo_remove">Delete cell</string>
+    <string name="combo_insert_left">Insert left</string>
+    <string name="combo_insert_right">Insert right</string>
+    <string name="combo_cancel_selection">Cancel</string>
+    <string name="combo_chain">Chain</string>
+    <string name="combo_chain_description">Press right after the previous skill, or the chain breaks</string>
+    <string name="combo_optional">Optional</string>
+    <string name="combo_optional_description">The overlay does not suggest it, but if you use it the combo continues from there</string>
+    <string name="combo_warning_empty">Empty cells: %1$d. The overlay skips them.</string>
+    <string name="combo_warning_chain">Cell %1$s: the data says this is a chain follow-up, but its launcher is not before it. The data can be incomplete, so check in game.</string>
+    <string name="combo_tag_optional">opt</string>
+    
+    
+    
+    
+
+    <!-- Skill tooltip -->
+    
+    
+    
+    
+    
+    
+    <string name="combo_tooltip_cell">Cell %1$s</string>
+    <string name="combo_tooltip_cell_chain">chained to the previous</string>
+    <string name="combo_tooltip_cell_optional">optional</string>
+
+    <!-- Overlay -->
+    <string name="combo_next_now">Now</string>
+    <string name="combo_next_start">Start with</string>
+    <string name="combo_next_entry">Chain entry</string>
+    <string name="combo_next_wait">In %1$s s</string>
+    <string name="combo_next_no_keys">No keys in the data</string>
+    <string name="combo_filler">While you wait</string>
+    <string name="combo_status_off">Not in combo: %1$s (%2$d of %3$d)</string>
+    <string name="combo_status_jump">Jumped by history</string>
+    <string name="combo_status_forward">Out of order: %1$s — continuing from it, %2$d skipped</string>
+    <string name="combo_status_reset">Combo restarted</string>
+    <string name="combo_chain_rescue">Chain broke — enter through %1$s</string>
+    <string name="combo_chain_relaunch">Chain broke — restart from %1$s</string>
+    <string name="combo_chain_skip">Chain broke — %1$d skipped</string>
+
+    <!-- Training -->
+    <string name="combo_training_hint">Click an icon to use the skill. A skill on cooldown does not come out in game and does not reach the history.</string>
+    <string name="combo_press_suggested">Use suggested</string>
+    <string name="combo_press_mistake">Make a mistake</string>
+    <string name="combo_reset">Restart</string>
+    <string name="combo_watch_start">Watch the game</string>
+    <string name="combo_watch_stop">Stop watching</string>
+    <string name="combo_watch_description">The app reads the Skill Usage History in game and guides you through the combo. It only reads the screen and never touches the game. Use Windowed Fullscreen. The overlay shows only while the game is in front; to move it, turn on Move overlay in the overlay menu, drag it, then lock it.</string>
+    <string name="combo_overlay_show">Show overlay</string>
+    <string name="combo_overlay_hide">Hide overlay</string>
+    <string name="combo_overlay_move">Move overlay</string>
+    <string name="combo_overlay_fix">Lock overlay</string>
+    <string name="combo_overlay_vertical">Vertical</string>
+    <string name="combo_overlay_horizontal">Horizontal</string>
+    <string name="combo_overlay_style_schema">Combo layout</string>
+    <string name="combo_overlay_style_next">Next skills</string>
+    <string name="combo_menu_show">Show combo</string>
+    <string name="combo_menu_hide">Hide combo</string>
+    <string name="combo_menu_edit">Edit combo</string>
+    <string name="combo_menu_empty">No saved combos</string>
+    <string name="combo_panel_tab_settings">Settings</string>
+    <string name="combo_panel_tab_combo">Combo</string>
+    <string name="combo_panel_style">Overlay style</string>
+    <string name="combo_panel_position">Position</string>
+    <string name="combo_panel_scale">Overlay size: %1$d %</string>
+    <string name="combo_panel_opacity">Overlay opacity: %1$d %</string>
+    <string name="combo_setting_slot_tooltips">Show skill details when the cursor rests on a cooldown slot</string>
+    <string name="combo_watch_web">Only the desktop version can watch the game and show the overlay on top of it.</string>
+    <string name="combo_log_cooldown">%1$s — on cooldown, did not come out</string>
+    <string name="combo_log_step">%1$s · %2$s</string>
+    <string name="combo_log_filler">%1$s · filler</string>
+    <string name="combo_log_event">%1$s · %2$s</string>
+</resources>

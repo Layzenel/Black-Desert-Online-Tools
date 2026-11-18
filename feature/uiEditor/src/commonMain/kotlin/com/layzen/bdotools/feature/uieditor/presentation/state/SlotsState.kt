@@ -8,7 +8,7 @@ import com.layzen.bdotools.feature.uieditor.domain.game.LoadedGame
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotId
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillStance
+import com.layzen.bdotools.core.skill.domain.SkillStance
 
 /**
  * Состояние страницы раскладки слотов.

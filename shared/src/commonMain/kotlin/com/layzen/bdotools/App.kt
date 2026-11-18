@@ -23,9 +23,15 @@ import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.account.accountsModule
 import com.layzen.bdotools.core.language.AppLanguages
 import com.layzen.bdotools.core.language.languageModule
+import com.layzen.bdotools.core.skill.skillCatalogModule
 import com.layzen.bdotools.feature.portraitconstructor.di.portraitsModule
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsRoute
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.preloadPortraitsStrings
+import com.layzen.bdotools.feature.comboassist.di.comboModule
+import com.layzen.bdotools.feature.gameinfo.di.gameInfoModule
+import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboRoute
+import com.layzen.bdotools.navigation.openTab
+import com.layzen.bdotools.feature.comboassist.presentation.ui.preloadComboStrings
 import com.layzen.bdotools.feature.uieditor.di.slotsModule
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsRoute
 import com.layzen.bdotools.feature.uieditor.presentation.ui.preloadSlotsStrings
@@ -53,29 +59,45 @@ import org.koin.dsl.koinConfiguration
 /** Koin-модули: общий список аккаунтов, язык интерфейса, обновление и все фичи. Новая фича добавляет сюда свой модуль. */
 private val featureModules = listOf(
     accountsModule,
+    skillCatalogModule,
     languageModule,
     updateModule,
     portraitsModule,
     slotsModule,
+    comboModule,
+    gameInfoModule,
 )
 
-/** Корень приложения, общий для сайта и настольной версии: Koin, тема, язык и экран с верхней навигацией. */
+/** Корень сайта: Koin, тема, язык ([AppRoot]) и экран с верхней навигацией ([AppScreen]). */
 @Composable
 @Preview
 fun App() {
+    val backStack = remember { mutableStateListOf<Destination>(Destination.Tab(AppTab.Portraits)) }
+    AppRoot(backStack) { AppScreen(backStack) }
+}
+
+/**
+ * Koin, тема и язык вокруг [content]. Настольная версия кладёт сюда и окно программы, и окна поверх игры, и трей —
+ * так у них общие Koin и язык, а окна поверх игры не зависят от того, видно ли окно программы.
+ * [backStack] — стек вкладок; он и его связь с адресом страницы живут снаружи смены языка.
+ */
+@Composable
+fun AppRoot(backStack: SnapshotStateList<Destination>, content: @Composable () -> Unit) {
     KoinApplication(configuration = koinConfiguration { modules(featureModules) }) {
         AppTheme {
             val languages = koinInject<AppLanguages>()
             val language by languages.selected.collectAsState()
-            // Стек навигации и его связь с адресом страницы живут снаружи LanguageEnvironment: смена языка
-            // не возвращает на первую вкладку и не сбивает адрес
-            val backStack = remember { mutableStateListOf<Destination>(Destination.Tab(AppTab.Portraits)) }
+            // смена языка не возвращает на первую вкладку и не сбивает адрес
             PlatformNavigation(backStack)
-            LanguageEnvironment(language) {
-                AppContent(backStack, languages)
-            }
+            LanguageEnvironment(language) { content() }
         }
     }
+}
+
+/** Экран программы: верхняя навигация и открытая вкладка из [backStack]. */
+@Composable
+fun AppScreen(backStack: SnapshotStateList<Destination>) {
+    AppContent(backStack, koinInject())
 }
 
 @Composable
@@ -92,6 +114,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
     LaunchedEffect(language) {
         preloadPortraitsStrings()
         preloadSlotsStrings()
+        preloadComboStrings()
     }
 
     Column(Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep)) {
@@ -99,7 +122,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
             tabs = AppTab.entries,
             selected = (current as? Destination.Tab)?.tab,
             onSelect = { tab ->
-                if (current != Destination.Tab(tab)) backStack.add(Destination.Tab(tab))
+                backStack.openTab(tab)
             },
             label = { stringResource(it.title) },
             icon = { painterResource(it.icon) },
@@ -141,5 +164,6 @@ private fun TabContent(tab: AppTab) {
     when (tab) {
         AppTab.Portraits -> PortraitsRoute()
         AppTab.Slots -> SlotsRoute()
+        AppTab.Combo -> ComboRoute()
     }
 }

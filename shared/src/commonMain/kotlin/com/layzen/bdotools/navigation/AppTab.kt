@@ -6,6 +6,8 @@ import com.layzen.bdotools.resources.tab_4
 import com.layzen.bdotools.resources.tab_5
 import com.layzen.bdotools.resources.tab_portraits
 import com.layzen.bdotools.resources.tab_portraits_icon
+import com.layzen.bdotools.resources.tab_combo
+import com.layzen.bdotools.resources.tab_combo_icon
 import com.layzen.bdotools.resources.tab_slots
 import com.layzen.bdotools.resources.tab_slots_icon
 import org.jetbrains.compose.resources.DrawableResource
@@ -23,5 +25,6 @@ enum class AppTab(
     val fillsScreen: Boolean = false,
 ) {
     Portraits("portraits", Res.string.tab_portraits, Res.drawable.tab_portraits_icon),
-    Slots("slots", Res.string.tab_slots, Res.drawable.tab_slots_icon, fillsScreen = true)
+    Slots("slots", Res.string.tab_slots, Res.drawable.tab_slots_icon, fillsScreen = true),
+    Combo("combo", Res.string.tab_combo, Res.drawable.tab_combo_icon, fillsScreen = true)
 }

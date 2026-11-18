@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.domain.game
 
+import com.layzen.bdotools.core.xml.attributesOf
 import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.domain.screen.movedTo

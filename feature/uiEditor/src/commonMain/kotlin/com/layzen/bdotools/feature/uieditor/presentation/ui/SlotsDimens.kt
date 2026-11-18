@@ -47,8 +47,6 @@ internal object SlotsDimens {
     val skillNumberPadding = 2.dp
     val classIcon = 22.dp
     val stanceSelectWidth = 160.dp
-    val skillTooltipWidth = 380.dp
-    val skillTooltipIcon = 44.dp
     const val GRID_ALPHA = 0.12f
     const val GRID_MAJOR_ALPHA = 0.22f
     const val AXIS_ALPHA = 0.7f

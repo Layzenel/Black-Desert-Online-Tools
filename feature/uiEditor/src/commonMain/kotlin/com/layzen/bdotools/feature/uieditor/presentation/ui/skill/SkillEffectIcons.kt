@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.layzen.bdotools.feature.uieditor.domain.skill.KeyBindings
+import com.layzen.bdotools.composable.skill.skillMarkupText
+import com.layzen.bdotools.core.skill.domain.KeyBindings
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillControl
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillDefense
-import com.layzen.bdotools.feature.uieditor.domain.skill.SkillText
+import com.layzen.bdotools.core.skill.domain.SkillText
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_control_pve_only

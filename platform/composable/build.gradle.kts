@@ -28,6 +28,12 @@ kotlin {
             api(libs.koin.compose)
             api(libs.koin.compose.viewmodel)
         }
+        // Окна поверх игры: стиль окна Windows (сквозные клики) и активное окно через JNA
+        val desktopMain by getting {
+            dependencies {
+                api(libs.jna.platform)
+            }
+        }
         // Навигация через историю браузера есть только в вебе
         webMain.dependencies {
             api(libs.navigation3.browser)
@@ -36,4 +42,9 @@ kotlin {
             implementation(libs.kotlin.test)
         }
     }
+}
+
+compose.resources {
+    packageOfResClass = "com.layzen.bdotools.composable.resources"
+    generateResClass = always
 }

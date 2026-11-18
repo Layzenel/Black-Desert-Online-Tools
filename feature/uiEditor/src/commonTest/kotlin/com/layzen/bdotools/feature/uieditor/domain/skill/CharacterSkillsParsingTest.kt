@@ -48,4 +48,11 @@ class CharacterSkillsParsingTest {
     fun fileWithoutSkillsGivesEmptyCharacter() {
         assertEquals(CharacterSkills("1", emptyMap(), emptyMap()), parseCharacterSkills("1", "<GameVariable/>"))
     }
+
+    @Test
+    fun characterFileGivesItsKeys() {
+        val file = "<ShortcutKey_Action_Key InputType=\"Attack1\" keyCode=\"1\"/>"
+
+        assertEquals(1, parseCharacterSkills("1", file).keys["Attack1"])
+    }
 }
