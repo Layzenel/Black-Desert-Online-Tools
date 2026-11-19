@@ -27,8 +27,6 @@ editing game files by hand and combo hints on top of the game. Runs in the brows
 | **[Overlay](docs/overlay.en.md)** | Windows app windows on top of the game: the combo hint, skill details over cooldown slots, the ping. |
 | **[Several accounts](docs/accounts.en.md)** | Picking an account if several have played on this PC, and where BDO Tools keeps its files. |
 
-![Interface Editor](docs/screenshots/uiEditor.en.png)
-
 Interface language — Russian or English, the `RU` / `EN` button in the top bar.
 
 ---

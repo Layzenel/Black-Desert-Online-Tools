@@ -105,6 +105,8 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
     }
 
     override suspend fun playedSlots(icon: suspend (Int) -> ByteArray?): List<ScreenSlot>? = withContext(Dispatchers.IO) {
+        // игра не на переднем плане — программа за ней не следит: ни снимков экрана, ни чтения файлов, ни загрузки иконок
+        if (!isGameForeground()) return@withContext null
         val settings = GameFolderSettings()
         val layouts = settings.folder?.let { SlotLayoutFiles.accountDir(it, settings.account) }?.let(SlotLayoutFiles::readAll).orEmpty()
         val skills = layouts.flatMap { layout -> layout.slots.map { it.skillNo } }.toSet()
@@ -116,7 +118,7 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         coroutineScope { missing.map { no -> async { no to limit.withPermit { icon(no) } } }.awaitAll() }
             .forEach { (no, bytes) -> bytes?.let { slotIcons[no] = it } }
         if (missing.isNotEmpty()) slotMatcher = IconMatcher(slotIcons.toMap(), emptySet())
-        // иконки готовятся заранее, а экран снимается, только когда игра на переднем плане
+        // иконки могли качаться долго: пока качались, игру могли свернуть
         if (!isGameForeground()) return@withContext null
         val layout = PlayedCharacterDetector.detect(Robot(), layouts, slotMatcher) ?: return@withContext null
         val size = SLOT_UNITS * layout.uiScale / layout.resolutionHeight

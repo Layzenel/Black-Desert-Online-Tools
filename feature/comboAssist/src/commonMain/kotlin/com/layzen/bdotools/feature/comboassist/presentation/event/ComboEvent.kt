@@ -30,6 +30,7 @@ sealed interface ComboEvent {
     data object ClearSelection : ComboEvent
     data object ToggleChain : ComboEvent
     data object ToggleOptional : ComboEvent
+    data class SetNote(val text: String) : ComboEvent
     data object RemoveCell : ComboEvent
     data class RemoveAt(val at: CellAt) : ComboEvent
     data class SwapCells(val from: CellAt, val to: CellAt) : ComboEvent
@@ -38,12 +39,9 @@ sealed interface ComboEvent {
 
     data class SetMode(val mode: ComboMode) : ComboEvent
     data class Press(val skillNo: Int) : ComboEvent
-    data object PressSuggested : ComboEvent
-    data object PressMistake : ComboEvent
-    data object ResetTraining : ComboEvent
-    data object ToggleWatching : ComboEvent
-    data object ToggleOverlay : ComboEvent
-    data object ToggleOverlayMove : ComboEvent
+    data object ToggleTrackerMove : ComboEvent
+    data object ToggleSchemaMove : ComboEvent
+    data object ToggleSchema : ComboEvent
     data object ToggleVertical : ComboEvent
     data class SetOverlayStyle(val style: OverlayStyle) : ComboEvent
 
@@ -52,6 +50,7 @@ sealed interface ComboEvent {
 
     /** Из меню оверлея: включить или выключить тултипы над слотами перезарядки. */
     data object ToggleSlotTooltips : ComboEvent
+    data object ToggleSlotShields : ComboEvent
 
     /** Из меню оверлея: размер оверлея комбо в процентах; [save] — закончили двигать ползунок, сохранить. */
     data class SetComboScale(val percent: Int, val save: Boolean) : ComboEvent

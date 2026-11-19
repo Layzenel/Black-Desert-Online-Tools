@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -26,6 +27,9 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_chain_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_insert_left
 import com.layzen.bdotools.feature.comboassist.resources.combo_insert_right
 import com.layzen.bdotools.feature.comboassist.resources.combo_make_fork
+import com.layzen.bdotools.feature.comboassist.resources.combo_note
+import com.layzen.bdotools.feature.comboassist.resources.combo_note_description
+import com.layzen.bdotools.feature.comboassist.resources.combo_note_placeholder
 import com.layzen.bdotools.feature.comboassist.resources.combo_optional
 import com.layzen.bdotools.feature.comboassist.resources.combo_optional_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_remove
@@ -36,6 +40,7 @@ import com.layzen.bdotools.feature.comboassist.resources.menu_fork
 import com.layzen.bdotools.feature.comboassist.resources.menu_insert_left
 import com.layzen.bdotools.feature.comboassist.resources.menu_insert_right
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToggleSwitch
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -44,7 +49,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Свойства выбранной ячейки: вставить рядом, развилка, связка, опциональность, снять выбор, удалить. */
+/** Свойства выбранной ячейки: вставить рядом, развилка, связка, опциональность, пометка для трекера, снять выбор, удалить. */
 @Composable
 internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
     val combo = state.combo ?: return
@@ -71,6 +76,8 @@ internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
         Column(Modifier.widthIn(max = ComboDimens.panelWidth), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
             ToggleSwitch(cell.chain, { onEvent(ComboEvent.ToggleChain) }, label = stringResource(Res.string.combo_chain), description = stringResource(Res.string.combo_chain_description))
             ToggleSwitch(cell.optional, { onEvent(ComboEvent.ToggleOptional) }, label = stringResource(Res.string.combo_optional), description = stringResource(Res.string.combo_optional_description))
+            SectionHeader(stringResource(Res.string.combo_note), description = stringResource(Res.string.combo_note_description))
+            InputField(cell.note, { onEvent(ComboEvent.SetNote(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_note_placeholder))
         }
     }
 }

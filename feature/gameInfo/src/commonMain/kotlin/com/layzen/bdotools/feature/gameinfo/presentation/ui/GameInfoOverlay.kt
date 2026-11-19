@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.composable.overlay.GameOverlayWindow
 import com.layzen.bdotools.composable.overlay.OverlayAnchor
 import com.layzen.bdotools.composable.overlay.OverlayContribution
+import com.layzen.bdotools.composable.overlay.OverlayScalePercent
 import com.layzen.bdotools.composable.overlay.OverlayTab
 import com.layzen.bdotools.composable.overlay.ScaledOverlay
 import com.layzen.bdotools.feature.gameinfo.presentation.GameInfoViewModel
@@ -63,10 +64,11 @@ private fun InfoTab(viewModel: GameInfoViewModel) {
     if (settings.shown && state.needsAdmin) WarningText(stringResource(Res.string.game_info_ping_needs_admin))
     if (!settings.shown) return
     ToggleSwitch(state.movable, { onEvent(GameInfoEvent.ToggleMove) }, label = stringResource(Res.string.game_info_ping_move))
-    SectionHeader(stringResource(Res.string.game_info_ping_scale, settings.scale))
+    val scale = settings.scale.coerceIn(OverlayScalePercent)
+    SectionHeader(stringResource(Res.string.game_info_ping_scale, scale))
     ValueSlider(
-        settings.scale, { onEvent(GameInfoEvent.SetScale(it, save = false)) }, SCALE, Modifier.fillMaxWidth(),
-        onValueChangeFinished = { onEvent(GameInfoEvent.SetScale(settings.scale, save = true)) },
+        scale, { onEvent(GameInfoEvent.SetScale(it, save = false)) }, OverlayScalePercent, Modifier.fillMaxWidth(),
+        onValueChangeFinished = { onEvent(GameInfoEvent.SetScale(scale, save = true)) },
     )
     SectionHeader(stringResource(Res.string.game_info_ping_opacity, settings.opacity))
     ValueSlider(
@@ -74,9 +76,6 @@ private fun InfoTab(viewModel: GameInfoViewModel) {
         onValueChangeFinished = { onEvent(GameInfoEvent.SetOpacity(settings.opacity, save = true)) },
     )
 }
-
-/** Размер пинга, проценты. */
-private val SCALE = 50..300
 
 /** Непрозрачность пинга, проценты. */
 private val OPACITY = 20..100

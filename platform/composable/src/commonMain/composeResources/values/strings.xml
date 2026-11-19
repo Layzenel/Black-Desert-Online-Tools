@@ -15,4 +15,5 @@
     <string name="skill_key_mmb">СКМ</string>
     <string name="skill_key_space">Пробел</string>
     <string name="overlay_panel_title">BDO Tools оверлей</string>
+    <string name="overlay_tab_settings">Настройки</string>
 </resources>

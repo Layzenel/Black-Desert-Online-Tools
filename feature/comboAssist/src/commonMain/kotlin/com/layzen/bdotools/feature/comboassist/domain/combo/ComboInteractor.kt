@@ -7,6 +7,7 @@ import com.layzen.bdotools.core.skill.domain.SkillStance
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkill
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 import com.layzen.bdotools.feature.comboassist.domain.skill.SkillTraits
+import com.layzen.bdotools.feature.comboassist.domain.skill.skillProtections
 import com.layzen.bdotools.feature.comboassist.domain.history.PlayedCharacter
 import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
 import com.layzen.bdotools.feature.comboassist.domain.history.SkillHistorySource
@@ -107,14 +108,15 @@ class ComboInteractor(
     }
 
     /**
-     * Урон и клавиши умения по английскому тултипу: урон — есть строка урона («1325% x2», «damage … x1.15»),
-     * клавиши — действия `{KeyBind:…}` из команды. `null` — подробности не скачались.
+     * Урон, клавиши и защита умения по английскому тултипу: урон — есть строка урона («1325% x2», «damage … x1.15»),
+     * клавиши — действия `{KeyBind:…}` из команды, защита — по строкам эффектов ([skillProtections]). `null` — подробности не скачались.
      */
     // shortcut: урон по тексту тултипа; если начнёт ошибаться — флаг урона в справочнике bdo-tools-data
     suspend fun skillTraits(skillNo: Int): SkillTraits? {
         val text = catalog.details(skillNo)?.text(COOLDOWN_LANGUAGE) ?: return null
-        val damage = text.effects.flatten().any { DAMAGE.containsMatchIn(it) }
-        return SkillTraits(damage, KEY_BIND.findAll(text.command).map { it.groupValues[1] }.toSet())
+        val effects = text.effects.flatten()
+        val damage = effects.any { DAMAGE.containsMatchIn(it) }
+        return SkillTraits(damage, KEY_BIND.findAll(text.command).map { it.groupValues[1] }.toSet(), skillProtections(effects))
     }
 
     private companion object {

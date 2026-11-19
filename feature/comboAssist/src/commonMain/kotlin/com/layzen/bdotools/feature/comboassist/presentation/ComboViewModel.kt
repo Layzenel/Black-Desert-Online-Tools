@@ -93,14 +93,12 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             ComboEvent.ImportCombos -> importCombos()
             is ComboEvent.SetMode -> setMode(event.mode)
             is ComboEvent.Press -> trainingStep { training.press(event.skillNo) }
-            ComboEvent.PressSuggested -> trainingStep { training.pressSuggested() }
-            ComboEvent.PressMistake -> trainingStep { training.pressMistake() }
-            ComboEvent.ResetTraining -> trainingStep { training.reset() }
-            ComboEvent.ToggleWatching -> toggleWatching()
-            ComboEvent.ToggleOverlayMove -> mutableState.update { it.copy(overlayMovable = !it.overlayMovable) }
-            ComboEvent.ToggleOverlay -> mutableState.update { it.copy(overlayShown = !it.overlayShown) }.also { ensureTicker() }
+            ComboEvent.ToggleTrackerMove -> mutableState.update { it.copy(trackerMovable = !it.trackerMovable) }
+            ComboEvent.ToggleSchemaMove -> mutableState.update { it.copy(schemaMovable = !it.schemaMovable) }
+            ComboEvent.ToggleSchema -> updateSettings { it.copy(schemaShown = !it.schemaShown) }
             is ComboEvent.ShowCombo -> showCombo(event.id)
             ComboEvent.ToggleSlotTooltips -> updateSettings { it.copy(slotTooltips = !it.slotTooltips) }
+            ComboEvent.ToggleSlotShields -> updateSettings { it.copy(slotShields = !it.slotShields) }.also { loadSlotProtections() }
             is ComboEvent.SetComboScale -> updateSettings(event.save) { it.copy(comboScale = event.percent) }
             is ComboEvent.SetComboOpacity -> updateSettings(event.save) { it.copy(comboOpacity = event.percent) }
             is ComboEvent.SetOverlayStyle -> changeOverlayLook { it.copy(overlayStyle = event.style) }
@@ -122,7 +120,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         val before = mutableState.value.combo
         mutableState.update { editor.reduce(it, event, skills) }
         val after = mutableState.value.combo ?: return
-        val changed = before?.columns != after.columns || before.fillers != after.fillers
+        val changed = before?.stepsOnly() != after.stepsOnly() || before.fillers != after.fillers
         if (!changed) return
         if (watcher?.isActive == true) restartWatching() else restartTraining()
     }
@@ -145,12 +143,28 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         while (isActive) {
             interactor.playedCharacter()?.let { played ->
                 mutableState.update { it.copy(slots = played.slots, playedClass = played.classKey ?: it.playedClass) }
+                loadSlotProtections()
                 val s = mutableState.value
                 if (played.classKey != null && played.classKey != s.combo?.classKey && !s.dirty) {
                     s.combos.firstOrNull { it.classKey == played.classKey }?.let { selectCombo(it.id) }
                 }
             }
             delay(CHARACTER_CHECK_MS)
+        }
+    }
+
+    /**
+     * Защита умений в слотах для щитов на них: только пока щиты включены и только тех умений, чьей защиты ещё нет.
+     * Не скачалось — попробуем при следующей проверке слотов.
+     */
+    private fun loadSlotProtections() {
+        val s = mutableState.value
+        if (!s.settings.slotShields) return
+        s.slots.map { it.skillNo }.distinct().filter { it !in s.slotProtections }.forEach { skillNo ->
+            viewModelScope.launch {
+                val protections = interactor.skillTraits(skillNo)?.protections ?: return@launch
+                mutableState.update { it.copy(slotProtections = it.slotProtections + (skillNo to protections)) }
+            }
         }
     }
 
@@ -187,7 +201,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             val items = classSkills.mapValues { (no, skill) -> SkillItem(no, skill, known[no]?.icon, known[no]?.traits) }
             editor.refresh(st.copy(loading = false, catalogFailed = classSkills.isEmpty(), skills = items), skills)
         }
-        if (s.mode == ComboMode.Training) restartTraining()
+        if (s.mode == ComboMode.Overlay) restartTraining()
         // в настольной версии программа следит за игрой всегда — за открытым комбо, с его умениями
         if (interactor.canWatchGame) restartWatching()
         // иконки и урон — параллельно: по одной загрузка класса шла десятки секунд
@@ -245,7 +259,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     private fun setMode(mode: ComboMode) {
         mutableState.update { it.copy(mode = mode) }
-        if (mode == ComboMode.Training) restartTraining()
+        if (mode == ComboMode.Overlay) restartTraining()
         ensureTicker()
     }
 
@@ -257,12 +271,12 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     private fun trainingStep(action: () -> Unit) { action(); publishTraining() }
 
-    private fun publishTraining() = mutableState.update { it.copy(overlay = training.snapshot(), log = training.log) }
+    private fun publishTraining() = mutableState.update { it.copy(overlay = training.snapshot()) }
 
     /** Пока идёт тренировка, слежение или открыт оверлей — трекер проверяет время и обновляет таймеры. */
     private fun ensureTicker() {
         val s = mutableState.value
-        val needed = s.mode == ComboMode.Training || s.watching || s.overlayShown
+        val needed = s.mode == ComboMode.Overlay || s.watching || s.overlayShown
         if (!needed) { ticker?.cancel(); ticker = null; return }
         if (ticker?.isActive == true) return
         ticker = viewModelScope.launch {
@@ -273,8 +287,6 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             }
         }
     }
-
-    private fun toggleWatching() = if (watcher?.isActive == true) stopWatching() else startWatching()
 
     private fun restartWatching() {
         stopWatching()
@@ -299,6 +311,9 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             interactor.watchGame(icons, preferred).collect { skillNo -> trainingStep { training.fromGame(skillNo) } }
         }
     }
+
+    /** Ячейки комбо без пометок: пометка шагов не меняет, и трекер из-за неё не начинается заново. */
+    private fun Combo.stepsOnly() = columns.map { column -> column.lanes.map { lane -> lane.map { it.copy(note = "") } } }
 
     private companion object {
         const val TICK_MS = 100L
