@@ -38,11 +38,9 @@
     <string name="combo_make_fork">Сделать развилкой</string>
     <string name="combo_add_lane">+ ветка</string>
     <string name="combo_add_lane_action">Добавить ветку</string>
-    <string name="combo_link_fork">Ветка как в прошлой развилке: вошёл в 1.2 — дальше подсказка 4.2</string>
-    <string name="combo_warning_linked">Развилка %1$s связана с прошлой, но веток в них разное число: где ветки не совпадут, подсказка выберет по перезарядкам.</string>
     <string name="combo_add_cell">Добавить ячейку в конец</string>
     <string name="combo_grow_lane">Удлинить ветку</string>
-    <string name="combo_empty_hint">Выбери ячейку и кликни умение в меню слева: после него появится новая ячейка, а над списком — что обычно идёт дальше. Перетащи иконку на другую ячейку, чтобы поменять их местами. ПКМ по ячейке — удалить её.</string>
+    <string name="combo_empty_hint">Выбери ячейку и кликни умение в меню слева: после него появится новая ячейка, а над списком — что обычно идёт дальше. Перетащи иконку к краю другой ячейки: слева или справа — встанет перед ней или после, сверху или снизу — новой веткой. ПКМ по ячейке — удалить её.</string>
     <string name="combo_cell">Ячейка %1$s</string>
     <string name="combo_cell_empty">Пустая ячейка</string>
     <string name="combo_remove">Удалить ячейку</string>
@@ -104,6 +102,8 @@
     <string name="combo_setting_slot_tooltips">Показывать данные об умении при наведении курсора на слот перезарядки</string>
     <string name="combo_setting_slot_shields">Показывать на слотах перезарядки защиту умения в PvP</string>
     <string name="combo_setting_slot_shields_description">Щиты в углу иконки. Защита только от монстров не показывается.</string>
+    <string name="combo_setting_slot_controls">Показывать под слотами перезарядки контроли умения в PvP</string>
+    <string name="combo_setting_slot_controls_description">Значки внизу иконки. Контроль только по монстрам не показывается.</string>
     <string name="combo_protection_super_armor">Устойчивость</string>
     <string name="combo_protection_forward_guard">Защита спереди</string>
     <string name="combo_protection_invincible">Неуязвимость</string>

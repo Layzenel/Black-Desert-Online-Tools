@@ -38,11 +38,9 @@
     <string name="combo_make_fork">Make a fork</string>
     <string name="combo_add_lane">+ branch</string>
     <string name="combo_add_lane_action">Add branch</string>
-    <string name="combo_link_fork">Same branch as the previous fork: enter 1.2, get 4.2 next</string>
-    <string name="combo_warning_linked">Fork %1$s is linked to the previous one, but they have a different number of branches: where they do not match, the hint picks by cooldowns.</string>
     <string name="combo_add_cell">Add a cell at the end</string>
     <string name="combo_grow_lane">Extend branch</string>
-    <string name="combo_empty_hint">Select a cell and click a skill in the menu on the left: a new cell appears after it, and the list shows what usually follows. Drag an icon onto another cell to swap them. Right-click a cell to delete it.</string>
+    <string name="combo_empty_hint">Select a cell and click a skill in the menu on the left: a new cell appears after it, and the list shows what usually follows. Drag an icon to an edge of another cell: left or right puts it before or after, top or bottom makes a new branch. Right-click a cell to delete it.</string>
     <string name="combo_cell">Cell %1$s</string>
     <string name="combo_cell_empty">Empty cell</string>
     <string name="combo_remove">Delete cell</string>
@@ -104,6 +102,8 @@
     <string name="combo_setting_slot_tooltips">Show skill details when the cursor rests on a cooldown slot</string>
     <string name="combo_setting_slot_shields">Show the skill PvP protection on cooldown slots</string>
     <string name="combo_setting_slot_shields_description">Shields in the icon corner. Protection against monsters only is not shown.</string>
+    <string name="combo_setting_slot_controls">Show the skill PvP crowd controls on cooldown slots</string>
+    <string name="combo_setting_slot_controls_description">Icons at the bottom of the slot. Crowd controls against monsters only are not shown.</string>
     <string name="combo_protection_super_armor">Super Armor</string>
     <string name="combo_protection_forward_guard">Forward Guard</string>
     <string name="combo_protection_invincible">Invincible</string>

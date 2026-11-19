@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
+import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.core.skill.domain.SkillDetails
 
 /**
@@ -15,8 +16,6 @@ data class SkillEffects(val defenses: List<SkillDefense>, val controls: List<Ski
     val pvpControls: List<SkillControl> get() = controls.filterNot { it.pveOnly }
 
     companion object {
-        private const val PVE_ONLY_MARK = "PvE only"
-        private const val RESISTANCE = "Resist"
         private val tags = Regex("<[^>]*>")
 
         /**
@@ -38,11 +37,10 @@ data class SkillEffects(val defenses: List<SkillDefense>, val controls: List<Ski
             }
         }
 
-        private fun controlsOf(lines: List<String>): List<SkillControl> = ControlType.entries.mapNotNull { type ->
-            // «Stun Resistance» и подобное — не контроль навыка
-            val typeLines = lines.indices.filter { lines[it].startsWith(type.tooltipKey + " ") && !lines[it].contains(RESISTANCE, ignoreCase = true) }
+        private fun controlsOf(lines: List<String>): List<SkillControl> = CrowdControl.entries.mapNotNull { type ->
+            val typeLines = lines.indices.filter { CrowdControl.ofLine(lines[it]) == type }
             if (typeLines.isEmpty()) return@mapNotNull null
-            SkillControl(type, pveOnly = typeLines.all { lines[it].contains(PVE_ONLY_MARK, ignoreCase = true) }, typeLines)
+            SkillControl(type, pveOnly = typeLines.all { CrowdControl.isPveOnly(lines[it]) }, typeLines)
         }
 
         /** Названия эффектов в тултипе ищутся на английском: так они пишутся одинаково у всех навыков. */

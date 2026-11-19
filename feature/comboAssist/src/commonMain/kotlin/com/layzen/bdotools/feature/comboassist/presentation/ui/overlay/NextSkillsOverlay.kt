@@ -5,8 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,8 +23,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
  * Оверлей поверх игры: карточка «что жать сейчас» с клавишами ([NextSkillCard]) и два следующих умения
- * в ряд на подложке тултипа игры, каждое бледнее предыдущего; пока ждёшь перезарядку — филлер. Под ними — пометка
- * игрока к шагу [note].
+ * в ряд на подложке тултипа игры, каждое бледнее предыдущего; пока ждёшь перезарядку — филлер; справа — опциональные
+ * умения в пунктирных рамках, которые можно вставить сейчас ([OptionalSkills]). Под ними — пометка игрока к шагу [note].
  */
 @Composable
 internal fun NextSkillsOverlay(
@@ -41,7 +39,7 @@ internal fun NextSkillsOverlay(
             Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS), verticalAlignment = Alignment.CenterVertically) {
                 AnimatedContent(
                     overlay.next?.skillNo,
-                    transitionSpec = { (slideInHorizontally(tween(SWAP_MS)) { it / SLIDE_SHARE } + fadeIn(tween(SWAP_MS))) togetherWith fadeOut(tween(SWAP_MS)) },
+                    transitionSpec = { stepSwap() },
                 ) { skillNo -> if (skillNo != null) NextSkillCard(overlay, skills, loadDetails) }
                 upcoming.forEachIndexed { index, skillNo ->
                     StepArrow()
@@ -50,6 +48,7 @@ internal fun NextSkillsOverlay(
                 AnimatedVisibility(overlay.filler != null, enter = fadeIn(tween(SWAP_MS)), exit = fadeOut(tween(SWAP_MS))) {
                     overlay.filler?.let { FillerCard(it, skills) }
                 }
+                OptionalSkills(overlay, skills, ComboDimens.focusUpcomingIcon)
             }
             StepNote(note)
         }
@@ -65,5 +64,3 @@ private fun UpcomingSkill(skillNo: Int, overlay: OverlayState, skills: Map<Int, 
 
 private const val UPCOMING = 2
 private val UPCOMING_ALPHA = listOf(0.85f, 0.6f)
-private const val SWAP_MS = 250
-private const val SLIDE_SHARE = 4

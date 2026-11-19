@@ -19,7 +19,7 @@ internal data class CellDrag(val from: CellAt, val start: Offset, val offset: Of
 /** Состояние и обработчики перетаскивания для ячеек холста. */
 internal class CanvasDrag(
     val current: CellDrag?,
-    val target: CellAt?,
+    val target: CellDrop?,
     val onStart: (CellAt) -> Unit,
     val onMove: (Offset) -> Unit,
     val onEnd: () -> Unit,

@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.domain.skill
 
+import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.core.skill.domain.SkillText
 import com.layzen.bdotools.core.skill.domain.SkillDetails
 import kotlin.test.Test
@@ -47,13 +48,13 @@ class SkillEffectsTest {
 
         assertEquals(
             listOf(
-                SkillControl(ControlType.Bound, pveOnly = false, lines = listOf(0, 1)),
-                SkillControl(ControlType.Stiffness, pveOnly = false, lines = listOf(3)),
-                SkillControl(ControlType.Floating, pveOnly = true, lines = listOf(2)),
+                SkillControl(CrowdControl.Bound, pveOnly = false, lines = listOf(0, 1)),
+                SkillControl(CrowdControl.Stiffness, pveOnly = false, lines = listOf(3)),
+                SkillControl(CrowdControl.Floating, pveOnly = true, lines = listOf(2)),
             ),
             effects.controls,
         )
-        assertEquals(listOf(ControlType.Bound, ControlType.Stiffness), effects.pvpControls.map { it.type })
+        assertEquals(listOf(CrowdControl.Bound, CrowdControl.Stiffness), effects.pvpControls.map { it.type })
     }
 
     @Test

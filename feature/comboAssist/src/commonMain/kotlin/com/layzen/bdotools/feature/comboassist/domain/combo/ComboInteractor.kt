@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.comboassist.domain.combo
 
+import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.core.skill.domain.Skill
 import com.layzen.bdotools.core.skill.domain.SkillCatalogRepository
 import com.layzen.bdotools.core.skill.domain.SkillDetails
@@ -33,6 +34,9 @@ class ComboInteractor(
 ) {
     /** Может ли программа следить за историей умений в игре (только настольная версия). */
     val canWatchGame: Boolean get() = history.supported
+
+    /** Видны ли слоты перезарядок на экране: щиты на них прячутся, когда слоты закрыты окном игры. */
+    fun slotsShown(): Flow<Boolean> = history.slotsShown()
 
     /** Применённые в игре умения по их иконкам [icons], пока поток собирают; [preferred] — умения комбо. */
     fun watchGame(icons: Map<Int, ByteArray>, preferred: Set<Int>): Flow<Int> = history.watch(icons, preferred)
@@ -109,14 +113,14 @@ class ComboInteractor(
 
     /**
      * Урон, клавиши и защита умения по английскому тултипу: урон — есть строка урона («1325% x2», «damage … x1.15»),
-     * клавиши — действия `{KeyBind:…}` из команды, защита — по строкам эффектов ([skillProtections]). `null` — подробности не скачались.
+     * клавиши — действия `{KeyBind:…}` из команды, защита и контроли — по строкам эффектов ([skillProtections], [CrowdControl.pvpOf]). `null` — подробности не скачались.
      */
     // shortcut: урон по тексту тултипа; если начнёт ошибаться — флаг урона в справочнике bdo-tools-data
     suspend fun skillTraits(skillNo: Int): SkillTraits? {
         val text = catalog.details(skillNo)?.text(COOLDOWN_LANGUAGE) ?: return null
         val effects = text.effects.flatten()
         val damage = effects.any { DAMAGE.containsMatchIn(it) }
-        return SkillTraits(damage, KEY_BIND.findAll(text.command).map { it.groupValues[1] }.toSet(), skillProtections(effects))
+        return SkillTraits(damage, KEY_BIND.findAll(text.command).map { it.groupValues[1] }.toSet(), skillProtections(effects), CrowdControl.pvpOf(text.effects.map { it.joinToString("") }))
     }
 
     private companion object {

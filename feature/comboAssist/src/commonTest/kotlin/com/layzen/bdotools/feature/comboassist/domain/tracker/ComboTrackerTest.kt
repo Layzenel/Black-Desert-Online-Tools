@@ -40,11 +40,11 @@ class ComboTrackerTest {
     private fun ComboTracker.label() = graph[state.positions.single()].label
 
     @Test
-    fun forkPicksLaneThatCoolsDownFirst() {
+    fun forkLanesGoInTurn() {
         val (passes, _) = tracker().follow(40)
         assertEquals("1.1", passes.getValue(1).first())
         assertEquals("1.2", passes.getValue(2).first())
-        assertEquals("1.1", passes.getValue(3).first()) // первая ветка (8 с) откатилась к третьему проходу
+        assertEquals("1.3", passes.getValue(3).first()) // 1.1 уже откатилась, но 1.3 готова и дольше не проходилась
     }
 
     @Test

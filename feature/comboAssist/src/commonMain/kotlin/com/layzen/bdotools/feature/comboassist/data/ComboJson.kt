@@ -20,6 +20,7 @@ private class SettingsDto(
     val comboOpacity: Int = 100,
     val schemaShown: Boolean = false,
     val slotShields: Boolean = false,
+    val slotControls: Boolean = false,
 )
 
 /** Комбо в файле; колонка — либо `cell`, либо `lanes`. */
@@ -34,9 +35,9 @@ private class ComboDto(
     val overlayStyle: String = OverlayStyle.Next.name,
 )
 
-/** Колонка в файле: обычная — [cell], развилка — [lanes]; [linked] — ветка как в предыдущей развилке. */
+/** Колонка в файле: обычная — [cell], развилка — [lanes]. */
 @Serializable
-private class ColumnDto(val cell: CellDto? = null, val lanes: List<List<CellDto>>? = null, val linked: Boolean = false)
+private class ColumnDto(val cell: CellDto? = null, val lanes: List<List<CellDto>>? = null)
 
 /** Ячейка в файле; поля по умолчанию не пишутся. */
 @Serializable
@@ -52,7 +53,7 @@ internal fun parseCombos(text: String): List<Combo> = json.decodeFromString<Comb
         name = dto.name,
         classKey = dto.classKey,
         columns = dto.columns.map { column ->
-            column.lanes?.let { lanes -> ComboColumn.Fork(lanes.map { lane -> lane.map { it.toCell() } }, column.linked) }
+            column.lanes?.let { lanes -> ComboColumn.Fork(lanes.map { lane -> lane.map { it.toCell() } }) }
                 ?: ComboColumn.Single(column.cell?.toCell() ?: ComboCell())
         },
         fillers = dto.fillers,
@@ -63,7 +64,7 @@ internal fun parseCombos(text: String): List<Combo> = json.decodeFromString<Comb
 
 /** Настройки оверлея из файла комбо; неверный файл — исключение, как у [parseCombos]. */
 internal fun parseSettings(text: String): OverlaySettings =
-    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields) }
+    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls) }
 
 /** Записывает комбо [combos] и настройки [settings] в формат файла. */
 internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = OverlaySettings()): String = json.encodeToString(
@@ -77,7 +78,7 @@ internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = Overlay
                 columns = combo.columns.map { column ->
                     when (column) {
                         is ComboColumn.Single -> ColumnDto(cell = column.cell.toDto())
-                        is ComboColumn.Fork -> ColumnDto(lanes = column.lanes.map { lane -> lane.map { it.toDto() } }, linked = column.linked)
+                        is ComboColumn.Fork -> ColumnDto(lanes = column.lanes.map { lane -> lane.map { it.toDto() } })
                     }
                 },
                 fillers = combo.fillers,
@@ -85,7 +86,7 @@ internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = Overlay
                 overlayStyle = combo.overlayStyle.name,
             )
         },
-        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields) },
+        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls) },
     ),
 )
 

@@ -46,8 +46,6 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_mode_overlay
 import com.layzen.bdotools.feature.comboassist.resources.combo_save
 import com.layzen.bdotools.feature.comboassist.resources.combo_save_dirty
 import com.layzen.bdotools.feature.comboassist.resources.combo_warning_chain
-import com.layzen.bdotools.feature.comboassist.resources.combo_warning_linked
-import com.layzen.bdotools.feature.comboassist.domain.combo.linkedForkProblems
 import com.layzen.bdotools.feature.comboassist.resources.combo_warning_empty
 import com.layzen.bdotools.uikit.components.ActionBar
 import com.layzen.bdotools.uikit.components.DescriptionText
@@ -122,6 +120,4 @@ private fun EditorContent(state: ComboState, onEvent: (ComboEvent) -> Unit, load
     CellPanel(state, onEvent)
     if (state.emptyCells > 0) WarningText(stringResource(Res.string.combo_warning_empty, state.emptyCells))
     state.problems.forEach { WarningText(stringResource(Res.string.combo_warning_chain, combo.label(it))) }
-    val starts = combo.columnStarts()
-    combo.linkedForkProblems().forEach { WarningText(stringResource(Res.string.combo_warning_linked, starts[it].toString())) }
 }

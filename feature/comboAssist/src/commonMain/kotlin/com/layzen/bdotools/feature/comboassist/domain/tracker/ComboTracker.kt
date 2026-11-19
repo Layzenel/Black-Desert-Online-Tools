@@ -33,47 +33,57 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
         state.readyAt[skillNo] = nowMs + skills.cooldown(skillNo)
         state.history = (state.history + skillNo).takeLast(HISTORY_SIZE)
         state.lastUseMs = nowMs
+        if (skillNo in graph.skills || skillNo in combo.fillers) state.lastComboMs = nowMs
         state.rescue?.let { if (!it.armed && it.entry == skillNo) { state.rescue = it.copy(armed = true); return TrackerEvent.Step(skillNo, rescueEntry = true) } }
-        planner.candidates(state).filter { it.skillNo == skillNo }.takeIf { it.isNotEmpty() }?.let { return advance(it, skillNo) }
+        planner.candidates(state).filter { it.skillNo == skillNo }.takeIf { it.isNotEmpty() }?.let { return advance(it, skillNo, nowMs) }
         val chain = planner.expectedChain(state)?.let { breakChain(it, nowMs) }
         if (chain != null) {
-            planner.candidates(state).filter { it.skillNo == skillNo }.takeIf { it.isNotEmpty() }?.let { return advance(it, skillNo, chain) }
+            planner.candidates(state).filter { it.skillNo == skillNo }.takeIf { it.isNotEmpty() }?.let { return advance(it, skillNo, nowMs, chain) }
         }
         return when {
-            skillNo in graph.skills -> { state.rescue = null; state.forced = null; outOfOrder(skillNo, before, chain) }
+            skillNo in graph.skills -> { state.rescue = null; state.forced = null; outOfOrder(skillNo, nowMs, before, chain) }
             skillNo in combo.fillers -> TrackerEvent.Filler(skillNo, chain)
             ++state.offCount >= settings.offLimit -> { resetPosition(); TrackerEvent.Reset(ResetReason.OffCombo, skillNo, chain) }
             else -> TrackerEvent.Off(skillNo, state.offCount, chain)
         }
     }
 
-    /** Проверка по времени: связка, продолжение которой не пришло за окно, обрывается; после простоя — сначала. */
+    /**
+     * Проверка по времени: связка, продолжение которой не пришло за окно, обрывается. Если умений комбо и филлеров не
+     * было дольше [TrackerSettings.idleMs] сверх ожидания перезарядки следующего шага — комбо начинается сначала.
+     */
     fun tick(nowMs: Long): TrackerEvent? {
         val last = state.lastUseMs ?: return null
         val chainNext = planner.expectedChain(state)
         if (chainNext != null && nowMs - last > settings.chainWindowMs) return TrackerEvent.ChainTimeout(breakChain(chainNext, nowMs))
-        if (!state.atStart && nowMs - last > settings.idleMs) { resetPosition(); return TrackerEvent.Reset(ResetReason.Idle) }
+        if (!state.atStart && nowMs - idleSince(last) > settings.idleMs) { resetPosition(); return TrackerEvent.Reset(ResetReason.Idle) }
         return null
+    }
+
+    /** С какого момента идёт простой: с последнего умения комбо или с отката следующего шага, если он позже. */
+    private fun idleSince(lastUseMs: Long): Long {
+        val lastCombo = state.lastComboMs ?: lastUseMs
+        return maxOf(lastCombo, planner.predict(state, lastCombo).firstOrNull()?.atMs ?: lastCombo)
     }
 
     /** Начать комбо сначала. Перезарядки остаются: умения в игре не откатываются от сброса подсказки. */
     fun reset(): TrackerEvent { resetPosition(); return TrackerEvent.Reset(ResetReason.Manual) }
 
-    private fun advance(hit: List<ComboNode>, skillNo: Int, chain: ChainRecovery? = null): TrackerEvent {
+    private fun advance(hit: List<ComboNode>, skillNo: Int, nowMs: Long, chain: ChainRecovery? = null): TrackerEvent {
         // повтор связки с запуска или вход через другое умение — не новый проход
         val prev = if (state.forced != null || state.rescue != null) null else planner.current(state)
         val wrapped = prev != null && hit.any { prev.wrapsTo(it) }
-        if (wrapped) { state.pass++; state.done.clear(); state.burned.clear(); state.forkLanes.clear() }
-        val chosen = sameLane(planner.followLinked(hit, state.forkLanes))
+        if (wrapped) { state.pass++; state.done.clear(); state.burned.clear() }
+        val chosen = sameLane(hit)
         state.positions = chosen.map { it.id }
-        rememberLane(chosen)
+        remember(chosen, nowMs)
         chosen.forEach { node -> state.done += node.id; chainFrom(node).forEach { state.burned -= it.id } }
         state.forced = null; state.rescue = null; state.offCount = 0
         return TrackerEvent.Step(skillNo, wrapped, chain = chain)
     }
 
     private fun resetPosition() {
-        state.positions = emptyList(); state.done.clear(); state.burned.clear(); state.forkLanes.clear()
+        state.positions = emptyList(); state.done.clear(); state.burned.clear()
         state.forced = null; state.rescue = null; state.offCount = 0
     }
 
@@ -105,13 +115,13 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
      * Умение из комбо не по порядку: позиция переходит на него, подсказка — со следующего за ним. Если оно впереди на
      * пути — пропущенные до него шаги сгорают; иначе место ищется по последним умениям истории.
      */
-    private fun outOfOrder(skillNo: Int, before: List<PlannedStep>, chain: ChainRecovery?): TrackerEvent {
+    private fun outOfOrder(skillNo: Int, nowMs: Long, before: List<PlannedStep>, chain: ChainRecovery?): TrackerEvent {
         val j = before.indexOfFirst { it.node?.skillNo == skillNo }
         if (j > 0) {
             before.take(j).forEach { step -> step.node?.let { state.burned += it.id } }
             val target = before[j].node!!
             state.positions = listOf(target.id); state.done += target.id
-            rememberLane(listOf(target))
+            remember(listOf(target), nowMs)
             return TrackerEvent.ErrorForward(skillNo, j, chain)
         }
         for (k in minOf(HISTORY_SIZE, state.history.size) downTo 1) {
@@ -119,7 +129,7 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
             val found = sameLane(graph.nodes.filter { matchesTail(it, tail) })
             if (found.isNotEmpty()) {
                 state.positions = found.map { it.id }
-                rememberLane(found)
+                remember(found, nowMs)
                 state.done.clear(); state.done += state.positions; state.burned.clear()
                 return TrackerEvent.Jump(skillNo, k, chain)
             }
@@ -131,11 +141,10 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
     private fun sameLane(nodes: List<ComboNode>): List<ComboNode> =
         if (nodes.size < 2) nodes else nodes.filter { it.isFork && it.at.lane == state.lane }.ifEmpty { nodes }
 
-    private fun rememberLane(nodes: List<ComboNode>) {
-        nodes.singleOrNull()?.takeIf { it.isFork }?.let {
-            state.lane = it.at.lane
-            state.forkLanes[it.at.column] = it.at.lane
-        }
+    /** Запоминает, когда прошли шаги [nodes], и ветку развилки, если шаг однозначен. */
+    private fun remember(nodes: List<ComboNode>, nowMs: Long) {
+        nodes.forEach { state.usedAt[it.id] = nowMs }
+        nodes.singleOrNull()?.takeIf { it.isFork }?.let { state.lane = it.at.lane }
     }
 
     private fun matchesTail(node: ComboNode, tail: List<Int>): Boolean =

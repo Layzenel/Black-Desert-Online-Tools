@@ -32,6 +32,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.zIndex
 import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.feature.comboassist.domain.combo.CellAt
@@ -52,7 +53,6 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillHover
 import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillIconView
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_add_lane
-import com.layzen.bdotools.feature.comboassist.resources.combo_link_fork
 import com.layzen.bdotools.feature.comboassist.resources.combo_remove
 import com.layzen.bdotools.feature.comboassist.resources.combo_add_cell
 import com.layzen.bdotools.feature.comboassist.resources.combo_grow_lane
@@ -67,7 +67,9 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Холст редактора: колонки слева направо, развилки в скобках, в углу ячейки — её подпись («4.1») и крестик удаления.
  * В конце комбо и веток — «+», под обычной колонкой — кнопка «сделать развилкой», под развилкой — «+ ветка».
- * Ячейку перетаскивают на другую, чтобы поменять их местами; ПКМ по ячейке удаляет её. Выбранная ячейка в золотой
+ * Ячейку перетаскивают на другую: к левому или правому краю — встаёт перед или после неё, к верхнему или нижнему —
+ * новой веткой над или под ней; синяя черта в промежутке показывает, куда. Ячейку ветки можно бросить слева или справа
+ * от неё самой — она выйдет из развилки. ПКМ по ячейке удаляет её. Выбранная ячейка в золотой
  * рамке, цель перетаскивания — в синей, продолжение связки не после своего запуска — в красной.
  */
 @Composable
@@ -75,7 +77,8 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
     val combo = state.combo ?: return
     val bounds = remember(combo.columns) { mutableStateMapOf<CellAt, Rect>() }
     var drag by remember { mutableStateOf<CellDrag?>(null) }
-    val dragTarget = drag?.let { d -> bounds.entries.firstOrNull { (at, rect) -> at != d.from && rect.contains(d.pointer) }?.key }
+    val slop = with(LocalDensity.current) { ComboDimens.dropSlop.toPx() }
+    val dragTarget = drag?.let { d -> CellDrop.find(bounds, d.from, combo.columns[d.from.column] is ComboColumn.Fork, d.pointer, slop) }
     val dragging = CanvasDrag(
         current = drag,
         target = dragTarget,
@@ -83,7 +86,7 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
         onMove = { amount -> drag = drag?.let { it.copy(offset = it.offset + amount) } },
         onEnd = {
             val from = drag?.from
-            if (from != null && dragTarget != null) onEvent(ComboEvent.SwapCells(from, dragTarget))
+            if (from != null && dragTarget != null) onEvent(ComboEvent.MoveCell(from, dragTarget.at, dragTarget.side))
             drag = null
         },
         onCancel = { drag = null },
@@ -116,17 +119,7 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
                         Box(Modifier.padding(vertical = AppTheme.dimens.spaceS)) { lanes() }
                         ForkBracket(start = false)
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-                        SmallButton(stringResource(Res.string.combo_add_lane), { onEvent(ComboEvent.AddLane(column)) }) {
-                            PlusIcon()
-                        }
-                        // связать можно только с развилкой левее
-                        if (combo.columns.take(column).any { it is ComboColumn.Fork }) {
-                            SmallButton(stringResource(Res.string.combo_link_fork), { onEvent(ComboEvent.ToggleLinked(column)) }) {
-                                Text(LINK, style = AppTheme.typography.bodyBold, color = if (col.linked) AppTheme.colors.accentGold else AppTheme.colors.textMuted)
-                            }
-                        }
-                    }
+                    SmallButton(stringResource(Res.string.combo_add_lane), { onEvent(ComboEvent.AddLane(column)) }) { PlusIcon() }
                 } else {
                     lanes()
                     SmallButton(stringResource(Res.string.combo_make_fork), { onEvent(ComboEvent.ToFork(column)) }) { ForkIcon() }
@@ -181,7 +174,6 @@ private fun EditorCell(
     val selected = state.selection == at
     val dragged = drag.current?.from == at
     val frame = when {
-        drag.target == at -> AppTheme.colors.accentBlue
         selected -> AppTheme.colors.accentGold
         at in state.problems -> AppTheme.colors.danger
         else -> AppTheme.colors.border
@@ -190,7 +182,8 @@ private fun EditorCell(
     val move by rememberUpdatedState(drag.onMove)
     val end by rememberUpdatedState(drag.onEnd)
     val cancel by rememberUpdatedState(drag.onCancel)
-    Box(Modifier.zIndex(if (dragged) 1f else 0f)) {
+    // цель выше соседей: черта места стоит снаружи ячейки, поверх стрелки
+    Box(Modifier.zIndex(if (dragged || drag.target?.at == at) 1f else 0f)) {
         val tag = if (cell.optional) " " + stringResource(Res.string.combo_tag_optional) else ""
         val item = cell.skillNo?.let { state.skills[it] }
         SkillHover(item, loadDetails, cell = CellNote(combo.label(at), cell.chain, cell.optional)) {
@@ -215,9 +208,10 @@ private fun EditorCell(
                         )
                     }
                     .clickable { onEvent(ComboEvent.SelectCell(at)) },
-                frame = frame, frameWidth = if (selected || drag.target == at) ComboDimens.nextFrame else ComboDimens.frame,
+                frame = frame, frameWidth = if (selected) ComboDimens.nextFrame else ComboDimens.frame,
             )
         }
+        drag.target?.takeIf { it.at == at }?.let { DropMark(it.side, Modifier.matchParentSize()) }
         // подписи над иконкой едут вместе с ней, когда ячейку тянут
         val shift = Modifier.graphicsLayer {
             val offset = drag.current?.takeIf { it.from == at }?.offset ?: Offset.Zero
@@ -246,9 +240,6 @@ private fun EditorCell(
     }
 }
 
-
-/** Знак связанной развилки: ветка та же, что в прошлой. */
-private const val LINK = "="
 private const val DRAGGED_ALPHA = 0.85f
 
 /** Подложка номера ячейки: иконку под ней видно. */

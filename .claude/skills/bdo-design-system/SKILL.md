@@ -21,6 +21,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `components/*.kt` | готовые UI-компоненты |
 | `icons/CharacterClassIcons.kt` | иконки и названия классов: `CharacterClass.icon` (SVG, белый силуэт `viewBox 0 0 64 64`, цвет — через `ColorFilter.tint`) и `CharacterClass.title`. Сам `CharacterClass` лежит в `platform/core` (`core.game`) |
 | `icons/LifeSkillIcons.kt` | то же для жизненных навыков: `LifeSkill.icon` и `LifeSkill.title` (алхимия, бартер, изготовление, кулинария, охота, рыбалка, сбор, судоходство, торговля, укрощение, урожай). Сам `LifeSkill` лежит в `platform/core` (`core.game`) |
+| `icons/CrowdControlIcons.kt` | значки контролей умений, как в игре: `CrowdControl.icon` (webp). Сам `CrowdControl` и разбор тултипа (`CrowdControl.pvpOf`) лежат в `platform/core` (`core.skill.domain`); значки — у навыков в редакторе интерфейса и под слотами перезарядки |
 | `showcase/ComponentShowcase.kt` | живой каталог всех компонентов (`ShowcaseDimens.kt` — его размеры) |
 | `../../composeResources/values/strings.xml`, `values-<tag>/strings.xml` | строки модуля, в том числе каталога, на русском и на остальных языках приложения |
 

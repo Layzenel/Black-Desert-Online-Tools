@@ -25,22 +25,19 @@ class ComboGraph private constructor(val nodes: List<ComboNode>, val start: List
             val nodes = mutableListOf<ComboNode>()
             val entries = mutableMapOf<Int, MutableList<ComboNode>>()
             val exits = mutableMapOf<Int, MutableList<ComboNode>>()
-            var lastFork: Int? = null
             combo.columns.forEachIndexed { column, col ->
-                val follows = lastFork.takeIf { col is ComboColumn.Fork && col.linked }
                 col.lanes.forEachIndexed { lane, cells ->
                     var prev: ComboNode? = null
                     cells.forEachIndexed { index, cell ->
                         val skill = cell.skillNo ?: return@forEachIndexed
                         val at = CellAt(column, lane, index)
-                        val node = ComboNode(nodes.size, skill, at, col is ComboColumn.Fork, cell.chain, cell.optional, combo.label(at), follows)
+                        val node = ComboNode(nodes.size, skill, at, col is ComboColumn.Fork, cell.chain, cell.optional, combo.label(at))
                         nodes += node
                         prev?.let { link(it, node) } ?: entries.getOrPut(column) { mutableListOf() }.add(node)
                         prev = node
                     }
                     prev?.let { exits.getOrPut(column) { mutableListOf() }.add(it) }
                 }
-                if (col is ComboColumn.Fork) lastFork = column
             }
             val live = entries.keys.sorted()
             if (live.isEmpty()) return ComboGraph(nodes, emptyList())

@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.comboassist.presentation.event
 import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.core.skill.domain.SkillStance
 import com.layzen.bdotools.feature.comboassist.domain.combo.CellAt
+import com.layzen.bdotools.feature.comboassist.domain.combo.DropSide
 import com.layzen.bdotools.feature.comboassist.domain.combo.OverlayStyle
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboMode
 
@@ -24,7 +25,6 @@ sealed interface ComboEvent {
     data class InsertColumn(val index: Int) : ComboEvent
     data class ToFork(val column: Int) : ComboEvent
     data class AddLane(val column: Int) : ComboEvent
-    data class ToggleLinked(val column: Int) : ComboEvent
     data class GrowLane(val column: Int, val lane: Int) : ComboEvent
     data class InsertCell(val after: Boolean) : ComboEvent
     data object ClearSelection : ComboEvent
@@ -33,7 +33,7 @@ sealed interface ComboEvent {
     data class SetNote(val text: String) : ComboEvent
     data object RemoveCell : ComboEvent
     data class RemoveAt(val at: CellAt) : ComboEvent
-    data class SwapCells(val from: CellAt, val to: CellAt) : ComboEvent
+    data class MoveCell(val from: CellAt, val to: CellAt, val side: DropSide) : ComboEvent
     data class AddFiller(val skillNo: Int) : ComboEvent
     data class RemoveFiller(val skillNo: Int) : ComboEvent
 
@@ -51,6 +51,7 @@ sealed interface ComboEvent {
     /** Из меню оверлея: включить или выключить тултипы над слотами перезарядки. */
     data object ToggleSlotTooltips : ComboEvent
     data object ToggleSlotShields : ComboEvent
+    data object ToggleSlotControls : ComboEvent
 
     /** Из меню оверлея: размер оверлея комбо в процентах; [save] — закончили двигать ползунок, сохранить. */
     data class SetComboScale(val percent: Int, val save: Boolean) : ComboEvent

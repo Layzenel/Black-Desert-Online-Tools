@@ -35,11 +35,42 @@ fun Combo.growLane(column: Int, lane: Int): ComboEdit {
     return ComboEdit(replace(column, fork.copy(lanes = lanes)), CellAt(column, lane, lanes[lane].size - 1))
 }
 
-/** Меняет местами ячейки [a] и [b]: связка и опциональность едут вместе с умением. */
-fun Combo.swap(a: CellAt, b: CellAt): ComboEdit {
-    val first = this[a] ?: return ComboEdit(this, a)
-    val second = this[b] ?: return ComboEdit(this, a)
-    return ComboEdit(put(a, second).put(b, first), b)
+/**
+ * Переносит ячейку [from] к ячейке [to] на сторону [side]: перед или после неё ([insertCell]), над или под ней —
+ * новой веткой (обычная колонка становится развилкой). Ячейка ветки, брошенная слева или справа от себя самой,
+ * выходит из развилки новой колонкой перед ней или после неё. Связка, опциональность и пометка едут вместе с умением,
+ * а место, откуда ячейку унесли, убирается как при [removeCell]: развилка из одной ветки становится обычными колонками.
+ */
+fun Combo.moveCell(from: CellAt, to: CellAt, side: DropSide): ComboEdit {
+    val cell = this[from] ?: return ComboEdit(this, from)
+    val sideways = side == DropSide.Before || side == DropSide.After
+    val leavesFork = from == to && sideways && columns[from.column] is ComboColumn.Fork
+    if ((from == to && !leavesFork) || this[to] == null) return ComboEdit(this, from)
+    val newColumn = leavesFork || (columns[to.column] is ComboColumn.Single && sideways)
+    val placed = when {
+        leavesFork -> insertColumn(if (side == DropSide.After) to.column + 1 else to.column)
+        sideways -> insertCell(to, after = side == DropSide.After)
+        else -> insertLane(to, below = side == DropSide.Below)
+    }
+    val slot = placed.selection ?: return ComboEdit(this, from)
+    val source = from.shiftedBy(slot, newColumn, newLane = !sideways)
+    return ComboEdit(placed.combo.put(slot, cell).removeCell(source).combo, null)
+}
+
+/** Вставляет ветку из одной пустой ячейки над веткой [at] или, при [below], под ней и выбирает её. */
+private fun Combo.insertLane(at: CellAt, below: Boolean): ComboEdit {
+    val lane = if (below) at.lane + 1 else at.lane
+    val lanes = columns[at.column].lanes.toMutableList().apply { add(lane, listOf(ComboCell())) }
+    return ComboEdit(replace(at.column, ComboColumn.Fork(lanes)), CellAt(at.column, lane))
+}
+
+/** Адрес этой ячейки после вставки пустой [inserted]: новой колонкой, новой веткой или в ветку. */
+private fun CellAt.shiftedBy(inserted: CellAt, newColumn: Boolean, newLane: Boolean): CellAt = when {
+    newColumn -> if (column >= inserted.column) copy(column = column + 1) else this
+    column != inserted.column -> this
+    newLane -> if (lane >= inserted.lane) copy(lane = lane + 1) else this
+    lane == inserted.lane && index >= inserted.index -> copy(index = index + 1)
+    else -> this
 }
 
 /**
@@ -112,12 +143,6 @@ fun Combo.cells(): List<Pair<CellAt, ComboCell>> = columns.flatMapIndexed { colu
 
 private fun Combo.replace(index: Int, column: ComboColumn): Combo =
     copy(columns = columns.mapIndexed { i, c -> if (i == index) column else c })
-
-/** Связывает развилку [column] с предыдущей развилкой или снимает связь; выбранная ячейка не меняется. */
-fun Combo.toggleLinked(column: Int, selection: CellAt?): ComboEdit {
-    val fork = columns.getOrNull(column) as? ComboColumn.Fork ?: return ComboEdit(this, selection)
-    return ComboEdit(replace(column, fork.copy(linked = !fork.linked)), selection)
-}
 
 /**
  * Вставляет пустую ячейку слева от [at] или, при [after], справа и выбирает её. В ветке развилки ячейка встаёт

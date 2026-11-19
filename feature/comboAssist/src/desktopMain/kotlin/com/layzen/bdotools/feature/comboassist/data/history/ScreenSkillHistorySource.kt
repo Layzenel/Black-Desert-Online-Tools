@@ -4,7 +4,9 @@ import com.layzen.bdotools.core.folder.GameFolderSettings
 import com.layzen.bdotools.feature.comboassist.data.slots.HistoryMerge
 import com.layzen.bdotools.feature.comboassist.data.slots.PlayedCharacterDetector
 import com.layzen.bdotools.feature.comboassist.data.slots.CooldownSlotWatch
+import com.layzen.bdotools.feature.comboassist.data.slots.SlotLayout
 import com.layzen.bdotools.feature.comboassist.data.slots.SlotLayoutFiles
+import com.layzen.bdotools.feature.comboassist.data.slots.slotVisibility
 import com.layzen.bdotools.feature.comboassist.domain.history.ScreenSlot
 import com.layzen.bdotools.feature.comboassist.domain.history.SkillHistorySource
 import com.layzen.bdotools.composable.overlay.isGameForeground
@@ -38,6 +40,17 @@ import kotlin.time.TimeSource
  */
 internal class ScreenSkillHistorySource : SkillHistorySource {
     override val supported: Boolean = true
+
+    /** Слоты персонажа, последнего узнанного в [playedSlots]: по ним проверяется, видны ли слоты. */
+    @Volatile private var played: SlotLayout? = null
+
+    /** Иконки умений из слотов для другого потока: [slotVisibility] сравнивает их своим [IconMatcher]. */
+    @Volatile private var slotIconsShared: Map<Int, ByteArray> = emptyMap()
+
+    override fun slotsShown(): Flow<Boolean> {
+        val log = GameFolderSettings().folder?.resolve("BDO Tools")?.resolve("comboAssist")?.resolve("slots.log")
+        return slotVisibility({ played }, { slotIconsShared }, log)
+    }
 
     /** Иконки умений из слотов всех персонажей для [playedSlots]. */
     private val slotIcons = mutableMapOf<Int, ByteArray>()
@@ -130,10 +143,14 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         val limit = Semaphore(ICON_DOWNLOADS)
         coroutineScope { missing.map { no -> async { no to limit.withPermit { icon(no) } } }.awaitAll() }
             .forEach { (no, bytes) -> bytes?.let { slotIcons[no] = it } }
-        if (missing.isNotEmpty()) slotMatcher = IconMatcher(slotIcons.toMap(), emptySet())
+        if (missing.isNotEmpty()) {
+            slotIconsShared = slotIcons.toMap()
+            slotMatcher = IconMatcher(slotIconsShared, emptySet())
+        }
         // иконки могли качаться долго: пока качались, игру могли свернуть
         if (!isGameForeground()) return@withContext null
         val layout = PlayedCharacterDetector.detect(Robot(), layouts, slotMatcher) ?: return@withContext null
+        played = layout
         val size = SLOT_UNITS * layout.uiScale / layout.resolutionHeight
         layout.slots.map { ScreenSlot(it.skillNo, it.centerX, it.centerY, size) }
     }

@@ -8,12 +8,11 @@ import com.layzen.bdotools.feature.comboassist.domain.combo.emptyCells
 import com.layzen.bdotools.feature.comboassist.domain.combo.fill
 import com.layzen.bdotools.feature.comboassist.domain.combo.growLane
 import com.layzen.bdotools.feature.comboassist.domain.combo.insertCell
-import com.layzen.bdotools.feature.comboassist.domain.combo.toggleLinked
 import com.layzen.bdotools.feature.comboassist.domain.combo.insertColumn
 import com.layzen.bdotools.feature.comboassist.domain.combo.previousSkills
 import com.layzen.bdotools.feature.comboassist.domain.combo.put
 import com.layzen.bdotools.feature.comboassist.domain.combo.removeCell
-import com.layzen.bdotools.feature.comboassist.domain.combo.swap
+import com.layzen.bdotools.feature.comboassist.domain.combo.moveCell
 import com.layzen.bdotools.feature.comboassist.domain.combo.toFork
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
@@ -37,7 +36,6 @@ internal class EditorController {
             is ComboEvent.ToFork -> combo.toFork(event.column)
             is ComboEvent.AddLane -> combo.addLane(event.column)
             is ComboEvent.GrowLane -> combo.growLane(event.column, event.lane)
-            is ComboEvent.ToggleLinked -> combo.toggleLinked(event.column, at)
             is ComboEvent.InsertCell -> at?.let { combo.insertCell(it, event.after) } ?: return state
             is ComboEvent.ClearSelection -> return refresh(state.copy(selection = null), skills)
             is ComboEvent.ToggleChain -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(chain = !it.chain)), a) } } ?: return state
@@ -45,7 +43,7 @@ internal class EditorController {
             is ComboEvent.SetNote -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(note = event.text)), a) } } ?: return state
             is ComboEvent.RemoveCell -> at?.let { combo.removeCell(it) } ?: return state
             is ComboEvent.RemoveAt -> combo.removeCell(event.at)
-            is ComboEvent.SwapCells -> combo.swap(event.from, event.to)
+            is ComboEvent.MoveCell -> combo.moveCell(event.from, event.to, event.side)
             is ComboEvent.AddFiller -> ComboEdit(combo.copy(fillers = (combo.fillers + event.skillNo).distinct()), at)
             is ComboEvent.RemoveFiller -> ComboEdit(combo.copy(fillers = combo.fillers - event.skillNo), at)
             else -> return state
