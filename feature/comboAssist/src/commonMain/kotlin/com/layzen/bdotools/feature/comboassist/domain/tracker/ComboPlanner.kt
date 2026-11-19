@@ -7,6 +7,8 @@ import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 /**
  * Подсказка: что жать дальше и когда. На развилке выбирает ветку, которая откатится раньше всех к моменту, когда до
  * её умений дойдёт очередь; связку оценивает целиком, чтобы не начинать её, если продолжения не успеют откатиться.
+ * Ветки, которые откатятся почти одновременно (разница не больше шага), идут по очереди: первой — та, что дольше
+ * всех не проходилась.
  * Опциональные шаги не подсказывает.
  *
  * @property graph граф комбо
@@ -48,8 +50,8 @@ class ComboPlanner(private val graph: ComboGraph, private val skills: ComboSkill
         val ready = state.readyAt.toMutableMap()
         var t = nowMs
         var prev = if (state.forced != null || state.rescue != null) null else current(state)
-        val lanes = state.forkLanes.toMutableMap()
-        var candidates = followLinked(candidates(state), lanes)
+        val used = state.usedAt.toMutableMap()
+        var candidates = candidates(state)
         state.rescue?.let { rescue ->
             if (!rescue.armed) {
                 t += ((ready[rescue.entry] ?: 0) - t).coerceAtLeast(0)
@@ -60,26 +62,19 @@ class ComboPlanner(private val graph: ComboGraph, private val skills: ComboSkill
             candidates = listOf(graph[rescue.target])
         }
         while (candidates.isNotEmpty() && path.size < settings.predictLimit) {
-            val (node, wait) = pick(candidates, t, ready)
+            val (node, wait) = pick(candidates, t, ready, used)
             if (node.optional) break
             if (prev != null && prev.wrapsTo(node) && path.isNotEmpty()) break
             t += wait
             path += PlannedStep(node.skillNo, t, node)
-            if (node.isFork) lanes[node.at.column] = node.at.lane
+            used[node.id] = t
             ready[node.skillNo] = t + skills.cooldown(node.skillNo)
             t += settings.stepMs
             prev = node
-            candidates = followLinked(node.next.filter { it.id !in state.burned }, lanes)
+            candidates = node.next.filter { it.id !in state.burned }
         }
         return path
     }
-
-    /**
-     * Из шагов связанных развилок — только ветки, совпадающей с пройденной в предыдущей развилке ([lanes]: колонка →
-     * ветка). Если такой ветки нет (в развилках разное число веток) — все шаги.
-     */
-    fun followLinked(nodes: List<ComboNode>, lanes: Map<Int, Int>): List<ComboNode> =
-        nodes.filter { node -> node.follows?.let { lanes[it] }?.let { it == node.at.lane } ?: true }.ifEmpty { nodes }
 
     /** Ожидание, чтобы пройти от [node] до конца его ветки и связки при старте в [startMs]. */
     fun chainWait(node: ComboNode, startMs: Long, ready: Map<Int, Long>): Long {
@@ -101,9 +96,13 @@ class ComboPlanner(private val graph: ComboGraph, private val skills: ComboSkill
         return fillers.firstOrNull { it !in graph.skills && !skills[it].onlyAfter && state.cooldownLeft(it, nowMs) == 0L }
     }
 
-    private fun pick(candidates: List<ComboNode>, t: Long, ready: Map<Int, Long>): Pair<ComboNode, Long> {
+    /** Шаг с наименьшим ожиданием; из почти равных (не дольше шага сверх лучшего) — давно не пройденный. */
+    private fun pick(candidates: List<ComboNode>, t: Long, ready: Map<Int, Long>, used: Map<Int, Long>): Pair<ComboNode, Long> {
         val live = candidates.filter { !it.optional }.ifEmpty { candidates }
-        return live.map { it to chainWait(it, t, ready) }.minWith(compareBy<Pair<ComboNode, Long>> { it.second }.thenBy { it.first.id })
+        val waits = live.map { it to chainWait(it, t, ready) }
+        val best = waits.minOf { it.second }
+        return waits.filter { it.second <= best + settings.stepMs }
+            .minWith(compareBy<Pair<ComboNode, Long>> { used[it.first.id] ?: Long.MIN_VALUE }.thenBy { it.first.id })
     }
 
     private companion object {

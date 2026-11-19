@@ -5,6 +5,7 @@ import com.layzen.bdotools.core.skill.domain.SkillStance
 import com.layzen.bdotools.feature.comboassist.domain.combo.CellAt
 import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import com.layzen.bdotools.feature.comboassist.domain.history.ScreenSlot
+import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.feature.comboassist.domain.skill.SkillProtection
 import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
 
@@ -31,7 +32,8 @@ import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
  * @property trackerMovable трекер в режиме перемещения: виден всегда и тянется мышью
  * @property schemaMovable окно схемы комбо в режиме перемещения: видно всегда и тянется мышью
  * @property slots слоты перезарядок персонажа, пока идёт слежение: при наведении на них — тултип умения
- * @property slotProtections защита умений в слотах для щитов на них (загружается, только пока щиты включены)
+ * @property slotProtections защита умений в слотах для щитов на них (загружается, только пока щиты или контроли включены)
+ * @property slotControls контроли умений в слотах для значков под ними (загружаются вместе с [slotProtections])
  * @property settings настройки окон поверх игры
  * @property importFailed последний выбранный для импорта файл — не файл комбо
  * @property playedClass класс персонажа, которым играют (по слотам на экране); `null` — ещё не узнан
@@ -58,6 +60,7 @@ data class ComboState(
     val schemaMovable: Boolean = false,
     val slots: List<ScreenSlot> = emptyList(),
     val slotProtections: Map<Int, Set<SkillProtection>> = emptyMap(),
+    val slotControls: Map<Int, Set<CrowdControl>> = emptyMap(),
     val settings: OverlaySettings = OverlaySettings(),
     val importFailed: Boolean = false,
     val playedClass: String? = null,

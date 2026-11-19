@@ -13,8 +13,10 @@ package com.layzen.bdotools.feature.comboassist.domain.tracker
  * @property forced шаг, который подсказывается следующим вместо обычного: повтор связки с запуска
  * @property rescue вход в оборванную связку через другое умение
  * @property lastUseMs когда было последнее применённое умение
+ * @property lastComboMs когда было последнее умение комбо или филлер: от него считается простой
  * @property lane ветка развилки (строка), по которой игрок шёл последней: при неоднозначности трекер держится её
- * @property forkLanes ветки развилок, пройденные в этом проходе (колонка → ветка): по ним идут связанные развилки
+ * @property usedAt когда шаг проходили последний раз (мс), по номеру шага; не сбрасывается между проходами — по нему
+ *   ветки развилки идут по очереди
  */
 class TrackerState {
     var positions: List<Int> = emptyList(); internal set
@@ -27,8 +29,9 @@ class TrackerState {
     var forced: Int? = null; internal set
     var rescue: Rescue? = null; internal set
     var lastUseMs: Long? = null; internal set
+    var lastComboMs: Long? = null; internal set
     var lane: Int? = null; internal set
-    val forkLanes: MutableMap<Int, Int> = mutableMapOf()
+    val usedAt: MutableMap<Int, Long> = mutableMapOf()
 
     /** Комбо ещё не начато или начато заново. */
     val atStart: Boolean get() = positions.isEmpty()

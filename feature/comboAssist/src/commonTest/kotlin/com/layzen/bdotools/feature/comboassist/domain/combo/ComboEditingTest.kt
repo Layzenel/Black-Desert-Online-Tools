@@ -40,12 +40,67 @@ class ComboEditingTest {
         assertEquals(listOf(ComboColumn.Single(ComboCell(1)), ComboColumn.Single(ComboCell(2))), result.columns)
     }
 
+    private fun row(vararg skills: Int) = Combo("c", "c", "striker", skills.map { ComboColumn.Single(ComboCell(it)) })
+
+    private fun Combo.skillRows() = columns.map { column -> column.lanes.map { lane -> lane.map { it.skillNo } } }
+
     @Test
-    fun swapMovesFlagsWithSkill() {
-        val combo = Combo("c", "c", "striker", listOf(ComboColumn.Single(ComboCell(1, chain = true)), ComboColumn.Single(ComboCell(2))))
-        val swapped = combo.swap(CellAt(0), CellAt(1)).combo
-        assertEquals(ComboCell(2), swapped[CellAt(0)])
-        assertEquals(ComboCell(1, chain = true), swapped[CellAt(1)])
+    fun moveAfterPutsCellBehindTargetWithItsFlags() {
+        val combo = Combo("c", "c", "striker", listOf(ComboColumn.Single(ComboCell(1, chain = true)), ComboColumn.Single(ComboCell(2)), ComboColumn.Single(ComboCell(3))))
+        val moved = combo.moveCell(CellAt(0), CellAt(1), DropSide.After).combo
+        assertEquals(listOf(2, 1, 3), moved.columns.map { (it as ComboColumn.Single).cell.skillNo })
+        assertEquals(ComboCell(1, chain = true), moved[CellAt(1)])
+    }
+
+    @Test
+    fun moveBeforeGoesLeftOfTarget() {
+        assertEquals(listOf(listOf(listOf(3)), listOf(listOf(1)), listOf(listOf(2))), row(1, 2, 3).moveCell(CellAt(2), CellAt(0), DropSide.Before).combo.skillRows())
+    }
+
+    @Test
+    fun moveBelowSingleMakesFork() {
+        val moved = row(1, 2, 3).moveCell(CellAt(2), CellAt(1), DropSide.Below).combo
+        assertEquals(listOf(listOf(listOf(1)), listOf(listOf(2), listOf(3))), moved.skillRows())
+    }
+
+    @Test
+    fun moveAboveAddsLaneToForkAndRemovesEmptySource() {
+        val combo = Combo("c", "c", "striker", listOf(ComboColumn.Fork(listOf(listOf(ComboCell(1)), listOf(ComboCell(2)))), ComboColumn.Single(ComboCell(3))))
+        val moved = combo.moveCell(CellAt(1), CellAt(0, 0), DropSide.Above).combo
+        assertEquals(listOf(listOf(listOf(3), listOf(1), listOf(2))), moved.skillRows())
+    }
+
+    @Test
+    fun forkCellDroppedBesideItselfLeavesFork() {
+        val combo = Combo("c", "c", "striker", listOf(ComboColumn.Fork(listOf(listOf(ComboCell(1)), listOf(ComboCell(2)))), ComboColumn.Single(ComboCell(3))))
+        val moved = combo.moveCell(CellAt(0, 1), CellAt(0, 1), DropSide.After).combo
+        assertEquals(listOf(listOf(listOf(1)), listOf(listOf(2)), listOf(listOf(3))), moved.skillRows())
+    }
+
+    @Test
+    fun forkCellDroppedBesideOtherLaneClosesFork() {
+        val combo = Combo("c", "c", "striker", listOf(ComboColumn.Fork(listOf(listOf(ComboCell(1)), listOf(ComboCell(2))))))
+        val moved = combo.moveCell(CellAt(0, 0), CellAt(0, 1), DropSide.Before).combo
+        assertEquals(listOf(listOf(listOf(1)), listOf(listOf(2))), moved.skillRows())
+    }
+
+    @Test
+    fun singleCellOnItselfDoesNothing() {
+        assertEquals(row(1, 2).skillRows(), row(1, 2).moveCell(CellAt(0), CellAt(0), DropSide.After).combo.skillRows())
+    }
+
+    @Test
+    fun moveInsideLaneReorders() {
+        val combo = Combo("c", "c", "striker", listOf(ComboColumn.Fork(listOf(listOf(ComboCell(1), ComboCell(2)), listOf(ComboCell(3))))))
+        val moved = combo.moveCell(CellAt(0, 0, 0), CellAt(0, 0, 1), DropSide.After).combo
+        assertEquals(listOf(listOf(listOf(2, 1), listOf(3))), moved.skillRows())
+    }
+
+    @Test
+    fun movingLastButOneLaneOutUnwrapsFork() {
+        val combo = Combo("c", "c", "striker", listOf(ComboColumn.Fork(listOf(listOf(ComboCell(1)), listOf(ComboCell(2))))))
+        val moved = combo.moveCell(CellAt(0, 1), CellAt(0, 0), DropSide.Before).combo
+        assertEquals(listOf(listOf(listOf(2)), listOf(listOf(1))), moved.skillRows())
     }
 
     @Test

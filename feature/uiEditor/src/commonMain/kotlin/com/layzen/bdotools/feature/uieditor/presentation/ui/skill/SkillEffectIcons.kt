@@ -25,6 +25,7 @@ import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import com.layzen.bdotools.uikit.icons.icon
 import org.jetbrains.compose.resources.stringResource
 
 /**

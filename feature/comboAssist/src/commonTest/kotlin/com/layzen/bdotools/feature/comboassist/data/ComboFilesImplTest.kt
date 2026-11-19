@@ -18,7 +18,7 @@ class ComboFilesImplTest {
 
     private val combo = Combo(
         "a1", "Loop: PvE", "dosa",
-        columns = listOf(ComboColumn.Fork(listOf(listOf(ComboCell(1)), listOf(ComboCell(2)))), ComboColumn.Fork(listOf(listOf(ComboCell(3)), listOf(ComboCell(4))), linked = true)),
+        columns = listOf(ComboColumn.Fork(listOf(listOf(ComboCell(1)), listOf(ComboCell(2)))), ComboColumn.Fork(listOf(listOf(ComboCell(3)), listOf(ComboCell(4))))),
         fillers = listOf(5),
     )
 

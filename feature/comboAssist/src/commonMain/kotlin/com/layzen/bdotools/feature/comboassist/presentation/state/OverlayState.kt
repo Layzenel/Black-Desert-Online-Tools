@@ -15,6 +15,7 @@ import com.layzen.bdotools.feature.comboassist.domain.tracker.TrackerEvent
  * @property pass номер прохода; 0 — комбо ещё не начато
  * @property cooldownLeft сколько осталось до отката, мс, по номеру навыка (только умения на перезарядке)
  * @property filler умение-филлер на время ожидания или `null`
+ * @property optional опциональные умения, которые можно вставить сейчас: трекер показывает их отдельно от пути
  * @property previousSkill последнее применённое умение: по нему выбирается строка команды следующего
  * @property event последнее событие трекера, пока оно свежее
  * @property nowMs момент снимка
@@ -28,6 +29,7 @@ data class OverlayState(
     val pass: Int = 0,
     val cooldownLeft: Map<Int, Long> = emptyMap(),
     val filler: Int? = null,
+    val optional: List<Int> = emptyList(),
     val previousSkill: Int? = null,
     val event: TrackerEvent? = null,
     val nowMs: Long = 0,

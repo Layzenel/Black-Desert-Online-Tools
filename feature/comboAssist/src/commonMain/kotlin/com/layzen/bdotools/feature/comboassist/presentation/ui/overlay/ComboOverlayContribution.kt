@@ -13,6 +13,8 @@ import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_tab_combo
+import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_controls
+import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_controls_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shields
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shields_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_tooltips
@@ -69,10 +71,15 @@ private fun ComboOverlayWindows(viewModel: ComboViewModel) {
         }
     }
     if (state.settings.slotTooltips) SlotTooltipWindow(state.slots, state.skills, viewModel::details)
-    if (state.settings.slotShields) SlotShieldsWindow(state.slots, state.slotProtections)
+    if (state.settings.slotShields || state.settings.slotControls) {
+        val slotsShown by viewModel.slotsShown.collectAsState()
+        val protections = if (state.settings.slotShields) state.slotProtections else emptyMap()
+        val controls = if (state.settings.slotControls) state.slotControls else emptyMap()
+        SlotShieldsWindow(state.slots, protections, controls, slotsShown)
+    }
 }
 
-/** Пункт общей вкладки «Настройки»: тултипы над слотами перезарядки и щиты защиты умений на слотах. */
+/** Пункт общей вкладки «Настройки»: тултипы над слотами перезарядки, щиты защиты и значки контролей на слотах. */
 @Composable
 private fun SettingsSection(viewModel: ComboViewModel) {
     val state by viewModel.state.collectAsState()
@@ -86,4 +93,9 @@ private fun SettingsSection(viewModel: ComboViewModel) {
         description = stringResource(Res.string.combo_setting_slot_shields_description),
     )
     ProtectionLegend()
+    ToggleSwitch(
+        state.settings.slotControls, { viewModel.onEvent(ComboEvent.ToggleSlotControls) },
+        label = stringResource(Res.string.combo_setting_slot_controls),
+        description = stringResource(Res.string.combo_setting_slot_controls_description),
+    )
 }

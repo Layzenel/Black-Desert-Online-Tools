@@ -32,13 +32,8 @@ internal class TrainingController {
         lastEvent = null
     }
 
-    /** Игрок применил [skillNo]. На перезарядке оно в игре не выходит — в трекер не попадает. */
-    fun press(skillNo: Int) {
-        val tracker = tracker ?: return
-        val now = nowMs()
-        if (tracker.state.cooldownLeft(skillNo, now) > 0) return
-        record(tracker.onSkill(skillNo, now))
-    }
+    /** Игрок применил [skillNo] в предпросмотре: засчитывается всегда, даже если по расчёту оно ещё на перезарядке. */
+    fun press(skillNo: Int) { tracker?.let { record(it.onSkill(skillNo, nowMs())) } }
 
     /** Умение [skillNo] появилось в истории умений игры: оно точно вышло, перезарядку не проверяем. */
     fun fromGame(skillNo: Int) { tracker?.let { record(it.onSkill(skillNo, nowMs())) } }
@@ -62,6 +57,7 @@ internal class TrainingController {
             pass = if (state.atStart) 0 else state.pass,
             cooldownLeft = state.readyAt.mapValues { (it.value - now).coerceAtLeast(0) }.filterValues { it > 0 },
             filler = tracker.planner.filler(state, combo?.fillers.orEmpty(), now, wait),
+            optional = tracker.planner.candidates(state).filter { it.optional }.map { it.skillNo }.distinct(),
             previousSkill = state.history.lastOrNull(),
             event = lastEvent?.takeIf { now - lastEventMs < EVENT_FRESH_MS },
             nowMs = now,

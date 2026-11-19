@@ -8,6 +8,7 @@ package com.layzen.bdotools.feature.comboassist.domain.settings
  * @property comboOpacity непрозрачность оверлея комбо в процентах: 100 — непрозрачный
  * @property schemaShown вместе с трекером показывать отдельное окно со схемой комбо
  * @property slotShields показывать на слотах перезарядки щиты защиты умения в PvP: устойчивость, защита спереди, неуязвимость
+ * @property slotControls показывать под иконкой слота перезарядки значки контролей умения в PvP
  */
 data class OverlaySettings(
     val slotTooltips: Boolean = true,
@@ -15,4 +16,5 @@ data class OverlaySettings(
     val comboOpacity: Int = 100,
     val schemaShown: Boolean = false,
     val slotShields: Boolean = false,
+    val slotControls: Boolean = false,
 )

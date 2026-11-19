@@ -20,6 +20,9 @@ is remembered.
   to the slot in game.
 - "Show the skill PvP protection on cooldown slots" — shields in the top-right corner of the icon: yellow — Super
   Armor, blue — Forward Guard, red — Invincible. Protection against monsters only (PvE) is not shown.
+  While the slots are covered by a game window (skills, settings) or the UI is hidden, the shields are hidden too.
+- "Show the skill PvP crowd controls on cooldown slots" — crowd control icons (stun, knockdown and so on) at the
+  bottom of the icon, as in game. Crowd controls against monsters only are not shown; they hide together with the shields.
 
 **"Combo"** — saved combos: "Show combo", "Hide combo" and "Edit combo" (opens the app).
 How to build a combo — [Combo Assist](comboAssist.en.md).

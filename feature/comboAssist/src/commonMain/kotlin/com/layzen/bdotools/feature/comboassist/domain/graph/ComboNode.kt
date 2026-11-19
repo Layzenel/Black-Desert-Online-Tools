@@ -12,7 +12,6 @@ import com.layzen.bdotools.feature.comboassist.domain.combo.CellAt
  * @property chain связка с предыдущим шагом
  * @property optional опциональный шаг
  * @property label подпись ячейки («4.1»)
- * @property follows колонка предыдущей развилки, если развилка этой ячейки с ней связана: ветка должна совпасть
  */
 class ComboNode(
     val id: Int,
@@ -22,7 +21,6 @@ class ComboNode(
     val chain: Boolean,
     val optional: Boolean,
     val label: String,
-    val follows: Int? = null,
 ) {
     /** Шаги, которые можно сделать после этого. */
     val next: MutableList<ComboNode> = mutableListOf()

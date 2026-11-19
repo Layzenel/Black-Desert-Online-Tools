@@ -21,7 +21,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
@@ -45,6 +47,9 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     /** Состояние экрана. */
     val state: StateFlow<ComboState> = mutableState.asStateFlow()
+
+    /** Видны ли слоты перезарядок на экране игры; проверяется, только пока на это подписаны (щиты включены). */
+    val slotsShown: StateFlow<Boolean> = interactor.slotsShown().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
 
     /** Может ли платформа следить за игрой и показывать оверлей поверх неё. */
     val canWatchGame: Boolean get() = interactor.canWatchGame
@@ -99,6 +104,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             is ComboEvent.ShowCombo -> showCombo(event.id)
             ComboEvent.ToggleSlotTooltips -> updateSettings { it.copy(slotTooltips = !it.slotTooltips) }
             ComboEvent.ToggleSlotShields -> updateSettings { it.copy(slotShields = !it.slotShields) }.also { loadSlotProtections() }
+            ComboEvent.ToggleSlotControls -> updateSettings { it.copy(slotControls = !it.slotControls) }.also { loadSlotProtections() }
             is ComboEvent.SetComboScale -> updateSettings(event.save) { it.copy(comboScale = event.percent) }
             is ComboEvent.SetComboOpacity -> updateSettings(event.save) { it.copy(comboOpacity = event.percent) }
             is ComboEvent.SetOverlayStyle -> changeOverlayLook { it.copy(overlayStyle = event.style) }
@@ -154,16 +160,19 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
     }
 
     /**
-     * Защита умений в слотах для щитов на них: только пока щиты включены и только тех умений, чьей защиты ещё нет.
+     * Защита и контроли умений в слотах для значков на них: только пока щиты или контроли включены и только тех
+     * умений, чьих данных ещё нет.
      * Не скачалось — попробуем при следующей проверке слотов.
      */
     private fun loadSlotProtections() {
         val s = mutableState.value
-        if (!s.settings.slotShields) return
+        if (!s.settings.slotShields && !s.settings.slotControls) return
         s.slots.map { it.skillNo }.distinct().filter { it !in s.slotProtections }.forEach { skillNo ->
             viewModelScope.launch {
-                val protections = interactor.skillTraits(skillNo)?.protections ?: return@launch
-                mutableState.update { it.copy(slotProtections = it.slotProtections + (skillNo to protections)) }
+                val traits = interactor.skillTraits(skillNo) ?: return@launch
+                mutableState.update {
+                    it.copy(slotProtections = it.slotProtections + (skillNo to traits.protections), slotControls = it.slotControls + (skillNo to traits.controls))
+                }
             }
         }
     }

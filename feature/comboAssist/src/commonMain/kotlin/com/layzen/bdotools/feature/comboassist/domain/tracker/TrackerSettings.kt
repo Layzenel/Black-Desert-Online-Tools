@@ -5,7 +5,7 @@ package com.layzen.bdotools.feature.comboassist.domain.tracker
  *
  * @property stepMs сколько времени в среднем занимает один шаг комбо
  * @property chainWindowMs сколько можно медлить до продолжения связки, пока оно ещё выходит
- * @property idleMs простой, после которого комбо начинается сначала
+ * @property idleMs сколько можно не жать умения комбо и филлеры сверх ожидания перезарядки — потом комбо начинается сначала
  * @property offLimit сколько умений не из комбо подряд — и комбо начинается сначала
  * @property skipWeight во сколько шагов по времени обходится пропуск одного шага
  * @property fillerMinMs меньше этого ожидания филлер не предлагается
@@ -15,7 +15,7 @@ package com.layzen.bdotools.feature.comboassist.domain.tracker
 data class TrackerSettings(
     val stepMs: Long = 800,
     val chainWindowMs: Long = 1500,
-    val idleMs: Long = 8000,
+    val idleMs: Long = 5000,
     val offLimit: Int = 3,
     val skipWeight: Double = 1.5,
     val fillerMinMs: Long = 600,

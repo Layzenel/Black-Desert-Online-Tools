@@ -14,16 +14,3 @@ fun Combo.chainProblems(skills: ComboSkills): List<CellAt> = cells().mapNotNull 
 /** Сколько в комбо пустых ячеек: оверлей их пропускает. */
 fun Combo.emptyCells(): Int = cells().count { it.second.skillNo == null }
 
-/**
- * Связанные развилки, у которых веток не столько же, сколько у предыдущей развилки: где ветки не совпадут,
- * подсказка выберет ветку по перезарядкам. Номера колонок.
- */
-fun Combo.linkedForkProblems(): List<Int> {
-    var previous: ComboColumn.Fork? = null
-    return columns.withIndex().mapNotNull { (index, column) ->
-        val fork = column as? ComboColumn.Fork ?: return@mapNotNull null
-        val problem = index.takeIf { fork.linked && previous != null && previous!!.lanes.size != fork.lanes.size }
-        previous = fork
-        problem
-    }
-}

@@ -19,9 +19,6 @@ sealed interface ComboColumn {
         override val lanes: List<List<ComboCell>> get() = listOf(listOf(cell))
     }
 
-    /**
-     * Развилка: ветки друг под другом, игрок проходит одну из них. [linked] — ветка та же, что в предыдущей развилке
-     * (вошёл в 1.2 — дальше 4.2): развилки связаны, хотя между ними общие шаги.
-     */
-    data class Fork(override val lanes: List<List<ComboCell>>, val linked: Boolean = false) : ComboColumn
+    /** Развилка: ветки друг под другом, игрок проходит одну из них. */
+    data class Fork(override val lanes: List<List<ComboCell>>) : ComboColumn
 }
