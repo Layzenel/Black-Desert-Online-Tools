@@ -39,8 +39,6 @@ sealed interface ComboEvent {
 
     data class SetMode(val mode: ComboMode) : ComboEvent
     data class Press(val skillNo: Int) : ComboEvent
-    data object ToggleTrackerMove : ComboEvent
-    data object ToggleSchemaMove : ComboEvent
     data object ToggleSchema : ComboEvent
     data object ToggleVertical : ComboEvent
     data class SetOverlayStyle(val style: OverlayStyle) : ComboEvent

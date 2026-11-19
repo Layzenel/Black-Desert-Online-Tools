@@ -15,7 +15,6 @@ import com.layzen.bdotools.feature.gameinfo.presentation.GameInfoViewModel
 import com.layzen.bdotools.feature.gameinfo.presentation.event.GameInfoEvent
 import com.layzen.bdotools.feature.gameinfo.resources.Res
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping
-import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_move
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_needs_admin
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_opacity
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_scale
@@ -47,12 +46,12 @@ internal fun gameInfoOverlayContribution(): OverlayContribution = OverlayContrib
 private fun PingWindow(viewModel: GameInfoViewModel) {
     val state by viewModel.state.collectAsState()
     if (!viewModel.supported || !state.settings.shown) return
-    GameOverlayWindow(PING_WINDOW, OverlayAnchor.TopRight, GameInfoDimens.pingWindow, state.movable) {
+    GameOverlayWindow(PING_WINDOW, OverlayAnchor.TopRight, GameInfoDimens.pingWindow) {
         ScaledOverlay(state.settings.scale, state.settings.opacity) { PingBadge(state.ping) }
     }
 }
 
-/** Вкладка «Информация»: пинг игры — показ, перемещение, размер и непрозрачность. */
+/** Вкладка «Информация»: пинг игры — показ, размер и непрозрачность. */
 @Composable
 private fun InfoTab(viewModel: GameInfoViewModel) {
     val state by viewModel.state.collectAsState()
@@ -63,7 +62,6 @@ private fun InfoTab(viewModel: GameInfoViewModel) {
     // без прав администратора задержку нового подключения игры не собрать: пинг пустой, а почему — здесь
     if (settings.shown && state.needsAdmin) WarningText(stringResource(Res.string.game_info_ping_needs_admin))
     if (!settings.shown) return
-    ToggleSwitch(state.movable, { onEvent(GameInfoEvent.ToggleMove) }, label = stringResource(Res.string.game_info_ping_move))
     val scale = settings.scale.coerceIn(OverlayScalePercent)
     SectionHeader(stringResource(Res.string.game_info_ping_scale, scale))
     ValueSlider(

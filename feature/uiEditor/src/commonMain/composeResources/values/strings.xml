@@ -62,13 +62,6 @@
     <string name="slots_skill_hide_absolute">Скрыть умения «Абсолют»</string>
     <string name="slots_skill_hide_pve_controls">Скрыть PvE контроли</string>
     <string name="slots_skill_slot_number_hint">Номер слота, в котором установлено умение</string>
-    <string name="slots_control_stun">Оглушение</string>
-    <string name="slots_control_knockdown">Нокдаун</string>
-    <string name="slots_control_bound">Опрокидывание</string>
-    <string name="slots_control_stiffness">Ошеломление</string>
-    <string name="slots_control_floating">Подбрасывание</string>
-    <string name="slots_control_knockback">Отталкивание</string>
-    <string name="slots_control_freezing">Заморозка</string>
     <string name="slots_control_pve_only">%1$s (недоступно в PvP)</string>
     <string name="slots_defense_super_armor">Устойчивость</string>
     <string name="slots_defense_invincible">Невредимость</string>

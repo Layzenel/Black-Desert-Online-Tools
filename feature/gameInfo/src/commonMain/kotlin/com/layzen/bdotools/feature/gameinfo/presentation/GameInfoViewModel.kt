@@ -41,7 +41,6 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
     fun onEvent(event: GameInfoEvent) {
         when (event) {
             GameInfoEvent.TogglePing -> change(save = true) { it.copy(shown = !it.shown) }.also { updateWatching() }
-            GameInfoEvent.ToggleMove -> mutableState.update { it.copy(movable = !it.movable) }
             is GameInfoEvent.SetScale -> change(event.save) { it.copy(scale = event.percent) }
             is GameInfoEvent.SetOpacity -> change(event.save) { it.copy(opacity = event.percent) }
         }

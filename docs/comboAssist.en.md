@@ -4,8 +4,7 @@
 
 Your own combo for a class and an in-game hint showing which skill to press next.
 
-The editor also works on the website, but only the Windows app can watch the game and show the hint on top of it
-(see [Overlay](overlay.en.md)).
+The tool is in the Windows app only; the website does not have it. For the in-game hint, see [Overlay](overlay.en.md).
 
 ## Editor
 

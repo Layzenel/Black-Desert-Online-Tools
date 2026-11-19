@@ -40,7 +40,6 @@ internal object ComboDimens {
     val slotTooltipWidth = 420.dp
     val slotTooltipGap = 6.dp
     val slotShieldOutline = 1.dp
-    val shieldIcon = DpSize(13.dp, 15.dp)
     val nextCardHeight = 40.dp
     val focusIcon = 60.dp
     val focusUpcomingIcon = 26.dp
@@ -55,5 +54,6 @@ internal object ComboDimens {
     val dropMark = 4.dp
     val dropMarkOutset = 6.dp
     val dropSlop = 14.dp
+    val markTooltipOffset = 16.dp
     val optionalDash = 4.dp
 }

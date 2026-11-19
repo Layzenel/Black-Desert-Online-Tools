@@ -15,5 +15,5 @@ internal fun Destination.toFragment(): String = when (this) {
 internal fun destinationFromFragment(fragment: String): Destination? {
     val name = getBrowserHistoryFragmentName(fragment) ?: return null
     if (name == SHOWCASE_ROUTE) return Destination.Showcase
-    return AppTab.entries.firstOrNull { it.route == name }?.let(Destination::Tab)
+    return AppTab.available.firstOrNull { it.route == name }?.let(Destination::Tab)
 }

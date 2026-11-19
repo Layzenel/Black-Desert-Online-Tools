@@ -3,13 +3,15 @@ package com.layzen.bdotools.feature.comboassist.data.slots
 import com.layzen.bdotools.feature.comboassist.data.history.IconMatcher
 import com.layzen.bdotools.feature.comboassist.data.history.WatchLog
 import com.layzen.bdotools.feature.comboassist.data.history.captureScreen
+import com.layzen.bdotools.composable.overlay.isCursorShown
+import java.awt.MouseInfo
 import java.awt.Robot
 
 /**
  * Слоты перезарядок во время слежения: какие умения только что ушли на перезарядку. Раскладка — того персонажа,
  * которого видно на экране ([PlayedCharacterDetector]), а не угаданного по файлам: у двух персонажей одного класса
  * слоты бывают разложены по-разному, и чужая раскладка выдала бы не то умение. Персонаж проверяется раз в
- * [DETECT_MS]; пока он не узнан, слоты молчат.
+ * [DETECT_MS]; пока он не узнан, слоты молчат. Пока курсор показан над слотами, слоты тоже молчат.
  *
  * @property layouts слоты всех персонажей аккаунта
  * @property matcher иконки умений для узнавания персонажа
@@ -34,7 +36,22 @@ internal class CooldownSlotWatch(
         val current = layout ?: return emptyList()
         val slots = geometry ?: return emptyList()
         val shot = captureScreen(robot, slots.logicalArea, slots.area.width, slots.area.height)
-        return darkening?.onFrame(slots.saturations(shot)).orEmpty().map { current.slots[it].skillNo }
+        val gone = darkening?.onFrame(slots.saturations(shot)).orEmpty()
+        if (gone.isNotEmpty() && pointerOverSlots(slots)) {
+            gone.forEach { log.line(nowMs, "slot ${current.slots[it].skillNo} darkened under the cursor, ignored") }
+            return emptyList()
+        }
+        return gone.map { current.slots[it].skillNo }
+    }
+
+    /**
+     * Курсор показан и стоит над слотами: тултипы и подсказки у курсора закрывают соседние слоты, а снимок экрана видит
+     * их вместе с игрой — потемневший слот тогда не значит, что умение применили. В бою игра курсор прячет.
+     */
+    private fun pointerOverSlots(slots: SlotGeometry): Boolean {
+        if (!isCursorShown()) return false
+        val pointer = MouseInfo.getPointerInfo()?.location ?: return false
+        return slots.logicalArea.contains(pointer)
     }
 
     private fun detect(robot: Robot, nowMs: Long) {

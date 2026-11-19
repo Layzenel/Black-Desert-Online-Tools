@@ -17,14 +17,22 @@ import org.jetbrains.compose.resources.StringResource
  * Вкладки верхней навигации. [route] попадает в адрес страницы: `#portraits`.
  * [fillsScreen] — вкладка занимает всё окно под навигацией без внешних отступов (редактор с меню слева)
  * и прокручивает свои части сама, а не страницей. [icon] — белый силуэт слева от подписи вкладки.
+ * [desktopOnly] — вкладка только в настольной версии: на сайте её нет ни в навигации, ни по адресу.
  */
 enum class AppTab(
     val route: String,
     val title: StringResource,
     val icon: DrawableResource,
     val fillsScreen: Boolean = false,
+    val desktopOnly: Boolean = false,
 ) {
     Portraits("portraits", Res.string.tab_portraits, Res.drawable.tab_portraits_icon),
     Slots("slots", Res.string.tab_slots, Res.drawable.tab_slots_icon, fillsScreen = true),
-    Combo("combo", Res.string.tab_combo, Res.drawable.tab_combo_icon, fillsScreen = true)
+    Combo("combo", Res.string.tab_combo, Res.drawable.tab_combo_icon, fillsScreen = true, desktopOnly = true);
+
+    companion object {
+        /** Вкладки этой платформы: на сайте — без [desktopOnly]. */
+        val available: List<AppTab> get() = entries.filter { isDesktopApp || !it.desktopOnly }
+    }
+
 }

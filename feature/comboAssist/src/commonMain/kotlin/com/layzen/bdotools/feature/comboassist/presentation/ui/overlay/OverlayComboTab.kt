@@ -25,12 +25,10 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_menu_edit
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_empty
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_hide
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_show
-import com.layzen.bdotools.feature.comboassist.resources.combo_tracker_move
 import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_vertical
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_scale
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_schema
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_tracker
-import com.layzen.bdotools.feature.comboassist.resources.combo_schema_move
 import com.layzen.bdotools.feature.comboassist.resources.combo_schema_show
 import com.layzen.bdotools.feature.comboassist.resources.combo_tracker_limits
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_opacity
@@ -66,11 +64,9 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
     state.combo?.let { combo ->
         OptionGroup(OverlayStyle.entries, combo.overlayStyle, { onEvent(ComboEvent.SetOverlayStyle(it)) }, { stringResource(it.title) }, Modifier.fillMaxWidth())
     }
-    ToggleSwitch(state.trackerMovable, { onEvent(ComboEvent.ToggleTrackerMove) }, label = stringResource(Res.string.combo_tracker_move))
     DescriptionText(stringResource(Res.string.combo_tracker_limits))
     SectionHeader(stringResource(Res.string.combo_panel_schema))
     ToggleSwitch(state.settings.schemaShown, { onEvent(ComboEvent.ToggleSchema) }, label = stringResource(Res.string.combo_schema_show))
-    ToggleSwitch(state.schemaMovable, { onEvent(ComboEvent.ToggleSchemaMove) }, label = stringResource(Res.string.combo_schema_move))
     state.combo?.let { combo ->
         ToggleSwitch(combo.vertical, { onEvent(ComboEvent.ToggleVertical) }, label = stringResource(Res.string.combo_overlay_vertical))
     }

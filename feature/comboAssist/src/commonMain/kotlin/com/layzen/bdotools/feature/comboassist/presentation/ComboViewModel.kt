@@ -98,8 +98,6 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             ComboEvent.ImportCombos -> importCombos()
             is ComboEvent.SetMode -> setMode(event.mode)
             is ComboEvent.Press -> trainingStep { training.press(event.skillNo) }
-            ComboEvent.ToggleTrackerMove -> mutableState.update { it.copy(trackerMovable = !it.trackerMovable) }
-            ComboEvent.ToggleSchemaMove -> mutableState.update { it.copy(schemaMovable = !it.schemaMovable) }
             ComboEvent.ToggleSchema -> updateSettings { it.copy(schemaShown = !it.schemaShown) }
             is ComboEvent.ShowCombo -> showCombo(event.id)
             ComboEvent.ToggleSlotTooltips -> updateSettings { it.copy(slotTooltips = !it.slotTooltips) }

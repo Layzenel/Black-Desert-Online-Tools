@@ -125,4 +125,11 @@
     <string name="showcase_palette_default">Default color</string>
     <string name="showcase_tooltip_section_body">A plate in a thin frame inside the double tooltip frame.</string>
     <string name="showcase_page_body">A page without a window header: the menu on the left spans the full height, and actions live in the menu or in the bar above the content. Right-click opens the context menu.</string>
+    <string name="crowd_control_title_stun">Stun</string>
+    <string name="crowd_control_title_knockdown">Knockdown</string>
+    <string name="crowd_control_title_bound">Bound</string>
+    <string name="crowd_control_title_stiffness">Stiffness</string>
+    <string name="crowd_control_title_floating">Floating</string>
+    <string name="crowd_control_title_knockback">Knockback</string>
+    <string name="crowd_control_title_freezing">Freezing</string>
 </resources>

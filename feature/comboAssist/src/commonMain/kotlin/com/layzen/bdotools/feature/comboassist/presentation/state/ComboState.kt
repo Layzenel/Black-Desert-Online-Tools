@@ -29,8 +29,6 @@ import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
  * @property overlay снимок трекера для оверлея
  * @property watching программа следит за историей умений в игре (только настольная версия)
  * @property overlayShown окно оверлея поверх игры открыто (только настольная версия)
- * @property trackerMovable трекер в режиме перемещения: виден всегда и тянется мышью
- * @property schemaMovable окно схемы комбо в режиме перемещения: видно всегда и тянется мышью
  * @property slots слоты перезарядок персонажа, пока идёт слежение: при наведении на них — тултип умения
  * @property slotProtections защита умений в слотах для щитов на них (загружается, только пока щиты или контроли включены)
  * @property slotControls контроли умений в слотах для значков под ними (загружаются вместе с [slotProtections])
@@ -56,8 +54,6 @@ data class ComboState(
     val overlay: OverlayState = OverlayState(),
     val watching: Boolean = false,
     val overlayShown: Boolean = false,
-    val trackerMovable: Boolean = false,
-    val schemaMovable: Boolean = false,
     val slots: List<ScreenSlot> = emptyList(),
     val slotProtections: Map<Int, Set<SkillProtection>> = emptyMap(),
     val slotControls: Map<Int, Set<CrowdControl>> = emptyMap(),
