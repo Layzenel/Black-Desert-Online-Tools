@@ -1,9 +1,6 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.overlay
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -22,14 +19,6 @@ internal fun shieldColor(protection: SkillProtection): Color = when (protection)
     SkillProtection.SuperArmor -> AppTheme.colors.accentGold
     SkillProtection.ForwardGuard -> AppTheme.colors.accentBlue
     SkillProtection.Invincible -> AppTheme.colors.accentRed
-}
-
-/** Щит защиты [protection] размером [ComboDimens.shieldIcon] — тот же, что на слотах перезарядки в игре. */
-@Composable
-internal fun ShieldIcon(protection: SkillProtection, modifier: Modifier = Modifier) {
-    val fill = shieldColor(protection)
-    val outline = AppTheme.colors.track
-    Canvas(modifier.size(ComboDimens.shieldIcon)) { drawShield(Offset.Zero, size.width, fill, outline) }
 }
 
 /** Щит шириной [width] с левым верхним углом в [topLeft]: заливка [fill] и тёмный контур [outline], чтобы был виден на любой иконке. */

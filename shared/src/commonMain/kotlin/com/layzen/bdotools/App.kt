@@ -119,7 +119,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
 
     Column(Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep)) {
         TopNavigation(
-            tabs = AppTab.entries,
+            tabs = AppTab.available,
             selected = (current as? Destination.Tab)?.tab,
             onSelect = { tab ->
                 backStack.openTab(tab)

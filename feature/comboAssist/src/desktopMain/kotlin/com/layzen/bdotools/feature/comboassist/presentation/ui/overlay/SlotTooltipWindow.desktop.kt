@@ -20,8 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.rememberWindowState
+import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.feature.comboassist.domain.history.ScreenSlot
+import com.layzen.bdotools.feature.comboassist.domain.skill.SkillProtection
 import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillTooltipCard
@@ -46,16 +48,24 @@ private const val LEFT_SIDE_SHARE = 0.45
  * на переднем плане.
  */
 @Composable
-internal actual fun SlotTooltipWindow(slots: List<ScreenSlot>, skills: Map<Int, SkillItem>, loadDetails: suspend (Int) -> SkillDetails?) {
+internal actual fun SlotTooltipWindow(
+    slots: List<ScreenSlot>,
+    skills: Map<Int, SkillItem>,
+    loadDetails: suspend (Int) -> SkillDetails?,
+    protections: Map<Int, Set<SkillProtection>>,
+    controls: Map<Int, Set<CrowdControl>>,
+) {
     if (slots.isEmpty()) return
     val gameActive by rememberGameActive()
-    val hovered by produceState<ScreenSlot?>(null, slots, gameActive) {
+    val screen = remember { Toolkit.getDefaultToolkit().screenSize }
+    val marks = slots.mapNotNull { SlotMarks.of(it, protections[it.skillNo].orEmpty(), controls[it.skillNo].orEmpty(), screen) }
+    val hovered by produceState<ScreenSlot?>(null, slots, marks, gameActive) {
         value = null
         if (!gameActive) return@produceState
         var candidate: ScreenSlot? = null
         var since = 0L
         while (true) {
-            val slot = withContext(Dispatchers.IO) { slotUnderCursor(slots) }
+            val slot = withContext(Dispatchers.IO) { slotUnderCursor(slots, marks) }
             val now = System.currentTimeMillis()
             if (slot != candidate) {
                 candidate = slot

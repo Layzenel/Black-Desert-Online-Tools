@@ -125,4 +125,11 @@
     <string name="showcase_palette_default">Цвет по умолчанию</string>
     <string name="showcase_tooltip_section_body">Плашка в тонкой рамке внутри двойной рамки подсказки.</string>
     <string name="showcase_page_body">Страница без шапки окна: меню слева во всю высоту, действия — в меню или в панели над содержимым. Правый клик открывает контекстное меню.</string>
+    <string name="crowd_control_title_stun">Оглушение</string>
+    <string name="crowd_control_title_knockdown">Нокдаун</string>
+    <string name="crowd_control_title_bound">Опрокидывание</string>
+    <string name="crowd_control_title_stiffness">Ошеломление</string>
+    <string name="crowd_control_title_floating">Подбрасывание</string>
+    <string name="crowd_control_title_knockback">Отталкивание</string>
+    <string name="crowd_control_title_freezing">Заморозка</string>
 </resources>

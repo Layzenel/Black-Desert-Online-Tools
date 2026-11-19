@@ -22,7 +22,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 
 /** Окно поверх игры в настольной версии; место окна [id] — в `Preferences` пользователя ([savePosition]). */
 @Composable
-actual fun GameOverlayWindow(id: String, anchor: OverlayAnchor, size: DpSize, movable: Boolean, content: @Composable () -> Unit) {
+actual fun GameOverlayWindow(id: String, anchor: OverlayAnchor, size: DpSize, content: @Composable () -> Unit) {
     val state = rememberWindowState(position = remember { savedPosition(id, anchor, size) }, size = size)
     val shown by rememberGameActive()
     // кнопка меню поднимается над окном после каждого его появления
@@ -37,7 +37,9 @@ actual fun GameOverlayWindow(id: String, anchor: OverlayAnchor, size: DpSize, mo
         focusable = false,
         alwaysOnTop = true,
     ) {
-        LaunchedEffect(window, movable) { setClickThrough(window, enabled = !movable) }
+        // тянуть можно, только пока курсор показан: атака со спрятанным курсором окно не сдвинет
+        val cursorShown by rememberCursorShown()
+        LaunchedEffect(window, cursorShown) { setClickThrough(window, enabled = !cursorShown) }
         val density = LocalDensity.current
         // содержимое меряется без границ окна, и окно получает его размер: длинное комбо помещается целиком
         val fit = Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
@@ -45,12 +47,6 @@ actual fun GameOverlayWindow(id: String, anchor: OverlayAnchor, size: DpSize, mo
         LaunchedEffect(state) {
             snapshotFlow { state.position }.collect { moved -> if (moved is WindowPosition.Absolute) savePosition(id, moved.x, moved.y) }
         }
-        if (movable) {
-            WindowDraggableArea(fit.border(OverlayDimens.movableFrame, AppTheme.colors.accentGold)) {
-                Box(Modifier.padding(AppTheme.dimens.spaceS)) { content() }
-            }
-        } else {
-            Box(fit.padding(AppTheme.dimens.spaceS)) { content() }
-        }
+        WindowDraggableArea(fit) { Box(Modifier.padding(AppTheme.dimens.spaceS)) { content() } }
     }
 }

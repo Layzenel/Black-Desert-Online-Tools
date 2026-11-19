@@ -4,7 +4,6 @@
     <string name="game_info_tab">Информация</string>
     <string name="game_info_ping">Пинг</string>
     <string name="game_info_ping_show">Показывать пинг игры</string>
-    <string name="game_info_ping_move">Переместить пинг</string>
     <string name="game_info_ping_needs_admin">Пинг не узнать: после загрузочного экрана игра подключается заново, и включить замер задержки нового подключения Windows разрешает только администратору. Запустите BDO Tools от имени администратора.</string>
     <string name="game_info_ping_scale">Размер пинга: %1$d %</string>
     <string name="game_info_ping_opacity">Непрозрачность пинга: %1$d %</string>

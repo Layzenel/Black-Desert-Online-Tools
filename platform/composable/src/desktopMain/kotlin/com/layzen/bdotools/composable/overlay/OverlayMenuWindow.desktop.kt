@@ -29,7 +29,7 @@ private const val RAISE_DELAY_MS = 100L
  * Окно кнопки меню: своё место на экране, независимое от оверлея ([savedMenuPosition]). Прозрачное, без рамки,
  * поверх всех окон и всегда над оверлеем ([OverlayLayers]), видно только пока игра на переднем плане. Размером
  * с содержимое (раскрытое меню растит окно вниз и вправо). Без фокуса: клик по кнопке не уводит игру с переднего
- * плана. Тянется зажатой ЛКМ.
+ * плана. Тянется зажатой ЛКМ. Пока курсор спрятан игрой, клики проходят сквозь окно в игру.
  */
 @Composable
 internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragModifier: Modifier) -> Unit) {
@@ -48,6 +48,9 @@ internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragM
         focusable = false,
         alwaysOnTop = true,
     ) {
+        // пока игра прячет курсор (режим боя), клики уходят в игру: атака не достаётся кнопке
+        val cursorShown by rememberCursorShown()
+        LaunchedEffect(window, cursorShown) { setClickThrough(window, enabled = !cursorShown) }
         LaunchedEffect(shown, open, OverlayLayers.overlayShown) {
             delay(RAISE_DELAY_MS)
             if (shown) window.toFront()

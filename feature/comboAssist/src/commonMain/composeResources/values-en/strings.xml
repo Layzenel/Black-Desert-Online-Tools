@@ -82,9 +82,7 @@
     <string name="combo_filler">While you wait</string>
 
     <!-- Overlay settings -->
-    <string name="combo_tracker_move">Move tracker</string>
     <string name="combo_schema_show">Show layout</string>
-    <string name="combo_schema_move">Move layout</string>
     <string name="combo_panel_tracker">Tracker</string>
     <string name="combo_panel_schema">Combo layout</string>
     <string name="combo_tracker_limits">The tracker works only when "Skill Usage History" is turned on in game. In some places, such as the Black Shrine, the history is not shown, so the tracker does not work there.</string>
@@ -99,11 +97,11 @@
     <string name="combo_panel_tab_combo">Combo</string>
     <string name="combo_panel_scale">Overlay size: %1$d %</string>
     <string name="combo_panel_opacity">Overlay opacity: %1$d %</string>
-    <string name="combo_setting_slot_tooltips">Show skill details when the cursor rests on a cooldown slot</string>
-    <string name="combo_setting_slot_shields">Show the skill PvP protection on cooldown slots</string>
-    <string name="combo_setting_slot_shields_description">Shields in the icon corner. Protection against monsters only is not shown.</string>
-    <string name="combo_setting_slot_controls">Show the skill PvP crowd controls on cooldown slots</string>
-    <string name="combo_setting_slot_controls_description">Icons at the bottom of the slot. Crowd controls against monsters only are not shown.</string>
+    <string name="combo_setting_slot_tooltips">Skill tooltip over a slot</string>
+    <string name="combo_setting_slot_shields">Skill protection on slots</string>
+    <string name="combo_setting_slot_shields_description">Shields in the icon corner, PvP only</string>
+    <string name="combo_setting_slot_controls">Crowd controls on slots</string>
+    <string name="combo_setting_slot_controls_description">Icons on the bottom edge, PvP only</string>
     <string name="combo_protection_super_armor">Super Armor</string>
     <string name="combo_protection_forward_guard">Forward Guard</string>
     <string name="combo_protection_invincible">Invincible</string>

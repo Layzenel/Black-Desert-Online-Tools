@@ -13,25 +13,28 @@ Windows app only.
 
 The BDO Tools icon on top of the game opens the "BDO Tools overlay" menu. The icon can be dragged, and its place
 is remembered.
+Any overlay window (tracker, layout, ping) can be dragged with the left mouse button, and its place is remembered.
+While the game hides the cursor (combat mode), the button and windows pass clicks to the game.
 
 **"Settings"**
 
-- "Show skill details when the cursor rests on a cooldown slot" — the skill's name, effects and description next
+- "Skill tooltip over a slot" — the skill's name, effects and description next
   to the slot in game.
-- "Show the skill PvP protection on cooldown slots" — shields in the top-right corner of the icon: yellow — Super
+- "Skill protection on slots" — shields in the top-right corner of the icon: yellow — Super
   Armor, blue — Forward Guard, red — Invincible. Protection against monsters only (PvE) is not shown.
   While the slots are covered by a game window (skills, settings) or the UI is hidden, the shields are hidden too.
-- "Show the skill PvP crowd controls on cooldown slots" — crowd control icons (stun, knockdown and so on) at the
+- "Crowd controls on slots" — crowd control icons (stun, knockdown and so on) at the
   bottom of the icon, as in game. Crowd controls against monsters only are not shown; they hide together with the shields.
+  Hover a shield or a crowd control icon to see its name.
 
 **"Combo"** — saved combos: "Show combo", "Hide combo" and "Edit combo" (opens the app).
 How to build a combo — [Combo Assist](comboAssist.en.md).
 
-- "Tracker" — the style: "Next" or "Focus"; "Move tracker" — turn it on, drag it with the mouse, then turn it off.
-- "Combo layout" — "Show layout", "Move layout" and "Vertical": the orientation applies only to the layout.
+- "Tracker" — the style: "Next" or "Focus".
+- "Combo layout" — "Show layout" and "Vertical": the orientation applies only to the layout.
 - "Overlay size" (20 to 100 %) and "Overlay opacity" — for the tracker and the layout.
 
-**"Info"** — "Show game ping", "Move ping", its size (20 to 100 %) and opacity.
+**"Info"** — "Show game ping", its size (20 to 100 %) and opacity.
 
 ## Ping
 

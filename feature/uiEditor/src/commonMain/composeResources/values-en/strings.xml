@@ -62,13 +62,6 @@
     <string name="slots_skill_hide_absolute">Hide Absolute skills</string>
     <string name="slots_skill_hide_pve_controls">Hide PvE controls</string>
     <string name="slots_skill_slot_number_hint">Number of the slot the skill is placed in</string>
-    <string name="slots_control_stun">Stun</string>
-    <string name="slots_control_knockdown">Knockdown</string>
-    <string name="slots_control_bound">Bound</string>
-    <string name="slots_control_stiffness">Stiffness</string>
-    <string name="slots_control_floating">Floating</string>
-    <string name="slots_control_knockback">Knockback</string>
-    <string name="slots_control_freezing">Freezing</string>
     <string name="slots_control_pve_only">%1$s (PvE only)</string>
     <string name="slots_defense_super_armor">Super Armor</string>
     <string name="slots_defense_invincible">Invincible</string>

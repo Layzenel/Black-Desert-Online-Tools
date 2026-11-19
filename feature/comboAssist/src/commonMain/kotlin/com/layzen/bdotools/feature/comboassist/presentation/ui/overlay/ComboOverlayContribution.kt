@@ -18,6 +18,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_cont
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shields
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shields_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_tooltips
+import com.layzen.bdotools.uikit.components.SectionDivider
 import com.layzen.bdotools.uikit.components.ToggleSwitch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -54,27 +55,27 @@ private fun ComboOverlayWindows(viewModel: ComboViewModel) {
     val state by viewModel.state.collectAsState()
     state.combo?.let { combo ->
         val settings = state.settings
-        if (state.overlayShown || state.trackerMovable) {
-            GameOverlayWindow(COMBO_ROUTE, OverlayAnchor.BottomCenter, ComboDimens.overlayWindow, state.trackerMovable) {
+        if (state.overlayShown) {
+            GameOverlayWindow(COMBO_ROUTE, OverlayAnchor.BottomCenter, ComboDimens.overlayWindow) {
                 ScaledOverlay(settings.comboScale, settings.comboOpacity) {
                     ComboOverlayContent(combo, state.overlay, state.skills, viewModel::details)
                 }
             }
         }
-        if ((state.overlayShown && settings.schemaShown) || state.schemaMovable) {
+        if (state.overlayShown && settings.schemaShown) {
             val size = if (combo.vertical) ComboDimens.overlayWindowVertical else ComboDimens.overlayWindow
-            GameOverlayWindow(SCHEMA_WINDOW, OverlayAnchor.CenterLeft, size, state.schemaMovable) {
+            GameOverlayWindow(SCHEMA_WINDOW, OverlayAnchor.CenterLeft, size) {
                 ScaledOverlay(settings.comboScale, settings.comboOpacity) {
                     SchemaOverlay(combo, state.overlay, state.skills, viewModel::details, inGame = true)
                 }
             }
         }
     }
-    if (state.settings.slotTooltips) SlotTooltipWindow(state.slots, state.skills, viewModel::details)
+    val protections = if (state.settings.slotShields) state.slotProtections else emptyMap()
+    val controls = if (state.settings.slotControls) state.slotControls else emptyMap()
+    if (state.settings.slotTooltips) SlotTooltipWindow(state.slots, state.skills, viewModel::details, protections, controls)
     if (state.settings.slotShields || state.settings.slotControls) {
         val slotsShown by viewModel.slotsShown.collectAsState()
-        val protections = if (state.settings.slotShields) state.slotProtections else emptyMap()
-        val controls = if (state.settings.slotControls) state.slotControls else emptyMap()
         SlotShieldsWindow(state.slots, protections, controls, slotsShown)
     }
 }
@@ -87,12 +88,13 @@ private fun SettingsSection(viewModel: ComboViewModel) {
         state.settings.slotTooltips, { viewModel.onEvent(ComboEvent.ToggleSlotTooltips) },
         label = stringResource(Res.string.combo_setting_slot_tooltips),
     )
+    SectionDivider()
     ToggleSwitch(
         state.settings.slotShields, { viewModel.onEvent(ComboEvent.ToggleSlotShields) },
         label = stringResource(Res.string.combo_setting_slot_shields),
         description = stringResource(Res.string.combo_setting_slot_shields_description),
     )
-    ProtectionLegend()
+    SectionDivider()
     ToggleSwitch(
         state.settings.slotControls, { viewModel.onEvent(ComboEvent.ToggleSlotControls) },
         label = stringResource(Res.string.combo_setting_slot_controls),

@@ -82,9 +82,7 @@
     <string name="combo_filler">Пока ждёшь</string>
 
     <!-- Настройка оверлея -->
-    <string name="combo_tracker_move">Переместить трекер</string>
     <string name="combo_schema_show">Показать схему</string>
-    <string name="combo_schema_move">Переместить схему</string>
     <string name="combo_panel_tracker">Трекер</string>
     <string name="combo_panel_schema">Схема комбо</string>
     <string name="combo_tracker_limits">Трекер работает, только если в игре включена «История испол. навыков». В некоторых местах игры, например в Чёрном храме, история не показывается — там трекер не работает.</string>
@@ -99,11 +97,11 @@
     <string name="combo_panel_tab_combo">Комбо</string>
     <string name="combo_panel_scale">Размер оверлея: %1$d %</string>
     <string name="combo_panel_opacity">Непрозрачность оверлея: %1$d %</string>
-    <string name="combo_setting_slot_tooltips">Показывать данные об умении при наведении курсора на слот перезарядки</string>
-    <string name="combo_setting_slot_shields">Показывать на слотах перезарядки защиту умения в PvP</string>
-    <string name="combo_setting_slot_shields_description">Щиты в углу иконки. Защита только от монстров не показывается.</string>
-    <string name="combo_setting_slot_controls">Показывать под слотами перезарядки контроли умения в PvP</string>
-    <string name="combo_setting_slot_controls_description">Значки внизу иконки. Контроль только по монстрам не показывается.</string>
+    <string name="combo_setting_slot_tooltips">Тултип умения над слотом</string>
+    <string name="combo_setting_slot_shields">Защита умения на слотах</string>
+    <string name="combo_setting_slot_shields_description">Щиты в углу иконки, только PvP</string>
+    <string name="combo_setting_slot_controls">Контроли умения на слотах</string>
+    <string name="combo_setting_slot_controls_description">Значки на нижней кромке, только PvP</string>
     <string name="combo_protection_super_armor">Устойчивость</string>
     <string name="combo_protection_forward_guard">Защита спереди</string>
     <string name="combo_protection_invincible">Неуязвимость</string>
