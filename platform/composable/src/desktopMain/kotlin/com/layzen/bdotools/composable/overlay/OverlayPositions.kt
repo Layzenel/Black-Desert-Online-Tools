@@ -22,6 +22,9 @@ private const val BOTTOM_SHARE = 0.78f
 /** Отступ окна у [OverlayAnchor.TopRight] от правого верхнего угла экрана. */
 private const val TOP_RIGHT_MARGIN = 220f
 
+/** Отступ окна у [OverlayAnchor.CenterLeft] от левого края экрана. */
+private const val LEFT_MARGIN = 40f
+
 private fun keys(id: String): Pair<String, String> = if (id == COMBO_ID) "x" to "y" else "${id}X" to "${id}Y"
 
 /** Сохранённое место окна [id] или `null`, если его ещё не двигали. */
@@ -39,6 +42,7 @@ internal fun savedPosition(id: String, anchor: OverlayAnchor, size: DpSize): Win
     return when (anchor) {
         OverlayAnchor.BottomCenter -> WindowPosition((screen.width.dp - size.width) / 2, screen.height.dp * BOTTOM_SHARE - size.height)
         OverlayAnchor.TopRight -> WindowPosition((screen.width - TOP_RIGHT_MARGIN * 2).dp, TOP_RIGHT_MARGIN.dp)
+        OverlayAnchor.CenterLeft -> WindowPosition(LEFT_MARGIN.dp, (screen.height.dp - size.height) / 2)
     }
 }
 

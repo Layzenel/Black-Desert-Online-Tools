@@ -34,7 +34,7 @@
 
     <!-- Редактор -->
     <string name="combo_mode_editor">Редактор</string>
-    <string name="combo_mode_training">Тренировка</string>
+    <string name="combo_mode_overlay">Настройка оверлея</string>
     <string name="combo_make_fork">Сделать развилкой</string>
     <string name="combo_add_lane">+ ветка</string>
     <string name="combo_add_lane_action">Добавить ветку</string>
@@ -53,6 +53,9 @@
     <string name="combo_chain_description">Жать сразу после предыдущего, иначе цепочка сорвётся</string>
     <string name="combo_optional">Опциональный</string>
     <string name="combo_optional_description">Оверлей его не подсказывает, но если применишь — комбо продолжится с него</string>
+    <string name="combo_note">Пометка</string>
+    <string name="combo_note_placeholder">Например: в прыжке, после рывка</string>
+    <string name="combo_note_description">Трекер покажет её, когда этот шаг — следующий</string>
     <string name="combo_warning_empty">Пустых ячеек: %1$d — оверлей их пропускает.</string>
     <string name="combo_warning_chain">Ячейка %1$s: по данным это продолжение связки, а перед ним нет его запуска. Данные бывают неполными — проверь в игре.</string>
     <string name="combo_tag_optional">опц</string>
@@ -79,44 +82,29 @@
     <string name="combo_next_wait">Через %1$s с</string>
     <string name="combo_next_no_keys">Клавиш в данных нет</string>
     <string name="combo_filler">Пока ждёшь</string>
-    <string name="combo_status_off">Вне комбо: %1$s (%2$d из %3$d)</string>
-    <string name="combo_status_jump">Перескок по истории</string>
-    <string name="combo_status_forward">Не по порядку: %1$s — продолжаю с него, пропущено %2$d</string>
-    <string name="combo_status_reset">Комбо сначала</string>
-    <string name="combo_chain_rescue">Связка оборвалась — вход через %1$s</string>
-    <string name="combo_chain_relaunch">Связка оборвалась — заново с %1$s</string>
-    <string name="combo_chain_skip">Связка оборвалась — пропущено %1$d</string>
 
-    <!-- Тренировка -->
-    <string name="combo_training_hint">Клик по иконке — применить умение. Умение на перезарядке в игре не выйдет и в историю не попадёт.</string>
-    <string name="combo_press_suggested">Применить подсказанное</string>
-    <string name="combo_press_mistake">Ошибиться</string>
-    <string name="combo_reset">Сначала</string>
-    <string name="combo_watch_start">Следить за игрой</string>
-    <string name="combo_watch_stop">Перестать следить</string>
-    <string name="combo_watch_description">Программа читает «Историю испол. навыков» в игре и ведёт по комбо. Только экран, в игру не вмешивается. Окно игры — «Полноэкранный в окне». Оверлей виден, только пока игра на переднем плане; чтобы передвинуть его, включи «Переместить оверлей» в меню оверлея, перетащи мышью и закрепи.</string>
-    <string name="combo_overlay_show">Показать оверлей</string>
-    <string name="combo_overlay_hide">Скрыть оверлей</string>
-    <string name="combo_overlay_move">Переместить оверлей</string>
-    <string name="combo_overlay_fix">Закрепить оверлей</string>
+    <!-- Настройка оверлея -->
+    <string name="combo_tracker_move">Переместить трекер</string>
+    <string name="combo_schema_show">Показать схему</string>
+    <string name="combo_schema_move">Переместить схему</string>
+    <string name="combo_panel_tracker">Трекер</string>
+    <string name="combo_panel_schema">Схема комбо</string>
+    <string name="combo_tracker_limits">Трекер работает, только если в игре включена «История испол. навыков». В некоторых местах игры, например в Чёрном храме, история не показывается — там трекер не работает.</string>
     <string name="combo_overlay_vertical">Вертикально</string>
     <string name="combo_overlay_horizontal">Горизонтально</string>
-    <string name="combo_overlay_style_schema">Схема комбо</string>
-    <string name="combo_overlay_style_next">Следующие умения</string>
+    <string name="combo_overlay_style_next">Следующие</string>
+    <string name="combo_overlay_style_focus">Фокус</string>
     <string name="combo_menu_show">Показать комбо</string>
     <string name="combo_menu_hide">Скрыть комбо</string>
     <string name="combo_menu_edit">Редактировать комбо</string>
     <string name="combo_menu_empty">Сохранённых комбо нет</string>
-    <string name="combo_panel_tab_settings">Настройки</string>
     <string name="combo_panel_tab_combo">Комбо</string>
-    <string name="combo_panel_style">Вид оверлея</string>
-    <string name="combo_panel_position">Позиция</string>
     <string name="combo_panel_scale">Размер оверлея: %1$d %</string>
     <string name="combo_panel_opacity">Непрозрачность оверлея: %1$d %</string>
     <string name="combo_setting_slot_tooltips">Показывать данные об умении при наведении курсора на слот перезарядки</string>
-    <string name="combo_watch_web">Следить за игрой и показывать оверлей поверх неё умеет только настольная версия.</string>
-    <string name="combo_log_cooldown">%1$s — на перезарядке, не вышло</string>
-    <string name="combo_log_step">%1$s · %2$s</string>
-    <string name="combo_log_filler">%1$s · филлер</string>
-    <string name="combo_log_event">%1$s · %2$s</string>
+    <string name="combo_setting_slot_shields">Показывать на слотах перезарядки защиту умения в PvP</string>
+    <string name="combo_setting_slot_shields_description">Щиты в углу иконки. Защита только от монстров не показывается.</string>
+    <string name="combo_protection_super_armor">Устойчивость</string>
+    <string name="combo_protection_forward_guard">Защита спереди</string>
+    <string name="combo_protection_invincible">Неуязвимость</string>
 </resources>

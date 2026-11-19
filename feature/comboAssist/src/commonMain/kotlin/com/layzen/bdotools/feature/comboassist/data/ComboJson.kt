@@ -18,6 +18,8 @@ private class SettingsDto(
     val slotTooltips: Boolean = true,
     val comboScale: Int = 100,
     val comboOpacity: Int = 100,
+    val schemaShown: Boolean = false,
+    val slotShields: Boolean = false,
 )
 
 /** Комбо в файле; колонка — либо `cell`, либо `lanes`. */
@@ -38,7 +40,7 @@ private class ColumnDto(val cell: CellDto? = null, val lanes: List<List<CellDto>
 
 /** Ячейка в файле; поля по умолчанию не пишутся. */
 @Serializable
-private class CellDto(val skill: Int? = null, val chain: Boolean = false, val optional: Boolean = false)
+private class CellDto(val skill: Int? = null, val chain: Boolean = false, val optional: Boolean = false, val note: String = "")
 
 private const val FORMAT_VERSION = 1
 private val json = Json { ignoreUnknownKeys = true }
@@ -61,7 +63,7 @@ internal fun parseCombos(text: String): List<Combo> = json.decodeFromString<Comb
 
 /** Настройки оверлея из файла комбо; неверный файл — исключение, как у [parseCombos]. */
 internal fun parseSettings(text: String): OverlaySettings =
-    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity) }
+    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields) }
 
 /** Записывает комбо [combos] и настройки [settings] в формат файла. */
 internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = OverlaySettings()): String = json.encodeToString(
@@ -83,9 +85,9 @@ internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = Overlay
                 overlayStyle = combo.overlayStyle.name,
             )
         },
-        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity) },
+        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields) },
     ),
 )
 
-private fun CellDto.toCell() = ComboCell(skill, chain, optional)
-private fun ComboCell.toDto() = CellDto(skillNo, chain, optional)
+private fun CellDto.toCell() = ComboCell(skill, chain, optional, note)
+private fun ComboCell.toDto() = CellDto(skillNo, chain, optional, note)

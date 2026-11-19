@@ -15,4 +15,5 @@
     <string name="skill_key_mmb">MMB</string>
     <string name="skill_key_space">Space</string>
     <string name="overlay_panel_title">BDO Tools overlay</string>
+    <string name="overlay_tab_settings">Settings</string>
 </resources>

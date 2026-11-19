@@ -2,8 +2,8 @@
 
 # Overlay
 
-BDO Tools windows on top of the game: the combo hint, skill details over cooldown slots and the ping. Windows app
-only.
+BDO Tools windows on top of the game: the combo tracker and layout, skill details over cooldown slots and the ping.
+Windows app only.
 
 - The overlay shows only while the game is in front. Use Windowed Fullscreen.
 - Clicks on the combo hint and skill details go through to the game, and overlay windows never take focus.
@@ -16,17 +16,19 @@ is remembered.
 
 **"Settings"**
 
-- "Show overlay" / "Hide overlay".
-- "Overlay style" — "Combo layout" or "Next skills"; "Position" — vertical or horizontal.
-- "Overlay size" and "Overlay opacity".
-- "Move overlay" — drag it with the mouse, then click "Lock overlay".
 - "Show skill details when the cursor rests on a cooldown slot" — the skill's name, effects and description next
   to the slot in game.
+- "Show the skill PvP protection on cooldown slots" — shields in the top-right corner of the icon: yellow — Super
+  Armor, blue — Forward Guard, red — Invincible. Protection against monsters only (PvE) is not shown.
 
 **"Combo"** — saved combos: "Show combo", "Hide combo" and "Edit combo" (opens the app).
 How to build a combo — [Combo Assist](comboAssist.en.md).
 
-**"Info"** — "Show game ping", "Move ping", its size and opacity.
+- "Tracker" — the style: "Next" or "Focus"; "Move tracker" — turn it on, drag it with the mouse, then turn it off.
+- "Combo layout" — "Show layout", "Move layout" and "Vertical": the orientation applies only to the layout.
+- "Overlay size" (20 to 100 %) and "Overlay opacity" — for the tracker and the layout.
+
+**"Info"** — "Show game ping", "Move ping", its size (20 to 100 %) and opacity.
 
 ## Ping
 

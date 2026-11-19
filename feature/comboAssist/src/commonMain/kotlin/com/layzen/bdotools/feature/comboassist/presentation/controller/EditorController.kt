@@ -42,6 +42,7 @@ internal class EditorController {
             is ComboEvent.ClearSelection -> return refresh(state.copy(selection = null), skills)
             is ComboEvent.ToggleChain -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(chain = !it.chain)), a) } } ?: return state
             is ComboEvent.ToggleOptional -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(optional = !it.optional)), a) } } ?: return state
+            is ComboEvent.SetNote -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(note = event.text)), a) } } ?: return state
             is ComboEvent.RemoveCell -> at?.let { combo.removeCell(it) } ?: return state
             is ComboEvent.RemoveAt -> combo.removeCell(event.at)
             is ComboEvent.SwapCells -> combo.swap(event.from, event.to)

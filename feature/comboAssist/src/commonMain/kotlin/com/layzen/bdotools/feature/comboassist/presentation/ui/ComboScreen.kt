@@ -30,7 +30,7 @@ import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.CellPanel
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.ComboCanvas
 import com.layzen.bdotools.feature.comboassist.presentation.ui.sidebar.ComboSidebarContent
-import com.layzen.bdotools.feature.comboassist.presentation.ui.training.TrainingPanel
+import com.layzen.bdotools.feature.comboassist.presentation.ui.overlaysettings.OverlaySettingsPanel
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_delete
 import com.layzen.bdotools.feature.comboassist.resources.combo_export
@@ -42,7 +42,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_import
 import com.layzen.bdotools.feature.comboassist.resources.combo_import_failed
 import com.layzen.bdotools.feature.comboassist.resources.combo_empty_hint
 import com.layzen.bdotools.feature.comboassist.resources.combo_mode_editor
-import com.layzen.bdotools.feature.comboassist.resources.combo_mode_training
+import com.layzen.bdotools.feature.comboassist.resources.combo_mode_overlay
 import com.layzen.bdotools.feature.comboassist.resources.combo_save
 import com.layzen.bdotools.feature.comboassist.resources.combo_save_dirty
 import com.layzen.bdotools.feature.comboassist.resources.combo_warning_chain
@@ -73,7 +73,7 @@ suspend fun preloadComboStrings() {
     getString(Res.string.combo_save)
 }
 
-/** Редактор комбо и тренировка. Окна поверх игры — в [com.layzen.bdotools.feature.comboassist.presentation.ui.overlay.comboOverlayContribution]. */
+/** Редактор комбо и настройка оверлея (настройка — только в настольной версии, [canWatchGame]). Окна поверх игры — в [com.layzen.bdotools.feature.comboassist.presentation.ui.overlay.comboOverlayContribution]. */
 @Composable
 fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
     ToolPage(
@@ -89,17 +89,16 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         },
     ) {
         Column(Modifier.fillMaxSize()) {
-            ActionBar {
-                OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_training) })
+            // настройка оверлея есть только в настольной версии: на сайте остаётся один редактор и переключать нечего
+            if (canWatchGame) ActionBar {
+                OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
             }
             Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceL),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL),
             ) {
-                when (state.mode) {
-                    ComboMode.Editor -> EditorContent(state, onEvent, loadDetails)
-                    ComboMode.Training -> TrainingPanel(state, canWatchGame, onEvent, loadDetails)
-                }
+                if (state.mode == ComboMode.Overlay && canWatchGame) OverlaySettingsPanel(state, onEvent, loadDetails)
+                else EditorContent(state, onEvent, loadDetails)
             }
         }
     }

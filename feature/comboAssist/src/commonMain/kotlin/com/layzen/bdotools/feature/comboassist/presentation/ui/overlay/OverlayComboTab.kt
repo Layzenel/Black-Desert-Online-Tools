@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import com.layzen.bdotools.composable.overlay.OverlayScalePercent
 import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.feature.comboassist.domain.combo.OverlayStyle
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
@@ -24,14 +25,15 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_menu_edit
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_empty
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_hide
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_show
-import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_move
+import com.layzen.bdotools.feature.comboassist.resources.combo_tracker_move
 import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_vertical
-import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_style_next
-import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_style_schema
-import com.layzen.bdotools.feature.comboassist.resources.combo_panel_position
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_scale
+import com.layzen.bdotools.feature.comboassist.resources.combo_panel_schema
+import com.layzen.bdotools.feature.comboassist.resources.combo_panel_tracker
+import com.layzen.bdotools.feature.comboassist.resources.combo_schema_move
+import com.layzen.bdotools.feature.comboassist.resources.combo_schema_show
+import com.layzen.bdotools.feature.comboassist.resources.combo_tracker_limits
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_opacity
-import com.layzen.bdotools.feature.comboassist.resources.combo_panel_style
 import com.layzen.bdotools.feature.comboassist.resources.combo_untitled
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.DescriptionText
@@ -49,7 +51,8 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Вкладка «Комбо» меню оверлея: какое комбо показать (выбор сразу включает его в оверлее), скрыть или открыть
- * в редакторе ([onEdit]), вид оверлея, вертикальный оверлей, режим перемещения, размер и непрозрачность.
+ * в редакторе ([onEdit]); трекер — вид и перемещение; схема — показ, перемещение и ориентация; общие размер
+ * и непрозрачность.
  */
 @Composable
 internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, onEdit: () -> Unit) {
@@ -59,22 +62,24 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
         if (state.overlayShown) ActionButton(stringResource(Res.string.combo_menu_hide), { onEvent(ComboEvent.HideCombo) })
         ActionButton(stringResource(Res.string.combo_menu_edit), { onEvent(ComboEvent.SetMode(ComboMode.Editor)); onEdit() })
     }
+    SectionHeader(stringResource(Res.string.combo_panel_tracker))
     state.combo?.let { combo ->
-        SectionHeader(stringResource(Res.string.combo_panel_style))
-        OptionGroup(OverlayStyle.entries, combo.overlayStyle, { onEvent(ComboEvent.SetOverlayStyle(it)) }, {
-            stringResource(if (it == OverlayStyle.Schema) Res.string.combo_overlay_style_schema else Res.string.combo_overlay_style_next)
-        })
+        OptionGroup(OverlayStyle.entries, combo.overlayStyle, { onEvent(ComboEvent.SetOverlayStyle(it)) }, { stringResource(it.title) }, Modifier.fillMaxWidth())
     }
-    SectionHeader(stringResource(Res.string.combo_panel_position))
+    ToggleSwitch(state.trackerMovable, { onEvent(ComboEvent.ToggleTrackerMove) }, label = stringResource(Res.string.combo_tracker_move))
+    DescriptionText(stringResource(Res.string.combo_tracker_limits))
+    SectionHeader(stringResource(Res.string.combo_panel_schema))
+    ToggleSwitch(state.settings.schemaShown, { onEvent(ComboEvent.ToggleSchema) }, label = stringResource(Res.string.combo_schema_show))
+    ToggleSwitch(state.schemaMovable, { onEvent(ComboEvent.ToggleSchemaMove) }, label = stringResource(Res.string.combo_schema_move))
     state.combo?.let { combo ->
         ToggleSwitch(combo.vertical, { onEvent(ComboEvent.ToggleVertical) }, label = stringResource(Res.string.combo_overlay_vertical))
     }
-    ToggleSwitch(state.overlayMovable, { onEvent(ComboEvent.ToggleOverlayMove) }, label = stringResource(Res.string.combo_overlay_move))
     val settings = state.settings
-    SectionHeader(stringResource(Res.string.combo_panel_scale, settings.comboScale))
+    val scale = settings.comboScale.coerceIn(OverlayScalePercent)
+    SectionHeader(stringResource(Res.string.combo_panel_scale, scale))
     ValueSlider(
-        settings.comboScale, { onEvent(ComboEvent.SetComboScale(it, save = false)) }, COMBO_SCALE, Modifier.fillMaxWidth(),
-        onValueChangeFinished = { onEvent(ComboEvent.SetComboScale(settings.comboScale, save = true)) },
+        scale, { onEvent(ComboEvent.SetComboScale(it, save = false)) }, OverlayScalePercent, Modifier.fillMaxWidth(),
+        onValueChangeFinished = { onEvent(ComboEvent.SetComboScale(scale, save = true)) },
     )
     SectionHeader(stringResource(Res.string.combo_panel_opacity, settings.comboOpacity))
     ValueSlider(
@@ -111,9 +116,6 @@ private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit) {
         }
     }
 }
-
-/** Размер оверлея комбо, проценты. */
-private val COMBO_SCALE = 50..200
 
 /** Непрозрачность оверлея комбо, проценты: совсем прозрачный не нужен — его не найти. */
 private val COMBO_OPACITY = 20..100

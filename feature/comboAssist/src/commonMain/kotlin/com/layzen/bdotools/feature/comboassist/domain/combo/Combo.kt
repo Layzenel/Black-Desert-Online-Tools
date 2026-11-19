@@ -8,8 +8,8 @@ package com.layzen.bdotools.feature.comboassist.domain.combo
  * @property classKey ключ класса (`CharacterClass.key`), чьи умения в комбо
  * @property columns колонки по порядку
  * @property fillers умения, которые оверлей предлагает, пока ждёт перезарядку следующего шага
- * @property vertical оверлей показывает колонки сверху вниз, а ветки развилок — рядом
- * @property overlayStyle вид оверлея поверх игры
+ * @property vertical схема комбо показывает колонки сверху вниз, а ветки развилок — рядом
+ * @property overlayStyle вид трекера поверх игры
  */
 data class Combo(
     val id: String,

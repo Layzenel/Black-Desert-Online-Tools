@@ -17,15 +17,17 @@ The editor also works on the website, but only the Windows app can watch the gam
   "Insert right".
 - **"Chain"** — the skill is pressed right after the previous one, or the chain breaks.
 - **"Optional"** — the overlay does not suggest it, but if you use it the combo continues from there.
+- **"Note"** — your own text for a step ("while jumping", "3 hits"): the tracker shows it when this step is next.
 - **Forks** — "Make a fork" and "+ branch": several ways to continue, the hint picks one by cooldowns. A fork can
   be linked to the previous one: enter the second branch, and the hint follows the second branch there too.
 - **"Fillers"** — skills the overlay suggests while the next step is on cooldown.
 - The editor warns about empty cells and about a chain continuation without its starter.
 
-## Training
+## Overlay settings
 
-"Training" mode tests a combo without the game: clicking an icon "uses" the skill, "Use suggested" and
-"Make a mistake" show how the hint will behave in game, and "Restart" starts the combo over.
+"Overlay settings" mode (Windows app only) lets you pick the tracker style and see it right away; below it are the
+combo layout and its orientation. Clicking an icon in the layout "uses" the skill, so you can see how the hint will
+behave in game.
 
 ## Import and export
 
@@ -34,13 +36,22 @@ The editor also works on the website, but only the Windows app can watch the gam
 
 ## In game
 
-"Watch the game" (Windows app only) — the app reads the Skill Usage History on screen and guides you through
-the combo:
+The Windows app watches the game by itself while the game is in the foreground: it reads the Skill Usage History
+on screen and guides you through the combo. The tracker shows what to press now, in one of the styles:
 
-- **"Combo layout"** — the whole combo with the current step marked, vertical or horizontal;
-- **"Next skills"** — "Now" and what comes next, with the character's keys; if a step is on cooldown —
+- **"Next"** — "Now" and the next two skills, with the character's keys; if a step is on cooldown —
   "In N s" and "While you wait" with a filler;
+- **"Focus"** — a large icon of the current step with its keys under it, the next two beside it, a progress bar
+  below;
+- the step note, if there is one, is shown under the tracker;
 - if you used a skill out of order, the hint continues from it; if a chain broke, it shows how to get back in.
+
+A separate window can show the **combo layout** — the whole combo with the current step marked, vertical or
+horizontal.
+
+> [!IMPORTANT]
+> The tracker works only when "Skill Usage History" is turned on in game. In some places, such as the Black Shrine,
+> the history is not shown, so the tracker does not work there.
 
 Use Windowed Fullscreen. The app only reads the screen: it never touches the game and never presses keys.
 

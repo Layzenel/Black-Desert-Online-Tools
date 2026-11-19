@@ -7,4 +7,7 @@ enum class OverlayAnchor {
 
     /** У правого верхнего угла экрана. */
     TopRight,
+
+    /** У левого края экрана, по центру высоты. */
+    CenterLeft,
 }
