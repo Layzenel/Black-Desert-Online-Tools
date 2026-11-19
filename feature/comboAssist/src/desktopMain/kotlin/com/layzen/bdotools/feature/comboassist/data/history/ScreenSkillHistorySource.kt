@@ -21,6 +21,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import java.awt.Robot
+import java.awt.image.BufferedImage
 import kotlin.time.TimeSource
 
 /**
@@ -59,6 +60,8 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         val merge = HistoryMerge()
         log.line(0, "start: $geometry, icons ${icons.size}, combo ${preferred.size}, characters with cooldown slots ${layouts.size}")
         var gameActive = false
+        // лучший кадр открытой и ещё не узнанной строки: в журнал вместе с картинкой, если узнать не выйдет
+        var miss: Pair<IconMatch, BufferedImage>? = null
         var checkedAt = -FOREGROUND_CHECK_MS
         while (true) {
             val now = start.elapsedNow().inWholeMilliseconds
@@ -76,15 +79,25 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
             val middle = geometry.textPixels(frame, geometry.middleBand) > geometry.minTextPixels
             when (val step = lines.onFrame(bottom, middle, now)) {
                 is HistoryLines.Step.Try -> {
-                    val match = matcher.match(geometry.icon(frame))
+                    val icon = geometry.icon(frame)
+                    val match = matcher.match(icon)
                     if (step.shift) log.line(now, "line opened by shift")
                     if (match.accepted) {
                         lines.recognized()
+                        miss = null
                         log.line(now, "skill ${match.skillNo} score %.1f second %.1f".format(match.score, match.second))
                         emitAll(merge.onHistory(match.skillNo!!, now), now, log, history = match.skillNo)
+                    } else if (match.score < (miss?.first?.score ?: Double.MAX_VALUE)) {
+                        // самый похожий кадр строки — в журнал, если строку так и не узнают
+                        miss = match to icon
                     }
                 }
-                HistoryLines.Step.GaveUp -> log.line(now, "not recognized")
+                HistoryLines.Step.GaveUp -> {
+                    val best = miss
+                    log.line(now, "not recognized" + (best?.first?.let { ", best ${it.skillNo} score %.1f second %.1f".format(it.score, it.second) } ?: ""))
+                    best?.let { log.miss(now, it.second) }
+                    miss = null
+                }
                 HistoryLines.Step.Idle -> Unit
             }
             slots.onFrame(robot, now).forEach { skillNo ->
