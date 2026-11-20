@@ -10,6 +10,8 @@ package com.layzen.bdotools.feature.comboassist.domain.combo
  * @property fillers умения, которые оверлей предлагает, пока ждёт перезарядку следующего шага
  * @property pool умения, которые трекер показывает всегда, отдельно от шагов: готовое — в золотой рамке, на перезарядке —
  *   с секундами (защита, баф, отскок — что жать по ситуации)
+ * @property keyTracked умения, которых нет ни в истории умений игры, ни на слотах перезарядок: трекер узнаёт их по клавишам
+ *   и расходу ресурса. Общие для обычного комбо и комбо под гневом
  * @property vertical схема комбо показывает колонки сверху вниз, а ветки развилок — рядом
  * @property overlayStyle вид трекера поверх игры
  * @property rage комбо под гневом Чёрного духа или `null`, если его нет
@@ -21,6 +23,7 @@ data class Combo(
     val columns: List<ComboColumn> = emptyList(),
     val fillers: List<Int> = emptyList(),
     val pool: List<Int> = emptyList(),
+    val keyTracked: Set<Int> = emptySet(),
     val vertical: Boolean = false,
     val overlayStyle: OverlayStyle = OverlayStyle.Next,
     val rage: ComboRage? = null,
@@ -34,7 +37,7 @@ data class Combo(
 
     /** Комбо, в котором часть [rageShown] заменена правленой [edited] (результатом правки [part]). */
     fun withPart(rageShown: Boolean, edited: Combo): Combo =
-        if (rageShown) copy(rage = ComboRage(edited.columns, edited.fillers, edited.pool)) else edited.copy(rage = rage)
+        if (rageShown) copy(rage = ComboRage(edited.columns, edited.fillers, edited.pool), keyTracked = edited.keyTracked) else edited.copy(rage = rage)
 
     /** Обычное комбо и комбо под гневом, если оно есть. */
     fun parts(): List<Combo> = listOfNotNull(part(false), part(true))

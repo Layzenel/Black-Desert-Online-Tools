@@ -5,6 +5,7 @@ import com.layzen.bdotools.feature.comboassist.data.keys.KeyStepWatch
 import com.layzen.bdotools.feature.comboassist.data.rage.BuffListPlace
 import com.layzen.bdotools.feature.comboassist.data.resource.ResourceWatch
 import com.layzen.bdotools.feature.comboassist.data.rage.rageBuffs
+import com.layzen.bdotools.feature.comboassist.data.slots.CooldownSlotWatch
 import com.layzen.bdotools.feature.comboassist.data.slots.HistoryMerge
 import com.layzen.bdotools.feature.comboassist.data.slots.PlayedCharacterDetector
 import com.layzen.bdotools.feature.comboassist.data.slots.SlotLayout
@@ -37,8 +38,9 @@ import kotlin.time.TimeSource
  * разрешении экрана (без уменьшения от масштаба Windows). Когда открывается новая строка ([HistoryLines]),
  * иконка сравнивается на каждом кадре, пока не узнана ([IconMatcher]).
  *
- * Умение, которого игра не записала в историю (продолжения и отмены анимации), подтверждают его клавиши
- * ([KeyStepWatch]) и расход ресурса ([ResourceWatch]); история приходит позже и поправляет трекер ([HistoryMerge]).
+ * Умение, которого игра не записала в историю, дописывает слот перезарядки, ушедший на перезарядку
+ * ([CooldownSlotWatch]), а умение, которого нет ни в истории, ни на слотах (флаг в редакторе), — его клавиши
+ * ([KeyStepWatch]) и расход ресурса ([ResourceWatch]). Чему верить первым — в [HistoryMerge].
  * Ход работы — в [WatchLog].
  *
  * shortcut: область истории — замер 2026-11-13 (2560×1440, «Размер интерфейса» 80 %, элемент у левого края над чатом),
@@ -91,6 +93,7 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         val geometry = HistoryGeometry.forScreen()
         val accountDir = folder?.let { SlotLayoutFiles.accountDir(it, settings.account) }
         val layouts = accountDir?.let(SlotLayoutFiles::readAll).orEmpty()
+        val slots = CooldownSlotWatch(layouts, matcher, log)
         val merge = HistoryMerge()
         val keys = KeyStepWatch(log)
         val accountText = accountDir?.let(SlotLayoutFiles::accountText)
@@ -139,17 +142,21 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
                 }
                 HistoryLines.Step.Idle -> Unit
             }
+            slots.onFrame(robot, now).forEach { skillNo ->
+                log.line(now, "slot $skillNo on cooldown")
+                merge.onSlot(skillNo, now)
+            }
             val drops = resource.onFrame(robot, now)
             keys.onFrame(now, active = true, played?.keys, keySteps, merge, drops)
-            emitAll(merge.onKeyTick(now), now, log, history = null)
+            emitAll(merge.onTick(now), now, log, history = null)
             delay(FRAME_MS)
         }
     }.flowOn(Dispatchers.IO)
 
-    /** Выпускает умения [skills]; все, кроме узнанного в истории [history], дописаны клавишами — это видно в журнале. */
+    /** Выпускает умения [skills]; все, кроме узнанного в истории [history], дописаны слотом или клавишами — это видно в журнале. */
     private suspend fun FlowCollector<Int>.emitAll(skills: List<Int>, now: Long, log: WatchLog, history: Int?) {
         skills.forEach { skillNo ->
-            if (skillNo != history) log.line(now, "skill $skillNo added from keys")
+            if (skillNo != history) log.line(now, "skill $skillNo added without history (slot or keys)")
             emit(skillNo)
         }
     }

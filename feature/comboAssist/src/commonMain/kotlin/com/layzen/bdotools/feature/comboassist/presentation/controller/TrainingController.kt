@@ -48,7 +48,9 @@ internal class TrainingController {
     fun keySteps(commands: Map<Int, KeyCommand>): List<KeyStep> {
         val tracker = tracker ?: return emptyList()
         val now = tracker.planner.candidates(tracker.state)
-        fun step(skillNo: Int, after: Int?) = commands[skillNo]?.let { KeyStep(skillNo, after, it.variants, it.visibleSpend) }
+        val keyTracked = combo?.keyTracked.orEmpty()
+        // умения из истории и со слотов клавишами не подтверждаются: те источники точнее
+        fun step(skillNo: Int, after: Int?) = commands[skillNo]?.takeIf { skillNo in keyTracked }?.let { KeyStep(skillNo, after, it.variants, it.visibleSpend) }
         val steps = now.mapNotNull { step(it.skillNo, null) } + now.flatMap { node -> node.next.mapNotNull { step(it.skillNo, node.skillNo) } }
         return steps.distinct()
     }

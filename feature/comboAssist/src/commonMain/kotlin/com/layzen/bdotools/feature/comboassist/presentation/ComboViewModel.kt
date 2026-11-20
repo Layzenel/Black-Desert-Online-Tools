@@ -140,7 +140,10 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             }
             is ComboEvent.SetOverlayStyle -> changeOverlayLook { it.copy(overlayStyle = event.style) }
             ComboEvent.ToggleVertical -> changeOverlayLook { it.copy(vertical = !it.vertical) }
-            ComboEvent.HideCombo -> mutableState.update { it.copy(overlayShown = false) }
+            ComboEvent.HideCombo -> {
+                mutableState.update { it.copy(overlayShown = false, rageActive = false) }
+                stopWatching()
+            }
             is ComboEvent.EditRage -> mutableState.update { editor.refresh(it.copy(editingRage = event.rage, selection = null), skills) }
             ComboEvent.AddRage -> changeRage(ComboRage.Empty, editing = true)
             ComboEvent.RemoveRage -> changeRage(null, editing = false)
@@ -161,7 +164,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         mutableState.update { editor.reduce(it, event, skills) }
         val after = mutableState.value.combo ?: return
         if (before != null && before != after) rememberEdit(before)
-        val changed = before?.parts()?.map { Triple(it.stepsOnly(), it.fillers, it.pool) } != after.parts().map { Triple(it.stepsOnly(), it.fillers, it.pool) }
+        val changed = before?.parts()?.map { listOf(it.stepsOnly(), it.fillers, it.pool, it.keyTracked) } != after.parts().map { listOf(it.stepsOnly(), it.fillers, it.pool, it.keyTracked) }
         if (!changed) return
         if (watcher?.isActive == true) restartWatching() else restartTraining()
     }
@@ -244,8 +247,9 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     /** Комбо [id] в оверлей; слежение за ним перезапускается само, когда загрузятся умения его класса ([loadSkills]). */
     private fun showCombo(id: String) {
-        selectCombo(id)
+        // до выбора: выбор перезапускает слежение, а оно идёт, только пока оверлей показан
         mutableState.update { it.copy(overlayShown = true) }
+        selectCombo(id)
         ensureTicker()
     }
 
@@ -276,7 +280,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             editor.refresh(st.copy(loading = false, catalogFailed = classSkills.isEmpty(), skills = items), skills)
         }
         if (s.mode == ComboMode.Overlay) restartTraining()
-        // в настольной версии программа следит за игрой всегда — за открытым комбо, с его умениями
+        // в настольной версии программа следит за игрой, пока оверлей комбо показан — за открытым комбо, с его умениями
         if (interactor.canWatchGame) restartWatching()
         // иконки и урон — параллельно: по одной загрузка класса шла десятки секунд
         classSkills.forEach { (no, skill) ->
@@ -365,9 +369,10 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         }
     }
 
+    /** Перезапускает слежение за игрой; пока оверлей комбо скрыт, экран, бафы, ресурс и клавиши не читаются. */
     private fun restartWatching() {
         stopWatching()
-        if (mutableState.value.combo != null) startWatching()
+        if (mutableState.value.combo != null && mutableState.value.overlayShown) startWatching()
     }
 
     private fun stopWatching() {

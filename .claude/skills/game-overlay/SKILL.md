@@ -24,7 +24,7 @@ description: Окна поверх игры в настольной версии
 | Игра на переднем плане | `isGameForeground()` (JNA, `BlackDesert64.exe`), в UI — `rememberGameActive()`; сквозные клики — `setClickThrough` (всё — `desktopMain`) |
 | Корень в приложении | `shared/src/desktopMain/.../window/DesktopApp.kt`: `OverlayHost` стоит рядом с окном программы, а не внутри него — скрытое в трей окно не перерисовывается. Общая ViewModel — `ViewModelStoreOwner` приложения; подписка на состояние в окнах поверх игры — `collectAsState` (вне окна программы нет `LifecycleOwner`) |
 | Помощник комбо | `feature/comboAssist/.../overlay/ComboOverlayContribution.kt`: два окна — трекер (`ComboOverlayContent` по `OverlayStyle`: `Next` — `NextSkillsOverlay`, `Focus` — `FocusOverlay`, у `BottomCenter`) и схема комбо (`SchemaOverlay`, окно `combo-schema` у `CenterLeft`, показ — `OverlaySettings.schemaShown`, ориентация `Combo.vertical` — только у схемы). Всё на подложке `TooltipPanel`, тот же вид — в предпросмотре вкладки «Настройки трекера». Пометка шага (`ComboCell.note`) — под трекером (`StepNote`). Ещё тултипы слотов (`SlotTooltipWindow`, `SlotUnderCursor.kt`) и щиты защиты в правом верхнем углу иконки слота (`SlotShieldsWindow`: защита в PvP по английскому тултипу — `skillProtections`, строки «(PvE only)» пропускаются), вкладка «Комбо» (`OverlayComboTab`) и пункт в «Настройках»; настройки (`OverlaySettings`) — в `combos.json` |
-| Чтение экрана (комбо) | `data/history/ScreenSkillHistorySource.kt`: история умений + клавиши (`data/keys`) + полоска ресурса (`data/resource`); персонаж — `data/slots/PlayedCharacterDetector`, видимость каждого слота — `data/slots/slotVisibility` |
+| Чтение экрана (комбо) | `data/history/ScreenSkillHistorySource.kt`: история умений + слоты перезарядок (`data/slots/CooldownSlotWatch`) + клавиши (`data/keys`) + полоска ресурса (`data/resource`); персонаж — `data/slots/PlayedCharacterDetector`, видимость каждого слота — `data/slots/slotVisibility` |
 | Пинг | `feature/gameInfo`: окно пинга и вкладка «Информация» (`GameInfoOverlay.kt`), настройки — `Preferences` `bdo-tools/game-info` |
 | Окно программы и трей | `shared/src/desktopMain/.../window/` (`DesktopApp`, `AppTray`, `CloseChoiceDialog`) |
 ## Правила окон
@@ -53,13 +53,20 @@ description: Окна поверх игры в настольной версии
 
 ## Чтение экрана
 
-- Слежение за игрой включено всегда, пока открыто комбо (настольная версия). Пока игра не на переднем плане, программа
+- Слежение за игрой (история, слоты, бафы гнева, ресурс, клавиши) идёт, только пока оверлей комбо показан (настольная
+  версия; «Скрыть» в меню оверлея его останавливает, `ComboViewModel.restartWatching`). Видимость слотов для тултипов
+  и щитов проверяется отдельно. Пока игра не на переднем плане, программа
   за ней не следит: экран не снимается, файлы слотов не читаются, иконки не качаются (`ScreenSkillHistorySource`).
   20 кадров/с: история умений (≈240×54 px) и полоска ресурса.
-- История — главный источник, второй — клавиши (`data/keys/KeyStepWatch`), их сводит `HistoryMerge`. **Слоты перезарядок
-  как источник убраны** (2026-11-20): иконка на перезарядке проявляется неровно, слот срабатывал по 5–7 раз за одну
-  перезарядку и вне её, а умения с КД 0 в слот не поставить. Ошибку клавиш поправляет строка истории: умение не по
-  порядку переводит трекер на него (`ComboTracker.outOfOrder`).
+- Чему верить (`HistoryMerge`): 1) история, 2) слот перезарядки (`CooldownSlotWatch` + `SlotDarkening`; ждёт строку
+  истории 600 мс, потом выпускается сам), 3) клавиши с расходом ресурса (`data/keys/KeyStepWatch`). Одно применение
+  из разных источников за 1,5 с засчитывается один раз; нажатие умения, которое уже ждёт слот, не учитывается.
+  Клавиши слушаются **только для умений из `Combo.keyTracked`** — у них в редакторе снят флаг «Видно в истории или на
+  слоте» (`TrainingController.keySteps`). Слоты убирали 2026-11-20 (иконка проявляется неровно, слот срабатывал по
+  5–7 раз за перезарядку) и вернули 2026-11-21 по просьбе пользователя — на практике слоты точнее клавиш; повторы
+  гасит `SlotDarkening`: сработавший слот следится снова, только когда цветность вернулась к 0,85 прежней.
+  Ошибку слота или клавиш поправляет строка истории: умение не по порядку переводит трекер на него
+  (`ComboTracker.outOfOrder`).
 - Трекер, схема, тултипы, щиты и значки контролей прячутся вместе со слотами: `slotVisibility` раз в 100 мс узнаёт
   каждый слот по своей иконке (`SlotVisibility.recognized`) и отдаёт номера скрытых. По своей иконке узнаётся
   меньшинство слотов (2026-11-20: 5 из 20, пара — раз в 0,6 с на перезарядке; требование «узнан каждый» убрало
