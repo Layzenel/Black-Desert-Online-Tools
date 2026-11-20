@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.comboassist.presentation.state
 
 import com.layzen.bdotools.core.game.CharacterClass
-import com.layzen.bdotools.core.skill.domain.SkillStance
+import com.layzen.bdotools.feature.comboassist.domain.skill.ComboStance
 import com.layzen.bdotools.feature.comboassist.domain.combo.CellAt
 import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import com.layzen.bdotools.feature.comboassist.domain.history.ScreenSlot
@@ -35,13 +35,16 @@ import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
  * @property settings настройки окон поверх игры
  * @property importFailed последний выбранный для импорта файл — не файл комбо
  * @property playedClass класс персонажа, которым играют (по слотам на экране); `null` — ещё не узнан
+ * @property editingRage редактор правит комбо под гневом Чёрного духа, а не обычное
+ * @property rageActive в игре висят бафы гнева Чёрного духа: трекер ведёт комбо под гневом, если оно есть
+ * @property trackerNotice открыто окно «Как работает трекер» (само — при первом открытии вкладки в настольной версии)
  */
 data class ComboState(
     val combos: List<Combo> = emptyList(),
     val combo: Combo? = null,
     val dirty: Boolean = false,
     val characterClass: CharacterClass = CharacterClass.Striker,
-    val stance: SkillStance? = SkillStance.Succession,
+    val stance: ComboStance? = ComboStance.Succession,
     val skills: Map<Int, SkillItem> = emptyMap(),
     val loading: Boolean = true,
     val catalogFailed: Boolean = false,
@@ -60,4 +63,19 @@ data class ComboState(
     val settings: OverlaySettings = OverlaySettings(),
     val importFailed: Boolean = false,
     val playedClass: String? = null,
-)
+    val editingRage: Boolean = false,
+    val rageActive: Boolean = false,
+    val trackerNotice: Boolean = false,
+) {
+    /** Редактор правит комбо под гневом: оно выбрано ([editingRage]) и есть у комбо. */
+    val rageEdited: Boolean get() = editingRage && combo?.rage != null
+
+    /** Часть комбо в редакторе: обычное комбо или комбо под гневом ([rageEdited]). */
+    val edited: Combo? get() = combo?.part(rageEdited)
+
+    /** Трекер ведёт комбо под гневом: гнев активен ([rageActive]) и такое комбо есть. */
+    val rageTracked: Boolean get() = rageActive && combo?.rage != null
+
+    /** Часть комбо, по которой идёт трекер: под гневом ([rageTracked]) или обычное. */
+    val tracked: Combo? get() = combo?.part(rageTracked)
+}

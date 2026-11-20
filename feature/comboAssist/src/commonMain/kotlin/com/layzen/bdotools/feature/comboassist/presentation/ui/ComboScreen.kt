@@ -29,6 +29,7 @@ import com.layzen.bdotools.feature.comboassist.presentation.state.ComboMode
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.CellPanel
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.ComboCanvas
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.ComboParts
 import com.layzen.bdotools.feature.comboassist.presentation.ui.sidebar.ComboSidebarContent
 import com.layzen.bdotools.feature.comboassist.presentation.ui.overlaysettings.OverlaySettingsPanel
 import com.layzen.bdotools.feature.comboassist.resources.Res
@@ -100,11 +101,13 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
             }
         }
     }
+    if (state.trackerNotice) TrackerNoticeDialog { onEvent(ComboEvent.CloseTrackerNotice) }
 }
 
 @Composable
 private fun EditorContent(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
-    val combo = state.combo ?: return
+    val combo = state.edited ?: return
+    ComboParts(state, onEvent)
     DescriptionText(stringResource(Res.string.combo_empty_hint))
     // Esc снимает выбор ячейки: холст берёт фокус, когда ячейку выбрали, иначе клавиши до него не дойдут
     val focus = remember { FocusRequester() }

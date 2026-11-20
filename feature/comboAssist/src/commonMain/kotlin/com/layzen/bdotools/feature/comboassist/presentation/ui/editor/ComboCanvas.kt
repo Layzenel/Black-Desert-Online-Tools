@@ -74,7 +74,7 @@ import org.jetbrains.compose.resources.stringResource
  */
 @Composable
 internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
-    val combo = state.combo ?: return
+    val combo = state.edited ?: return
     val bounds = remember(combo.columns) { mutableStateMapOf<CellAt, Rect>() }
     var drag by remember { mutableStateOf<CellDrag?>(null) }
     val slop = with(LocalDensity.current) { ComboDimens.dropSlop.toPx() }

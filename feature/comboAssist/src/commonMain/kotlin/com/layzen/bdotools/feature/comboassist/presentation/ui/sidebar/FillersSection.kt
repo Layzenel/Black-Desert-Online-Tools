@@ -48,7 +48,7 @@ import org.jetbrains.compose.resources.stringResource
  */
 @Composable
 internal fun FillersSection(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
-    val combo = state.combo ?: return
+    val combo = state.edited ?: return
     val language = stringResource(Res.string.combo_names_language)
     var query by remember { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }

@@ -1,10 +1,18 @@
 package com.layzen.bdotools.feature.comboassist.data.slots
 
+import com.layzen.bdotools.core.skill.domain.KeyBindings
+
 /**
- * Слоты перезарядок персонажа и масштаб интерфейса игры.
+ * Слоты перезарядок персонажа, масштаб интерфейса игры и клавиши персонажа.
  *
  * @property slots видимые слоты с умениями
  * @property uiScale «Размер интерфейса» игры (100 % → 1)
  * @property resolutionHeight высота разрешения игры в пикселях
+ * @property keys клавиши действий персонажа (`ShortcutKey_Action_Key` его файла)
  */
-internal data class SlotLayout(val slots: List<CooldownSlot>, val uiScale: Double, val resolutionHeight: Int)
+internal data class SlotLayout(
+    val slots: List<CooldownSlot>,
+    val uiScale: Double,
+    val resolutionHeight: Int,
+    val keys: KeyBindings = KeyBindings.Default,
+)

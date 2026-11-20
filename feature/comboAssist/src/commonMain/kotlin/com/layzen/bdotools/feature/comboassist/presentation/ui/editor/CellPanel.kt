@@ -52,7 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 /** Свойства выбранной ячейки: вставить рядом, развилка, связка, опциональность, пометка для трекера, снять выбор, удалить. */
 @Composable
 internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
-    val combo = state.combo ?: return
+    val combo = state.edited ?: return
     val at = state.selection ?: return
     val cell = combo[at] ?: return
     val column = combo.columns[at.column]

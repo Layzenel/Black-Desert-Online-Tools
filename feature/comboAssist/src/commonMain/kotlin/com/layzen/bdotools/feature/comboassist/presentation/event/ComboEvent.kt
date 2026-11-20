@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.comboassist.presentation.event
 
 import com.layzen.bdotools.core.game.CharacterClass
-import com.layzen.bdotools.core.skill.domain.SkillStance
+import com.layzen.bdotools.feature.comboassist.domain.skill.ComboStance
 import com.layzen.bdotools.feature.comboassist.domain.combo.CellAt
 import com.layzen.bdotools.feature.comboassist.domain.combo.DropSide
 import com.layzen.bdotools.feature.comboassist.domain.combo.OverlayStyle
@@ -13,12 +13,15 @@ sealed interface ComboEvent {
     data object NewCombo : ComboEvent
     data class Rename(val name: String) : ComboEvent
     data class SelectClass(val characterClass: CharacterClass) : ComboEvent
-    data class SelectStance(val stance: SkillStance?) : ComboEvent
+    data class SelectStance(val stance: ComboStance?) : ComboEvent
     data class Query(val text: String) : ComboEvent
     data object Save : ComboEvent
     data object Delete : ComboEvent
     data object ExportCombo : ComboEvent
     data object ImportCombos : ComboEvent
+    data class EditRage(val rage: Boolean) : ComboEvent
+    data object AddRage : ComboEvent
+    data object RemoveRage : ComboEvent
 
     data class SelectCell(val at: CellAt) : ComboEvent
     data class Fill(val skillNo: Int) : ComboEvent
@@ -40,6 +43,12 @@ sealed interface ComboEvent {
     data class SetMode(val mode: ComboMode) : ComboEvent
     data class Press(val skillNo: Int) : ComboEvent
     data object ToggleSchema : ComboEvent
+
+    /** Показать окно «Как работает трекер». */
+    data object ShowTrackerNotice : ComboEvent
+
+    /** Закрыть окно «Как работает трекер»: при следующем открытии вкладки оно само больше не появится. */
+    data object CloseTrackerNotice : ComboEvent
     data object ToggleVertical : ComboEvent
     data class SetOverlayStyle(val style: OverlayStyle) : ComboEvent
 

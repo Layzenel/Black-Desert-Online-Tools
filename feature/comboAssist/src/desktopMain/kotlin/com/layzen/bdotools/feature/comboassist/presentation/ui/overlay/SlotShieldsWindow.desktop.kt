@@ -47,7 +47,6 @@ internal actual fun SlotShieldsWindow(
     slots: List<ScreenSlot>,
     protections: Map<Int, Set<SkillProtection>>,
     controls: Map<Int, Set<CrowdControl>>,
-    shown: Boolean,
 ) {
     val screen = remember { Toolkit.getDefaultToolkit().screenSize }
     val marked = slots.mapNotNull { SlotMarks.of(it, protections[it.skillNo].orEmpty(), controls[it.skillNo].orEmpty(), screen) }
@@ -67,7 +66,7 @@ internal actual fun SlotShieldsWindow(
     Window(
         onCloseRequest = {},
         state = state,
-        visible = gameActive && shown,
+        visible = gameActive,
         undecorated = true,
         transparent = true,
         resizable = false,
@@ -85,7 +84,7 @@ internal actual fun SlotShieldsWindow(
             }
         }
     }
-    SlotMarkTooltip(marked, gameActive && shown)
+    SlotMarkTooltip(marked, gameActive)
 }
 
 /** Цвета значков: обводка щита, фон и рамка значка контроля. */

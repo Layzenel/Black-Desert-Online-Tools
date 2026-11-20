@@ -8,8 +8,8 @@ import com.layzen.bdotools.feature.comboassist.domain.skill.SkillProtection
 /**
  * Щиты в правом верхнем углу слотов перезарядки [slots] по защите умения в PvP ([protections]): жёлтый — устойчивость,
  * синий — защита спереди, красный — неуязвимость; несколько защит — щиты в ряд, самый сильный с края. Только экран,
- * внизу иконки — значки контролей умения в PvP ([controls]). Только экран, клики проходят в игру. Пока слоты не видны ([shown] — `false`: открыто окно умений, настроек и т. п.), щитов нет.
+ * внизу иконки — значки контролей умения в PvP ([controls]). Только экран, клики проходят в игру. Слоты, закрытые окном игры, сюда не передаются — на них щитов нет.
  * Есть только в настольной версии.
  */
 @Composable
-internal expect fun SlotShieldsWindow(slots: List<ScreenSlot>, protections: Map<Int, Set<SkillProtection>>, controls: Map<Int, Set<CrowdControl>>, shown: Boolean)
+internal expect fun SlotShieldsWindow(slots: List<ScreenSlot>, protections: Map<Int, Set<SkillProtection>>, controls: Map<Int, Set<CrowdControl>>)

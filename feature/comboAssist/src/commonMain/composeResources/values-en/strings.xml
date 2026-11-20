@@ -14,7 +14,13 @@
     <string name="combo_name_placeholder">Combo name</string>
     <string name="combo_stance_succession">Succession</string>
     <string name="combo_stance_awakening">Awakening</string>
+    <string name="combo_stance_sacramentum">Sacramentum</string>
+    <string name="combo_stance_purgatum">Purgatum</string>
     <string name="combo_stance_all">All</string>
+    <string name="combo_part_normal">Regular combo</string>
+    <string name="combo_part_rage">Under Black Spirit Rage</string>
+    <string name="combo_rage_add">Add Black Spirit Rage combo</string>
+    <string name="combo_rage_remove">Remove Rage combo</string>
     <string name="combo_class_search">Search classes</string>
     <string name="combo_section_skills">Skills</string>
     <string name="combo_search">Search skills</string>
@@ -85,7 +91,7 @@
     <string name="combo_schema_show">Show layout</string>
     <string name="combo_panel_tracker">Tracker</string>
     <string name="combo_panel_schema">Combo layout</string>
-    <string name="combo_tracker_limits">The tracker works only when "Skill Usage History" is turned on in game. In some places, such as the Black Shrine, the history is not shown, so the tracker does not work there.</string>
+    <string name="combo_tracker_limits">The tracker relies on "Skill Usage History", key presses and resource spending. Where the history is missing (for example, in the Black Shrine), it follows keys only and makes more mistakes.</string>
     <string name="combo_overlay_vertical">Vertical</string>
     <string name="combo_overlay_horizontal">Horizontal</string>
     <string name="combo_overlay_style_next">Next</string>
@@ -105,4 +111,23 @@
     <string name="combo_protection_super_armor">Super Armor</string>
     <string name="combo_protection_forward_guard">Forward Guard</string>
     <string name="combo_protection_invincible">Invincible</string>
+    <string name="combo_notice_title">How the combo tracker works</string>
+    <string name="combo_notice_intro">The tracker shows the next combo skill over the game and notices on its own what you used. The program only looks at the screen and listens to key presses: it sends nothing to the game and changes nothing in it. The hint is not always exact; the reasons are below.</string>
+    <string name="combo_notice_sources">How the tracker knows what you used</string>
+    <string name="combo_notice_source_history">"Skill Usage History" is the main and most accurate source. A skill the game wrote there always counts, but the line appears up to 0.75 s late.</string>
+    <string name="combo_notice_source_keys">Key presses. From the character's key bindings the program recognizes the command of the step the tracker is waiting for and counts it at once, without waiting for the history. If the history then shows another skill, the tracker corrects itself.</string>
+    <string name="combo_notice_source_resource">The resource bar (MP, WP, Fury and so on). A skill that spends a noticeable amount of resource counts on a press only when the bar drops: a press the game ignored does not move the step, and a skill pressed early, during the previous animation, counts when it really starts.</string>
+    <string name="combo_notice_limits">Limitations</string>
+    <string name="combo_notice_limit_admin">To hear keys, run the program as administrator: the game runs with administrator rights, and otherwise Windows does not pass its key presses on.</string>
+    <string name="combo_notice_limit_history_off">The history must be turned on: "Edit UI" → "Control Hints" → "Skill Usage History". Where it is missing (for example, in the Black Shrine), the tracker follows keys only and makes more mistakes.</string>
+    <string name="combo_notice_limit_history_gaps">The game does not write every skill to the history: chain follow-ups and skills that cancel the previous animation are often skipped. The tracker sees them by keys only.</string>
+    <string name="combo_notice_limit_cheap">Cheap skills (costing less than a couple of pixels of the bar) and skills the game casts on its own while a key is held count on press and hold without a check. If you pressed the keys but the skill did not come out, the tracker may move one step ahead; the next skill from the history puts it back.</string>
+    <string name="combo_notice_limit_keys">The tracker recognizes only the keys from the game's control settings. It may not understand macros, third-party programs or buttons remapped in mouse software.</string>
+    <string name="combo_notice_limit_hidden">The tracker, the layout and the marks over cooldown slots hide when the slots are covered by a game window: skills, settings, the map or a hidden UI. If only some slots are covered, the marks disappear only from them.</string>
+    <string name="combo_notice_limit_rage">The Black Spirit's Rage combo turns on when three rage buffs with a 60 s timer appear in the buff list, and turns off a minute later.</string>
+    <string name="combo_notice_tips">Tips</string>
+    <string name="combo_notice_tip_history">Do not cover "Skill Usage History" with other windows and do not move it: the program looks for it in its default place.</string>
+    <string name="combo_notice_tip_resync">If the tracker gets lost, start the combo from its first skill: it will recognize it and continue from there. If that does not help, use no combo skills for a few seconds: the tracker will start the combo over.</string>
+    <string name="combo_notice_ok">Got it</string>
+    <string name="combo_notice_open">How the tracker works</string>
 </resources>

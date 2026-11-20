@@ -7,4 +7,4 @@ import com.layzen.bdotools.feature.comboassist.domain.skill.SkillProtection
 
 /** Окон поверх игры в браузере нет. */
 @Composable
-internal actual fun SlotShieldsWindow(slots: List<ScreenSlot>, protections: Map<Int, Set<SkillProtection>>, controls: Map<Int, Set<CrowdControl>>, shown: Boolean) = Unit
+internal actual fun SlotShieldsWindow(slots: List<ScreenSlot>, protections: Map<Int, Set<SkillProtection>>, controls: Map<Int, Set<CrowdControl>>) = Unit

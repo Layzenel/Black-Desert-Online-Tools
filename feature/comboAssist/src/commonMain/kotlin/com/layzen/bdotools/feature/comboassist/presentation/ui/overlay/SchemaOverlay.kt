@@ -13,7 +13,6 @@ import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import com.layzen.bdotools.feature.comboassist.presentation.state.OverlayState
 import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
-import com.layzen.bdotools.uikit.components.TooltipPanel
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
@@ -29,6 +28,7 @@ internal fun SchemaOverlay(
     loadDetails: suspend (Int) -> SkillDetails?,
     onPress: ((Int) -> Unit)? = null,
     inGame: Boolean = false,
+    rage: Boolean = false,
 ) {
     // вертикальная схема прокручивается в своей высоте: на странице программы над ней уже есть прокрутка
     val scroll = when {
@@ -36,7 +36,7 @@ internal fun SchemaOverlay(
         combo.vertical -> Modifier.heightIn(max = ComboDimens.overlaySchemaMaxHeight).verticalScroll(rememberScrollState())
         else -> Modifier.horizontalScroll(rememberScrollState())
     }
-    TooltipPanel {
+    OverlayPanel(rage) {
         Row(scroll.padding(AppTheme.dimens.spaceXs)) {
             ComboSchema(combo, overlay, skills, loadDetails, onPress, tooltips = !inGame)
         }

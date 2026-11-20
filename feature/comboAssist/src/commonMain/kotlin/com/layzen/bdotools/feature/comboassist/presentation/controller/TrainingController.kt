@@ -1,6 +1,8 @@
 package com.layzen.bdotools.feature.comboassist.presentation.controller
 
 import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
+import com.layzen.bdotools.feature.comboassist.domain.keys.KeyCommand
+import com.layzen.bdotools.feature.comboassist.domain.keys.KeyStep
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 import com.layzen.bdotools.feature.comboassist.domain.tracker.ComboTracker
 import com.layzen.bdotools.feature.comboassist.domain.tracker.TrackerEvent
@@ -37,6 +39,18 @@ internal class TrainingController {
 
     /** Умение [skillNo] появилось в истории умений игры: оно точно вышло, перезарядку не проверяем. */
     fun fromGame(skillNo: Int) { tracker?.let { record(it.onSkill(skillNo, nowMs())) } }
+
+    /**
+     * Шаги, которые можно подтвердить клавишами: те, которых трекер ждёт сейчас, и следующие за ними (строка
+     * истории текущего ещё может не прийти, а продолжение уже жмут). [commands] — варианты клавиш умений.
+     */
+    fun keySteps(commands: Map<Int, KeyCommand>): List<KeyStep> {
+        val tracker = tracker ?: return emptyList()
+        val now = tracker.planner.candidates(tracker.state)
+        fun step(skillNo: Int, after: Int?) = commands[skillNo]?.let { KeyStep(skillNo, after, it.variants, it.visibleSpend) }
+        val steps = now.mapNotNull { step(it.skillNo, null) } + now.flatMap { node -> node.next.mapNotNull { step(it.skillNo, node.skillNo) } }
+        return steps.distinct()
+    }
 
     /** Проверка по времени (обрыв связки, простой); `true`, если что-то случилось. */
     fun tick(): Boolean = tracker?.tick(nowMs())?.also(::record) != null

@@ -18,6 +18,8 @@ internal object ComboDimens {
     val logIcon = 18.dp
     val tooltipIcon = 40.dp
     val tooltipWidth = 300.dp
+    val noticeWidth = 640.dp
+    val noticeMaxHeight = 560.dp
     val arrowLength = 18.dp
     val arrowHeight = 10.dp
     val chainHeight = 10.dp

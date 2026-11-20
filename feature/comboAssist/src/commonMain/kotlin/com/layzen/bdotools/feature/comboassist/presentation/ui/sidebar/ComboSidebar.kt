@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.size
 import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import com.layzen.bdotools.core.skill.domain.SkillDetails
-import com.layzen.bdotools.core.skill.domain.SkillStance
+import com.layzen.bdotools.feature.comboassist.domain.skill.ComboStance
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
@@ -23,6 +23,8 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_section_class
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_class_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_combo_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_all
+import com.layzen.bdotools.feature.comboassist.resources.combo_stance_purgatum
+import com.layzen.bdotools.feature.comboassist.resources.combo_stance_sacramentum
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_awakening
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_succession
 import com.layzen.bdotools.feature.comboassist.resources.combo_untitled
@@ -47,8 +49,9 @@ internal fun ComboSidebarContent(state: ComboState, onEvent: (ComboEvent) -> Uni
         icon = { Image(painterResource(it.icon), null, Modifier.size(ComboDimens.paletteIcon), colorFilter = tint) },
         searchPlaceholder = stringResource(Res.string.combo_class_search),
     )
-    // у классов Освобождения стоек нет: все навыки в одном наборе
-    if (!state.characterClass.ascension) StanceSelect(state, onEvent)
+    // у классов Освобождения стоек нет (кроме Серафима): все навыки в одном наборе
+    val stances = ComboStance.of(state.characterClass)
+    if (stances.isNotEmpty()) StanceSelect(state, stances, onEvent)
     SectionHeader(stringResource(Res.string.combo_section_combo), description = stringResource(Res.string.combo_section_combo_description))
     SavedCombos(state, onEvent, tint)
     MenuAction(stringResource(Res.string.combo_new), { onEvent(ComboEvent.NewCombo) })
@@ -83,15 +86,17 @@ private fun SavedCombos(state: ComboState, onEvent: (ComboEvent) -> Unit, tint: 
     )
 }
 
-/** Стойка, умения которой показывать: наследие, пробуждение или все. */
+/** Стойка класса из [stances], умения которой показывать, или все. */
 @Composable
-private fun StanceSelect(state: ComboState, onEvent: (ComboEvent) -> Unit) {
+private fun StanceSelect(state: ComboState, stances: List<ComboStance>, onEvent: (ComboEvent) -> Unit) {
     DropdownSelect(
-        state.stance, listOf(SkillStance.Succession, SkillStance.Awakening, null), { onEvent(ComboEvent.SelectStance(it)) },
+        state.stance, stances + null, { onEvent(ComboEvent.SelectStance(it)) },
         { stance ->
             when (stance) {
-                SkillStance.Succession -> stringResource(Res.string.combo_stance_succession)
-                SkillStance.Awakening -> stringResource(Res.string.combo_stance_awakening)
+                ComboStance.Succession -> stringResource(Res.string.combo_stance_succession)
+                ComboStance.Awakening -> stringResource(Res.string.combo_stance_awakening)
+                ComboStance.Sacramentum -> stringResource(Res.string.combo_stance_sacramentum)
+                ComboStance.Purgatum -> stringResource(Res.string.combo_stance_purgatum)
                 null -> stringResource(Res.string.combo_stance_all)
             }
         },

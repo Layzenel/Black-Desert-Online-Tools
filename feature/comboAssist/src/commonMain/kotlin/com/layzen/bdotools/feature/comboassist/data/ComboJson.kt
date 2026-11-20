@@ -4,6 +4,7 @@ import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import com.layzen.bdotools.feature.comboassist.domain.combo.OverlayStyle
 import com.layzen.bdotools.feature.comboassist.domain.combo.ComboCell
 import com.layzen.bdotools.feature.comboassist.domain.combo.ComboColumn
+import com.layzen.bdotools.feature.comboassist.domain.combo.ComboRage
 import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -21,6 +22,7 @@ private class SettingsDto(
     val schemaShown: Boolean = false,
     val slotShields: Boolean = false,
     val slotControls: Boolean = false,
+    val trackerNoticeSeen: Boolean = false,
 )
 
 /** Комбо в файле; колонка — либо `cell`, либо `lanes`. */
@@ -33,7 +35,12 @@ private class ComboDto(
     val fillers: List<Int> = emptyList(),
     val vertical: Boolean = false,
     val overlayStyle: String = OverlayStyle.Next.name,
+    val rage: RageDto? = null,
 )
+
+/** Комбо под гневом Чёрного духа в файле. */
+@Serializable
+private class RageDto(val columns: List<ColumnDto> = emptyList(), val fillers: List<Int> = emptyList())
 
 /** Колонка в файле: обычная — [cell], развилка — [lanes]. */
 @Serializable
@@ -52,19 +59,17 @@ internal fun parseCombos(text: String): List<Combo> = json.decodeFromString<Comb
         id = dto.id,
         name = dto.name,
         classKey = dto.classKey,
-        columns = dto.columns.map { column ->
-            column.lanes?.let { lanes -> ComboColumn.Fork(lanes.map { lane -> lane.map { it.toCell() } }) }
-                ?: ComboColumn.Single(column.cell?.toCell() ?: ComboCell())
-        },
+        columns = dto.columns.map { it.toColumn() },
         fillers = dto.fillers,
         vertical = dto.vertical,
         overlayStyle = OverlayStyle.entries.firstOrNull { it.name == dto.overlayStyle } ?: OverlayStyle.Next,
+        rage = dto.rage?.let { rage -> ComboRage(rage.columns.map { it.toColumn() }, rage.fillers) },
     )
 }
 
 /** Настройки оверлея из файла комбо; неверный файл — исключение, как у [parseCombos]. */
 internal fun parseSettings(text: String): OverlaySettings =
-    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls) }
+    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen) }
 
 /** Записывает комбо [combos] и настройки [settings] в формат файла. */
 internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = OverlaySettings()): String = json.encodeToString(
@@ -75,20 +80,24 @@ internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = Overlay
                 id = combo.id,
                 name = combo.name,
                 classKey = combo.classKey,
-                columns = combo.columns.map { column ->
-                    when (column) {
-                        is ComboColumn.Single -> ColumnDto(cell = column.cell.toDto())
-                        is ComboColumn.Fork -> ColumnDto(lanes = column.lanes.map { lane -> lane.map { it.toDto() } })
-                    }
-                },
+                columns = combo.columns.map { it.toDto() },
                 fillers = combo.fillers,
                 vertical = combo.vertical,
                 overlayStyle = combo.overlayStyle.name,
+                rage = combo.rage?.let { rage -> RageDto(rage.columns.map { it.toDto() }, rage.fillers) },
             )
         },
-        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls) },
+        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen) },
     ),
 )
+
+private fun ColumnDto.toColumn(): ComboColumn =
+    lanes?.let { lanes -> ComboColumn.Fork(lanes.map { lane -> lane.map { it.toCell() } }) } ?: ComboColumn.Single(cell?.toCell() ?: ComboCell())
+
+private fun ComboColumn.toDto(): ColumnDto = when (this) {
+    is ComboColumn.Single -> ColumnDto(cell = cell.toDto())
+    is ComboColumn.Fork -> ColumnDto(lanes = lanes.map { lane -> lane.map { it.toDto() } })
+}
 
 private fun CellDto.toCell() = ComboCell(skill, chain, optional, note)
 private fun ComboCell.toDto() = CellDto(skillNo, chain, optional, note)
