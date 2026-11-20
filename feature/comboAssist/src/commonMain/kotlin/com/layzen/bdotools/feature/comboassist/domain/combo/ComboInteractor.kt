@@ -1,10 +1,11 @@
 package com.layzen.bdotools.feature.comboassist.domain.combo
 
+import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.core.skill.domain.Skill
 import com.layzen.bdotools.core.skill.domain.SkillCatalogRepository
 import com.layzen.bdotools.core.skill.domain.SkillDetails
-import com.layzen.bdotools.core.skill.domain.SkillStance
+import com.layzen.bdotools.feature.comboassist.domain.skill.ComboStance
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkill
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 import com.layzen.bdotools.feature.comboassist.domain.skill.SkillTraits
@@ -12,6 +13,9 @@ import com.layzen.bdotools.feature.comboassist.domain.skill.skillProtections
 import com.layzen.bdotools.feature.comboassist.domain.history.PlayedCharacter
 import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
 import com.layzen.bdotools.feature.comboassist.domain.history.SkillHistorySource
+import com.layzen.bdotools.feature.comboassist.domain.keys.KeyStep
+import com.layzen.bdotools.feature.comboassist.domain.keys.KeyCommand
+import com.layzen.bdotools.feature.comboassist.domain.keys.keyVariants
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -35,11 +39,36 @@ class ComboInteractor(
     /** Может ли программа следить за историей умений в игре (только настольная версия). */
     val canWatchGame: Boolean get() = history.supported
 
-    /** Видны ли слоты перезарядок на экране: щиты на них прячутся, когда слоты закрыты окном игры. */
-    fun slotsShown(): Flow<Boolean> = history.slotsShown()
+    /** Какие слоты перезарядок закрыты окном игры: оверлей на них не рисуется, а закрыты все — трекер прячется. */
+    fun hiddenSlots(): Flow<Set<Int>> = history.hiddenSlots()
 
-    /** Применённые в игре умения по их иконкам [icons], пока поток собирают; [preferred] — умения комбо. */
-    fun watchGame(icons: Map<Int, ByteArray>, preferred: Set<Int>): Flow<Int> = history.watch(icons, preferred)
+    /** Висят ли бафы гнева Чёрного духа, пока поток собирают: тогда трекер ведёт комбо под гневом. */
+    fun rageActive(): Flow<Boolean> = history.rageActive()
+
+    /**
+     * Применённые в игре умения по их иконкам [icons], пока поток собирают; [preferred] — умения комбо, [keySteps] — шаги, которых трекер
+     * ждёт сейчас (их подтверждают клавиши).
+     */
+    fun watchGame(
+        icons: Map<Int, ByteArray>,
+        preferred: Set<Int>,
+        keySteps: () -> List<KeyStep>,
+    ): Flow<Int> =
+        history.watch(icons, preferred, keySteps)
+
+    /**
+     * Команды умений [skillNos]: варианты клавиш ([keyVariants]) и заметен ли его расход ресурса класса (MP в данных bdolytics).
+     * Умения без подробностей или клавиш пропускаются.
+     */
+    suspend fun keyCommands(skillNos: Set<Int>): Map<Int, KeyCommand> = coroutineScope {
+        skillNos.map { no -> async { no to catalog.details(no)?.text(COOLDOWN_LANGUAGE) } }
+            .awaitAll()
+            .mapNotNull { (no, text) ->
+                val variants = text?.command?.let(::keyVariants)?.takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+                no to KeyCommand(variants, visibleSpend = text.requiredMp >= VISIBLE_SPEND)
+            }
+            .toMap()
+    }
 
     /**
      * Персонаж, которым сейчас играют, по слотам перезарядок на экране, или `null`, если не понять. Класс — тот,
@@ -68,9 +97,14 @@ class ComboInteractor(
     /** Сохраняет настройки оверлея. */
     suspend fun saveSettings(settings: OverlaySettings) = combos.saveSettings(settings)
 
-    /** Новое пустое комбо класса [classKey] с одной пустой колонкой. */
-    fun newCombo(classKey: String, name: String): Combo =
-        Combo(id = newId(), name = name, classKey = classKey, columns = listOf(ComboColumn.Single(ComboCell())))
+    /**
+     * Новое пустое комбо класса [classKey] с одной пустой колонкой. У Серафима комбо под гневом Чёрного духа другое —
+     * его пустой вариант добавляется сразу.
+     */
+    fun newCombo(classKey: String, name: String): Combo = Combo(
+        id = newId(), name = name, classKey = classKey, columns = listOf(ComboColumn.Single(ComboCell())),
+        rage = ComboRage.Empty.takeIf { classKey == CharacterClass.Seraph.key },
+    )
 
     /** Сохраняет [combo] в файл, который выберет игрок. */
     suspend fun export(combo: Combo) = files.export(combo)
@@ -93,10 +127,9 @@ class ComboInteractor(
      * Умения класса [classKey], которые можно поставить в комбо персонажу в стойке [stance] (`null` — все):
      * последние ранги, с перезарядкой и без. Пусто, если справочник не скачался.
      */
-    suspend fun classSkills(classKey: String, stance: SkillStance?): Map<Int, Skill> {
+    suspend fun classSkills(classKey: String, stance: ComboStance?): Map<Int, Skill> {
         val skills = catalog.activeSkills()?.skills.orEmpty().filterValues { skill ->
-            skill.max && classKey in skill.classes && (stance == null || skill.fitsStance(stance)) &&
-                !(stance == SkillStance.Succession && skill.hasPrimeVariant)
+            skill.max && classKey in skill.classes && (stance == null || stance.allows(skill))
         }
         return withCooldowns(skills)
     }
@@ -126,6 +159,13 @@ class ComboInteractor(
     private companion object {
         /** Перезарядка одинакова на всех языках: берётся из английского текста. */
         const val COOLDOWN_LANGUAGE = "en"
+
+        /**
+         * Расход от этого (MP в данных bdolytics) заметен на полоске ресурса — несколько пикселей; дешевле (связки Страйкера
+         * по 5 из ~850) тонет в дрожании замера, и такое умение засчитывается по нажатию.
+         * shortcut: порог в единицах ресурса, а не в доле полоски — у классов с большим запасом может быть мал; уточнить по `watch.log`.
+         */
+        const val VISIBLE_SPEND = 20
 
         /** Клавиша в команде умения: `{KeyBind:Attack1}`. */
         val KEY_BIND = Regex("""\{KeyBind:(\w+)\}""")

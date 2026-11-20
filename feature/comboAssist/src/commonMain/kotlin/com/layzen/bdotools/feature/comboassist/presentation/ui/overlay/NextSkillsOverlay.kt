@@ -18,7 +18,6 @@ import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.presentation.ui.common.StepArrow
 import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillIconView
-import com.layzen.bdotools.uikit.components.TooltipPanel
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
@@ -32,9 +31,10 @@ internal fun NextSkillsOverlay(
     skills: Map<Int, SkillItem>,
     loadDetails: suspend (Int) -> SkillDetails?,
     note: String,
+    rage: Boolean = false,
 ) {
     val upcoming = overlay.plan.drop(1).take(UPCOMING).map { it.skillNo }
-    TooltipPanel {
+    OverlayPanel(rage) {
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
             Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS), verticalAlignment = Alignment.CenterVertically) {
                 AnimatedContent(

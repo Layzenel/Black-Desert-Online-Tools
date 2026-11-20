@@ -23,7 +23,8 @@ internal class EditorController {
 
     /** Применяет событие редактора [event] к [state]; события не редактора возвращают состояние как есть. */
     fun reduce(state: ComboState, event: ComboEvent, skills: ComboSkills): ComboState {
-        val combo = state.combo ?: return state
+        val whole = state.combo ?: return state
+        val combo = state.edited ?: return state
         val at = state.selection
         val edit: ComboEdit = when (event) {
             is ComboEvent.SelectCell -> return select(state, event.at, skills)
@@ -48,12 +49,13 @@ internal class EditorController {
             is ComboEvent.RemoveFiller -> ComboEdit(combo.copy(fillers = combo.fillers - event.skillNo), at)
             else -> return state
         }
-        return refresh(state.copy(combo = edit.combo, selection = edit.selection, dirty = true), skills)
+        val changed = whole.withPart(state.rageEdited, edit.combo)
+        return refresh(state.copy(combo = changed, selection = edit.selection, dirty = true), skills)
     }
 
     /** Пересчитывает подсказки «что дальше» и предупреждения после правки или смены справочника. */
     fun refresh(state: ComboState, skills: ComboSkills): ComboState {
-        val combo = state.combo ?: return state.copy(suggestions = emptyList(), problems = emptyList(), emptyCells = 0)
+        val combo = state.edited ?: return state.copy(suggestions = emptyList(), problems = emptyList(), emptyCells = 0)
         val base = state.selection?.let { at -> combo[at]?.skillNo ?: combo.previousSkills(at).firstOrNull() }
         return state.copy(
             suggestions = base?.let { skills.followUpsOf(it) }.orEmpty().filter { it in state.skills },

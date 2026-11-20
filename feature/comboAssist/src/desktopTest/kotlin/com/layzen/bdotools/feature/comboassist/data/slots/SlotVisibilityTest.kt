@@ -1,19 +1,49 @@
 package com.layzen.bdotools.feature.comboassist.data.slots
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SlotVisibilityTest {
     @Test
-    fun hidesAfterSeveralChecksWithoutRecognizedSlotsAndShowsAtOnce() {
-        val visibility = SlotVisibility()
-        repeat(3) { visibility.onCheck(0) }
-        assertTrue(visibility.shown) // нескольких проверок мало
-        assertTrue(visibility.onCheck(1)) // один узнанный слот — ещё не видно
-        assertFalse(visibility.shown)
-        assertTrue(visibility.onCheck(3))
-        assertTrue(visibility.shown)
+    fun slotNeverRecognizedStaysVisibleWithOthers() {
+        // 2026-11-20: по своей иконке узнаются не все слоты — неузнаваемый не должен прятать тултип
+        val visibility = SlotVisibility(4)
+        repeat(30) { visibility.onCheck(listOf(true, true, false, false)) }
+        assertEquals(emptySet(), visibility.hidden)
+    }
+
+    @Test
+    fun slotRecognizedOnlySometimesDoesNotBlink() {
+        // 2026-11-20: слоты 2 и 8 узнавались раз в 2 с и моргали щитами
+        val visibility = SlotVisibility(3)
+        repeat(300) { i -> visibility.onCheck(listOf(true, true, i % 20 == 0)); assertEquals(emptySet(), visibility.hidden) }
+    }
+
+    @Test
+    fun coveredSlotHidesOnItsOwn() {
+        val visibility = SlotVisibility(3)
+        repeat(40) { visibility.onCheck(listOf(true, true, true)) }
+        repeat(14) { visibility.onCheck(listOf(true, true, false)) }
+        assertEquals(emptySet(), visibility.hidden)
+        visibility.onCheck(listOf(true, true, false))
+        assertEquals(setOf(2), visibility.hidden)
+        repeat(200) { visibility.onCheck(listOf(true, true, false)) } // долго закрыт — так и остаётся скрытым
+        assertEquals(setOf(2), visibility.hidden)
+        visibility.onCheck(listOf(true, true, true))
+        assertEquals(emptySet(), visibility.hidden)
+    }
+
+    @Test
+    fun allHideQuicklyWhenAlmostNothingIsRecognized() {
+        val visibility = SlotVisibility(3)
+        repeat(3) { visibility.onCheck(listOf(true, false, false)) }
+        assertEquals(emptySet(), visibility.hidden)
+        visibility.onCheck(listOf(false, false, false))
+        assertEquals(setOf(0, 1, 2), visibility.hidden)
+        visibility.onCheck(listOf(true, true, false))
+        assertEquals(emptySet(), visibility.hidden)
     }
 
     @Test

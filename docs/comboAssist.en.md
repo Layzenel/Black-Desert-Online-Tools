@@ -9,7 +9,13 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
 ## Editor
 
 - On the left — "Class" and "Saved combos". A combo belongs to a class and fits all of its characters.
-- "Skills" — the class skills with search and the "Succession", "Awakening" or "All" stances.
+- "Skills" — the class skills with search and the "Succession", "Awakening" or "All" stances; for Seraph —
+  "Sacramentum" (without "Purga:" skills), "Purgatum" (without "Sacra:" skills) or "All".
+- **Black Spirit Rage combo** — above the combo, switch between "Regular combo" and "Under Black Spirit Rage"
+  ("Add Black Spirit Rage combo" if there is none yet; Seraph gets one right away). When the three Black Spirit Rage
+  buffs appear in the buff list with a 59-second timer, the tracker follows the Rage combo for one minute on
+  a black-and-red panel with fire, then goes back to the regular combo. The tracker has to see the Rage start: if the
+  app was opened mid-Rage, it waits for the next one. The timer is read in the Russian game client.
 - Select a cell and click a skill on the left: a new cell appears after it, and "Can follow" above the list shows
   what usually comes next, with chains marked.
 - Drag an icon to an edge of another cell: the left or right edge puts the skill before or after it, the top or
@@ -54,10 +60,24 @@ A separate window can show the **combo layout** — the whole combo with the cur
 horizontal.
 
 > [!IMPORTANT]
-> The tracker works only when "Skill Usage History" is turned on in game. In some places, such as the Black Shrine,
-> the history is not shown, so the tracker does not work there.
+> Turn on "Skill Usage History" in game and run the app **as administrator**: the game runs with administrator
+> rights, and otherwise Windows does not show its key presses to the app. The first time you open the combo
+> assistant, a window explains how the tracker works and what it cannot do.
 
-Use Windowed Fullscreen. The app only reads the screen: it never touches the game and never presses keys.
+The tracker learns what you used from three sources. "Skill Usage History" is the most accurate but up to 0.75 s
+late, and the game skips some skills there (flow follow-ups and animation cancels, such as Seraph's Combo: Bone
+Breaker). Key presses of the step the tracker is waiting for count at once, by the character's key bindings. A press
+does not mean the skill went out (it may be pressed early, during the previous one), so a skill that spends a
+noticeable amount of resource counts only when the resource bar under HP drops (any color, with or without Split HP).
+Cheap skills and skills cast while a key is held count on the press itself; if a guess is wrong, the next history
+line puts the tracker back. Where the history is missing (for example, in the Black Shrine), the tracker follows keys
+only and makes more mistakes.
+
+The tracker, the layout and the marks over cooldown slots hide while the slots are covered by a game window; marks
+disappear only from the covered slots.
+
+Use Windowed Fullscreen. The app only reads the screen and key presses: it never touches the game, never intercepts
+input and never presses keys.
 
 > [!NOTE]
 > The skill database comes from the open data of [bdolytics.com](https://bdolytics.com), so an internet

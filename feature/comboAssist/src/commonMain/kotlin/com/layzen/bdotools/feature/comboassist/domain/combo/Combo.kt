@@ -10,6 +10,7 @@ package com.layzen.bdotools.feature.comboassist.domain.combo
  * @property fillers умения, которые оверлей предлагает, пока ждёт перезарядку следующего шага
  * @property vertical схема комбо показывает колонки сверху вниз, а ветки развилок — рядом
  * @property overlayStyle вид трекера поверх игры
+ * @property rage комбо под гневом Чёрного духа или `null`, если его нет
  */
 data class Combo(
     val id: String,
@@ -19,7 +20,22 @@ data class Combo(
     val fillers: List<Int> = emptyList(),
     val vertical: Boolean = false,
     val overlayStyle: OverlayStyle = OverlayStyle.Next,
+    val rage: ComboRage? = null,
 ) {
+    /**
+     * Часть комбо, которую правят или по которой ведут трекер: обычное комбо или, если [rageShown], комбо под
+     * гневом в виде такого же комбо (без своего [rage]). Под гневом, когда его нет, — `null`.
+     */
+    fun part(rageShown: Boolean): Combo? =
+        if (!rageShown) this else rage?.let { copy(columns = it.columns, fillers = it.fillers, rage = null) }
+
+    /** Комбо, в котором часть [rageShown] заменена правленой [edited] (результатом правки [part]). */
+    fun withPart(rageShown: Boolean, edited: Combo): Combo =
+        if (rageShown) copy(rage = ComboRage(edited.columns, edited.fillers)) else edited.copy(rage = rage)
+
+    /** Обычное комбо и комбо под гневом, если оно есть. */
+    fun parts(): List<Combo> = listOfNotNull(part(false), part(true))
+
     /** Номер первой колонки каждой колонки комбо (развилка шириной 2 сдвигает следующие на 2), с единицы. */
     fun columnStarts(): List<Int> = columns.runningFold(1) { start, column -> start + column.width }.dropLast(1)
 

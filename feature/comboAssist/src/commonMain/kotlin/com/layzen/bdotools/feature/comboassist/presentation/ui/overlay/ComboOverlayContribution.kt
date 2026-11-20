@@ -53,31 +53,32 @@ internal fun comboOverlayContribution(): OverlayContribution = OverlayContributi
 private fun ComboOverlayWindows(viewModel: ComboViewModel) {
     if (!viewModel.canWatchGame) return
     val state by viewModel.state.collectAsState()
-    state.combo?.let { combo ->
+    val hidden by viewModel.hiddenSlots.collectAsState()
+    val visibleSlots = state.slots.filterIndexed { index, _ -> index !in hidden }
+    // все слоты закрыты окном игры (умения, настройки, карта) — трекер и схема прячутся вместе с ними
+    val slotsCovered = state.slots.isNotEmpty() && visibleSlots.isEmpty()
+    state.tracked?.let { combo ->
         val settings = state.settings
-        if (state.overlayShown) {
+        if (state.overlayShown && !slotsCovered) {
             GameOverlayWindow(COMBO_ROUTE, OverlayAnchor.BottomCenter, ComboDimens.overlayWindow) {
                 ScaledOverlay(settings.comboScale, settings.comboOpacity) {
-                    ComboOverlayContent(combo, state.overlay, state.skills, viewModel::details)
+                    ComboOverlayContent(combo, state.overlay, state.skills, viewModel::details, state.rageTracked)
                 }
             }
         }
-        if (state.overlayShown && settings.schemaShown) {
+        if (state.overlayShown && settings.schemaShown && !slotsCovered) {
             val size = if (combo.vertical) ComboDimens.overlayWindowVertical else ComboDimens.overlayWindow
             GameOverlayWindow(SCHEMA_WINDOW, OverlayAnchor.CenterLeft, size) {
                 ScaledOverlay(settings.comboScale, settings.comboOpacity) {
-                    SchemaOverlay(combo, state.overlay, state.skills, viewModel::details, inGame = true)
+                    SchemaOverlay(combo, state.overlay, state.skills, viewModel::details, inGame = true, rage = state.rageTracked)
                 }
             }
         }
     }
     val protections = if (state.settings.slotShields) state.slotProtections else emptyMap()
     val controls = if (state.settings.slotControls) state.slotControls else emptyMap()
-    if (state.settings.slotTooltips) SlotTooltipWindow(state.slots, state.skills, viewModel::details, protections, controls)
-    if (state.settings.slotShields || state.settings.slotControls) {
-        val slotsShown by viewModel.slotsShown.collectAsState()
-        SlotShieldsWindow(state.slots, protections, controls, slotsShown)
-    }
+    if (state.settings.slotTooltips) SlotTooltipWindow(visibleSlots, state.skills, viewModel::details, protections, controls)
+    if (state.settings.slotShields || state.settings.slotControls) SlotShieldsWindow(visibleSlots, protections, controls)
 }
 
 /** Пункт общей вкладки «Настройки»: тултипы над слотами перезарядки, щиты защиты и значки контролей на слотах. */

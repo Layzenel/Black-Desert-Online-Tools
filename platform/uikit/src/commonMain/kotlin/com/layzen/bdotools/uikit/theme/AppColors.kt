@@ -57,6 +57,13 @@ data class AppColors(
     // Силуэт индикатора загрузки
     val silhouette: Color,
     val silhouetteOutline: Color,
+
+    // Гнев Чёрного духа: подложка трекера под гневом, от чёрного к языкам пламени
+    val rageDeep: Color,
+    val rageDark: Color,
+    val rageBorder: Color,
+    val rageFlame: Color,
+    val rageEmber: Color,
 )
 
 /** Значения палитры, снятые со скриншотов окон игры. */
@@ -101,4 +108,10 @@ val DefaultAppColors = AppColors(
 
     silhouette = Color(0xFF000000),
     silhouetteOutline = Color(0xFFE0C8A0),
+
+    rageDeep = Color(0xFF0C0505),
+    rageDark = Color(0xFF3A0A0A),
+    rageBorder = Color(0xFF7A1414),
+    rageFlame = Color(0xFFB4140E),
+    rageEmber = Color(0xFFE8501C),
 )

@@ -14,7 +14,13 @@
     <string name="combo_name_placeholder">Название комбо</string>
     <string name="combo_stance_succession">Наследие</string>
     <string name="combo_stance_awakening">Пробуждение</string>
+    <string name="combo_stance_sacramentum">Сакраментум</string>
+    <string name="combo_stance_purgatum">Пургатум</string>
     <string name="combo_stance_all">Все</string>
+    <string name="combo_part_normal">Обычное комбо</string>
+    <string name="combo_part_rage">Под гневом Чёрного духа</string>
+    <string name="combo_rage_add">Добавить комбо под гневом</string>
+    <string name="combo_rage_remove">Убрать комбо под гневом</string>
     <string name="combo_class_search">Поиск класса</string>
     <string name="combo_section_skills">Умения</string>
     <string name="combo_search">Поиск умения</string>
@@ -85,7 +91,7 @@
     <string name="combo_schema_show">Показать схему</string>
     <string name="combo_panel_tracker">Трекер</string>
     <string name="combo_panel_schema">Схема комбо</string>
-    <string name="combo_tracker_limits">Трекер работает, только если в игре включена «История испол. навыков». В некоторых местах игры, например в Чёрном храме, история не показывается — там трекер не работает.</string>
+    <string name="combo_tracker_limits">Трекер опирается на «Историю испол. навыков», нажатия клавиш и расход ресурса. Где истории нет (например, в Чёрном храме), он ведёт только по клавишам и ошибается чаще.</string>
     <string name="combo_overlay_vertical">Вертикально</string>
     <string name="combo_overlay_horizontal">Горизонтально</string>
     <string name="combo_overlay_style_next">Следующие</string>
@@ -105,4 +111,23 @@
     <string name="combo_protection_super_armor">Устойчивость</string>
     <string name="combo_protection_forward_guard">Защита спереди</string>
     <string name="combo_protection_invincible">Неуязвимость</string>
+    <string name="combo_notice_title">Как работает трекер комбо</string>
+    <string name="combo_notice_intro">Трекер показывает поверх игры следующее умение комбо и сам замечает, что вы применили. Программа только смотрит на экран и слушает нажатия клавиш: в игру она ничего не отправляет и ничего в ней не меняет. Подсказка не всегда точна — ниже написано почему.</string>
+    <string name="combo_notice_sources">Откуда трекер знает, что вы применили</string>
+    <string name="combo_notice_source_history">«История испол. навыков» — главный и самый точный источник. Умение, которое игра туда записала, засчитывается наверняка, но строка появляется с задержкой до 0,75 с.</string>
+    <string name="combo_notice_source_keys">Нажатия клавиш. По раскладке клавиш персонажа программа узнаёт команду шага, которого трекер ждёт сейчас, и засчитывает его сразу, не дожидаясь истории. Если потом история покажет другое умение, трекер поправится сам.</string>
+    <string name="combo_notice_source_resource">Полоска ресурса (MP, WP, ярость и т. п.). Умение, которое тратит заметно ресурса, засчитывается по нажатию, только когда полоска просела: нажатие, на которое игра не ответила, шаг не двигает, а умение, нажатое заранее во время анимации прошлого, засчитается, когда действительно начнётся.</string>
+    <string name="combo_notice_limits">Ограничения</string>
+    <string name="combo_notice_limit_admin">Чтобы слышать клавиши, программу нужно запускать от имени администратора: игра работает с правами администратора, и иначе Windows не отдаёт её нажатия.</string>
+    <string name="combo_notice_limit_history_off">История должна быть включена: «Редактировать UI» → «Подсказки по управлению» → «История испол. навыков». Где её нет (например, в Чёрном храме), трекер ведёт только по клавишам и ошибается чаще.</string>
+    <string name="combo_notice_limit_history_gaps">Игра пишет в историю не все умения: продолжения связок и умения, которые отменяют анимацию прошлого, часто пропускаются. Их трекер видит только по клавишам.</string>
+    <string name="combo_notice_limit_cheap">Дешёвые умения (расход меньше пары пикселей полоски) и умения, которые игра применяет сама, пока клавиша зажата, засчитываются по нажатию и удержанию без проверки. Если вы нажали клавиши, а умение не вышло, трекер может уйти на шаг вперёд — первое же умение из истории вернёт его на место.</string>
+    <string name="combo_notice_limit_keys">Трекер узнаёт только клавиши из настроек управления игры. Макросы, сторонние программы и кнопки, переназначенные в программе мыши, он может не понять.</string>
+    <string name="combo_notice_limit_hidden">Трекер, схема и значки над слотами перезарядки прячутся, когда слоты закрыты окном игры: окном умений, настроек, картой или скрытым интерфейсом. Если закрыта только часть слотов, значки пропадают только с них.</string>
+    <string name="combo_notice_limit_rage">Комбо под гневом Чёрного духа включается, когда в «Списке усилений» появляются три бафа гнева с таймером 60 с, и выключается через минуту.</string>
+    <string name="combo_notice_tips">Советы</string>
+    <string name="combo_notice_tip_history">Не закрывайте «Историю испол. навыков» другими окнами и не меняйте её место: программа ищет её там, где она стоит по умолчанию.</string>
+    <string name="combo_notice_tip_resync">Трекер сбился — начните комбо с первого умения: он узнает его и продолжит оттуда. Если не помогло, несколько секунд не применяйте умений комбо — трекер начнёт его сначала.</string>
+    <string name="combo_notice_ok">Понятно</string>
+    <string name="combo_notice_open">Как работает трекер</string>
 </resources>

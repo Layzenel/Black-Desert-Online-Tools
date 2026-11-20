@@ -26,7 +26,7 @@ import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillIconView
 import com.layzen.bdotools.uikit.components.ProgressBar
-import com.layzen.bdotools.uikit.components.TooltipPanel
+
 import com.layzen.bdotools.uikit.theme.AppShapes
 import com.layzen.bdotools.uikit.theme.AppTheme
 
@@ -40,9 +40,9 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * учитывает: блок и так маленький.
  */
 @Composable
-internal fun FocusOverlay(combo: Combo, overlay: OverlayState, skills: Map<Int, SkillItem>, loadDetails: suspend (Int) -> SkillDetails?) {
+internal fun FocusOverlay(combo: Combo, overlay: OverlayState, skills: Map<Int, SkillItem>, loadDetails: suspend (Int) -> SkillDetails?, rage: Boolean = false) {
     val next = overlay.next ?: return
-    TooltipPanel {
+    OverlayPanel(rage) {
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
             OptionalSkills(overlay, skills, ComboDimens.focusUpcomingIcon, vertical = true)
             Column(Modifier.width(ComboDimens.focusWidth), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {

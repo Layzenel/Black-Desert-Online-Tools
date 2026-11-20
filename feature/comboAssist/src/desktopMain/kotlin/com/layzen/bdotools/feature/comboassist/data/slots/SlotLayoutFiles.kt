@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.comboassist.data.slots
 
+import com.layzen.bdotools.core.skill.domain.parseKeyBindings
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -37,6 +38,13 @@ internal object SlotLayoutFiles {
     /** Слоты всех персонажей аккаунта [accountDir], у кого они есть. */
     fun readAll(accountDir: Path): List<SlotLayout> = characters(accountDir).map { it.second }.filter { it.slots.isNotEmpty() }
 
+    /** Текст файла аккаунта [accountDir] (как Latin-1) или `null`, если его не прочитать. */
+    fun accountText(accountDir: Path): String? = try {
+        readGameFile(accountDir)
+    } catch (e: IOException) {
+        null
+    }
+
     /** Персонажи аккаунта: время изменения их файла и слоты. Пусто, если файлы не прочитать. */
     private fun characters(accountDir: Path): List<Pair<Long, SlotLayout>> = try {
         val accountText = readGameFile(accountDir)
@@ -51,7 +59,7 @@ internal object SlotLayoutFiles {
                 val slots = parseSlotSkills(text).filterKeys { it !in hidden }.mapNotNull { (slot, skillNo) ->
                     centers[slot]?.let { (x, y) -> CooldownSlot(skillNo, x, y) }
                 }
-                modified to SlotLayout(slots, scale, height)
+                modified to SlotLayout(slots, scale, height, parseKeyBindings(text))
             }
         }
     } catch (e: IOException) {

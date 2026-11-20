@@ -9,6 +9,7 @@ package com.layzen.bdotools.feature.comboassist.domain.settings
  * @property schemaShown вместе с трекером показывать отдельное окно со схемой комбо
  * @property slotShields показывать на слотах перезарядки щиты защиты умения в PvP: устойчивость, защита спереди, неуязвимость
  * @property slotControls показывать под иконкой слота перезарядки значки контролей умения в PvP
+ * @property trackerNoticeSeen игрок уже прочитал, как работает трекер: окно с объяснением при первом открытии больше не показывается
  */
 data class OverlaySettings(
     val slotTooltips: Boolean = true,
@@ -17,4 +18,5 @@ data class OverlaySettings(
     val schemaShown: Boolean = false,
     val slotShields: Boolean = false,
     val slotControls: Boolean = false,
+    val trackerNoticeSeen: Boolean = false,
 )
