@@ -40,13 +40,20 @@ internal class EditorController {
             is ComboEvent.InsertCell -> at?.let { combo.insertCell(it, event.after) } ?: return state
             is ComboEvent.ClearSelection -> return refresh(state.copy(selection = null), skills)
             is ComboEvent.ToggleChain -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(chain = !it.chain)), a) } } ?: return state
-            is ComboEvent.ToggleOptional -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(optional = !it.optional)), a) } } ?: return state
             is ComboEvent.SetNote -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(note = event.text)), a) } } ?: return state
             is ComboEvent.RemoveCell -> at?.let { combo.removeCell(it) } ?: return state
             is ComboEvent.RemoveAt -> combo.removeCell(event.at)
             is ComboEvent.MoveCell -> combo.moveCell(event.from, event.to, event.side)
             is ComboEvent.AddFiller -> ComboEdit(combo.copy(fillers = (combo.fillers + event.skillNo).distinct()), at)
             is ComboEvent.RemoveFiller -> ComboEdit(combo.copy(fillers = combo.fillers - event.skillNo), at)
+            is ComboEvent.AddPool -> ComboEdit(combo.copy(pool = (combo.pool + event.skillNo).distinct()), at)
+            is ComboEvent.RemovePool -> ComboEdit(combo.copy(pool = combo.pool - event.skillNo), at)
+            is ComboEvent.MovePool -> {
+                val from = combo.pool.indexOf(event.skillNo)
+                val to = from + event.by
+                if (from < 0 || to !in combo.pool.indices) return state
+                ComboEdit(combo.copy(pool = combo.pool.toMutableList().apply { add(to, removeAt(from)) }), at)
+            }
             else -> return state
         }
         val changed = whole.withPart(state.rageEdited, edit.combo)

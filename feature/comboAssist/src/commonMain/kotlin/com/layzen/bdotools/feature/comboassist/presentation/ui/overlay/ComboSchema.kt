@@ -74,7 +74,7 @@ internal fun ComboSchema(
                             cells.forEachIndexed { index, cell ->
                                 if (cell.skillNo == null) return@forEachIndexed
                                 if (index > 0) Connector(cell.chain, vertical)
-                                SchemaCell(combo, CellAt(column, lane, index), cell.skillNo, cell.chain, cell.optional, overlay, skills, loadDetails, onPress, tooltips)
+                                SchemaCell(combo, CellAt(column, lane, index), cell.skillNo, cell.chain, overlay, skills, loadDetails, onPress, tooltips)
                             }
                         }
                     }
@@ -110,7 +110,6 @@ private fun SchemaCell(
     at: CellAt,
     skillNo: Int,
     chain: Boolean,
-    optional: Boolean,
     overlay: OverlayState,
     skills: Map<Int, SkillItem>,
     loadDetails: suspend (Int) -> SkillDetails?,
@@ -124,7 +123,6 @@ private fun SchemaCell(
         when {
             next || current -> 1f
             id in overlay.done -> DONE_ALPHA
-            optional -> SKIPPED_ALPHA
             else -> 1f
         },
         tween(FADE_MS),
@@ -150,7 +148,7 @@ private fun SchemaCell(
             crossed = id in overlay.burned,
         )
     }
-    if (tooltips) SkillHover(item, loadDetails, cell = CellNote(combo.label(at), chain, optional)) { icon() } else icon()
+    if (tooltips) SkillHover(item, loadDetails, cell = CellNote(combo.label(at), chain)) { icon() } else icon()
 }
 
 private const val DONE_ALPHA = 0.35f

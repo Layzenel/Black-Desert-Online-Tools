@@ -35,6 +35,6 @@ class ComboStanceTest {
     fun stanceOfOtherClassIsReplaced() {
         assertEquals(ComboStance.Sacramentum, ComboStance.keep(CharacterClass.Seraph, ComboStance.Succession))
         assertNull(ComboStance.keep(CharacterClass.Scholar, ComboStance.Succession))
-        assertNull(ComboStance.keep(CharacterClass.Seraph, null))
+        assertEquals(ComboStance.Sacramentum, ComboStance.keep(CharacterClass.Seraph, null))
     }
 }

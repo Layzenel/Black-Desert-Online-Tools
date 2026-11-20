@@ -10,9 +10,7 @@ import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_part_normal
 import com.layzen.bdotools.feature.comboassist.resources.combo_part_rage
 import com.layzen.bdotools.feature.comboassist.resources.combo_rage_add
-import com.layzen.bdotools.feature.comboassist.resources.combo_rage_remove
 import com.layzen.bdotools.feature.comboassist.resources.menu_add
-import com.layzen.bdotools.feature.comboassist.resources.menu_delete
 import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -21,7 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Какую часть комбо править: обычное или под гневом Чёрного духа. Если комбо под гневом нет — кнопка «добавить»,
- * пока правят комбо под гневом — ещё и «убрать».
+ * иначе переключатель; убрать комбо под гневом — внизу меню слева.
  */
 @Composable
 internal fun ComboParts(state: ComboState, onEvent: (ComboEvent) -> Unit) {
@@ -35,8 +33,5 @@ internal fun ComboParts(state: ComboState, onEvent: (ComboEvent) -> Unit) {
             listOf(false, true), state.rageEdited, { onEvent(ComboEvent.EditRage(it)) },
             { rage -> stringResource(if (rage) Res.string.combo_part_rage else Res.string.combo_part_normal) },
         )
-        if (state.rageEdited) {
-            MenuAction(stringResource(Res.string.combo_rage_remove), { onEvent(ComboEvent.RemoveRage) }, icon = painterResource(Res.drawable.menu_delete))
-        }
     }
 }

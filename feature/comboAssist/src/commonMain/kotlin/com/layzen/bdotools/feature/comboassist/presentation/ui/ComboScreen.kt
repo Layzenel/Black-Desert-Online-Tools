@@ -19,6 +19,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +34,7 @@ import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.CellPanel
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.ComboCanvas
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.ComboParts
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.OptionalSkillsEditor
 import com.layzen.bdotools.feature.comboassist.presentation.ui.sidebar.ComboSidebarContent
 import com.layzen.bdotools.feature.comboassist.presentation.ui.overlaysettings.OverlaySettingsPanel
 import com.layzen.bdotools.feature.comboassist.resources.Res
@@ -44,8 +49,12 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_import_failed
 import com.layzen.bdotools.feature.comboassist.resources.combo_empty_hint
 import com.layzen.bdotools.feature.comboassist.resources.combo_mode_editor
 import com.layzen.bdotools.feature.comboassist.resources.combo_mode_overlay
+import com.layzen.bdotools.feature.comboassist.resources.combo_notice_open
+import com.layzen.bdotools.feature.comboassist.resources.combo_rage_remove
+import com.layzen.bdotools.feature.comboassist.resources.menu_info
 import com.layzen.bdotools.feature.comboassist.resources.combo_save
 import com.layzen.bdotools.feature.comboassist.resources.combo_save_dirty
+import com.layzen.bdotools.feature.comboassist.resources.combo_untitled
 import com.layzen.bdotools.feature.comboassist.resources.combo_warning_chain
 import com.layzen.bdotools.feature.comboassist.resources.combo_warning_empty
 import com.layzen.bdotools.uikit.components.ActionBar
@@ -75,15 +84,26 @@ suspend fun preloadComboStrings() {
 /** Редактор комбо и настройка оверлея (настройка — только в настольной версии, [canWatchGame]). Окна поверх игры — в [com.layzen.bdotools.feature.comboassist.presentation.ui.overlay.comboOverlayContribution]. */
 @Composable
 fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
+    // Ctrl+Z ловит сама страница: поле ввода отменяет свой текст само и до неё клавишу не пускает
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focus.requestFocus() }
     ToolPage(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().focusRequester(focus).onKeyEvent { event ->
+            val undo = event.type == KeyEventType.KeyDown && (event.isCtrlPressed || event.isMetaPressed) && !event.isShiftPressed && event.key == Key.Z
+            if (undo) onEvent(ComboEvent.Undo)
+            undo
+        }.focusable(),
         sidebarWidth = ComboDimens.sidebarWidth,
         sidebar = { ComboSidebarContent(state, onEvent, loadDetails) },
         sidebarFooter = {
+            if (canWatchGame) MenuAction(stringResource(Res.string.combo_notice_open), { onEvent(ComboEvent.ShowTrackerNotice) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_info))
             if (state.importFailed) WarningText(stringResource(Res.string.combo_import_failed))
             MenuAction(stringResource(Res.string.combo_import), { onEvent(ComboEvent.ImportCombos) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_import))
             MenuAction(stringResource(Res.string.combo_export), { onEvent(ComboEvent.ExportCombo) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_export), enabled = state.combo != null)
-            MenuAction(stringResource(Res.string.combo_delete), { onEvent(ComboEvent.Delete) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_delete), enabled = state.combo != null)
+            if (state.combo?.rage != null) {
+                MenuAction(stringResource(Res.string.combo_rage_remove), { onEvent(ComboEvent.RemoveRage) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_delete))
+            }
+            MenuAction(stringResource(Res.string.combo_delete), { onEvent(ComboEvent.AskDelete) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_delete), enabled = state.combo != null)
             MenuAction(stringResource(if (state.dirty) Res.string.combo_save_dirty else Res.string.combo_save), { onEvent(ComboEvent.Save) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_save), enabled = state.combo != null)
         },
     ) {
@@ -102,6 +122,11 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         }
     }
     if (state.trackerNotice) TrackerNoticeDialog { onEvent(ComboEvent.CloseTrackerNotice) }
+    val deleted = state.combo
+    if (state.deleteAsked && deleted != null) {
+        val name = deleted.name.ifBlank { stringResource(Res.string.combo_untitled) }
+        DeleteComboDialog(name, onCancel = { onEvent(ComboEvent.CancelDelete) }, onConfirm = { onEvent(ComboEvent.Delete) })
+    }
 }
 
 @Composable
@@ -123,4 +148,5 @@ private fun EditorContent(state: ComboState, onEvent: (ComboEvent) -> Unit, load
     CellPanel(state, onEvent)
     if (state.emptyCells > 0) WarningText(stringResource(Res.string.combo_warning_empty, state.emptyCells))
     state.problems.forEach { WarningText(stringResource(Res.string.combo_warning_chain, combo.label(it))) }
+    OptionalSkillsEditor(state, onEvent, loadDetails)
 }

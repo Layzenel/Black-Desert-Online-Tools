@@ -10,7 +10,7 @@ import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
  *
  * Шаг по комбо двигает позицию; умение из комбо не по порядку — сбой: трекер сравнивает «вернуться» и «идти дальше»
  * и берёт дешёвое, а если умения нет на пути — перескакивает по последним умениям истории. Оборванная связка
- * спасается входом через другое умение, повтором с запуска или пропуском. Филлеры позицию не трогают. Время
+ * спасается входом через другое умение, повтором с запуска или пропуском. Филлеры и умения пула позицию не трогают. Время
  * подаётся снаружи: трекер не держит таймеров, обрыв связки и простой проверяет [tick].
  *
  * @property combo комбо
@@ -33,7 +33,7 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
         state.readyAt[skillNo] = nowMs + skills.cooldown(skillNo)
         state.history = (state.history + skillNo).takeLast(HISTORY_SIZE)
         state.lastUseMs = nowMs
-        if (skillNo in graph.skills || skillNo in combo.fillers) state.lastComboMs = nowMs
+        if (skillNo in graph.skills || skillNo in combo.fillers || skillNo in combo.pool) state.lastComboMs = nowMs
         state.rescue?.let { if (!it.armed && it.entry == skillNo) { state.rescue = it.copy(armed = true); return TrackerEvent.Step(skillNo, rescueEntry = true) } }
         planner.candidates(state).filter { it.skillNo == skillNo }.takeIf { it.isNotEmpty() }?.let { return advance(it, skillNo, nowMs) }
         val chain = planner.expectedChain(state)?.let { breakChain(it, nowMs) }
@@ -42,7 +42,7 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
         }
         return when {
             skillNo in graph.skills -> { state.rescue = null; state.forced = null; outOfOrder(skillNo, nowMs, before, chain) }
-            skillNo in combo.fillers -> TrackerEvent.Filler(skillNo, chain)
+            skillNo in combo.fillers || skillNo in combo.pool -> TrackerEvent.Filler(skillNo, chain)
             ++state.offCount >= settings.offLimit -> { resetPosition(); TrackerEvent.Reset(ResetReason.OffCombo, skillNo, chain) }
             else -> TrackerEvent.Off(skillNo, state.offCount, chain)
         }
@@ -95,7 +95,10 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
         lost.forEach { state.burned += it.id }
         state.positions = brokenAt.previous.filter { it.id in state.positions }.map { it.id }.ifEmpty { state.positions }.take(1)
         val step = settings.stepMs
-        val entry = skills[brokenAt.skillNo].after.firstOrNull { !skills[it].onlyAfter && state.cooldownLeft(it, nowMs) == 0L }
+        // вход — только умением из комбо или филлером: чужое умение игроку незнакомо, а у умения другой стойки нет иконки
+        val entry = skills[brokenAt.skillNo].after.firstOrNull {
+            (it in graph.skills || it in combo.fillers) && !skills[it].onlyAfter && state.cooldownLeft(it, nowMs) == 0L
+        }
         val launcher = launcherOf(brokenAt)
         val options = buildList {
             entry?.let { add(ChainRecovery.Rescue(brokenAt, it) to step + planner.chainWait(brokenAt, nowMs + step, state.readyAt)) }
@@ -154,7 +157,7 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
 
     private fun launcherOf(node: ComboNode): ComboNode {
         var cur = node
-        while (cur.chain) cur = cur.previous.firstOrNull { it.next.contains(cur) && !it.optional } ?: break
+        while (cur.chain) cur = cur.previous.firstOrNull { it.next.contains(cur) } ?: break
         return cur
     }
 

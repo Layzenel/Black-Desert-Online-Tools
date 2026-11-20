@@ -20,6 +20,7 @@ internal object ComboDimens {
     val tooltipWidth = 300.dp
     val noticeWidth = 640.dp
     val noticeMaxHeight = 560.dp
+    val confirmWidth = 420.dp
     val arrowLength = 18.dp
     val arrowHeight = 10.dp
     val chainHeight = 10.dp
@@ -57,5 +58,5 @@ internal object ComboDimens {
     val dropMarkOutset = 6.dp
     val dropSlop = 14.dp
     val markTooltipOffset = 16.dp
-    val optionalDash = 4.dp
+    val poolIcon = 32.dp
 }

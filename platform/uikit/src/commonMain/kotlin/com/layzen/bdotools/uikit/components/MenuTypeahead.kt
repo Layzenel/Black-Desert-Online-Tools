@@ -33,6 +33,15 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 private const val FIRST_PRINTABLE = 32
 
 /**
+ * Код «нет знака»: его дают клавиши без буквы — Shift, Ctrl, стрелки. На Desktop он больше [FIRST_PRINTABLE]
+ * и попадал в поиск квадратиком.
+ */
+private const val NO_CHAR = 0xFFFF
+
+/** Код [code] — знак, который можно дописать в строку поиска. */
+private fun printable(code: Int): Boolean = code >= FIRST_PRINTABLE && code != NO_CHAR && !Char(code).isISOControl()
+
+/**
  * Ловит набор с клавиатуры, пока список открыт ([active]): буквы дописываются в [query], Backspace стирает,
  * Esc закрывает список ([onEscape]). Сам список фокус не берёт — фокусируемое всплывающее окно в веб-сборке
  * после закрытия съедает следующий клик, — поэтому клавиши ловит этот невидимый элемент на странице.
@@ -47,12 +56,12 @@ internal fun TypeToSearch(active: Boolean, query: String, onQueryChange: (String
             .focusRequester(focus)
             .onPreviewKeyEvent { event ->
                 if (!active) return@onPreviewKeyEvent false
-                if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent event.utf16CodePoint >= FIRST_PRINTABLE
+                if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent printable(event.utf16CodePoint)
                 when {
                     event.key == Key.Escape -> onEscape()
                     event.key == Key.Backspace -> onQueryChange(query.dropLast(1))
                     event.isCtrlPressed || event.isMetaPressed || event.isAltPressed -> return@onPreviewKeyEvent false
-                    event.utf16CodePoint >= FIRST_PRINTABLE -> onQueryChange(query + event.utf16CodePoint.toChar())
+                    printable(event.utf16CodePoint) -> onQueryChange(query + event.utf16CodePoint.toChar())
                     else -> return@onPreviewKeyEvent false
                 }
                 true

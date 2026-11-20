@@ -8,6 +8,8 @@ package com.layzen.bdotools.feature.comboassist.domain.combo
  * @property classKey ключ класса (`CharacterClass.key`), чьи умения в комбо
  * @property columns колонки по порядку
  * @property fillers умения, которые оверлей предлагает, пока ждёт перезарядку следующего шага
+ * @property pool умения, которые трекер показывает всегда, отдельно от шагов: готовое — в золотой рамке, на перезарядке —
+ *   с секундами (защита, баф, отскок — что жать по ситуации)
  * @property vertical схема комбо показывает колонки сверху вниз, а ветки развилок — рядом
  * @property overlayStyle вид трекера поверх игры
  * @property rage комбо под гневом Чёрного духа или `null`, если его нет
@@ -18,6 +20,7 @@ data class Combo(
     val classKey: String,
     val columns: List<ComboColumn> = emptyList(),
     val fillers: List<Int> = emptyList(),
+    val pool: List<Int> = emptyList(),
     val vertical: Boolean = false,
     val overlayStyle: OverlayStyle = OverlayStyle.Next,
     val rage: ComboRage? = null,
@@ -27,11 +30,11 @@ data class Combo(
      * гневом в виде такого же комбо (без своего [rage]). Под гневом, когда его нет, — `null`.
      */
     fun part(rageShown: Boolean): Combo? =
-        if (!rageShown) this else rage?.let { copy(columns = it.columns, fillers = it.fillers, rage = null) }
+        if (!rageShown) this else rage?.let { copy(columns = it.columns, fillers = it.fillers, pool = it.pool, rage = null) }
 
     /** Комбо, в котором часть [rageShown] заменена правленой [edited] (результатом правки [part]). */
     fun withPart(rageShown: Boolean, edited: Combo): Combo =
-        if (rageShown) copy(rage = ComboRage(edited.columns, edited.fillers)) else edited.copy(rage = rage)
+        if (rageShown) copy(rage = ComboRage(edited.columns, edited.fillers, edited.pool)) else edited.copy(rage = rage)
 
     /** Обычное комбо и комбо под гневом, если оно есть. */
     fun parts(): List<Combo> = listOfNotNull(part(false), part(true))

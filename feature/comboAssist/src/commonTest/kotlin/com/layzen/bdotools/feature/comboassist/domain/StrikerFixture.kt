@@ -37,14 +37,15 @@ object StrikerFixture {
         ).associateBy { it.skillNo },
     )
 
-    private fun cell(no: Int, chain: Boolean = false, optional: Boolean = false) = ComboCell(no, chain, optional)
+    private fun cell(no: Int, chain: Boolean = false) = ComboCell(no, chain)
 
-    /** Развилка из трёх веток, связка Алый коготь → Удар под дых → Рубящая длань, развилка 2×2, два опциональных. */
+    /** Развилка из трёх веток, связка Алый коготь → Удар под дых → Рубящая длань, развилка 2×2, два умения в пуле. */
     val demo = Combo(
         id = "demo",
         name = "Пример",
         classKey = "striker",
         fillers = listOf(ANKLE_HOOK),
+        pool = listOf(SUPPRESSION, CROUCHING_WOLF),
         columns = listOf(
             ComboColumn.Fork(listOf(listOf(cell(WOLF_FANG)), listOf(cell(RAGE_HAMMER)), listOf(cell(RAMPAGING)))),
             ComboColumn.Single(cell(ADAMANTINE)),
@@ -52,8 +53,6 @@ object StrikerFixture {
             ComboColumn.Single(cell(DEATHSTRIKE, chain = true)),
             ComboColumn.Single(cell(BOMBARDMENT, chain = true)),
             ComboColumn.Fork(listOf(listOf(cell(ROARING_TIGER), cell(KNEE_HAMMER)), listOf(cell(HEART_AND_SOUL), cell(SOMERSAULT)))),
-            ComboColumn.Single(cell(SUPPRESSION, optional = true)),
-            ComboColumn.Single(cell(CROUCHING_WOLF, optional = true)),
         ),
     )
 }

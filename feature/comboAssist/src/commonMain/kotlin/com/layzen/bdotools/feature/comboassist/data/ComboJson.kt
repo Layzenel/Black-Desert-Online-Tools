@@ -23,6 +23,7 @@ private class SettingsDto(
     val slotShields: Boolean = false,
     val slotControls: Boolean = false,
     val trackerNoticeSeen: Boolean = false,
+    val resetSeconds: Int = 5,
 )
 
 /** Комбо в файле; колонка — либо `cell`, либо `lanes`. */
@@ -33,6 +34,7 @@ private class ComboDto(
     val classKey: String,
     val columns: List<ColumnDto> = emptyList(),
     val fillers: List<Int> = emptyList(),
+    val pool: List<Int> = emptyList(),
     val vertical: Boolean = false,
     val overlayStyle: String = OverlayStyle.Next.name,
     val rage: RageDto? = null,
@@ -40,13 +42,13 @@ private class ComboDto(
 
 /** Комбо под гневом Чёрного духа в файле. */
 @Serializable
-private class RageDto(val columns: List<ColumnDto> = emptyList(), val fillers: List<Int> = emptyList())
+private class RageDto(val columns: List<ColumnDto> = emptyList(), val fillers: List<Int> = emptyList(), val pool: List<Int> = emptyList())
 
 /** Колонка в файле: обычная — [cell], развилка — [lanes]. */
 @Serializable
 private class ColumnDto(val cell: CellDto? = null, val lanes: List<List<CellDto>>? = null)
 
-/** Ячейка в файле; поля по умолчанию не пишутся. */
+/** Ячейка в файле; поля по умолчанию не пишутся. [optional] — только в старых файлах: такие ячейки переезжают в пул ([withoutOptional]). */
 @Serializable
 private class CellDto(val skill: Int? = null, val chain: Boolean = false, val optional: Boolean = false, val note: String = "")
 
@@ -59,17 +61,18 @@ internal fun parseCombos(text: String): List<Combo> = json.decodeFromString<Comb
         id = dto.id,
         name = dto.name,
         classKey = dto.classKey,
-        columns = dto.columns.map { it.toColumn() },
+        columns = dto.columns.withoutOptional(),
         fillers = dto.fillers,
+        pool = (dto.pool + dto.columns.optionalSkills()).distinct(),
         vertical = dto.vertical,
         overlayStyle = OverlayStyle.entries.firstOrNull { it.name == dto.overlayStyle } ?: OverlayStyle.Next,
-        rage = dto.rage?.let { rage -> ComboRage(rage.columns.map { it.toColumn() }, rage.fillers) },
+        rage = dto.rage?.let { rage -> ComboRage(rage.columns.withoutOptional(), rage.fillers, (rage.pool + rage.columns.optionalSkills()).distinct()) },
     )
 }
 
 /** Настройки оверлея из файла комбо; неверный файл — исключение, как у [parseCombos]. */
 internal fun parseSettings(text: String): OverlaySettings =
-    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen) }
+    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen, it.resetSeconds) }
 
 /** Записывает комбо [combos] и настройки [settings] в формат файла. */
 internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = OverlaySettings()): String = json.encodeToString(
@@ -82,22 +85,42 @@ internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = Overlay
                 classKey = combo.classKey,
                 columns = combo.columns.map { it.toDto() },
                 fillers = combo.fillers,
+                pool = combo.pool,
                 vertical = combo.vertical,
                 overlayStyle = combo.overlayStyle.name,
-                rage = combo.rage?.let { rage -> RageDto(rage.columns.map { it.toDto() }, rage.fillers) },
+                rage = combo.rage?.let { rage -> RageDto(rage.columns.map { it.toDto() }, rage.fillers, rage.pool) },
             )
         },
-        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen) },
+        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen, it.resetSeconds) },
     ),
 )
 
-private fun ColumnDto.toColumn(): ComboColumn =
-    lanes?.let { lanes -> ComboColumn.Fork(lanes.map { lane -> lane.map { it.toCell() } }) } ?: ComboColumn.Single(cell?.toCell() ?: ComboCell())
+/**
+ * Колонки без опциональных ячеек (их больше нет — вместо них пул): одиночная пропадает, из развилки ячейка уходит,
+ * пустая ветка — тоже; от развилки с одной ячейкой остаётся обычная колонка.
+ */
+private fun List<ColumnDto>.withoutOptional(): List<ComboColumn> = mapNotNull { column ->
+    val lanes = column.lanes
+    if (lanes == null) {
+        val cell = column.cell
+        return@mapNotNull if (cell?.optional == true) null else ComboColumn.Single(cell?.toCell() ?: ComboCell())
+    }
+    val kept = lanes.map { lane -> lane.filter { !it.optional }.map { it.toCell() } }.filter { it.isNotEmpty() }
+    when {
+        kept.isEmpty() -> null
+        kept.size == 1 && kept[0].size == 1 -> ComboColumn.Single(kept[0][0])
+        else -> ComboColumn.Fork(kept)
+    }
+}
+
+/** Умения опциональных ячеек старого файла: они переезжают в пул. */
+private fun List<ColumnDto>.optionalSkills(): List<Int> =
+    flatMap { column -> column.lanes?.flatten() ?: listOfNotNull(column.cell) }.filter { it.optional }.mapNotNull { it.skill }
 
 private fun ComboColumn.toDto(): ColumnDto = when (this) {
     is ComboColumn.Single -> ColumnDto(cell = cell.toDto())
     is ComboColumn.Fork -> ColumnDto(lanes = lanes.map { lane -> lane.map { it.toDto() } })
 }
 
-private fun CellDto.toCell() = ComboCell(skill, chain, optional, note)
-private fun ComboCell.toDto() = CellDto(skillNo, chain, optional, note)
+private fun CellDto.toCell() = ComboCell(skill, chain, note)
+private fun ComboCell.toDto() = CellDto(skillNo, chain, note = note)

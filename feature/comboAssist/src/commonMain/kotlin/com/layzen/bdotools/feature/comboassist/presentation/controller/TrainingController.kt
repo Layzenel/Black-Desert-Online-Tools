@@ -5,6 +5,7 @@ import com.layzen.bdotools.feature.comboassist.domain.keys.KeyCommand
 import com.layzen.bdotools.feature.comboassist.domain.keys.KeyStep
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 import com.layzen.bdotools.feature.comboassist.domain.tracker.ComboTracker
+import com.layzen.bdotools.feature.comboassist.domain.tracker.TrackerSettings
 import com.layzen.bdotools.feature.comboassist.domain.tracker.TrackerEvent
 import com.layzen.bdotools.feature.comboassist.presentation.state.OverlayState
 import kotlin.time.TimeSource
@@ -24,13 +25,13 @@ internal class TrainingController {
     /** Текущее время трекера, мс. */
     fun nowMs(): Long = start.elapsedNow().inWholeMilliseconds
 
-    /** Начинает следить за комбо [combo] с умениями [skills]; перезарядки сбрасываются. */
-    fun load(combo: Combo, skills: ComboSkills) {
+    /** Начинает следить за комбо [combo] с умениями [skills] и порогами [settings]; перезарядки переносятся. */
+    fun load(combo: Combo, skills: ComboSkills, settings: TrackerSettings) {
         this.combo = combo
         this.skills = skills
         // перезарядки переносятся: правка комбо не откатывает умения в игре
         val cooldowns = tracker?.state?.readyAt?.toMap().orEmpty()
-        tracker = ComboTracker(combo, skills).also { it.state.readyAt.putAll(cooldowns) }
+        tracker = ComboTracker(combo, skills, settings).also { it.state.readyAt.putAll(cooldowns) }
         lastEvent = null
     }
 
@@ -71,7 +72,7 @@ internal class TrainingController {
             pass = if (state.atStart) 0 else state.pass,
             cooldownLeft = state.readyAt.mapValues { (it.value - now).coerceAtLeast(0) }.filterValues { it > 0 },
             filler = tracker.planner.filler(state, combo?.fillers.orEmpty(), now, wait),
-            optional = tracker.planner.candidates(state).filter { it.optional }.map { it.skillNo }.distinct(),
+            pool = combo?.pool.orEmpty(),
             previousSkill = state.history.lastOrNull(),
             event = lastEvent?.takeIf { now - lastEventMs < EVENT_FRESH_MS },
             nowMs = now,

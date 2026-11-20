@@ -22,8 +22,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
  * Оверлей поверх игры: карточка «что жать сейчас» с клавишами ([NextSkillCard]) и два следующих умения
- * в ряд на подложке тултипа игры, каждое бледнее предыдущего; пока ждёшь перезарядку — филлер; справа — опциональные
- * умения в пунктирных рамках, которые можно вставить сейчас ([OptionalSkills]). Под ними — пометка игрока к шагу [note].
+ * в ряд на подложке тултипа игры, каждое бледнее предыдущего; пока ждёшь перезарядку — филлер. Под ними — опциональные
+ * умения комбо рядами по 7 ([SkillPool]), ниже — пометка игрока к шагу [note].
  */
 @Composable
 internal fun NextSkillsOverlay(
@@ -48,8 +48,8 @@ internal fun NextSkillsOverlay(
                 AnimatedVisibility(overlay.filler != null, enter = fadeIn(tween(SWAP_MS)), exit = fadeOut(tween(SWAP_MS))) {
                     overlay.filler?.let { FillerCard(it, skills) }
                 }
-                OptionalSkills(overlay, skills, ComboDimens.focusUpcomingIcon)
             }
+            SkillPool(overlay, skills, POOL_COLUMNS)
             StepNote(note)
         }
     }
@@ -63,4 +63,7 @@ private fun UpcomingSkill(skillNo: Int, overlay: OverlayState, skills: Map<Int, 
 }
 
 private const val UPCOMING = 2
+
+/** Опциональных умений в ряду: больше — следующий ряд. */
+private const val POOL_COLUMNS = 7
 private val UPCOMING_ALPHA = listOf(0.85f, 0.6f)

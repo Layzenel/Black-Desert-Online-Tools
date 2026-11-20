@@ -14,7 +14,6 @@ import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_names_language
 import com.layzen.bdotools.feature.comboassist.resources.combo_tooltip_cell
 import com.layzen.bdotools.feature.comboassist.resources.combo_tooltip_cell_chain
-import com.layzen.bdotools.feature.comboassist.resources.combo_tooltip_cell_optional
 import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.components.TooltipPanel
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -49,13 +48,12 @@ internal fun SkillTooltipCard(item: SkillItem, loadDetails: suspend (Int) -> Ski
     }
 }
 
-/** Место умения в комбо: подпись ячейки, связка, опциональность. */
+/** Место умения в комбо: подпись ячейки и связка. */
 @Composable
 private fun CellLine(cell: CellNote) {
     val parts = listOfNotNull(
         stringResource(Res.string.combo_tooltip_cell, cell.label),
         stringResource(Res.string.combo_tooltip_cell_chain).takeIf { cell.chain },
-        stringResource(Res.string.combo_tooltip_cell_optional).takeIf { cell.optional },
     )
     Text(parts.joinToString(" · "), style = AppTheme.typography.bodyBold, color = AppTheme.colors.accentGold)
 }

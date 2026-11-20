@@ -38,6 +38,7 @@ import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
  * @property editingRage редактор правит комбо под гневом Чёрного духа, а не обычное
  * @property rageActive в игре висят бафы гнева Чёрного духа: трекер ведёт комбо под гневом, если оно есть
  * @property trackerNotice открыто окно «Как работает трекер» (само — при первом открытии вкладки в настольной версии)
+ * @property deleteAsked открыто окно подтверждения удаления комбо
  */
 data class ComboState(
     val combos: List<Combo> = emptyList(),
@@ -66,6 +67,7 @@ data class ComboState(
     val editingRage: Boolean = false,
     val rageActive: Boolean = false,
     val trackerNotice: Boolean = false,
+    val deleteAsked: Boolean = false,
 ) {
     /** Редактор правит комбо под гневом: оно выбрано ([editingRage]) и есть у комбо. */
     val rageEdited: Boolean get() = editingRage && combo?.rage != null

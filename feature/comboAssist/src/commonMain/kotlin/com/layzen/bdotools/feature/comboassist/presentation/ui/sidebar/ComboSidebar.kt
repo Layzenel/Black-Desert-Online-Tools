@@ -14,7 +14,6 @@ import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.resources.Res
-import com.layzen.bdotools.feature.comboassist.resources.combo_class_search
 import com.layzen.bdotools.feature.comboassist.resources.combo_name_placeholder
 import com.layzen.bdotools.feature.comboassist.resources.combo_new
 import com.layzen.bdotools.feature.comboassist.resources.combo_none
@@ -22,7 +21,6 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_section_combo
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_class
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_class_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_combo_description
-import com.layzen.bdotools.feature.comboassist.resources.combo_stance_all
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_purgatum
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_sacramentum
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_awakening
@@ -44,11 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun ComboSidebarContent(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
     val tint = ColorFilter.tint(AppTheme.colors.textBeige)
     SectionHeader(stringResource(Res.string.combo_section_class), description = stringResource(Res.string.combo_section_class_description))
-    DropdownSelect(
-        state.characterClass, CharacterClass.entries, { onEvent(ComboEvent.SelectClass(it)) }, { stringResource(it.title) }, Modifier.fillMaxWidth(),
-        icon = { Image(painterResource(it.icon), null, Modifier.size(ComboDimens.paletteIcon), colorFilter = tint) },
-        searchPlaceholder = stringResource(Res.string.combo_class_search),
-    )
+    ClassSelect(state.characterClass, { onEvent(ComboEvent.SelectClass(it)) }, tint)
     // у классов Освобождения стоек нет (кроме Серафима): все навыки в одном наборе
     val stances = ComboStance.of(state.characterClass)
     if (stances.isNotEmpty()) StanceSelect(state, stances, onEvent)
@@ -90,14 +84,13 @@ private fun SavedCombos(state: ComboState, onEvent: (ComboEvent) -> Unit, tint: 
 @Composable
 private fun StanceSelect(state: ComboState, stances: List<ComboStance>, onEvent: (ComboEvent) -> Unit) {
     DropdownSelect(
-        state.stance, stances + null, { onEvent(ComboEvent.SelectStance(it)) },
+        state.stance ?: stances.first(), stances, { onEvent(ComboEvent.SelectStance(it)) },
         { stance ->
             when (stance) {
                 ComboStance.Succession -> stringResource(Res.string.combo_stance_succession)
                 ComboStance.Awakening -> stringResource(Res.string.combo_stance_awakening)
                 ComboStance.Sacramentum -> stringResource(Res.string.combo_stance_sacramentum)
                 ComboStance.Purgatum -> stringResource(Res.string.combo_stance_purgatum)
-                null -> stringResource(Res.string.combo_stance_all)
             }
         },
         Modifier.fillMaxWidth(),

@@ -35,12 +35,12 @@ enum class ComboStance(val skillStance: SkillStance?, val hiddenPrefixes: List<S
             else -> listOf(Succession, Awakening)
         }
 
-        /** Стойка при смене класса на [characterClass]: прежняя [current], если она у него есть (или все), иначе первая. */
+        /** Стойка при смене класса на [characterClass]: прежняя [current], если она у него есть, иначе первая; у класса без стоек — `null`. */
         fun keep(characterClass: CharacterClass, current: ComboStance?): ComboStance? {
             val options = of(characterClass)
             return when {
                 options.isEmpty() -> null
-                current == null || current in options -> current
+                current in options -> current
                 else -> options.first()
             }
         }

@@ -30,8 +30,6 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_make_fork
 import com.layzen.bdotools.feature.comboassist.resources.combo_note
 import com.layzen.bdotools.feature.comboassist.resources.combo_note_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_note_placeholder
-import com.layzen.bdotools.feature.comboassist.resources.combo_optional
-import com.layzen.bdotools.feature.comboassist.resources.combo_optional_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_remove
 import com.layzen.bdotools.feature.comboassist.resources.menu_add
 import com.layzen.bdotools.feature.comboassist.resources.menu_cancel
@@ -75,7 +73,6 @@ internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
         }
         Column(Modifier.widthIn(max = ComboDimens.panelWidth), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
             ToggleSwitch(cell.chain, { onEvent(ComboEvent.ToggleChain) }, label = stringResource(Res.string.combo_chain), description = stringResource(Res.string.combo_chain_description))
-            ToggleSwitch(cell.optional, { onEvent(ComboEvent.ToggleOptional) }, label = stringResource(Res.string.combo_optional), description = stringResource(Res.string.combo_optional_description))
             SectionHeader(stringResource(Res.string.combo_note), description = stringResource(Res.string.combo_note_description))
             InputField(cell.note, { onEvent(ComboEvent.SetNote(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_note_placeholder))
         }
