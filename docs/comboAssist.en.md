@@ -9,7 +9,8 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
 ## Editor
 
 - On the left — "Class" and "Saved combos". A combo belongs to a class and fits all of its characters.
-- Ctrl+Z undoes the last combo edit; deleting a combo asks for confirmation. At the bottom of the menu — "How the tracker works" and removing the rage combo.
+- The buttons above the editor and Ctrl+Z / Ctrl+Y (Ctrl+Shift+Z) undo and redo combo edits; a dragged cell moves
+  under the others, and a blue pointer at a cell edge shows where it will go; deleting a combo asks for confirmation. At the bottom of the menu — "How the tracker works" and removing the rage combo.
 - "Skills" — the class skills with search and the "Succession" or "Awakening" stances; for Seraph —
   "Sacramentum" (without "Purga:" skills), "Purgatum" (without "Sacra:" skills).
 - **Black Spirit Rage combo** — above the combo, switch between "Regular combo" and "Under Black Spirit Rage"
@@ -69,12 +70,15 @@ horizontal.
 
 The tracker learns what you used from three sources. "Skill Usage History" is the most accurate but up to 0.75 s
 late, and the game skips some skills there (flow follow-ups and animation cancels, such as Seraph's Combo: Bone
-Breaker). Key presses of the step the tracker is waiting for count at once, by the character's key bindings. A press
+Breaker). If the history skipped a skill that is on a cooldown slot, the tracker counts it when the slot goes on cooldown.
+For skills that are neither in the history nor on a slot, clear "Seen in history or on a slot" in the editor's cell
+panel (it is on by default and shared by every cell of the skill): only those skills count by key presses, by the
+character's key bindings. A press
 does not mean the skill went out (it may be pressed early, during the previous one), so a skill that spends a
 noticeable amount of resource counts only when the resource bar under HP drops (any color, with or without Split HP).
 Cheap skills and skills cast while a key is held count on the press itself; if a guess is wrong, the next history
-line puts the tracker back. Where the history is missing (for example, in the Black Shrine), the tracker follows keys
-only and makes more mistakes.
+line puts the tracker back. Where the history is missing (for example, in the Black Shrine), the tracker relies on
+slots and keys and makes more mistakes.
 
 The tracker, the layout and the marks over cooldown slots hide while the slots are covered by a game window; marks
 disappear only from the covered slots.

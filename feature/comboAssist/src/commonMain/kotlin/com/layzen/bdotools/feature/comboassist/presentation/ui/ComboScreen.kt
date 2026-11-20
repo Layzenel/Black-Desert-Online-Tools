@@ -2,6 +2,7 @@ package com.layzen.bdotools.feature.comboassist.presentation.ui
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,11 @@ import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_delete
 import com.layzen.bdotools.feature.comboassist.resources.combo_export
 import com.layzen.bdotools.feature.comboassist.resources.menu_delete
+import com.layzen.bdotools.feature.comboassist.resources.menu_redo
+import com.layzen.bdotools.feature.comboassist.resources.menu_undo
+import com.layzen.bdotools.feature.comboassist.resources.combo_redo_tooltip
+import com.layzen.bdotools.feature.comboassist.resources.combo_undo_tooltip
+import com.layzen.bdotools.uikit.components.ToolbarButton
 import com.layzen.bdotools.feature.comboassist.resources.menu_export
 import com.layzen.bdotools.feature.comboassist.resources.menu_import
 import com.layzen.bdotools.feature.comboassist.resources.menu_save
@@ -89,9 +95,16 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
     LaunchedEffect(Unit) { focus.requestFocus() }
     ToolPage(
         modifier = Modifier.fillMaxSize().focusRequester(focus).onKeyEvent { event ->
-            val undo = event.type == KeyEventType.KeyDown && (event.isCtrlPressed || event.isMetaPressed) && !event.isShiftPressed && event.key == Key.Z
-            if (undo) onEvent(ComboEvent.Undo)
-            undo
+            // Ctrl+Z — отменить, Ctrl+Y и Ctrl+Shift+Z — повторить, как в редакторе интерфейса
+            val action = when {
+                !event.isCtrlPressed && !event.isMetaPressed -> null
+                event.key == Key.Z && event.isShiftPressed -> ComboEvent.Redo
+                event.key == Key.Z -> ComboEvent.Undo
+                event.key == Key.Y -> ComboEvent.Redo
+                else -> null
+            }
+            if (action != null && event.type == KeyEventType.KeyDown) onEvent(action)
+            action != null
         }.focusable(),
         sidebarWidth = ComboDimens.sidebarWidth,
         sidebar = { ComboSidebarContent(state, onEvent, loadDetails) },
@@ -108,9 +121,16 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         },
     ) {
         Column(Modifier.fillMaxSize()) {
-            // настройка оверлея есть только в настольной версии: на сайте остаётся один редактор и переключать нечего
-            if (canWatchGame) ActionBar {
-                OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
+            // настройка оверлея есть только в настольной версии: на сайте остаётся один редактор, и в полосе — только отмена
+            ActionBar {
+                Box(Modifier.weight(1f)) {
+                    if (canWatchGame) OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
+                }
+                // отмена и повтор правок — кнопками, как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
+                if (state.mode == ComboMode.Editor || !canWatchGame) {
+                    ToolbarButton(painterResource(Res.drawable.menu_undo), stringResource(Res.string.combo_undo_tooltip), { onEvent(ComboEvent.Undo) }, enabled = state.canUndo)
+                    ToolbarButton(painterResource(Res.drawable.menu_redo), stringResource(Res.string.combo_redo_tooltip), { onEvent(ComboEvent.Redo) }, enabled = state.canRedo)
+                }
             }
             Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceL),

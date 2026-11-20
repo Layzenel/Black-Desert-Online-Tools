@@ -11,16 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Стрелка между шагами комбо: вправо или, при [vertical], вниз. */
+/** Стрелка между шагами комбо: вправо или, при [vertical], вниз; цвета [color]. */
 @Composable
-internal fun StepArrow(modifier: Modifier = Modifier, vertical: Boolean = false) {
-    val color = AppTheme.colors.textBeige
+internal fun StepArrow(modifier: Modifier = Modifier, vertical: Boolean = false, color: Color = AppTheme.colors.textBeige) {
     val box = if (vertical) Modifier.size(ComboDimens.arrowHeight, ComboDimens.arrowLength) else Modifier.size(ComboDimens.arrowLength, ComboDimens.arrowHeight)
     Canvas(modifier.then(box)) {
         val length = if (vertical) size.height else size.width

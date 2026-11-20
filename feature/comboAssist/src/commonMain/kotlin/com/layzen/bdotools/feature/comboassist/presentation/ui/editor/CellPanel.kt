@@ -31,6 +31,8 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_note
 import com.layzen.bdotools.feature.comboassist.resources.combo_note_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_note_placeholder
 import com.layzen.bdotools.feature.comboassist.resources.combo_remove
+import com.layzen.bdotools.feature.comboassist.resources.combo_seen_in_game
+import com.layzen.bdotools.feature.comboassist.resources.combo_seen_in_game_hint
 import com.layzen.bdotools.feature.comboassist.resources.menu_add
 import com.layzen.bdotools.feature.comboassist.resources.menu_cancel
 import com.layzen.bdotools.feature.comboassist.resources.menu_delete
@@ -38,6 +40,7 @@ import com.layzen.bdotools.feature.comboassist.resources.menu_fork
 import com.layzen.bdotools.feature.comboassist.resources.menu_insert_left
 import com.layzen.bdotools.feature.comboassist.resources.menu_insert_right
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToggleSwitch
@@ -47,7 +50,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Свойства выбранной ячейки: вставить рядом, развилка, связка, опциональность, пометка для трекера, снять выбор, удалить. */
+/** Свойства выбранной ячейки: вставить рядом, развилка, связка, видно ли умение в истории или на слоте, пометка для трекера, снять выбор, удалить. */
 @Composable
 internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
     val combo = state.edited ?: return
@@ -73,6 +76,11 @@ internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
         }
         Column(Modifier.widthIn(max = ComboDimens.panelWidth), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
             ToggleSwitch(cell.chain, { onEvent(ComboEvent.ToggleChain) }, label = stringResource(Res.string.combo_chain), description = stringResource(Res.string.combo_chain_description))
+            cell.skillNo?.let { skillNo ->
+                HoverTooltip(stringResource(Res.string.combo_seen_in_game_hint)) {
+                    ToggleSwitch(skillNo !in combo.keyTracked, { onEvent(ComboEvent.ToggleKeyTracked) }, label = stringResource(Res.string.combo_seen_in_game))
+                }
+            }
             SectionHeader(stringResource(Res.string.combo_note), description = stringResource(Res.string.combo_note_description))
             InputField(cell.note, { onEvent(ComboEvent.SetNote(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_note_placeholder))
         }

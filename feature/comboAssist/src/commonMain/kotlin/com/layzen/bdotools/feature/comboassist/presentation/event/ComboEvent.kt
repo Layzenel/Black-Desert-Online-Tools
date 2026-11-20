@@ -26,6 +26,7 @@ sealed interface ComboEvent {
 
     /** Ctrl+Z: вернуть комбо, каким оно было до последней правки. */
     data object Undo : ComboEvent
+    data object Redo : ComboEvent
     data object ExportCombo : ComboEvent
     data object ImportCombos : ComboEvent
     data class EditRage(val rage: Boolean) : ComboEvent
@@ -41,6 +42,9 @@ sealed interface ComboEvent {
     data class InsertCell(val after: Boolean) : ComboEvent
     data object ClearSelection : ComboEvent
     data object ToggleChain : ComboEvent
+
+    /** Переключить у умения выбранной ячейки, видно ли оно в истории или на слоте ([com.layzen.bdotools.feature.comboassist.domain.combo.Combo.keyTracked]). */
+    data object ToggleKeyTracked : ComboEvent
     data class SetNote(val text: String) : ComboEvent
     data object RemoveCell : ComboEvent
     data class RemoveAt(val at: CellAt) : ComboEvent

@@ -34,6 +34,12 @@ class ComboJsonTest {
     }
 
     @Test
+    fun keepsKeyTracked() {
+        val combo = Combo("id", "", "striker", listOf(ComboColumn.Single(ComboCell(skillNo = 1))), keyTracked = setOf(3, 2))
+        assertEquals(listOf(combo), parseCombos(combosJson(listOf(combo))))
+    }
+
+    @Test
     fun oldOptionalCellsMoveToPool() {
         // до пула были опциональные ячейки: одиночная колонка пропадает, из развилки ячейка уходит
         val text = """{"combos":[{"id":"id","name":"","classKey":"striker","columns":[

@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,11 +30,11 @@ private const val RAISE_DELAY_MS = 100L
 /**
  * Окно кнопки меню: своё место на экране, независимое от оверлея ([savedMenuPosition]). Прозрачное, без рамки,
  * поверх всех окон и всегда над оверлеем ([OverlayLayers]), видно только пока игра на переднем плане. Размером
- * с содержимое (раскрытое меню растит окно вниз и вправо). Без фокуса: клик по кнопке не уводит игру с переднего
+ * с содержимое (раскрытое меню растит окно вниз и вправо, в правой половине экрана — влево). Без фокуса: клик по кнопке не уводит игру с переднего
  * плана. Тянется зажатой ЛКМ. Пока курсор спрятан игрой, клики проходят сквозь окно в игру.
  */
 @Composable
-internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragModifier: Modifier) -> Unit) {
+internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragModifier: Modifier, alignEnd: Boolean) -> Unit) {
     val gameActive by rememberGameActive()
     val start = DpSize(OverlayDimens.menuButton, OverlayDimens.menuButton)
     val state = rememberWindowState(position = remember { savedMenuPosition() }, size = start)
@@ -55,14 +57,26 @@ internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragM
             delay(RAISE_DELAY_MS)
             if (shown) window.toFront()
         }
+        val button = OverlayDimens.menuButton.value
+        // меню раскрывается к центру экрана: у правой половины — влево, окно сдвигается так, чтобы кнопка осталась на месте
+        var alignEnd by remember { mutableStateOf(false) }
         LaunchedEffect(state) {
             snapshotFlow { state.position }.collect { position ->
-                if (position is WindowPosition.Absolute) savePosition(MENU_ID, position.x, position.y)
+                // запоминается место закрытого окна — место кнопки, а не сдвинутого влево меню
+                if (position is WindowPosition.Absolute && state.size.width.value <= button) savePosition(MENU_ID, position.x, position.y)
             }
         }
         val density = LocalDensity.current
         val fit = Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
-            .onSizeChanged { state.size = with(density) { DpSize(it.width.toDp(), it.height.toDp()) } }
+            .onSizeChanged {
+                val size = with(density) { DpSize(it.width.toDp(), it.height.toDp()) }
+                val buttonLeft = if (alignEnd) window.x + window.width - button else window.x.toFloat()
+                val screen = window.graphicsConfiguration.bounds
+                alignEnd = buttonLeft + button / 2 > screen.x + screen.width / 2
+                state.size = size
+                val left = if (alignEnd) buttonLeft + button - size.width.value else buttonLeft
+                if (left.toInt() != window.x) state.position = WindowPosition(left.dp, window.y.dp)
+            }
         // окно ставится по курсору на экране напрямую, без перерисовки на каждый сдвиг — иначе кнопка отстаёт;
         // позиция в состоянии окна (и в настройках) — когда отпустили
         val drag = Modifier.pointerInput(window) {
@@ -80,7 +94,7 @@ internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragM
                 window.setLocation(windowStart.x + mouse.x - mouseStart.x, windowStart.y + mouse.y - mouseStart.y)
             }
         }
-        Box(fit) { content(drag) }
+        Box(fit) { content(drag, alignEnd) }
     }
 }
 

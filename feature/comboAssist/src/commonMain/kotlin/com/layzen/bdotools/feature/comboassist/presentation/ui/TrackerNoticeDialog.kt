@@ -24,6 +24,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_notice_ok
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_source_history
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_source_keys
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_source_resource
+import com.layzen.bdotools.feature.comboassist.resources.combo_notice_source_slots
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_sources
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_tip_history
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_tip_resync
@@ -41,7 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 /** Разделы окна: заголовок и пункты. */
 private val SECTIONS: List<Pair<StringResource, List<StringResource>>> = listOf(
     Res.string.combo_notice_sources to listOf(
-        Res.string.combo_notice_source_history, Res.string.combo_notice_source_keys, Res.string.combo_notice_source_resource,
+        Res.string.combo_notice_source_history, Res.string.combo_notice_source_slots, Res.string.combo_notice_source_keys, Res.string.combo_notice_source_resource,
     ),
     Res.string.combo_notice_limits to listOf(
         Res.string.combo_notice_limit_admin, Res.string.combo_notice_limit_history_off, Res.string.combo_notice_limit_history_gaps,

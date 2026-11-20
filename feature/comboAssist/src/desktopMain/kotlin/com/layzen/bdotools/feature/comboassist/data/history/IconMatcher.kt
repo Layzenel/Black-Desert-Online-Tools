@@ -24,7 +24,12 @@ internal class IconMatcher(private val icons: Map<Int, ByteArray>, private val p
     /** Лучшее совпадение для кадра иконки [icon]: сначала среди [preferred], потом среди всех. */
     fun match(icon: BufferedImage): IconMatch {
         val inCombo = best(icon, icons.keys.filter { it in preferred })
-        return if (inCombo.accepted) inCombo else best(icon, icons.keys.toList()).takeIf { it.accepted } ?: inCombo
+        if (inCombo.accepted) return inCombo
+        val all = best(icon, icons.keys.toList())
+        if (all.accepted) return all
+        // умение комбо, на которое кадр похож больше всех, узнаётся и с порогом мягче: иконки умений под гневом
+        // в истории другие (2026-11-21: 9776 Серафима — 43.9 при втором 65.3)
+        return if (all.skillNo == inCombo.skillNo && acceptsInCombo(inCombo.score, inCombo.second)) inCombo.copy(lenient = true) else inCombo
     }
 
     /** Разница кадра [frame] с иконкой умения [skillNo] (чем меньше, тем похожее) или `null`, если иконки нет. */

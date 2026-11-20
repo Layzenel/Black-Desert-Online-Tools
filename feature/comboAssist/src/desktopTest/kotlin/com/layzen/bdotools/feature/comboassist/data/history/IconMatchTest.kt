@@ -19,6 +19,15 @@ class IconMatchTest {
     }
 
     @Test
+    fun comboSkillUnderRageIsAcceptedLeniently() {
+        // 9776 Серафима под гневом: в истории своя иконка
+        assertFalse(accepts(43.9, 65.3))
+        assertTrue(acceptsInCombo(43.9, 65.3))
+        assertFalse(acceptsInCombo(43.9, 55.0))
+        assertFalse(acceptsInCombo(52.0, 90.0))
+    }
+
+    @Test
     fun rejectsForeignIconsWithoutGap() {
         assertFalse(accepts(45.0, 52.0))
         assertFalse(accepts(57.0, 90.0))
