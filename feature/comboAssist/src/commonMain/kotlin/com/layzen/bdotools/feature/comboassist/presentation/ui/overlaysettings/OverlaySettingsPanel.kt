@@ -19,7 +19,6 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_vertical
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_schema
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_tracker
 import com.layzen.bdotools.feature.comboassist.resources.combo_tracker_limits
-import com.layzen.bdotools.feature.comboassist.resources.combo_notice_open
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.components.SectionHeader
@@ -36,7 +35,6 @@ internal fun OverlaySettingsPanel(state: ComboState, onEvent: (ComboEvent) -> Un
     val settings = state.settings
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
         SectionHeader(stringResource(Res.string.combo_panel_tracker), description = stringResource(Res.string.combo_tracker_limits))
-        ActionButton(stringResource(Res.string.combo_notice_open), { onEvent(ComboEvent.ShowTrackerNotice) })
         OptionGroup(OverlayStyle.entries, combo.overlayStyle, { onEvent(ComboEvent.SetOverlayStyle(it)) }, { stringResource(it.title) },
             Modifier.widthIn(max = AppTheme.dimens.contentMaxWidth))
         ScaledOverlay(settings.comboScale, settings.comboOpacity) { ComboOverlayContent(combo, state.overlay, state.skills, loadDetails, state.rageTracked) }

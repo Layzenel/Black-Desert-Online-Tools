@@ -57,7 +57,6 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_remove
 import com.layzen.bdotools.feature.comboassist.resources.combo_add_cell
 import com.layzen.bdotools.feature.comboassist.resources.combo_grow_lane
 import com.layzen.bdotools.feature.comboassist.resources.combo_make_fork
-import com.layzen.bdotools.feature.comboassist.resources.combo_tag_optional
 import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.components.onSecondaryClick
 import com.layzen.bdotools.uikit.theme.AppShapes
@@ -94,8 +93,11 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
     )
     Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalAlignment = Alignment.CenterVertically) {
         combo.columns.forEachIndexed { column, col ->
-            // между колонками — стрелка; если первая ячейка колонки — связка, её звено уже нарисовано в ветке
-            if (column > 0 && col.lanes.none { it.firstOrNull()?.chain == true }) StepArrow()
+            // между колонками — стрелка или звено связки. Звено одиночной ячейки — здесь, вне колонки: иначе кнопка «развилка»
+            // под колонкой встаёт по центру звена и ячейки, а не под ячейкой. У развилки звено своей ветки — в самой ветке
+            val singleChain = col is ComboColumn.Single && col.lanes.first().firstOrNull()?.chain == true
+            if (singleChain) Box(Modifier.height(ComboDimens.editorIcon), contentAlignment = Alignment.Center) { ChainLink() }
+            else if (column > 0 && col.lanes.none { it.firstOrNull()?.chain == true }) StepArrow()
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
                 // пустое место над колонкой той же высоты, что кнопки под ней: центр колонки — на ячейках, и «+» рядом с ней
                 Spacer(Modifier.height(ComboDimens.gapButton))
@@ -104,7 +106,7 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
                         col.lanes.forEachIndexed { lane, cells ->
                             Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalAlignment = Alignment.Bottom) {
                                 cells.forEachIndexed { index, cell ->
-                                    if (index > 0 || cell.chain) Box(Modifier.height(ComboDimens.editorIcon), contentAlignment = Alignment.Center) { if (cell.chain) ChainLink() else StepArrow() }
+                                    if (index > 0 || (cell.chain && !singleChain)) Box(Modifier.height(ComboDimens.editorIcon), contentAlignment = Alignment.Center) { if (cell.chain) ChainLink() else StepArrow() }
                                     EditorCell(combo, CellAt(column, lane, index), cell, state, dragging, onEvent, loadDetails)
                                 }
                                 if (col is ComboColumn.Fork) AddCellSlot(stringResource(Res.string.combo_grow_lane)) { onEvent(ComboEvent.GrowLane(column, lane)) }
@@ -132,35 +134,6 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
     }
 }
 
-/** Пустой слот поменьше ячейки с «+» и подсказкой [hint]: в конце комбо и в конце каждой ветки развилки. */
-@Composable
-private fun AddCellSlot(hint: String, onClick: () -> Unit) {
-    // по высоте ячейки, чтобы «+» стоял на одной линии с иконками умений
-    Box(Modifier.height(ComboDimens.editorIcon), contentAlignment = Alignment.Center) {
-        HoverTooltip(hint) {
-            Box(
-                Modifier.size(ComboDimens.addSlot).background(AppTheme.colors.backgroundRaised)
-                    .border(ComboDimens.frame, AppTheme.colors.border)
-                    .pointerHoverIcon(PointerIcon.Hand).clickable(onClick = onClick),
-                contentAlignment = Alignment.Center,
-            ) { PlusIcon() }
-        }
-    }
-}
-
-/** Маленькая квадратная кнопка с подсказкой [hint]. */
-@Composable
-private fun SmallButton(hint: String, onClick: () -> Unit, content: @Composable () -> Unit) {
-    HoverTooltip(hint) {
-        Box(
-            Modifier.size(ComboDimens.gapButton).background(AppTheme.colors.backgroundRaised, AppShapes.Small)
-                .border(ComboDimens.frame, AppTheme.colors.border, AppShapes.Small)
-                .pointerHoverIcon(PointerIcon.Hand).clickable(onClick = onClick),
-            contentAlignment = Alignment.Center,
-        ) { content() }
-    }
-}
-
 @Composable
 private fun EditorCell(
     combo: Combo,
@@ -184,9 +157,8 @@ private fun EditorCell(
     val cancel by rememberUpdatedState(drag.onCancel)
     // цель выше соседей: черта места стоит снаружи ячейки, поверх стрелки
     Box(Modifier.zIndex(if (dragged || drag.target?.at == at) 1f else 0f)) {
-        val tag = if (cell.optional) " " + stringResource(Res.string.combo_tag_optional) else ""
         val item = cell.skillNo?.let { state.skills[it] }
-        SkillHover(item, loadDetails, cell = CellNote(combo.label(at), cell.chain, cell.optional)) {
+        SkillHover(item, loadDetails, cell = CellNote(combo.label(at), cell.chain)) {
             SkillIconView(
                 item?.icon, ComboDimens.editorIcon,
                 Modifier
@@ -221,7 +193,7 @@ private fun EditorCell(
         val backdrop = AppTheme.colors.backgroundDeep.copy(alpha = LABEL_BACKDROP_ALPHA)
         // номер ячейки — в углу иконки на тёмной подложке; не мешает тянуть и кликать ячейку
         Text(
-            combo.label(at) + tag,
+            combo.label(at),
             shift.padding(ComboDimens.nextFrame).background(backdrop).padding(horizontal = AppTheme.dimens.spaceXxs),
             style = AppTheme.typography.caption,
             color = if (selected) AppTheme.colors.accentGold else AppTheme.colors.textPrimary,

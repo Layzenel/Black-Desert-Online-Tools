@@ -16,7 +16,6 @@
     <string name="combo_stance_awakening">Awakening</string>
     <string name="combo_stance_sacramentum">Sacramentum</string>
     <string name="combo_stance_purgatum">Purgatum</string>
-    <string name="combo_stance_all">All</string>
     <string name="combo_part_normal">Regular combo</string>
     <string name="combo_part_rage">Under Black Spirit Rage</string>
     <string name="combo_rage_add">Add Black Spirit Rage combo</string>
@@ -29,9 +28,16 @@
     <string name="combo_section_fillers_count">Fillers: %1$d</string>
     <string name="combo_fillers_description">The overlay suggests them while the next step is on cooldown.</string>
     <string name="combo_fillers_search">Search fillers</string>
+    <string name="combo_optional_title">Optional skills</string>
+    <string name="combo_optional_description">The tracker always shows them, apart from the steps and in this order: a ready skill has a gold frame, one on cooldown shows seconds. For protection, buffs, dodges: what you use as the fight goes.</string>
+    <string name="combo_optional_search">Search skills</string>
+    <string name="combo_optional_add">Add an optional skill</string>
+    <string name="combo_move_left">Move left</string>
+    <string name="combo_move_right">Move right</string>
     <string name="combo_save">Save</string>
     <string name="combo_save_dirty">Save *</string>
     <string name="combo_delete">Delete combo</string>
+    <string name="combo_delete_confirm">The combo "%1$s" will be deleted. This cannot be undone.</string>
     <string name="combo_export">Export combo</string>
     <string name="combo_import">Import combos</string>
     <string name="combo_import_failed">This file is not a BDO Tools combo.</string>
@@ -40,7 +46,7 @@
 
     <!-- Editor -->
     <string name="combo_mode_editor">Editor</string>
-    <string name="combo_mode_overlay">Overlay settings</string>
+    <string name="combo_mode_overlay">Tracker settings</string>
     <string name="combo_make_fork">Make a fork</string>
     <string name="combo_add_lane">+ branch</string>
     <string name="combo_add_lane_action">Add branch</string>
@@ -55,14 +61,11 @@
     <string name="combo_cancel_selection">Cancel</string>
     <string name="combo_chain">Chain</string>
     <string name="combo_chain_description">Press right after the previous skill, or the chain breaks</string>
-    <string name="combo_optional">Optional</string>
-    <string name="combo_optional_description">The overlay does not suggest it, but if you use it the combo continues from there</string>
     <string name="combo_note">Note</string>
     <string name="combo_note_placeholder">For example: while jumping, after a dash</string>
     <string name="combo_note_description">The tracker shows it when this step is next</string>
     <string name="combo_warning_empty">Empty cells: %1$d. The overlay skips them.</string>
     <string name="combo_warning_chain">Cell %1$s: the data says this is a chain follow-up, but its launcher is not before it. The data can be incomplete, so check in game.</string>
-    <string name="combo_tag_optional">opt</string>
     
     
     
@@ -77,7 +80,6 @@
     
     <string name="combo_tooltip_cell">Cell %1$s</string>
     <string name="combo_tooltip_cell_chain">chained to the previous</string>
-    <string name="combo_tooltip_cell_optional">optional</string>
 
     <!-- Overlay -->
     <string name="combo_next_now">Now</string>
@@ -91,6 +93,8 @@
     <string name="combo_schema_show">Show layout</string>
     <string name="combo_panel_tracker">Tracker</string>
     <string name="combo_panel_schema">Combo layout</string>
+    <string name="combo_reset_title">Combo reset: %1$d s</string>
+    <string name="combo_reset_description">How many seconds you can go without combo skills and fillers (not counting cooldown waits) before the tracker starts the combo over.</string>
     <string name="combo_tracker_limits">The tracker relies on "Skill Usage History", key presses and resource spending. Where the history is missing (for example, in the Black Shrine), it follows keys only and makes more mistakes.</string>
     <string name="combo_overlay_vertical">Vertical</string>
     <string name="combo_overlay_horizontal">Horizontal</string>

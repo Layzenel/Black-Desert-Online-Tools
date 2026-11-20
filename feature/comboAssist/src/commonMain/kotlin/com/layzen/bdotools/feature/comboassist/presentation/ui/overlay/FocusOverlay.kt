@@ -35,7 +35,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * шага, внизу полоса прогресса прохода и пометка игрока к шагу. Блок одной ширины: длинная комбинация клавиш и
  * длинное комбо его не растягивают. На входе в развилку в углу крупной иконки — первое умение другой ветки (его тоже
  * можно жать), у следующего шага, с которого начинается развилка, — синяя цифра с числом веток. Слева — опциональные
- * умения, которые можно вставить сейчас, столбиком в пунктирных рамках. Смена шага анимирована: текущий выезжает
+ * умения комбо, не больше двух рядов ([SkillPool]). Смена шага анимирована: текущий выезжает
  * справа, следующие и пометка проявляются, полоса прогресса и рамка готовности меняются плавно. Ориентацию комбо не
  * учитывает: блок и так маленький.
  */
@@ -44,7 +44,8 @@ internal fun FocusOverlay(combo: Combo, overlay: OverlayState, skills: Map<Int, 
     val next = overlay.next ?: return
     OverlayPanel(rage) {
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-            OptionalSkills(overlay, skills, ComboDimens.focusUpcomingIcon, vertical = true)
+            // не выше двух рядов: высокий столбик растягивал блок фокуса вниз
+            SkillPool(overlay, skills, columns = (overlay.pool.size + POOL_ROWS - 1) / POOL_ROWS)
             Column(Modifier.width(ComboDimens.focusWidth), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
                     AnimatedContent(next, transitionSpec = { stepSwap() }, contentKey = ::stepKey) { step ->
@@ -128,3 +129,6 @@ private fun otherLaneStart(combo: Combo, step: PlannedStep): Int? {
 private fun stepKey(step: PlannedStep): Any = step.node?.id ?: step.skillNo
 
 private val UPCOMING_ALPHA = listOf(0.85f, 0.55f)
+
+/** Не больше рядов опциональных умений: умений больше — больше столбцов. */
+private const val POOL_ROWS = 2

@@ -10,7 +10,6 @@ import com.layzen.bdotools.feature.comboassist.domain.combo.CellAt
  * @property at адрес ячейки
  * @property isFork ячейка стоит в развилке
  * @property chain связка с предыдущим шагом
- * @property optional опциональный шаг
  * @property label подпись ячейки («4.1»)
  */
 class ComboNode(
@@ -19,7 +18,6 @@ class ComboNode(
     val at: CellAt,
     val isFork: Boolean,
     val chain: Boolean,
-    val optional: Boolean,
     val label: String,
 ) {
     /** Шаги, которые можно сделать после этого. */

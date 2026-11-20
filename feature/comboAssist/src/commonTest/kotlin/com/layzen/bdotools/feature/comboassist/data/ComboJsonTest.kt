@@ -28,6 +28,25 @@ class ComboJsonTest {
     }
 
     @Test
+    fun keepsPool() {
+        val combo = Combo("id", "", "seraph", listOf(ComboColumn.Single(ComboCell(skillNo = 1))), pool = listOf(5, 6))
+        assertEquals(listOf(combo), parseCombos(combosJson(listOf(combo))))
+    }
+
+    @Test
+    fun oldOptionalCellsMoveToPool() {
+        // до пула были опциональные ячейки: одиночная колонка пропадает, из развилки ячейка уходит
+        val text = """{"combos":[{"id":"id","name":"","classKey":"striker","columns":[
+            {"cell":{"skill":1}},
+            {"cell":{"skill":2,"optional":true}},
+            {"lanes":[[{"skill":3}],[{"skill":4,"optional":true}]]}
+        ]}]}"""
+        val combo = parseCombos(text).single()
+        assertEquals(listOf(ComboColumn.Single(ComboCell(1)), ComboColumn.Single(ComboCell(3))), combo.columns)
+        assertEquals(listOf(2, 4), combo.pool)
+    }
+
+    @Test
     fun removedSchemaStyleFallsBackToNext() {
         val text = """{"combos":[{"id":"id","name":"","classKey":"striker","overlayStyle":"Schema"}]}"""
         assertEquals(OverlayStyle.Next, parseCombos(text).single().overlayStyle)

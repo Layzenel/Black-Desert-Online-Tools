@@ -63,7 +63,6 @@ class ComboPlanner(private val graph: ComboGraph, private val skills: ComboSkill
         }
         while (candidates.isNotEmpty() && path.size < settings.predictLimit) {
             val (node, wait) = pick(candidates, t, ready, used)
-            if (node.optional) break
             if (prev != null && prev.wrapsTo(node) && path.isNotEmpty()) break
             t += wait
             path += PlannedStep(node.skillNo, t, node)
@@ -98,8 +97,7 @@ class ComboPlanner(private val graph: ComboGraph, private val skills: ComboSkill
 
     /** Шаг с наименьшим ожиданием; из почти равных (не дольше шага сверх лучшего) — давно не пройденный. */
     private fun pick(candidates: List<ComboNode>, t: Long, ready: Map<Int, Long>, used: Map<Int, Long>): Pair<ComboNode, Long> {
-        val live = candidates.filter { !it.optional }.ifEmpty { candidates }
-        val waits = live.map { it to chainWait(it, t, ready) }
+        val waits = candidates.map { it to chainWait(it, t, ready) }
         val best = waits.minOf { it.second }
         return waits.filter { it.second <= best + settings.stepMs }
             .minWith(compareBy<Pair<ComboNode, Long>> { used[it.first.id] ?: Long.MIN_VALUE }.thenBy { it.first.id })

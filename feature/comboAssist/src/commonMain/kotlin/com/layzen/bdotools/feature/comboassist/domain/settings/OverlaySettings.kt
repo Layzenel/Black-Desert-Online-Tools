@@ -10,6 +10,7 @@ package com.layzen.bdotools.feature.comboassist.domain.settings
  * @property slotShields показывать на слотах перезарядки щиты защиты умения в PvP: устойчивость, защита спереди, неуязвимость
  * @property slotControls показывать под иконкой слота перезарядки значки контролей умения в PvP
  * @property trackerNoticeSeen игрок уже прочитал, как работает трекер: окно с объяснением при первом открытии больше не показывается
+ * @property resetSeconds сколько секунд можно не жать умения комбо и филлеры (сверх ожидания перезарядки) — потом комбо начинается сначала
  */
 data class OverlaySettings(
     val slotTooltips: Boolean = true,
@@ -19,4 +20,10 @@ data class OverlaySettings(
     val slotShields: Boolean = false,
     val slotControls: Boolean = false,
     val trackerNoticeSeen: Boolean = false,
-)
+    val resetSeconds: Int = DEFAULT_RESET_SECONDS,
+) {
+    private companion object {
+        /** Как было до настройки: [com.layzen.bdotools.feature.comboassist.domain.tracker.TrackerSettings.idleMs]. */
+        const val DEFAULT_RESET_SECONDS = 5
+    }
+}

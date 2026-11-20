@@ -8,6 +8,7 @@ import com.layzen.bdotools.feature.comboassist.domain.StrikerFixture.CRIMSON_FAN
 import com.layzen.bdotools.feature.comboassist.domain.StrikerFixture.DEATHSTRIKE
 import com.layzen.bdotools.feature.comboassist.domain.StrikerFixture.ROARING_TIGER
 import com.layzen.bdotools.feature.comboassist.domain.StrikerFixture.SUPPRESSION
+import com.layzen.bdotools.feature.comboassist.domain.StrikerFixture.CROUCHING_WOLF
 import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import com.layzen.bdotools.feature.comboassist.domain.combo.ComboCell
 import com.layzen.bdotools.feature.comboassist.domain.combo.ComboColumn
@@ -48,17 +49,19 @@ class ComboTrackerTest {
     }
 
     @Test
-    fun optionalStepsAreNeverSuggested() {
-        val (passes, _) = tracker().follow(40)
-        assertTrue(passes.values.flatten().none { it == "8" || it == "9" })
+    fun poolSkillsAreNeverSuggested() {
+        val tracker = tracker()
+        val suggested = (0 until 40).flatMap { tracker.planner.predict(tracker.state, it * step).map { s -> s.skillNo } }
+        assertTrue(suggested.none { it == SUPPRESSION || it == CROUCHING_WOLF })
     }
 
     @Test
-    fun usedOptionalStepIsAccepted() {
+    fun poolSkillKeepsPosition() {
         val tracker = tracker()
-        val (_, t) = tracker.follow(7)
-        assertIs<TrackerEvent.Step>(tracker.onSkill(SUPPRESSION, t))
-        assertEquals("8", tracker.label())
+        val (_, t) = tracker.follow(2) // не внутри связки: умение пула посреди связки её обрывает
+        val label = tracker.label()
+        assertIs<TrackerEvent.Filler>(tracker.onSkill(SUPPRESSION, t))
+        assertEquals(label, tracker.label())
     }
 
     @Test
@@ -75,7 +78,7 @@ class ComboTrackerTest {
     @Test
     fun chainRescuedThroughAnotherLauncher() {
         val combo = Combo(
-            id = "c", name = "c", classKey = "striker", fillers = listOf(ANKLE_HOOK),
+            id = "c", name = "c", classKey = "striker", fillers = listOf(ANKLE_HOOK, ADAMANTINE),
             columns = listOf(
                 ComboColumn.Single(ComboCell(CRIMSON_FANG)),
                 ComboColumn.Single(ComboCell(DEATHSTRIKE, chain = true)),
@@ -93,6 +96,23 @@ class ComboTrackerTest {
         assertEquals("2", tracker.label())
         assertEquals(1, tracker.state.pass)
         assertTrue(tracker.state.burned.isEmpty())
+    }
+
+    @Test
+    fun chainIsNotRescuedThroughSkillOutsideCombo() {
+        // 2026-11-20: трекер предлагал войти в связку умением, которого в комбо нет, — без иконки и непонятно откуда
+        val combo = Combo(
+            id = "c", name = "c", classKey = "striker", fillers = listOf(ANKLE_HOOK),
+            columns = listOf(
+                ComboColumn.Single(ComboCell(CRIMSON_FANG)),
+                ComboColumn.Single(ComboCell(DEATHSTRIKE, chain = true)),
+                ComboColumn.Single(ComboCell(BOMBARDMENT, chain = true)),
+            ),
+        )
+        val tracker = tracker(combo)
+        tracker.onSkill(CRIMSON_FANG, 0)
+        val event = tracker.onSkill(ANKLE_HOOK, step)
+        assertFalse(event.chain is ChainRecovery.Rescue)
     }
 
     @Test
@@ -151,11 +171,10 @@ class ComboTrackerTest {
         assertEquals(e, tracker.planner.predict(tracker.state, 3 * step).first().skillNo)
     }
 
-    /** Как у игрока: опциональный первый шаг, развилка из двух длинных веток, в обеих одна и та же связка. */
+    /** Как у игрока: развилка из двух длинных веток, в обеих одна и та же связка. */
     private val twoLanes = Combo(
-        "t", "t", "striker", fillers = emptyList(),
+        "t", "t", "striker", fillers = emptyList(), pool = listOf(StrikerFixture.CROUCHING_WOLF),
         columns = listOf(
-            ComboColumn.Single(ComboCell(StrikerFixture.CROUCHING_WOLF, optional = true)),
             ComboColumn.Fork(
                 listOf(
                     listOf(ComboCell(StrikerFixture.KNEE_HAMMER), ComboCell(CRIMSON_FANG), ComboCell(DEATHSTRIKE, chain = true), ComboCell(BOMBARDMENT, chain = true)),
@@ -164,13 +183,6 @@ class ComboTrackerTest {
             ),
         ),
     )
-
-    @Test
-    fun optionalFirstStepCanBeSkippedAtStart() {
-        val tracker = tracker(twoLanes)
-        assertIs<TrackerEvent.Step>(tracker.onSkill(StrikerFixture.KNEE_HAMMER, 0))
-        assertEquals("2.1", tracker.label())
-    }
 
     @Test
     fun chainBreaksEvenWhenPositionIsAmbiguous() {

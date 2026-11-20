@@ -16,7 +16,6 @@
     <string name="combo_stance_awakening">Пробуждение</string>
     <string name="combo_stance_sacramentum">Сакраментум</string>
     <string name="combo_stance_purgatum">Пургатум</string>
-    <string name="combo_stance_all">Все</string>
     <string name="combo_part_normal">Обычное комбо</string>
     <string name="combo_part_rage">Под гневом Чёрного духа</string>
     <string name="combo_rage_add">Добавить комбо под гневом</string>
@@ -29,9 +28,16 @@
     <string name="combo_section_fillers_count">Филлеры: %1$d</string>
     <string name="combo_fillers_description">Оверлей предлагает их, пока ждёт перезарядку следующего шага.</string>
     <string name="combo_fillers_search">Поиск филлера</string>
+    <string name="combo_optional_title">Опциональные умения</string>
+    <string name="combo_optional_description">Трекер показывает их всегда, отдельно от шагов и в этом порядке: готовое — в золотой рамке, на перезарядке — с секундами. Для защиты, бафов, отскоков — что жмёшь по ситуации.</string>
+    <string name="combo_optional_search">Поиск умения</string>
+    <string name="combo_optional_add">Добавить опциональное умение</string>
+    <string name="combo_move_left">Левее</string>
+    <string name="combo_move_right">Правее</string>
     <string name="combo_save">Сохранить</string>
     <string name="combo_save_dirty">Сохранить *</string>
     <string name="combo_delete">Удалить комбо</string>
+    <string name="combo_delete_confirm">Комбо «%1$s» будет удалено. Отменить удаление будет нельзя.</string>
     <string name="combo_export">Экспорт комбо</string>
     <string name="combo_import">Импорт комбо</string>
     <string name="combo_import_failed">Этот файл — не комбо BDO Tools.</string>
@@ -40,7 +46,7 @@
 
     <!-- Редактор -->
     <string name="combo_mode_editor">Редактор</string>
-    <string name="combo_mode_overlay">Настройка оверлея</string>
+    <string name="combo_mode_overlay">Настройки трекера</string>
     <string name="combo_make_fork">Сделать развилкой</string>
     <string name="combo_add_lane">+ ветка</string>
     <string name="combo_add_lane_action">Добавить ветку</string>
@@ -55,14 +61,11 @@
     <string name="combo_cancel_selection">Отмена</string>
     <string name="combo_chain">Связка</string>
     <string name="combo_chain_description">Жать сразу после предыдущего, иначе цепочка сорвётся</string>
-    <string name="combo_optional">Опциональный</string>
-    <string name="combo_optional_description">Оверлей его не подсказывает, но если применишь — комбо продолжится с него</string>
     <string name="combo_note">Пометка</string>
     <string name="combo_note_placeholder">Например: в прыжке, после рывка</string>
     <string name="combo_note_description">Трекер покажет её, когда этот шаг — следующий</string>
     <string name="combo_warning_empty">Пустых ячеек: %1$d — оверлей их пропускает.</string>
     <string name="combo_warning_chain">Ячейка %1$s: по данным это продолжение связки, а перед ним нет его запуска. Данные бывают неполными — проверь в игре.</string>
-    <string name="combo_tag_optional">опц</string>
     
     
     
@@ -77,7 +80,6 @@
     
     <string name="combo_tooltip_cell">Ячейка %1$s</string>
     <string name="combo_tooltip_cell_chain">связка с предыдущим</string>
-    <string name="combo_tooltip_cell_optional">опциональный</string>
 
     <!-- Оверлей -->
     <string name="combo_next_now">Сейчас</string>
@@ -91,6 +93,8 @@
     <string name="combo_schema_show">Показать схему</string>
     <string name="combo_panel_tracker">Трекер</string>
     <string name="combo_panel_schema">Схема комбо</string>
+    <string name="combo_reset_title">Сброс комбо: %1$d с</string>
+    <string name="combo_reset_description">Сколько секунд можно не применять умения комбо и филлеры (не считая ожидания перезарядки) — потом трекер начнёт комбо сначала.</string>
     <string name="combo_tracker_limits">Трекер опирается на «Историю испол. навыков», нажатия клавиш и расход ресурса. Где истории нет (например, в Чёрном храме), он ведёт только по клавишам и ошибается чаще.</string>
     <string name="combo_overlay_vertical">Вертикально</string>
     <string name="combo_overlay_horizontal">Горизонтально</string>

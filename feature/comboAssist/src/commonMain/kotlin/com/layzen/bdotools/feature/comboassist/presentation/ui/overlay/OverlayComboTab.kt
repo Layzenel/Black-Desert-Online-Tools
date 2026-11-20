@@ -82,6 +82,7 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
         settings.comboOpacity, { onEvent(ComboEvent.SetComboOpacity(it, save = false)) }, COMBO_OPACITY, Modifier.fillMaxWidth(),
         onValueChangeFinished = { onEvent(ComboEvent.SetComboOpacity(settings.comboOpacity, save = true)) },
     )
+    ResetSecondsSlider(settings.resetSeconds, onEvent)
 }
 
 /**

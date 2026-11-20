@@ -15,6 +15,7 @@ import com.layzen.bdotools.feature.comboassist.domain.keys.KeyStep
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboStance
 import kotlin.concurrent.Volatile
 import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
+import com.layzen.bdotools.feature.comboassist.domain.tracker.TrackerSettings
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 import com.layzen.bdotools.feature.comboassist.presentation.controller.EditorController
 import com.layzen.bdotools.feature.comboassist.presentation.controller.TrainingController
@@ -55,6 +56,9 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
     /** Шаги, которые трекер ждёт сейчас, для потока слежения: он читает их из своего потока. */
     @Volatile private var keySteps: List<KeyStep> = emptyList()
     private var skillsLoader: Job? = null
+
+    /** Комбо до каждой правки, последняя — в конце; правки другого комбо при отмене пропускаются ([undo]). */
+    private val history = ArrayDeque<Combo>()
 
     /** Состояние экрана. */
     val state: StateFlow<ComboState> = mutableState.asStateFlow()
@@ -110,7 +114,10 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             is ComboEvent.SelectStance -> { mutableState.update { it.copy(stance = event.stance) }; reloadSkills() }
             is ComboEvent.Query -> mutableState.update { it.copy(query = event.text) }
             ComboEvent.Save -> save()
-            ComboEvent.Delete -> delete()
+            ComboEvent.AskDelete -> mutableState.update { it.copy(deleteAsked = it.combo != null) }
+            ComboEvent.CancelDelete -> mutableState.update { it.copy(deleteAsked = false) }
+            ComboEvent.Delete -> { mutableState.update { it.copy(deleteAsked = false) }; delete() }
+            ComboEvent.Undo -> undo()
             ComboEvent.ExportCombo -> mutableState.value.combo?.let { combo -> viewModelScope.launch { interactor.export(combo) } }
             ComboEvent.ImportCombos -> importCombos()
             is ComboEvent.SetMode -> setMode(event.mode)
@@ -127,6 +134,10 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             ComboEvent.ToggleSlotControls -> updateSettings { it.copy(slotControls = !it.slotControls) }.also { loadSlotProtections() }
             is ComboEvent.SetComboScale -> updateSettings(event.save) { it.copy(comboScale = event.percent) }
             is ComboEvent.SetComboOpacity -> updateSettings(event.save) { it.copy(comboOpacity = event.percent) }
+            is ComboEvent.SetResetSeconds -> {
+                updateSettings(event.save) { it.copy(resetSeconds = event.seconds) }
+                if (event.save) restartTraining()
+            }
             is ComboEvent.SetOverlayStyle -> changeOverlayLook { it.copy(overlayStyle = event.style) }
             ComboEvent.ToggleVertical -> changeOverlayLook { it.copy(vertical = !it.vertical) }
             ComboEvent.HideCombo -> mutableState.update { it.copy(overlayShown = false) }
@@ -149,13 +160,35 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         val before = mutableState.value.combo
         mutableState.update { editor.reduce(it, event, skills) }
         val after = mutableState.value.combo ?: return
-        val changed = before?.parts()?.map { it.stepsOnly() to it.fillers } != after.parts().map { it.stepsOnly() to it.fillers }
+        if (before != null && before != after) rememberEdit(before)
+        val changed = before?.parts()?.map { Triple(it.stepsOnly(), it.fillers, it.pool) } != after.parts().map { Triple(it.stepsOnly(), it.fillers, it.pool) }
         if (!changed) return
+        if (watcher?.isActive == true) restartWatching() else restartTraining()
+    }
+
+    /** Запоминает комбо [before] до правки для Ctrl+Z; старые правки сверх [HISTORY_LIMIT] забываются. */
+    private fun rememberEdit(before: Combo) {
+        history.addLast(before)
+        if (history.size > HISTORY_LIMIT) history.removeFirst()
+    }
+
+    /**
+     * Ctrl+Z: открытое комбо — каким оно было до последней своей правки. Правки других комбо (открывали их раньше)
+     * пропускаются: отмена не должна подменять одно комбо другим.
+     */
+    private fun undo() {
+        val current = mutableState.value.combo ?: return
+        while (history.isNotEmpty() && history.last().id != current.id) history.removeLast()
+        val previous = history.removeLastOrNull() ?: return
+        mutableState.update { s ->
+            editor.refresh(s.copy(combo = previous, selection = null, dirty = true, editingRage = s.editingRage && previous.rage != null), skills)
+        }
         if (watcher?.isActive == true) restartWatching() else restartTraining()
     }
 
     /** Добавляет или убирает ([rage] = `null`) комбо под гневом; [editing] — править ли его дальше. */
     private fun changeRage(rage: ComboRage?, editing: Boolean) {
+        mutableState.value.combo?.let(::rememberEdit)
         mutableState.update { s ->
             val combo = s.combo?.copy(rage = rage) ?: return@update s
             editor.refresh(s.copy(combo = combo, editingRage = editing, selection = if (editing) CellAt(0) else null, dirty = true), skills)
@@ -306,7 +339,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     private fun restartTraining() {
         val combo = mutableState.value.tracked ?: return
-        training.load(combo, skills)
+        training.load(combo, skills, TrackerSettings(idleMs = mutableState.value.settings.resetSeconds * MS_PER_SECOND))
         publishTraining()
     }
 
@@ -351,7 +384,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         watcher = viewModelScope.launch {
             val icons = mutableState.value.skills.values.mapNotNull { item -> interactor.icon(item.skill)?.let { item.skillNo to it } }.toMap()
             val combo = mutableState.value.combo
-            val preferred = combo?.parts().orEmpty().flatMap { c -> c.cells().mapNotNull { it.second.skillNo } + c.fillers }.toSet()
+            val preferred = combo?.parts().orEmpty().flatMap { c -> c.cells().mapNotNull { it.second.skillNo } + c.fillers + c.pool }.toSet()
             keyCommands = interactor.keyCommands(preferred)
             // комбо под гневом есть — трекер переходит на него, пока висят бафы гнева, и обратно, когда они спали
             if (combo?.rage != null) launch {
@@ -370,6 +403,11 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     private companion object {
         const val TICK_MS = 100L
+
+        /** Сколько правок помнит Ctrl+Z. */
+        const val HISTORY_LIMIT = 100
+
+        const val MS_PER_SECOND = 1000L
 
         /** Как часто узнавать, каким персонажем играют. */
         const val CHARACTER_CHECK_MS = 5000L

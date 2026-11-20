@@ -16,7 +16,16 @@ sealed interface ComboEvent {
     data class SelectStance(val stance: ComboStance?) : ComboEvent
     data class Query(val text: String) : ComboEvent
     data object Save : ComboEvent
+
+    /** Спросить, удалять ли открытое комбо: само удаление — [Delete] из окна подтверждения. */
+    data object AskDelete : ComboEvent
+
+    /** Не удалять: закрыть окно подтверждения. */
+    data object CancelDelete : ComboEvent
     data object Delete : ComboEvent
+
+    /** Ctrl+Z: вернуть комбо, каким оно было до последней правки. */
+    data object Undo : ComboEvent
     data object ExportCombo : ComboEvent
     data object ImportCombos : ComboEvent
     data class EditRage(val rage: Boolean) : ComboEvent
@@ -32,12 +41,16 @@ sealed interface ComboEvent {
     data class InsertCell(val after: Boolean) : ComboEvent
     data object ClearSelection : ComboEvent
     data object ToggleChain : ComboEvent
-    data object ToggleOptional : ComboEvent
     data class SetNote(val text: String) : ComboEvent
     data object RemoveCell : ComboEvent
     data class RemoveAt(val at: CellAt) : ComboEvent
     data class MoveCell(val from: CellAt, val to: CellAt, val side: DropSide) : ComboEvent
     data class AddFiller(val skillNo: Int) : ComboEvent
+    data class AddPool(val skillNo: Int) : ComboEvent
+    data class RemovePool(val skillNo: Int) : ComboEvent
+
+    /** Сдвинуть опциональное умение [skillNo] на [by] мест: −1 — левее, 1 — правее. */
+    data class MovePool(val skillNo: Int, val by: Int) : ComboEvent
     data class RemoveFiller(val skillNo: Int) : ComboEvent
 
     data class SetMode(val mode: ComboMode) : ComboEvent
@@ -65,6 +78,9 @@ sealed interface ComboEvent {
 
     /** Из меню оверлея: непрозрачность оверлея комбо в процентах; [save] — закончили двигать ползунок, сохранить. */
     data class SetComboOpacity(val percent: Int, val save: Boolean) : ComboEvent
+
+    /** Через сколько секунд без умений комбо трекер начинает его сначала. */
+    data class SetResetSeconds(val seconds: Int, val save: Boolean) : ComboEvent
 
     /** Из меню оверлея: убрать оверлей; слежение за игрой продолжается. */
     data object HideCombo : ComboEvent
