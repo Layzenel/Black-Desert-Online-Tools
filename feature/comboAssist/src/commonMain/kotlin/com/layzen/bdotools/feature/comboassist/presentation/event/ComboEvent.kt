@@ -26,6 +26,7 @@ sealed interface ComboEvent {
 
     /** Ctrl+Z: вернуть комбо, каким оно было до последней правки. */
     data object Undo : ComboEvent
+    data object Redo : ComboEvent
     data object ExportCombo : ComboEvent
     data object ImportCombos : ComboEvent
     data class EditRage(val rage: Boolean) : ComboEvent

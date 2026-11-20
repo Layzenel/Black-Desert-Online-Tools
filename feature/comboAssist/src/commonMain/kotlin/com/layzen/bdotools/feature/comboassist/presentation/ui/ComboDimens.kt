@@ -54,8 +54,7 @@ internal object ComboDimens {
     val cooldownIcon = 12.dp
     val expandArrow = 10.dp
     val buttonIcon = 16.dp
-    val dropMark = 4.dp
-    val dropMarkOutset = 6.dp
+    val dropArrow = 10.dp
     val dropSlop = 14.dp
     val markTooltipOffset = 16.dp
     val poolIcon = 32.dp

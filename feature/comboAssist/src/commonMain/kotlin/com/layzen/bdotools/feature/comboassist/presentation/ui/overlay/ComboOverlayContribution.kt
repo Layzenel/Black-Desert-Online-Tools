@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.overlay
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.layzen.bdotools.composable.overlay.GameOverlayWindow
@@ -44,7 +45,9 @@ internal fun comboOverlayContribution(): OverlayContribution = OverlayContributi
         OverlayTab(COMBO_ORDER, Res.string.combo_panel_tab_combo) { scope ->
             val viewModel: ComboViewModel = koinViewModel()
             val state by viewModel.state.collectAsState()
-            OverlayComboTab(state, viewModel::onEvent, onEdit = scope::openApp)
+            // схема комбо под курсором — рядом с меню, чтобы было видно, что это за комбо
+            OverlayComboTab(state, viewModel::onEvent, onEdit = scope::openApp, onHover = { combo -> scope.aside(combo?.let { { ComboPreview(it, viewModel) } }) })
+            DisposableEffect(Unit) { onDispose { scope.aside(null) } }
         },
     ),
 )

@@ -23,6 +23,8 @@ import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboMode
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -60,6 +62,9 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
     /** Комбо до каждой правки, последняя — в конце; правки другого комбо при отмене пропускаются ([undo]). */
     private val history = ArrayDeque<Combo>()
 
+    /** Комбо до каждой отмены, последняя — в конце, для Ctrl+Y ([redo]); новая правка их забывает. */
+    private val future = ArrayDeque<Combo>()
+
     /** Состояние экрана. */
     val state: StateFlow<ComboState> = mutableState.asStateFlow()
 
@@ -88,6 +93,25 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     /** Подробности умения для тултипа и клавиш; справочник кэширует их сам. */
     suspend fun details(skillNo: Int): SkillDetails? = interactor.details(skillNo)
+
+    /** Умения схем при наведении в меню оверлея по набору умений комбо: иконки качаются один раз, правка комбо — новый набор. */
+    private val previews = mutableMapOf<Set<Int>, Map<Int, SkillItem>>()
+
+    /** Умения комбо [combo] с иконками — для его схемы при наведении в меню оверлея (класс может быть не открытым). */
+    suspend fun previewSkills(combo: Combo): Map<Int, SkillItem> {
+        val needed = combo.parts().flatMap { part -> part.cells().mapNotNull { it.second.skillNo } }.toSet()
+        previews[needed]?.let { return it }
+        val loaded = mutableState.value.skills
+        val items = coroutineScope {
+            interactor.classSkills(combo.classKey, stance = null).filterKeys { it in needed }.map { (no, skill) ->
+                async {
+                    val icon = loaded[no]?.icon ?: interactor.icon(skill)?.let { bytes -> runCatching { bytes.decodeToImageBitmap() }.getOrNull() }
+                    no to SkillItem(no, skill, icon)
+                }
+            }.awaitAll().toMap()
+        }
+        return items.also { previews[needed] = it }
+    }
 
     /** Действие игрока. */
     fun onEvent(event: ComboEvent) {
@@ -118,6 +142,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             ComboEvent.CancelDelete -> mutableState.update { it.copy(deleteAsked = false) }
             ComboEvent.Delete -> { mutableState.update { it.copy(deleteAsked = false) }; delete() }
             ComboEvent.Undo -> undo()
+            ComboEvent.Redo -> redo()
             ComboEvent.ExportCombo -> mutableState.value.combo?.let { combo -> viewModelScope.launch { interactor.export(combo) } }
             ComboEvent.ImportCombos -> importCombos()
             is ComboEvent.SetMode -> setMode(event.mode)
@@ -169,24 +194,40 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         if (watcher?.isActive == true) restartWatching() else restartTraining()
     }
 
-    /** Запоминает комбо [before] до правки для Ctrl+Z; старые правки сверх [HISTORY_LIMIT] забываются. */
+    /** Запоминает комбо [before] до правки для Ctrl+Z; старые правки сверх [HISTORY_LIMIT] забываются, отменённые — тоже. */
     private fun rememberEdit(before: Combo) {
         history.addLast(before)
         if (history.size > HISTORY_LIMIT) history.removeFirst()
+        future.clear()
+        publishHistory()
     }
 
     /**
      * Ctrl+Z: открытое комбо — каким оно было до последней своей правки. Правки других комбо (открывали их раньше)
      * пропускаются: отмена не должна подменять одно комбо другим.
      */
-    private fun undo() {
+    private fun undo() = step(from = history, to = future)
+
+    /** Ctrl+Y: открытое комбо — каким оно было до последней своей отмены. */
+    private fun redo() = step(from = future, to = history)
+
+    /** Отмена или повтор: последнее комбо из [from] с тем же id становится открытым, открытое уходит в [to]. */
+    private fun step(from: ArrayDeque<Combo>, to: ArrayDeque<Combo>) {
         val current = mutableState.value.combo ?: return
-        while (history.isNotEmpty() && history.last().id != current.id) history.removeLast()
-        val previous = history.removeLastOrNull() ?: return
+        while (from.isNotEmpty() && from.last().id != current.id) from.removeLast()
+        val next = from.removeLastOrNull() ?: return
+        to.addLast(current)
         mutableState.update { s ->
-            editor.refresh(s.copy(combo = previous, selection = null, dirty = true, editingRage = s.editingRage && previous.rage != null), skills)
+            editor.refresh(s.copy(combo = next, selection = null, dirty = true, editingRage = s.editingRage && next.rage != null), skills)
         }
+        publishHistory()
         if (watcher?.isActive == true) restartWatching() else restartTraining()
+    }
+
+    /** Есть ли что отменить и повторить у открытого комбо — для кнопок над редактором. */
+    private fun publishHistory() = mutableState.update { s ->
+        val id = s.combo?.id
+        s.copy(canUndo = history.any { it.id == id }, canRedo = future.any { it.id == id })
     }
 
     /** Добавляет или убирает ([rage] = `null`) комбо под гневом; [editing] — править ли его дальше. */
@@ -261,7 +302,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         val characterClass = classOf(combo) ?: s.characterClass
         val stance = ComboStance.keep(characterClass, s.stance)
         editor.refresh(s.copy(combo = combo, selection = null, dirty = false, characterClass = characterClass, stance = stance, editingRage = false), skills)
-    }.also { reloadSkills() }
+    }.also { publishHistory(); reloadSkills() }
 
     /** Перезагружает умения класса; прошлая загрузка отменяется, чтобы её иконки не попали в список нового класса. */
     private fun reloadSkills() {

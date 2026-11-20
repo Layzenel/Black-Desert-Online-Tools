@@ -38,6 +38,8 @@
     <string name="combo_save_dirty">Save *</string>
     <string name="combo_delete">Delete combo</string>
     <string name="combo_delete_confirm">The combo "%1$s" will be deleted. This cannot be undone.</string>
+    <string name="combo_undo_tooltip">Undo (Ctrl+Z)</string>
+    <string name="combo_redo_tooltip">Redo (Ctrl+Y or Ctrl+Shift+Z)</string>
     <string name="combo_export">Export combo</string>
     <string name="combo_import">Import combos</string>
     <string name="combo_import_failed">This file is not a BDO Tools combo.</string>

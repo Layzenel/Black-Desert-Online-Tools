@@ -10,6 +10,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
@@ -49,13 +58,13 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Вкладка «Комбо» меню оверлея: какое комбо показать (выбор сразу включает его в оверлее), скрыть или открыть
- * в редакторе ([onEdit]); трекер — вид и перемещение; схема — показ, перемещение и ориентация; общие размер
+ * в редакторе ([onEdit]); комбо под курсором — в [onHover] (`null` — ни одно); трекер — вид и перемещение; схема — показ, перемещение и ориентация; общие размер
  * и непрозрачность.
  */
 @Composable
-internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, onEdit: () -> Unit) {
+internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, onEdit: () -> Unit, onHover: (Combo?) -> Unit = {}) {
     SectionHeader(stringResource(Res.string.combo_menu_show))
-    ComboList(state, onEvent)
+    ComboList(state, onEvent, onHover)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
         if (state.overlayShown) ActionButton(stringResource(Res.string.combo_menu_hide), { onEvent(ComboEvent.HideCombo) })
         ActionButton(stringResource(Res.string.combo_menu_edit), { onEvent(ComboEvent.SetMode(ComboMode.Editor)); onEdit() })
@@ -90,7 +99,7 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
  * класса, которым играют ([ComboState.playedClass]), бледные и не выбираются. Список своей высоты.
  */
 @Composable
-private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit) {
+private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit, onHover: (Combo?) -> Unit) {
     if (state.combos.isEmpty()) {
         DescriptionText(stringResource(Res.string.combo_menu_empty))
         return
@@ -98,14 +107,19 @@ private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit) {
     val untitled = stringResource(Res.string.combo_untitled)
     val tint = ColorFilter.tint(AppTheme.colors.textBeige)
     val scroll = rememberScrollState()
+    var hovered by remember { mutableStateOf<Combo?>(null) }
+    LaunchedEffect(hovered) { onHover(hovered) }
     Column(Modifier.fillMaxWidth().heightIn(max = ComboDimens.overlayPanelListHeight).verticalScrollbar(scroll).verticalScroll(scroll)) {
         state.combos.forEach { combo ->
             val characterClass = CharacterClass.entries.firstOrNull { it.key == combo.classKey }
             // комбо другого класса персонажу в игре не подходит: видно, но не выбирается
             val fits = state.playedClass == null || combo.classKey == state.playedClass
+            val hover = remember { MutableInteractionSource() }
+            val over by hover.collectIsHoveredAsState()
+            LaunchedEffect(over) { if (over) hovered = combo else if (hovered?.id == combo.id) hovered = null }
             MenuItem(
                 combo.name.ifBlank { untitled }, { if (fits) onEvent(ComboEvent.ShowCombo(combo.id)) },
-                Modifier.fillMaxWidth().alpha(if (fits) 1f else UNFIT_ALPHA),
+                Modifier.fillMaxWidth().hoverable(hover).alpha(if (fits) 1f else UNFIT_ALPHA),
                 hotkey = characterClass?.let { stringResource(it.title) },
                 badge = characterClass?.let { { Image(painterResource(it.icon), null, Modifier.size(ComboDimens.paletteIcon), colorFilter = tint) } },
                 selected = state.overlayShown && state.combo?.id == combo.id,

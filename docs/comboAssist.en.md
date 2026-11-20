@@ -9,7 +9,8 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
 ## Editor
 
 - On the left — "Class" and "Saved combos". A combo belongs to a class and fits all of its characters.
-- Ctrl+Z undoes the last combo edit; deleting a combo asks for confirmation. At the bottom of the menu — "How the tracker works" and removing the rage combo.
+- The buttons above the editor and Ctrl+Z / Ctrl+Y (Ctrl+Shift+Z) undo and redo combo edits; a dragged cell moves
+  under the others, and a blue pointer at a cell edge shows where it will go; deleting a combo asks for confirmation. At the bottom of the menu — "How the tracker works" and removing the rage combo.
 - "Skills" — the class skills with search and the "Succession" or "Awakening" stances; for Seraph —
   "Sacramentum" (without "Purga:" skills), "Purgatum" (without "Sacra:" skills).
 - **Black Spirit Rage combo** — above the combo, switch between "Regular combo" and "Under Black Spirit Rage"

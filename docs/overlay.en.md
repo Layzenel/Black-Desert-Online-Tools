@@ -27,7 +27,9 @@ While the game hides the cursor (combat mode), the button and windows pass click
   bottom of the icon, as in game. Crowd controls against monsters only are not shown; they hide together with the shields.
   Hover a shield or a crowd control icon to see its name.
 
-**"Combo"** — saved combos: "Show combo", "Hide combo" and "Edit combo" (opens the app).
+**"Combo"** — saved combos: "Show combo" (the schema of the combo under the cursor appears next to the menu), "Hide
+combo" (game watching stops too) and "Edit combo" (opens the app). In the right half of the screen the menu opens to
+the left, and overlay windows stay inside the screen.
 How to build a combo — [Combo Assist](comboAssist.en.md).
 
 - "Tracker" — the style: "Next" or "Focus".

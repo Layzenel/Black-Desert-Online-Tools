@@ -38,6 +38,8 @@
     <string name="combo_save_dirty">Сохранить *</string>
     <string name="combo_delete">Удалить комбо</string>
     <string name="combo_delete_confirm">Комбо «%1$s» будет удалено. Отменить удаление будет нельзя.</string>
+    <string name="combo_undo_tooltip">Отменить (Ctrl+Z)</string>
+    <string name="combo_redo_tooltip">Повторить (Ctrl+Y или Ctrl+Shift+Z)</string>
     <string name="combo_export">Экспорт комбо</string>
     <string name="combo_import">Импорт комбо</string>
     <string name="combo_import_failed">Этот файл — не комбо BDO Tools.</string>

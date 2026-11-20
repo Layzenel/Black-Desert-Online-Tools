@@ -91,6 +91,13 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
         onCancel = { drag = null },
         place = { at, rect -> bounds[at] = rect },
     )
+    // тянущая ячейка — под остальными, цель — поверх соседей (её указатель стоит снаружи). zIndex действует только
+    // среди соседей, поэтому слой меняют и колонка, и ветка с ячейкой
+    fun layer(holds: (CellAt) -> Boolean): Float = when {
+        drag?.from?.let(holds) == true -> DRAGGED_LAYER
+        dragTarget?.at?.let(holds) == true -> TARGET_LAYER
+        else -> 0f
+    }
     Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalAlignment = Alignment.CenterVertically) {
         combo.columns.forEachIndexed { column, col ->
             // между колонками — стрелка или звено связки. Звено одиночной ячейки — здесь, вне колонки: иначе кнопка «развилка»
@@ -98,13 +105,13 @@ internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadD
             val singleChain = col is ComboColumn.Single && col.lanes.first().firstOrNull()?.chain == true
             if (singleChain) Box(Modifier.height(ComboDimens.editorIcon), contentAlignment = Alignment.Center) { ChainLink() }
             else if (column > 0 && col.lanes.none { it.firstOrNull()?.chain == true }) StepArrow()
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+            Column(Modifier.zIndex(layer { it.column == column }), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
                 // пустое место над колонкой той же высоты, что кнопки под ней: центр колонки — на ячейках, и «+» рядом с ней
                 Spacer(Modifier.height(ComboDimens.gapButton))
                 val lanes: @Composable () -> Unit = {
                     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
                         col.lanes.forEachIndexed { lane, cells ->
-                            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalAlignment = Alignment.Bottom) {
+                            Row(Modifier.zIndex(layer { it.column == column && it.lane == lane }), horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalAlignment = Alignment.Bottom) {
                                 cells.forEachIndexed { index, cell ->
                                     if (index > 0 || (cell.chain && !singleChain)) Box(Modifier.height(ComboDimens.editorIcon), contentAlignment = Alignment.Center) { if (cell.chain) ChainLink() else StepArrow() }
                                     EditorCell(combo, CellAt(column, lane, index), cell, state, dragging, onEvent, loadDetails)
@@ -155,8 +162,8 @@ private fun EditorCell(
     val move by rememberUpdatedState(drag.onMove)
     val end by rememberUpdatedState(drag.onEnd)
     val cancel by rememberUpdatedState(drag.onCancel)
-    // цель выше соседей: черта места стоит снаружи ячейки, поверх стрелки
-    Box(Modifier.zIndex(if (dragged || drag.target?.at == at) 1f else 0f)) {
+    // тянущая — под остальными ячейками, цель — поверх соседей: её указатель места стоит снаружи ячейки
+    Box(Modifier.zIndex(if (dragged) DRAGGED_LAYER else if (drag.target?.at == at) TARGET_LAYER else 0f)) {
         val item = cell.skillNo?.let { state.skills[it] }
         SkillHover(item, loadDetails, cell = CellNote(combo.label(at), cell.chain)) {
             SkillIconView(
@@ -213,6 +220,8 @@ private fun EditorCell(
 }
 
 private const val DRAGGED_ALPHA = 0.85f
+private const val DRAGGED_LAYER = -1f
+private const val TARGET_LAYER = 1f
 
 /** Подложка номера ячейки: иконку под ней видно. */
 private const val LABEL_BACKDROP_ALPHA = 0.7f
