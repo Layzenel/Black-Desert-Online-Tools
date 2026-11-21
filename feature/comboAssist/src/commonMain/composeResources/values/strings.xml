@@ -119,11 +119,12 @@
     <string name="combo_panel_tab_combo">Комбо</string>
     <string name="combo_panel_scale">Размер оверлея: %1$d %</string>
     <string name="combo_panel_opacity">Непрозрачность оверлея: %1$d %</string>
-    <string name="combo_setting_slot_tooltips">Тултип умения над слотом</string>
-    <string name="combo_setting_slot_shields">Защита умения на слотах</string>
-    <string name="combo_setting_slot_shields_description">Щиты в углу иконки, только PvP</string>
-    <string name="combo_setting_slot_controls">Контроли умения на слотах</string>
-    <string name="combo_setting_slot_controls_description">Значки на нижней кромке, только PvP</string>
+    <string name="combo_setting_slot_tooltips">Показать информацию об умении</string>
+    <string name="combo_setting_slot_tooltips_description">Показать информацию об умении при наведении курсора на слот перезарядки</string>
+    <string name="combo_setting_slot_shields">Показать модификаторы защиты умения</string>
+    <string name="combo_setting_slot_shields_description">Показать модификаторы защиты умения при наведении курсора на слот перезарядки (только PvP)</string>
+    <string name="combo_setting_slot_controls">Показать применяемые контроли умения</string>
+    <string name="combo_setting_slot_controls_description">Показать применяемые контроли умения при наведении курсора на слот перезарядки (только PvP)</string>
     <string name="combo_protection_super_armor">Устойчивость</string>
     <string name="combo_protection_forward_guard">Защита спереди</string>
     <string name="combo_protection_invincible">Неуязвимость</string>

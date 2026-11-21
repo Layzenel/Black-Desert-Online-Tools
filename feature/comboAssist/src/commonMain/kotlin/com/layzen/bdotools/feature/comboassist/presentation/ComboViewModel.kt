@@ -154,7 +154,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
                 if (!mutableState.value.settings.trackerNoticeSeen) updateSettings { it.copy(trackerNoticeSeen = true) }
             }
             is ComboEvent.ShowCombo -> showCombo(event.id)
-            ComboEvent.ToggleSlotTooltips -> updateSettings { it.copy(slotTooltips = !it.slotTooltips) }
+            ComboEvent.ToggleSlotTooltips -> updateSettings { it.copy(slotTooltips = !it.slotTooltips) }.also { loadSlotSkills() }
             ComboEvent.ToggleSlotShields -> updateSettings { it.copy(slotShields = !it.slotShields) }.also { loadSlotProtections() }
             ComboEvent.ToggleSlotControls -> updateSettings { it.copy(slotControls = !it.slotControls) }.also { loadSlotProtections() }
             is ComboEvent.SetComboScale -> updateSettings(event.save) { it.copy(comboScale = event.percent) }
@@ -259,6 +259,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
         while (isActive) {
             interactor.playedCharacter()?.let { played ->
                 mutableState.update { it.copy(slots = played.slots, playedClass = played.classKey ?: it.playedClass, historyHidden = !played.historyShown) }
+                loadSlotSkills()
                 loadSlotProtections()
                 val s = mutableState.value
                 if (played.classKey != null && played.classKey != s.combo?.classKey && !s.dirty) {
@@ -266,6 +267,22 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
                 }
             }
             delay(CHARACTER_CHECK_MS)
+        }
+    }
+
+    /**
+     * Умения в слотах с иконками для тултипов — любого класса, не только открытого комбо: только пока тултипы
+     * включены и только тех умений, которых ещё нет. Не скачалось — попробуем при следующей проверке слотов.
+     */
+    private fun loadSlotSkills() {
+        val s = mutableState.value
+        if (!s.settings.slotTooltips) return
+        s.slots.map { it.skillNo }.distinct().filter { it !in s.slotSkills }.forEach { skillNo ->
+            viewModelScope.launch {
+                val skill = interactor.skill(skillNo) ?: return@launch
+                val icon = interactor.icon(skill)?.let { bytes -> runCatching { bytes.decodeToImageBitmap() }.getOrNull() }
+                mutableState.update { it.copy(slotSkills = it.slotSkills + (skillNo to SkillItem(skillNo, skill, icon))) }
+            }
         }
     }
 
