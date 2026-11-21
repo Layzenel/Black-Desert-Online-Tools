@@ -14,15 +14,20 @@ private const val PATH_LENGTH = 1024
  */
 fun isGameForeground(): Boolean {
     if (!System.getProperty("os.name").orEmpty().startsWith("Windows")) return true
-    val window = User32.INSTANCE.GetForegroundWindow() ?: return false
+    return foregroundGamePid() != null
+}
+
+/** Номер процесса игры, если её окно на переднем плане, иначе `null`. Только Windows. */
+internal fun foregroundGamePid(): Int? {
+    val window = User32.INSTANCE.GetForegroundWindow() ?: return null
     val pid = IntByReference()
     User32.INSTANCE.GetWindowThreadProcessId(window, pid)
-    val process = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_LIMITED_INFORMATION, false, pid.value) ?: return false
+    val process = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_LIMITED_INFORMATION, false, pid.value) ?: return null
     try {
         val buffer = CharArray(PATH_LENGTH)
         val size = IntByReference(buffer.size)
-        if (!Kernel32.INSTANCE.QueryFullProcessImageName(process, 0, buffer, size)) return false
-        return String(buffer, 0, size.value).lowercase().endsWith(GAME_EXE)
+        if (!Kernel32.INSTANCE.QueryFullProcessImageName(process, 0, buffer, size)) return null
+        return pid.value.takeIf { String(buffer, 0, size.value).lowercase().endsWith(GAME_EXE) }
     } finally {
         Kernel32.INSTANCE.CloseHandle(process)
     }

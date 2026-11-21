@@ -28,7 +28,7 @@ fun OverlayHost(contributions: List<OverlayContribution>, onOpenApp: (id: String
         .sortedBy { it.second.order }
     if (tabs.isEmpty()) return
     var open by remember { mutableStateOf(false) }
-    OverlayMenuWindow(open) { dragModifier, alignEnd ->
-        OverlayMenu(tabs, open, { open = it }, onOpenApp, dragModifier, alignEnd)
+    OverlayMenuWindow(open) { dragModifier, alignEnd, gameElevated ->
+        OverlayMenu(tabs, open, { open = it }, onOpenApp, dragModifier, alignEnd, gameElevated)
     }
 }

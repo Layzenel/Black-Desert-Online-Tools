@@ -1,7 +1,7 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.overlay
 
 import androidx.compose.foundation.layout.Box
-import com.layzen.bdotools.composable.overlay.rememberGameActive
+import com.layzen.bdotools.composable.overlay.rememberOverlayShown
 import com.layzen.bdotools.composable.overlay.setClickThrough
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -56,12 +56,12 @@ internal actual fun SlotTooltipWindow(
     controls: Map<Int, Set<CrowdControl>>,
 ) {
     if (slots.isEmpty()) return
-    val gameActive by rememberGameActive()
+    val overlayShown by rememberOverlayShown()
     val screen = remember { Toolkit.getDefaultToolkit().screenSize }
     val marks = slots.mapNotNull { SlotMarks.of(it, protections[it.skillNo].orEmpty(), controls[it.skillNo].orEmpty(), screen) }
-    val hovered by produceState<ScreenSlot?>(null, slots, marks, gameActive) {
+    val hovered by produceState<ScreenSlot?>(null, slots, marks, overlayShown) {
         value = null
-        if (!gameActive) return@produceState
+        if (!overlayShown) return@produceState
         var candidate: ScreenSlot? = null
         var since = 0L
         while (true) {

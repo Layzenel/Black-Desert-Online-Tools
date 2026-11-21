@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.layzen.bdotools.composable.overlay.rememberGameActive
+import com.layzen.bdotools.composable.overlay.rememberOverlayShown
 import com.layzen.bdotools.composable.overlay.setClickThrough
 import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.feature.comboassist.domain.history.ScreenSlot
@@ -52,7 +52,7 @@ internal actual fun SlotShieldsWindow(
     val marked = slots.mapNotNull { SlotMarks.of(it, protections[it.skillNo].orEmpty(), controls[it.skillNo].orEmpty(), screen) }
     if (marked.isEmpty()) return
     val bounds = marked.flatMap { listOfNotNull(it.rect, it.controlsArea()) }.reduce { a, b -> Rect(minOf(a.left, b.left), minOf(a.top, b.top), maxOf(a.right, b.right), maxOf(a.bottom, b.bottom)) }
-    val gameActive by rememberGameActive()
+    val overlayShown by rememberOverlayShown()
     val position = WindowPosition(bounds.left.dp, bounds.top.dp)
     val size = DpSize(bounds.width.dp, bounds.height.dp)
     val state = rememberWindowState(position = position, size = size)
@@ -66,7 +66,7 @@ internal actual fun SlotShieldsWindow(
     Window(
         onCloseRequest = {},
         state = state,
-        visible = gameActive,
+        visible = overlayShown,
         undecorated = true,
         transparent = true,
         resizable = false,
@@ -84,7 +84,7 @@ internal actual fun SlotShieldsWindow(
             }
         }
     }
-    SlotMarkTooltip(marked, gameActive)
+    SlotMarkTooltip(marked, overlayShown)
 }
 
 /** Цвета значков: обводка щита, фон и рамка значка контроля. */

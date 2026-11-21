@@ -20,19 +20,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.layzen.bdotools.composable.resources.Res
+import androidx.compose.ui.draw.alpha
 import com.layzen.bdotools.composable.resources.overlay_app_icon
+import com.layzen.bdotools.composable.resources.overlay_app_icon_admin
+import com.layzen.bdotools.composable.resources.overlay_game_admin
 import com.layzen.bdotools.composable.resources.overlay_panel_title
 import com.layzen.bdotools.uikit.components.CloseButton
+import com.layzen.bdotools.uikit.components.onSecondaryClick
 import com.layzen.bdotools.uikit.components.GameWindow
 import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+/** Прозрачность значка, пока оверлей выключен ([OverlayActive]). */
+private const val INACTIVE_ALPHA = 0.4f
+
 /**
  * Кнопка меню оверлея — значок программы — и меню под ней: окно «BDO Tools оверлей» с вкладками всех фич
  * ([tabs]: маршрут фичи и вкладка). [open] — меню раскрыто, [onOpenChange] — открыть или закрыть.
  * [dragModifier] — перетаскивание окна кнопки зажатой ЛКМ; [alignEnd] — меню под кнопкой по её правому краю.
+ * ПКМ по кнопке включает и выключает оверлей ([OverlayActive]): выключенный — бледный значок.
+ * [gameElevated] — игра запущена от имени администратора: в значке щиток вместо ромба.
  */
 @Composable
 internal fun OverlayMenu(
@@ -42,11 +51,16 @@ internal fun OverlayMenu(
     onOpenApp: (id: String) -> Unit,
     dragModifier: Modifier,
     alignEnd: Boolean = false,
+    gameElevated: Boolean = false,
 ) {
     Column(horizontalAlignment = if (alignEnd) Alignment.End else Alignment.Start, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
         Image(
-            painterResource(Res.drawable.overlay_app_icon), null,
+            painterResource(if (gameElevated) Res.drawable.overlay_app_icon_admin else Res.drawable.overlay_app_icon),
+            if (gameElevated) stringResource(Res.string.overlay_game_admin) else null,
             Modifier.size(OverlayDimens.menuButton).pointerHoverIcon(PointerIcon.Hand)
+                .alpha(if (OverlayActive.value) 1f else INACTIVE_ALPHA)
+                // ПКМ включает и выключает оверлей; раньше перетаскивания и клика, чтобы они его не получили
+                .onSecondaryClick { OverlayActive.value = !OverlayActive.value }
                 // перетаскивание раньше клика: сдвиг с зажатой ЛКМ двигает окно, а клик без сдвига открывает меню
                 .then(dragModifier)
                 // без индикации: иначе после нажатия на квадрате значка остаётся серая подложка фокуса

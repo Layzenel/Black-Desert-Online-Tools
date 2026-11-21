@@ -5,4 +5,4 @@ import androidx.compose.ui.Modifier
 
 /** В браузере окон поверх игры нет. */
 @Composable
-internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragModifier: Modifier, alignEnd: Boolean) -> Unit) = Unit
+internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragModifier: Modifier, alignEnd: Boolean, gameElevated: Boolean) -> Unit) = Unit

@@ -28,7 +28,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 @Composable
 actual fun GameOverlayWindow(id: String, anchor: OverlayAnchor, size: DpSize, content: @Composable () -> Unit) {
     val state = rememberWindowState(position = remember { savedPosition(id, anchor, size) }, size = size)
-    val shown by rememberGameActive()
+    val shown by rememberOverlayShown()
     // кнопка меню поднимается над окном после каждого его появления
     LaunchedEffect(shown) { if (shown) OverlayLayers.overlayShown++ }
     Window(
