@@ -22,7 +22,10 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.runtime.produceState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /** Пауза перед подъёмом окна: окно оверлея должно успеть показаться, иначе оно окажется выше. */
 private const val RAISE_DELAY_MS = 100L
@@ -34,8 +37,12 @@ private const val RAISE_DELAY_MS = 100L
  * плана. Тянется зажатой ЛКМ. Пока курсор спрятан игрой, клики проходят сквозь окно в игру.
  */
 @Composable
-internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragModifier: Modifier, alignEnd: Boolean) -> Unit) {
+internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragModifier: Modifier, alignEnd: Boolean, gameElevated: Boolean) -> Unit) {
     val gameActive by rememberGameActive()
+    // права у запущенной игры не меняются: проверка — при каждом её выходе на передний план
+    val gameElevated by produceState(false, gameActive) {
+        if (gameActive) value = withContext(Dispatchers.IO) { isGameElevated() }
+    }
     val start = DpSize(OverlayDimens.menuButton, OverlayDimens.menuButton)
     val state = rememberWindowState(position = remember { savedMenuPosition() }, size = start)
     // только поверх игры: окно кнопки фокус не берёт, так что клик по ней игру с переднего плана не уводит
@@ -94,7 +101,7 @@ internal actual fun OverlayMenuWindow(open: Boolean, content: @Composable (dragM
                 window.setLocation(windowStart.x + mouse.x - mouseStart.x, windowStart.y + mouse.y - mouseStart.y)
             }
         }
-        Box(fit) { content(drag, alignEnd) }
+        Box(fit) { content(drag, alignEnd, gameElevated) }
     }
 }
 

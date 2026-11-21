@@ -13,6 +13,8 @@ Windows app only.
 
 The BDO Tools icon on top of the game opens the "BDO Tools overlay" menu. The icon can be dragged, and its place
 is remembered.
+Right-click the icon to turn the overlay on or off: when it is off, the icon is faded and overlay windows are hidden,
+but the icon stays. A shield inside the icon instead of the diamond means the game is running as administrator.
 Any overlay window (tracker, layout, ping) can be dragged with the left mouse button, and its place is remembered.
 While the game hides the cursor (combat mode), the button and windows pass clicks to the game.
 
