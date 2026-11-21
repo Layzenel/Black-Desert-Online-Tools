@@ -7,10 +7,20 @@ import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
  *
  * @property ping пинг в миллисекундах; `null` — не узнать или пинг не показывают
  * @property needsAdmin пинг не собрать без прав администратора — подсказка во вкладке
- * @property settings как показывать пинг
+ * @property fps кадров в секунду; `null` — не узнать или FPS не показывают
+ * @property fpsAvailable FPS можно включить: программа запущена от администратора в настольной версии
+ * @property settings как показывать пинг и FPS
  */
 data class GameInfoState(
     val ping: Int? = null,
     val needsAdmin: Boolean = false,
+    val fps: Int? = null,
+    val fpsAvailable: Boolean = false,
     val settings: PingSettings = PingSettings(),
-)
+) {
+    /** FPS включён и его можно мерить: сохранённая настройка без прав администратора не действует. */
+    val fpsShown: Boolean get() = settings.fpsShown && fpsAvailable
+
+    /** Окно пинга видно: показывают пинг или FPS. */
+    val windowShown: Boolean get() = settings.shown || fpsShown
+}

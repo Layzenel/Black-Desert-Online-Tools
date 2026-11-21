@@ -89,8 +89,9 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `backgroundItem` | `#34343A` | ховер пункта, иконки-кнопки, поле dropdown |
 | `backgroundInput` | `#1E1E21` | поля ввода и поиска |
 | `backgroundSelected` | `#4F433C` | выбранный пункт или вариант |
-| `titleBar` → `titleBarDark` | `#775D3A` → `#5E4A2E` | градиент шапки окна |
-| `titleBarHighlight` | `#C0A850` | золотая кромка над шапкой |
+| `titleBar` → `titleBarLight` | `#775D3A` → `#85693F` | подложка шапки окна и верхней навигации: светлеет книзу, как в игре |
+| `titleBarDark` | `#5E4A2E` | тёмная рамка шапки |
+| `titleBarHighlight` | `#C0A850` | золотая кромка над `ContentFrame` |
 | `button` / `buttonHover` / `buttonPressed` | `#44444E` / `#52525D` / `#38383F` | кнопки |
 | `buttonBorder` | `#4E4F56` | рамка кнопки |
 | `border` / `borderSelected` | `#39393F` / `#685048` | рамки пунктов |
@@ -152,7 +153,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `ToolIntro(points, image, imageDescription)` | что умеет тулза — под просьбой выбрать папку, пока данных нет: пункты с золотым тире и скриншот тулзы (`drawable/intro_*.jpg`, сжатый JPEG ~1100 px; перевод — в `drawable-<tag>/`). Пустой экран с одной кнопкой не оставляй |
 | `BulletList(points)` | список пунктов с золотым тире (ограничения, советы, что умеет тулза); на нём построен `ToolIntro`, в каталоге виден в его примере |
 | `GameWindow(title, actions, footer) { }` | окно с бронзовой шапкой: основа `ModalWindow` и примеров каталога. Для страниц тулз — `ToolPage` |
-| `WindowTitleBar`, `WindowFooter`, `Panel` | части окна, если нужна нестандартная компоновка |
+| `WindowTitleBar`, `WindowFooter`, `Panel` | части окна, если нужна нестандартная компоновка. Шапка и `TopNavigation` рисуются одной подложкой `titleBarBackground` (как окна игры: бронза светлеет книзу, тёмная рамка, бледные шевроны «^» у правого края); новая бронзовая полоса — тоже через неё |
 | `ModalWindow(title, onDismissRequest, dismissible, footer, aside) { }` | модальное окно поверх страницы: выбор, подтверждение, редактор. Пока идёт долгая операция, передавай `dismissible = false`. `aside` — панель слева от окна вровень с его верхом (описание пункта, на который навели); окно из-за неё не сдвигается |
 | `CloseButton(onClick)` | крестик (нарисован линиями): в шапке окна и для очистки поля |
 | `InfoButton(text)` | кружок с «!»; по клику над ним подсказка с `text` — ограничения поля, правила |
@@ -180,7 +181,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `ValueSlider(value, onValueChange, range, onValueChangeFinished)` | целое число в диапазоне, где важна наглядность; колесо мыши над ним меняет значение на шаг (сотая диапазона, не меньше 1); `onValueChangeFinished` — конец перетаскивания или клик, чтобы правка по ходу жеста легла в историю отмены одним шагом |
 | `NumberField(value, onValueChange, range)` | точный ввод числа (фейлстак, цена, количество) |
 | `InputField(value, onValueChange, placeholder, leading, trailing, minLines)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями. `minLines` больше 1 — многострочное поле (вставка текста файла) |
-| `ToggleSwitch(checked, onCheckedChange, label, description)` | включить или выключить опцию |
+| `ToggleSwitch(checked, onCheckedChange, label, description, enabled)` | включить или выключить опцию; `enabled = false` — опция недоступна (серая подпись, не нажимается), причину пиши рядом (`WarningText`) |
 | `CheckBox(checked, onCheckedChange)` | отметка элементов списка для массового действия (например, удаления). Внутри строки `MenuItem` передавай его в слот `icon` |
 | `Tile(selected, onClick) { }` | плитка в сетке: предметы, классы, персонажи |
 

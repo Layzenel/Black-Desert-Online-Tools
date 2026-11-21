@@ -2,7 +2,7 @@
 
 # Overlay
 
-BDO Tools windows on top of the game: the combo tracker and layout, skill details over cooldown slots and the ping.
+BDO Tools windows on top of the game: the combo tracker and layout, skill details over cooldown slots, the ping and FPS.
 Windows app only.
 
 - The overlay shows only while the game is in front. Use Windowed Fullscreen.
@@ -36,7 +36,7 @@ How to build a combo — [Combo Assist](comboAssist.en.md).
 - "Combo layout" — "Show layout" and "Vertical": the orientation applies only to the layout.
 - "Overlay size" (20 to 100 %) and "Overlay opacity" — for the tracker and the layout.
 
-**"Info"** — "Show game ping", its size (20 to 100 %) and opacity.
+**"Info"** — "Show game ping", "Show FPS", "Info panel size" (20 to 100 %) and "Info panel opacity".
 
 ## Ping
 
@@ -46,6 +46,15 @@ change channel or reconnect.
 > [!IMPORTANT]
 > After a loading screen the game reconnects, and Windows lets only an administrator turn on latency tracking for
 > the new connection. Without it the ping shows "— ms" — run BDO Tools as administrator.
+
+## FPS
+
+How many frames per second the game puts on screen — to the right of the ping, in the same window. The app counts
+frames by Windows system events about frame output, like Xbox Game Bar, and does not touch the game.
+
+> [!IMPORTANT]
+> Windows shares these events with administrators only, so "Show FPS" can be turned on only when BDO Tools runs as
+> administrator. Without the rights the switch is unavailable.
 
 ## Tray
 

@@ -6,6 +6,7 @@ import com.layzen.bdotools.feature.gameinfo.domain.ping.PingInteractor
 import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
 import com.layzen.bdotools.feature.gameinfo.presentation.event.GameInfoEvent
 import com.layzen.bdotools.feature.gameinfo.presentation.state.GameInfoState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,14 +15,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * Пинг игры поверх неё: настройки показа и замер. Пинг меряется, только пока его показывают, — без показа
- * подключения игры не трогаются.
+ * Пинг и FPS игры поверх неё: настройки показа и замер. Каждое значение меряется, только пока его показывают, — без
+ * показа подключения и кадры игры не трогаются.
  *
- * @property interactor пинг и его настройки
+ * @property interactor пинг, FPS и их настройки
  */
 class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
-    private val mutableState = MutableStateFlow(GameInfoState())
-    private var watcher: Job? = null
+    private val mutableState = MutableStateFlow(GameInfoState(fpsAvailable = interactor.fpsAvailable))
+    private var pingWatcher: Job? = null
+    private var fpsWatcher: Job? = null
 
     /** Состояние вкладки и окна пинга. */
     val state: StateFlow<GameInfoState> = mutableState.asStateFlow()
@@ -41,6 +43,9 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
     fun onEvent(event: GameInfoEvent) {
         when (event) {
             GameInfoEvent.TogglePing -> change(save = true) { it.copy(shown = !it.shown) }.also { updateWatching() }
+            GameInfoEvent.ToggleFps -> if (interactor.fpsAvailable) {
+                change(save = true) { it.copy(fpsShown = !it.fpsShown) }.also { updateWatching() }
+            }
             is GameInfoEvent.SetScale -> change(event.save) { it.copy(scale = event.percent) }
             is GameInfoEvent.SetOpacity -> change(event.save) { it.copy(opacity = event.percent) }
         }
@@ -53,18 +58,26 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
         if (save) viewModelScope.launch { interactor.save(settings) }
     }
 
-    /** Мерить, пока пинг показывают и платформа умеет; иначе остановить замер. */
+    /** Мерить пинг и FPS, пока их показывают и платформа умеет; иначе остановить замер. */
     private fun updateWatching() {
-        if (mutableState.value.settings.shown && interactor.supported) {
-            if (watcher?.isActive != true) {
-                watcher = viewModelScope.launch {
-                    interactor.watch().collect { reading -> mutableState.update { it.copy(ping = reading.ms, needsAdmin = reading.needsAdmin) } }
-                }
-            }
-        } else {
-            watcher?.cancel()
-            watcher = null
-            mutableState.update { it.copy(ping = null, needsAdmin = false) }
+        val state = mutableState.value
+        pingWatcher = pingWatcher.keepIf(state.settings.shown && interactor.supported) {
+            interactor.watch().collect { reading -> mutableState.update { it.copy(ping = reading.ms, needsAdmin = reading.needsAdmin) } }
         }
+        if (pingWatcher == null) mutableState.update { it.copy(ping = null, needsAdmin = false) }
+        fpsWatcher = fpsWatcher.keepIf(state.fpsShown) {
+            interactor.watchFps().collect { fps -> mutableState.update { it.copy(fps = fps) } }
+        }
+        if (fpsWatcher == null) mutableState.update { it.copy(fps = null) }
+    }
+
+    /** Замер идёт, пока [watch]: запускает [block], если ещё не идёт, и останавливает, когда больше не нужен. */
+    private fun Job?.keepIf(watch: Boolean, block: suspend CoroutineScope.() -> Unit): Job? = when {
+        !watch -> {
+            this?.cancel()
+            null
+        }
+        this?.isActive == true -> this
+        else -> viewModelScope.launch(block = block)
     }
 }

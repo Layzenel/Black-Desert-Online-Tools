@@ -2,13 +2,16 @@
 <resources>
     <!-- Overlay menu: Info tab -->
     <string name="game_info_tab">Info</string>
-    <string name="game_info_ping">Ping</string>
     <string name="game_info_ping_show">Show game ping</string>
     <string name="game_info_ping_needs_admin">Ping is unavailable: after a loading screen the game reconnects, and Windows lets only an administrator turn on latency tracking for the new connection. Run BDO Tools as administrator.</string>
-    <string name="game_info_ping_scale">Ping size: %1$d %</string>
-    <string name="game_info_ping_opacity">Ping opacity: %1$d %</string>
+    <string name="game_info_ping_scale">Info panel size: %1$d %</string>
+    <string name="game_info_ping_opacity">Info panel opacity: %1$d %</string>
+    <string name="game_info_fps_show">Show FPS</string>
+    <string name="game_info_fps_needs_admin">FPS can be turned on only when BDO Tools runs as administrator: Windows shares the game frame events with administrators only.</string>
 
     <!-- Ping over the game -->
     <string name="game_info_ping_ms">%1$d ms</string>
     <string name="game_info_ping_unknown">— ms</string>
+    <string name="game_info_fps_value">%1$d FPS</string>
+    <string name="game_info_fps_unknown">— FPS</string>
 </resources>
