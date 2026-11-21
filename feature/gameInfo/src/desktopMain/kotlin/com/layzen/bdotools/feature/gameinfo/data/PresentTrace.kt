@@ -54,9 +54,14 @@ internal class PresentTrace private constructor(private val session: Long) {
             field = value
         }
 
-    /** Кадры [processId] за последнюю секунду; `null` — кадров не было [STALE_NANOS] (игра свёрнута или закрыта). */
-    fun fps(): Int? = synchronized(frames) {
-        frames.size.takeIf { it > 0 && System.nanoTime() - lastFrameNanos < STALE_NANOS }
+    /**
+     * Моменты вывода кадров [processId] за последние [WINDOW_TICKS] (мс от первого кадра окна, по возрастанию);
+     * `null` — кадров не было [STALE_NANOS] (игра свёрнута или закрыта).
+     */
+    fun frames(): List<Double>? = synchronized(frames) {
+        if (frames.isEmpty() || System.nanoTime() - lastFrameNanos >= STALE_NANOS) return null
+        val first = frames.first()
+        frames.map { (it - first) / TICKS_PER_MS }
     }
 
     /** Останавливает сессию: поток чтения завершается сам. */
@@ -85,7 +90,7 @@ internal class PresentTrace private constructor(private val session: Long) {
         val time = record.getLong(EVENT_TIMESTAMP)
         synchronized(frames) {
             frames.addLast(time)
-            while (time - frames.first() >= SECOND_TICKS) frames.removeFirst()
+            while (time - frames.first() >= WINDOW_TICKS) frames.removeFirst()
             lastFrameNanos = System.nanoTime()
         }
     }
@@ -134,7 +139,9 @@ internal class PresentTrace private constructor(private val session: Long) {
         /** Событий от всех программ — тысячи в секунду (замер 2026-11-21): буферы крупнее, чтобы не терять. */
         private const val BUFFER_KB = 64
 
-        private const val SECOND_TICKS = 10_000_000L // время событий — системное, в 100 нс
+        // время событий — системное, в 100 нс; окно — для «1% low», фризов и графика
+        private const val TICKS_PER_MS = 10_000.0
+        private const val WINDOW_TICKS = 50_000_000L
         private const val STALE_NANOS = 3_000_000_000L
         private const val INVALID_HANDLE = -1L
         private const val ERROR_ALREADY_EXISTS = 183

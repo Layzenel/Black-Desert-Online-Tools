@@ -15,12 +15,12 @@ import kotlinx.coroutines.flow.flowOn
 internal class DesktopGameFpsSource : GameFpsSource {
     override val available: Boolean = System.getProperty("os.name").orEmpty().startsWith("Windows") && isRunningAsAdmin()
 
-    override fun watch(): Flow<Int?> = flow {
+    override fun watch(): Flow<List<Double>?> = flow {
         val trace = PresentTrace.start()
         try {
             while (true) {
                 trace?.processId = runCatching { gameProcessId() }.getOrNull()
-                emit(trace?.fps())
+                emit(trace?.frames())
                 delay(CHECK_MS)
             }
         } finally {

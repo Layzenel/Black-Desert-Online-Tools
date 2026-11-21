@@ -7,6 +7,8 @@
     <string name="game_info_ping_scale">Размер информационной панели: %1$d %</string>
     <string name="game_info_ping_opacity">Непрозрачность информационной панели: %1$d %</string>
     <string name="game_info_fps_show">Отображать FPS</string>
+    <string name="game_info_fps_style_compact">Компактно</string>
+    <string name="game_info_fps_style_detailed">Подробно</string>
     <string name="game_info_fps_needs_admin">FPS можно включить, только если BDO Tools запущена от имени администратора: события о кадрах игры Windows отдаёт только администратору.</string>
 
     <!-- Пинг поверх игры -->
@@ -14,4 +16,6 @@
     <string name="game_info_ping_unknown">— мс</string>
     <string name="game_info_fps_value">%1$d FPS</string>
     <string name="game_info_fps_unknown">— FPS</string>
+    <string name="game_info_fps_low">1% %1$d</string>
+    <string name="game_info_fps_freezes">фризы %1$d</string>
 </resources>

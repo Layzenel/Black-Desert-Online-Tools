@@ -46,6 +46,7 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
             GameInfoEvent.ToggleFps -> if (interactor.fpsAvailable) {
                 change(save = true) { it.copy(fpsShown = !it.fpsShown) }.also { updateWatching() }
             }
+            is GameInfoEvent.SetFpsStyle -> change(save = true) { it.copy(fpsStyle = event.style) }
             is GameInfoEvent.SetScale -> change(event.save) { it.copy(scale = event.percent) }
             is GameInfoEvent.SetOpacity -> change(event.save) { it.copy(opacity = event.percent) }
         }

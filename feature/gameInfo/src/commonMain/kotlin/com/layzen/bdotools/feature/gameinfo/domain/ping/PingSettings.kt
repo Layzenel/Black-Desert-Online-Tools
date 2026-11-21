@@ -1,10 +1,13 @@
 package com.layzen.bdotools.feature.gameinfo.domain.ping
 
+import com.layzen.bdotools.feature.gameinfo.domain.fps.FpsStyle
+
 /**
  * Как показывать пинг и FPS поверх игры (одно окно).
  *
  * @property shown показывать пинг
  * @property fpsShown показывать FPS справа от пинга; действует, только пока программа запущена от администратора
+ * @property fpsStyle как показывать FPS: одной строкой или подробно, с графиком
  * @property scale размер в процентах
  * @property opacity непрозрачность в процентах
  */
@@ -13,4 +16,5 @@ data class PingSettings(
     val scale: Int = 100,
     val opacity: Int = 100,
     val fpsShown: Boolean = false,
+    val fpsStyle: FpsStyle = FpsStyle.Compact,
 )

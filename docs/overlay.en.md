@@ -36,7 +36,7 @@ How to build a combo — [Combo Assist](comboAssist.en.md).
 - "Combo layout" — "Show layout" and "Vertical": the orientation applies only to the layout.
 - "Overlay size" (20 to 100 %) and "Overlay opacity" — for the tracker and the layout.
 
-**"Info"** — "Show game ping", "Show FPS", "Info panel size" (20 to 100 %) and "Info panel opacity".
+**"Info"** — "Show game ping", "Show FPS" (style "Compact" or "Detailed"), "Info panel size" (20 to 100 %) and "Info panel opacity".
 
 ## Ping
 
@@ -51,6 +51,12 @@ change channel or reconnect.
 
 How many frames per second the game puts on screen — to the right of the ping, in the same window. The app counts
 frames by Windows system events about frame output, like Xbox Game Bar, and does not touch the game.
+
+- **"Compact"** — FPS over the last second and "1%" (1% low): the FPS you would get if the whole second ran as slowly
+  as the worst 1 % of frames over the last 5 seconds. The closer it is to FPS, the smoother the game.
+- **"Detailed"** — also "freezes" (frames longer than twice the average over 5 seconds, orange when there were any)
+  and a frame time graph below the line: a flat line is smooth, a spike up is a stutter. The dashed line is the
+  average frame time.
 
 > [!IMPORTANT]
 > Windows shares these events with administrators only, so "Show FPS" can be turned on only when BDO Tools runs as

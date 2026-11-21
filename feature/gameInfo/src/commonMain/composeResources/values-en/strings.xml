@@ -7,6 +7,8 @@
     <string name="game_info_ping_scale">Info panel size: %1$d %</string>
     <string name="game_info_ping_opacity">Info panel opacity: %1$d %</string>
     <string name="game_info_fps_show">Show FPS</string>
+    <string name="game_info_fps_style_compact">Compact</string>
+    <string name="game_info_fps_style_detailed">Detailed</string>
     <string name="game_info_fps_needs_admin">FPS can be turned on only when BDO Tools runs as administrator: Windows shares the game frame events with administrators only.</string>
 
     <!-- Ping over the game -->
@@ -14,4 +16,6 @@
     <string name="game_info_ping_unknown">— ms</string>
     <string name="game_info_fps_value">%1$d FPS</string>
     <string name="game_info_fps_unknown">— FPS</string>
+    <string name="game_info_fps_low">1% %1$d</string>
+    <string name="game_info_fps_freezes">freezes %1$d</string>
 </resources>

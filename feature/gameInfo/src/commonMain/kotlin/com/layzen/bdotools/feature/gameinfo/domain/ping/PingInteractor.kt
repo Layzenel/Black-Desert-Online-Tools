@@ -1,7 +1,9 @@
 package com.layzen.bdotools.feature.gameinfo.domain.ping
 
+import com.layzen.bdotools.feature.gameinfo.domain.fps.FrameStats
 import com.layzen.bdotools.feature.gameinfo.domain.fps.GameFpsSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Пинг и FPS игры и как их показывать.
@@ -24,8 +26,8 @@ class PingInteractor(
     /** См. [GameFpsSource.available]. */
     val fpsAvailable: Boolean get() = fps.available
 
-    /** См. [GameFpsSource.watch]. */
-    fun watchFps(): Flow<Int?> = fps.watch()
+    /** Кадры игры раз в секунду ([GameFpsSource.watch]); `null` — игра не рисует кадры. */
+    fun watchFps(): Flow<FrameStats?> = fps.watch().map { frames -> frames?.let(FrameStats::of) }
 
     /** См. [PingSettingsRepository.settings]. */
     suspend fun settings(): PingSettings = settings.settings()

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.emptyFlow
 /** Браузер не видит кадров игры: FPS мерит только настольная версия. */
 internal class BrowserGameFpsSource : GameFpsSource {
     override val available: Boolean = false
-    override fun watch(): Flow<Int?> = emptyFlow()
+    override fun watch(): Flow<List<Double>?> = emptyFlow()
 }
 
 internal actual fun createGameFpsSource(): GameFpsSource = BrowserGameFpsSource()
