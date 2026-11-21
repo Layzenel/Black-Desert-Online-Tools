@@ -27,8 +27,11 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_cont
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shields
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shields_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_tooltips
+import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_tooltips_description
+import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.components.SectionDivider
 import com.layzen.bdotools.uikit.components.ToggleSwitch
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -92,7 +95,7 @@ private fun ComboOverlayWindows(viewModel: ComboViewModel) {
     }
     val protections = if (state.settings.slotShields) state.slotProtections else emptyMap()
     val controls = if (state.settings.slotControls) state.slotControls else emptyMap()
-    if (state.settings.slotTooltips) SlotTooltipWindow(visibleSlots, state.skills, viewModel::details, protections, controls)
+    if (state.settings.slotTooltips) SlotTooltipWindow(visibleSlots, state.slotSkills, viewModel::details, protections, controls)
     if (state.settings.slotShields || state.settings.slotControls) SlotShieldsWindow(visibleSlots, protections, controls)
 }
 
@@ -100,20 +103,23 @@ private fun ComboOverlayWindows(viewModel: ComboViewModel) {
 @Composable
 private fun SettingsSection(viewModel: ComboViewModel) {
     val state by viewModel.state.collectAsState()
-    ToggleSwitch(
-        state.settings.slotTooltips, { viewModel.onEvent(ComboEvent.ToggleSlotTooltips) },
-        label = stringResource(Res.string.combo_setting_slot_tooltips),
-    )
+    SettingToggle(state.settings.slotTooltips, Res.string.combo_setting_slot_tooltips, Res.string.combo_setting_slot_tooltips_description) {
+        viewModel.onEvent(ComboEvent.ToggleSlotTooltips)
+    }
     SectionDivider()
-    ToggleSwitch(
-        state.settings.slotShields, { viewModel.onEvent(ComboEvent.ToggleSlotShields) },
-        label = stringResource(Res.string.combo_setting_slot_shields),
-        description = stringResource(Res.string.combo_setting_slot_shields_description),
-    )
+    SettingToggle(state.settings.slotShields, Res.string.combo_setting_slot_shields, Res.string.combo_setting_slot_shields_description) {
+        viewModel.onEvent(ComboEvent.ToggleSlotShields)
+    }
     SectionDivider()
-    ToggleSwitch(
-        state.settings.slotControls, { viewModel.onEvent(ComboEvent.ToggleSlotControls) },
-        label = stringResource(Res.string.combo_setting_slot_controls),
-        description = stringResource(Res.string.combo_setting_slot_controls_description),
-    )
+    SettingToggle(state.settings.slotControls, Res.string.combo_setting_slot_controls, Res.string.combo_setting_slot_controls_description) {
+        viewModel.onEvent(ComboEvent.ToggleSlotControls)
+    }
+}
+
+/** Переключатель настройки с названием [label]; пояснение [hint] — в подсказке при наведении курсора. */
+@Composable
+private fun SettingToggle(checked: Boolean, label: StringResource, hint: StringResource, onToggle: () -> Unit) {
+    HoverTooltip(stringResource(hint)) {
+        ToggleSwitch(checked, { onToggle() }, label = stringResource(label))
+    }
 }

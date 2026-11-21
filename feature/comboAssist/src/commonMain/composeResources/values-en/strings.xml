@@ -119,11 +119,12 @@
     <string name="combo_panel_tab_combo">Combo</string>
     <string name="combo_panel_scale">Overlay size: %1$d %</string>
     <string name="combo_panel_opacity">Overlay opacity: %1$d %</string>
-    <string name="combo_setting_slot_tooltips">Skill tooltip over a slot</string>
-    <string name="combo_setting_slot_shields">Skill protection on slots</string>
-    <string name="combo_setting_slot_shields_description">Shields in the icon corner, PvP only</string>
-    <string name="combo_setting_slot_controls">Crowd controls on slots</string>
-    <string name="combo_setting_slot_controls_description">Icons on the bottom edge, PvP only</string>
+    <string name="combo_setting_slot_tooltips">Show skill info</string>
+    <string name="combo_setting_slot_tooltips_description">Show skill info when hovering over a cooldown slot</string>
+    <string name="combo_setting_slot_shields">Show skill protection modifiers</string>
+    <string name="combo_setting_slot_shields_description">Show skill protection modifiers when hovering over a cooldown slot (PvP only)</string>
+    <string name="combo_setting_slot_controls">Show applied crowd controls</string>
+    <string name="combo_setting_slot_controls_description">Show the crowd controls a skill applies when hovering over a cooldown slot (PvP only)</string>
     <string name="combo_protection_super_armor">Super Armor</string>
     <string name="combo_protection_forward_guard">Forward Guard</string>
     <string name="combo_protection_invincible">Invincible</string>

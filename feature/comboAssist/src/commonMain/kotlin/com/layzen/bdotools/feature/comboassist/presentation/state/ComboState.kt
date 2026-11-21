@@ -30,6 +30,7 @@ import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
  * @property watching программа следит за историей умений в игре (только настольная версия)
  * @property overlayShown окно оверлея поверх игры открыто (только настольная версия)
  * @property slots слоты перезарядок персонажа, пока идёт слежение: при наведении на них — тултип умения
+ * @property slotSkills умения в слотах для их тултипов, любого класса (загружаются, только пока тултипы включены)
  * @property slotProtections защита умений в слотах для щитов на них (загружается, только пока щиты или контроли включены)
  * @property slotControls контроли умений в слотах для значков под ними (загружаются вместе с [slotProtections])
  * @property settings настройки окон поверх игры
@@ -62,6 +63,7 @@ data class ComboState(
     val watching: Boolean = false,
     val overlayShown: Boolean = false,
     val slots: List<ScreenSlot> = emptyList(),
+    val slotSkills: Map<Int, SkillItem> = emptyMap(),
     val slotProtections: Map<Int, Set<SkillProtection>> = emptyMap(),
     val slotControls: Map<Int, Set<CrowdControl>> = emptyMap(),
     val settings: OverlaySettings = OverlaySettings(),

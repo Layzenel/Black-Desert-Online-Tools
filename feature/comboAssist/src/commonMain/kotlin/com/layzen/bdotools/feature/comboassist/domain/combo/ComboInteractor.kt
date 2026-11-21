@@ -82,6 +82,9 @@ class ComboInteractor(
         return PlayedCharacter(slots, classKey, history.historyShown())
     }
 
+    /** Умение [skillNo] из справочника любого класса или `null`, если справочник не скачался или такого нет. */
+    suspend fun skill(skillNo: Int): Skill? = catalog.activeSkills()?.skills?.get(skillNo)
+
     /** Сохранённые комбо. */
     suspend fun combos(): List<Combo> = combos.combos()
 
