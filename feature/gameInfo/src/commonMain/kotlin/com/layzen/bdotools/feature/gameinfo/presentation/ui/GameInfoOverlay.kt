@@ -11,20 +11,25 @@ import com.layzen.bdotools.composable.overlay.OverlayContribution
 import com.layzen.bdotools.composable.overlay.OverlayScalePercent
 import com.layzen.bdotools.composable.overlay.OverlayTab
 import com.layzen.bdotools.composable.overlay.ScaledOverlay
+import com.layzen.bdotools.feature.gameinfo.domain.fps.FpsStyle
 import com.layzen.bdotools.feature.gameinfo.presentation.GameInfoViewModel
 import com.layzen.bdotools.feature.gameinfo.presentation.event.GameInfoEvent
 import com.layzen.bdotools.feature.gameinfo.resources.Res
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_needs_admin
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_show
+import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_style_compact
+import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_style_detailed
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_needs_admin
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_opacity
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_scale
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_show
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_tab
+import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToggleSwitch
 import com.layzen.bdotools.uikit.components.ValueSlider
 import com.layzen.bdotools.uikit.components.WarningText
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -49,7 +54,7 @@ private fun PingWindow(viewModel: GameInfoViewModel) {
     if (!viewModel.supported || !state.windowShown) return
     GameOverlayWindow(PING_WINDOW, OverlayAnchor.TopRight, GameInfoDimens.pingWindow) {
         ScaledOverlay(state.settings.scale, state.settings.opacity) {
-            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown)
+            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown, state.settings.fpsStyle)
         }
     }
 }
@@ -69,6 +74,9 @@ private fun InfoTab(viewModel: GameInfoViewModel) {
     )
     // события о кадрах Windows отдаёт только администратору: без прав включатель недоступен, а почему — здесь
     if (!state.fpsAvailable) WarningText(stringResource(Res.string.game_info_fps_needs_admin))
+    if (state.fpsShown) {
+        OptionGroup(FpsStyle.entries, settings.fpsStyle, { onEvent(GameInfoEvent.SetFpsStyle(it)) }, { stringResource(it.title) }, Modifier.fillMaxWidth())
+    }
     if (!state.windowShown) return
     val scale = settings.scale.coerceIn(OverlayScalePercent)
     SectionHeader(stringResource(Res.string.game_info_ping_scale, scale))
@@ -82,6 +90,13 @@ private fun InfoTab(viewModel: GameInfoViewModel) {
         onValueChangeFinished = { onEvent(GameInfoEvent.SetOpacity(settings.opacity, save = true)) },
     )
 }
+
+/** Подпись вида FPS в меню. */
+private val FpsStyle.title: StringResource
+    get() = when (this) {
+        FpsStyle.Compact -> Res.string.game_info_fps_style_compact
+        FpsStyle.Detailed -> Res.string.game_info_fps_style_detailed
+    }
 
 /** Непрозрачность пинга, проценты. */
 private val OPACITY = 20..100

@@ -9,4 +9,6 @@ internal object GameInfoDimens {
     val pingBarGap = 2.dp
     val frame = 2.dp
     val pingWindow = DpSize(140.dp, 48.dp)
+    val frameGraphHeight = 28.dp
+    val frameGraphLine = 1.dp
 }

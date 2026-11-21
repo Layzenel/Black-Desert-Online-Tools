@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.gameinfo.presentation.state
 
+import com.layzen.bdotools.feature.gameinfo.domain.fps.FrameStats
 import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
 
 /**
@@ -7,14 +8,14 @@ import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
  *
  * @property ping пинг в миллисекундах; `null` — не узнать или пинг не показывают
  * @property needsAdmin пинг не собрать без прав администратора — подсказка во вкладке
- * @property fps кадров в секунду; `null` — не узнать или FPS не показывают
+ * @property fps кадры игры за последние секунды; `null` — не узнать или FPS не показывают
  * @property fpsAvailable FPS можно включить: программа запущена от администратора в настольной версии
  * @property settings как показывать пинг и FPS
  */
 data class GameInfoState(
     val ping: Int? = null,
     val needsAdmin: Boolean = false,
-    val fps: Int? = null,
+    val fps: FrameStats? = null,
     val fpsAvailable: Boolean = false,
     val settings: PingSettings = PingSettings(),
 ) {
