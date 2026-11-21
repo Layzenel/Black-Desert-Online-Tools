@@ -20,6 +20,7 @@ data class AppColors(
     // Шапка окна
     val titleBar: Color,
     val titleBarDark: Color,
+    val titleBarLight: Color,
     val titleBarHighlight: Color,
 
     // Кнопки
@@ -77,6 +78,7 @@ val DefaultAppColors = AppColors(
 
     titleBar = Color(0xFF775D3A),
     titleBarDark = Color(0xFF5E4A2E),
+    titleBarLight = Color(0xFF85693F),
     titleBarHighlight = Color(0xFFC0A850),
 
     button = Color(0xFF44444E),

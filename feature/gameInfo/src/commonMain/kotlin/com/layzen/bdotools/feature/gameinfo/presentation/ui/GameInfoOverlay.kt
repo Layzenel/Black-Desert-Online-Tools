@@ -14,7 +14,8 @@ import com.layzen.bdotools.composable.overlay.ScaledOverlay
 import com.layzen.bdotools.feature.gameinfo.presentation.GameInfoViewModel
 import com.layzen.bdotools.feature.gameinfo.presentation.event.GameInfoEvent
 import com.layzen.bdotools.feature.gameinfo.resources.Res
-import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping
+import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_needs_admin
+import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_show
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_needs_admin
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_opacity
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_scale
@@ -45,23 +46,30 @@ internal fun gameInfoOverlayContribution(): OverlayContribution = OverlayContrib
 @Composable
 private fun PingWindow(viewModel: GameInfoViewModel) {
     val state by viewModel.state.collectAsState()
-    if (!viewModel.supported || !state.settings.shown) return
+    if (!viewModel.supported || !state.windowShown) return
     GameOverlayWindow(PING_WINDOW, OverlayAnchor.TopRight, GameInfoDimens.pingWindow) {
-        ScaledOverlay(state.settings.scale, state.settings.opacity) { PingBadge(state.ping) }
+        ScaledOverlay(state.settings.scale, state.settings.opacity) {
+            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown)
+        }
     }
 }
 
-/** Вкладка «Информация»: пинг игры — показ, размер и непрозрачность. */
+/** Вкладка «Информация»: пинг и FPS игры — показ, размер и непрозрачность их окна. */
 @Composable
 private fun InfoTab(viewModel: GameInfoViewModel) {
     val state by viewModel.state.collectAsState()
     val settings = state.settings
     val onEvent = viewModel::onEvent
-    SectionHeader(stringResource(Res.string.game_info_ping))
     ToggleSwitch(settings.shown, { onEvent(GameInfoEvent.TogglePing) }, label = stringResource(Res.string.game_info_ping_show))
     // без прав администратора задержку нового подключения игры не собрать: пинг пустой, а почему — здесь
     if (settings.shown && state.needsAdmin) WarningText(stringResource(Res.string.game_info_ping_needs_admin))
-    if (!settings.shown) return
+    ToggleSwitch(
+        state.fpsShown, { onEvent(GameInfoEvent.ToggleFps) },
+        label = stringResource(Res.string.game_info_fps_show), enabled = state.fpsAvailable,
+    )
+    // события о кадрах Windows отдаёт только администратору: без прав включатель недоступен, а почему — здесь
+    if (!state.fpsAvailable) WarningText(stringResource(Res.string.game_info_fps_needs_admin))
+    if (!state.windowShown) return
     val scale = settings.scale.coerceIn(OverlayScalePercent)
     SectionHeader(stringResource(Res.string.game_info_ping_scale, scale))
     ValueSlider(

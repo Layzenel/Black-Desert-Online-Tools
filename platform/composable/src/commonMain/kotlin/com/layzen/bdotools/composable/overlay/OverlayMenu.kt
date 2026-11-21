@@ -2,6 +2,7 @@ package com.layzen.bdotools.composable.overlay
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +49,8 @@ internal fun OverlayMenu(
             Modifier.size(OverlayDimens.menuButton).pointerHoverIcon(PointerIcon.Hand)
                 // перетаскивание раньше клика: сдвиг с зажатой ЛКМ двигает окно, а клик без сдвига открывает меню
                 .then(dragModifier)
-                .clickable { onOpenChange(!open) },
+                // без индикации: иначе после нажатия на квадрате значка остаётся серая подложка фокуса
+                .clickable(remember { MutableInteractionSource() }, indication = null) { onOpenChange(!open) },
         )
         if (open) {
             // то, что вкладка показывает рядом с меню, — со стороны центра экрана: у правого края — слева

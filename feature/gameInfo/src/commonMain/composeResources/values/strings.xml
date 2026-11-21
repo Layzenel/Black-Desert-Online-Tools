@@ -2,13 +2,16 @@
 <resources>
     <!-- Меню оверлея: вкладка «Информация» -->
     <string name="game_info_tab">Информация</string>
-    <string name="game_info_ping">Пинг</string>
     <string name="game_info_ping_show">Показывать пинг игры</string>
     <string name="game_info_ping_needs_admin">Пинг не узнать: после загрузочного экрана игра подключается заново, и включить замер задержки нового подключения Windows разрешает только администратору. Запустите BDO Tools от имени администратора.</string>
-    <string name="game_info_ping_scale">Размер пинга: %1$d %</string>
-    <string name="game_info_ping_opacity">Непрозрачность пинга: %1$d %</string>
+    <string name="game_info_ping_scale">Размер информационной панели: %1$d %</string>
+    <string name="game_info_ping_opacity">Непрозрачность информационной панели: %1$d %</string>
+    <string name="game_info_fps_show">Отображать FPS</string>
+    <string name="game_info_fps_needs_admin">FPS можно включить, только если BDO Tools запущена от имени администратора: события о кадрах игры Windows отдаёт только администратору.</string>
 
     <!-- Пинг поверх игры -->
     <string name="game_info_ping_ms">%1$d мс</string>
     <string name="game_info_ping_unknown">— мс</string>
+    <string name="game_info_fps_value">%1$d FPS</string>
+    <string name="game_info_fps_unknown">— FPS</string>
 </resources>

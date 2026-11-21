@@ -23,7 +23,11 @@ import androidx.compose.ui.semantics.Role
 import com.layzen.bdotools.uikit.theme.AppShapes
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Переключатель-пилюля: включён — золотой с кремовым кружком справа. */
+/**
+ * Переключатель-пилюля: включён — золотой с кремовым кружком справа.
+ *
+ * @param enabled `false` — недоступен: не нажимается, подпись серая (почему — пиши рядом)
+ */
 @Composable
 fun ToggleSwitch(
     checked: Boolean,
@@ -31,13 +35,14 @@ fun ToggleSwitch(
     modifier: Modifier = Modifier,
     label: String? = null,
     description: String? = null,
+    enabled: Boolean = true,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
     Row(
         modifier
-            .pointerHoverIcon(PointerIcon.Hand)
-            .clickable(remember { MutableInteractionSource() }, null, role = Role.Switch) { onCheckedChange(!checked) },
+            .pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default)
+            .clickable(remember { MutableInteractionSource() }, null, enabled = enabled, role = Role.Switch) { onCheckedChange(!checked) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
     ) {
@@ -53,7 +58,7 @@ fun ToggleSwitch(
         }
         if (label != null || description != null) {
             Column {
-                if (label != null) Text(label, style = AppTheme.typography.sectionTitle, color = colors.textBeige)
+                if (label != null) Text(label, style = AppTheme.typography.sectionTitle, color = if (enabled) colors.textBeige else colors.textDisabled)
                 if (description != null) DescriptionText(description)
             }
         }

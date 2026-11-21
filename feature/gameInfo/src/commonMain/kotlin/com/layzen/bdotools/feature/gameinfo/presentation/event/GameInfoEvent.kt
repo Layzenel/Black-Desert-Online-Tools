@@ -4,6 +4,9 @@ package com.layzen.bdotools.feature.gameinfo.presentation.event
 sealed interface GameInfoEvent {
     data object TogglePing : GameInfoEvent
 
+    /** Показ FPS; без прав администратора не меняется. */
+    data object ToggleFps : GameInfoEvent
+
     /** Размер пинга в процентах; [save] — закончили двигать ползунок, сохранить. */
     data class SetScale(val percent: Int, val save: Boolean) : GameInfoEvent
 

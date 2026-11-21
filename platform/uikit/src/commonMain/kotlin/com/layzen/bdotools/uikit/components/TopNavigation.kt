@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
@@ -33,7 +32,7 @@ import androidx.compose.ui.semantics.Role
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
- * Верхняя навигация сайта: бронзовая полоса в стиле шапки окна, название слева и вкладки.
+ * Верхняя навигация сайта: бронзовая полоса в стиле шапки окна ([titleBarBackground]), название слева и вкладки.
  * Выбранная вкладка — тёмная подложка, золотой текст и золотая черта снизу.
  * На узком экране вкладки прокручиваются по горизонтали.
  * У вкладки иконка [icon] (белый силуэт) и подпись справа от неё, выровненная по левому краю.
@@ -59,12 +58,7 @@ fun <T> TopNavigation(
         modifier
             .fillMaxWidth()
             .height(dimens.topNavigationHeight)
-            .background(Brush.verticalGradient(listOf(colors.titleBar, colors.titleBarDark)))
-            .drawBehind {
-                val stroke = dimens.borderWidth.toPx()
-                drawLine(colors.titleBarHighlight, Offset(0f, stroke / 2), Offset(size.width, stroke / 2), stroke)
-                drawLine(Color.Black, Offset(0f, size.height - stroke / 2), Offset(size.width, size.height - stroke / 2), stroke)
-            }
+            .titleBarBackground(colors, dimens.borderWidth)
             .padding(start = dimens.spaceL),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceXl),
