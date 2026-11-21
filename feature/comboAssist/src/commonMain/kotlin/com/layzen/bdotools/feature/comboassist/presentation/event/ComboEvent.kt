@@ -33,6 +33,9 @@ sealed interface ComboEvent {
     data object AddRage : ComboEvent
     data object RemoveRage : ComboEvent
 
+    /** Скопировать обычное комбо в комбо под гневом: шаги, филлеры и опциональные умения — чтобы поменять только отличия. */
+    data object CopyToRage : ComboEvent
+
     data class SelectCell(val at: CellAt) : ComboEvent
     data class Fill(val skillNo: Int) : ComboEvent
     data class InsertColumn(val index: Int) : ComboEvent
@@ -45,6 +48,9 @@ sealed interface ComboEvent {
 
     /** Переключить у умения выбранной ячейки, видно ли оно в истории или на слоте ([com.layzen.bdotools.feature.comboassist.domain.combo.Combo.keyTracked]). */
     data object ToggleKeyTracked : ComboEvent
+
+    /** Команда активации умения в выбранной ячейке — действия игры, зажатые вместе; `null` — любой вариант команды. */
+    data class SetKeyVariant(val actions: Set<String>?) : ComboEvent
     data class SetNote(val text: String) : ComboEvent
     data object RemoveCell : ComboEvent
     data class RemoveAt(val at: CellAt) : ComboEvent
@@ -53,7 +59,7 @@ sealed interface ComboEvent {
     data class AddPool(val skillNo: Int) : ComboEvent
     data class RemovePool(val skillNo: Int) : ComboEvent
 
-    /** Сдвинуть опциональное умение [skillNo] на [by] мест: −1 — левее, 1 — правее. */
+    /** Сдвинуть опциональное умение [skillNo] на [by] мест: меньше нуля — левее, больше — правее; за краем — крайним. */
     data class MovePool(val skillNo: Int, val by: Int) : ComboEvent
     data class RemoveFiller(val skillNo: Int) : ComboEvent
 

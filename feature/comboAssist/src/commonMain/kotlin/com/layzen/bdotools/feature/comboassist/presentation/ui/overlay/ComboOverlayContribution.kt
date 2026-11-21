@@ -1,6 +1,14 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.overlay
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.layzen.bdotools.feature.comboassist.resources.combo_history_hidden
+import com.layzen.bdotools.uikit.components.TooltipPanel
+import com.layzen.bdotools.uikit.components.WarningText
+import com.layzen.bdotools.uikit.theme.AppTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -65,7 +73,11 @@ private fun ComboOverlayWindows(viewModel: ComboViewModel) {
         if (state.overlayShown && !slotsCovered) {
             GameOverlayWindow(COMBO_ROUTE, OverlayAnchor.BottomCenter, ComboDimens.overlayWindow) {
                 ScaledOverlay(settings.comboScale, settings.comboOpacity) {
-                    ComboOverlayContent(combo, state.overlay, state.skills, viewModel::details, state.rageTracked)
+                    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+                        // без истории умений трекер узнаёт применения только по слотам и клавишам и часто сбивается
+                        if (state.historyHidden) TooltipPanel { WarningText(stringResource(Res.string.combo_history_hidden), Modifier.widthIn(max = AppTheme.dimens.tooltipMaxWidth)) }
+                        ComboOverlayContent(combo, state.overlay, state.skills, viewModel::details, state.rageTracked)
+                    }
                 }
             }
         }

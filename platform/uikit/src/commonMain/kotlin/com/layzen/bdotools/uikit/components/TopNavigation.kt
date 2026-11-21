@@ -37,7 +37,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Выбранная вкладка — тёмная подложка, золотой текст и золотая черта снизу.
  * На узком экране вкладки прокручиваются по горизонтали.
  * У вкладки иконка [icon] (белый силуэт) и подпись справа от неё, выровненная по левому краю.
- * [selected] равен `null`, когда открыт экран вне вкладок. [trailing] — элементы у правого края полосы,
+ * [selected] равен `null`, когда открыт экран вне вкладок. [titleIcon] — значок перед названием (например, что
+ * программа запущена от имени администратора). [trailing] — элементы у правого края полосы,
  * например выбор аккаунта.
  */
 @Composable
@@ -49,6 +50,7 @@ fun <T> TopNavigation(
     icon: @Composable (T) -> Painter,
     modifier: Modifier = Modifier,
     title: String? = null,
+    titleIcon: (@Composable () -> Unit)? = null,
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
     val colors = AppTheme.colors
@@ -68,7 +70,10 @@ fun <T> TopNavigation(
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceXl),
     ) {
         if (title != null) {
-            Text(title, style = AppTheme.typography.windowTitle, color = colors.textPrimary, maxLines = 1)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(dimens.spaceS)) {
+                titleIcon?.invoke()
+                Text(title, style = AppTheme.typography.windowTitle, color = colors.textPrimary, maxLines = 1)
+            }
         }
         Row(
             Modifier

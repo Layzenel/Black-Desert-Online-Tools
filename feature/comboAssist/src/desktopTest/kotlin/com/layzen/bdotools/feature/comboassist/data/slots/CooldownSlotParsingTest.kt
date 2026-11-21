@@ -2,6 +2,8 @@ package com.layzen.bdotools.feature.comboassist.data.slots
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class CooldownSlotParsingTest {
     private val character = """
@@ -32,5 +34,15 @@ class CooldownSlotParsingTest {
         assertEquals(mapOf(0 to (0.3984375 to 0.5802332163), 10 to (0.59375 to 0.6079955697)), parseSlotCenters(account))
         assertEquals(0.8, parseUiScale(account))
         assertEquals(1440, parseResolutionHeight(account))
+    }
+
+    @Test
+    fun historyVisibilityComesFromCharacterThenAccount() {
+        val hidden = """<UIData Index="158" IsShow="false"/>"""
+        val shown = """<UIData Index="158" IsShow="true" PosX="1"/>"""
+        assertFalse(parseHistoryShown(hidden, shown))
+        assertTrue(parseHistoryShown(shown, hidden))
+        assertFalse(parseHistoryShown("", hidden))
+        assertTrue(parseHistoryShown("", ""))
     }
 }

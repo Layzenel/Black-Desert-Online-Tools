@@ -1,6 +1,8 @@
 package com.layzen.bdotools.feature.comboassist.presentation.controller
 
 import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
+import com.layzen.bdotools.feature.comboassist.domain.combo.cells
+import com.layzen.bdotools.feature.comboassist.domain.graph.ComboNode
 import com.layzen.bdotools.feature.comboassist.domain.keys.KeyCommand
 import com.layzen.bdotools.feature.comboassist.domain.keys.KeyStep
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
@@ -50,8 +52,15 @@ internal class TrainingController {
         val now = tracker.planner.candidates(tracker.state)
         val keyTracked = combo?.keyTracked.orEmpty()
         // умения из истории и со слотов клавишами не подтверждаются: те источники точнее
-        fun step(skillNo: Int, after: Int?) = commands[skillNo]?.takeIf { skillNo in keyTracked }?.let { KeyStep(skillNo, after, it.variants, it.visibleSpend) }
-        val steps = now.mapNotNull { step(it.skillNo, null) } + now.flatMap { node -> node.next.mapNotNull { step(it.skillNo, node.skillNo) } }
+        fun step(node: ComboNode, after: Int?): KeyStep? {
+            val skillNo = node.skillNo
+            if (skillNo !in keyTracked) return null
+            val command = commands[skillNo]
+            // выбранная в редакторе команда — единственный вариант: остальные варианты игрок не жмёт
+            val variants = combo?.get(node.at)?.keys?.let(::listOf) ?: command?.variants ?: return null
+            return KeyStep(skillNo, after, variants, command?.visibleSpend ?: false)
+        }
+        val steps = now.mapNotNull { step(it, null) } + now.flatMap { node -> node.next.mapNotNull { step(it, node.skillNo) } }
         return steps.distinct()
     }
 
@@ -75,6 +84,7 @@ internal class TrainingController {
             cooldownLeft = state.readyAt.mapValues { (it.value - now).coerceAtLeast(0) }.filterValues { it > 0 },
             filler = tracker.planner.filler(state, combo?.fillers.orEmpty(), now, wait),
             pool = combo?.pool.orEmpty(),
+            cellKeys = combo?.cells().orEmpty().mapNotNull { (at, cell) -> cell.keys?.let { at to it } }.toMap(),
             previousSkill = state.history.lastOrNull(),
             event = lastEvent?.takeIf { now - lastEventMs < EVENT_FRESH_MS },
             nowMs = now,

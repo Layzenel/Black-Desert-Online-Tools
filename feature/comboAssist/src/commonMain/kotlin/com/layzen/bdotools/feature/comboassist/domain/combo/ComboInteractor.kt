@@ -79,7 +79,7 @@ class ComboInteractor(
         val slots = history.playedSlots { no -> skills[no]?.let { catalog.icon(it.icon) } } ?: return null
         val classKey = slots.mapNotNull { skills[it.skillNo]?.classes?.singleOrNull() }
             .groupingBy { it }.eachCount().maxByOrNull { it.value }?.key
-        return PlayedCharacter(slots, classKey)
+        return PlayedCharacter(slots, classKey, history.historyShown())
     }
 
     /** Сохранённые комбо. */

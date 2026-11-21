@@ -19,10 +19,12 @@
     <string name="combo_part_normal">Regular combo</string>
     <string name="combo_part_rage">Under Black Spirit Rage</string>
     <string name="combo_rage_add">Add Black Spirit Rage combo</string>
+    <string name="combo_rage_copy">Copy the normal combo</string>
     <string name="combo_rage_remove">Remove Rage combo</string>
     <string name="combo_class_search">Search classes</string>
     <string name="combo_section_skills">Skills</string>
     <string name="combo_search">Search skills</string>
+    <string name="combo_key_aliases"></string>
     <string name="combo_suggest_title">Can follow</string>
     <string name="combo_suggest_chain">chain</string>
     <string name="combo_section_fillers_count">Fillers: %1$d</string>
@@ -32,8 +34,6 @@
     <string name="combo_optional_description">The tracker always shows them, apart from the steps and in this order: a ready skill has a gold frame, one on cooldown shows seconds. For protection, buffs, dodges: what you use as the fight goes.</string>
     <string name="combo_optional_search">Search skills</string>
     <string name="combo_optional_add">Add an optional skill</string>
-    <string name="combo_move_left">Move left</string>
-    <string name="combo_move_right">Move right</string>
     <string name="combo_save">Save</string>
     <string name="combo_save_dirty">Save *</string>
     <string name="combo_delete">Delete combo</string>
@@ -64,6 +64,13 @@
     <string name="combo_chain">Chain</string>
     <string name="combo_chain_description">Press right after the previous skill, or the chain breaks</string>
     <string name="combo_seen_in_game">Seen in history or on a slot</string>
+    <string name="combo_activation_title">Activation</string>
+    <string name="combo_activation_hint">Which command you use for the skill. Each cell has its own: the same skill may be used differently in different steps. The tracker shows it and listens only to it for skills with "Seen in history or on a slot" cleared. You can record your own keys: hold them and release.</string>
+    <string name="combo_activation_any">Any from description</string>
+    <string name="combo_activation_record">Record</string>
+    <string name="combo_activation_rerecord">Re-record</string>
+    <string name="combo_activation_remove">Remove your command</string>
+    <string name="combo_activation_recording">Hold the skill keys… Esc cancels</string>
     <string name="combo_seen_in_game_hint">The tracker learns that the skill was used from "Skill Usage History" and from its cooldown slot going on cooldown. Clear the flag if the skill is neither in the history nor on a slot (a chain follow-up, for example): the tracker will then count it by key presses and resource spending, which is less accurate. The flag is shared by every cell with this skill.</string>
     <string name="combo_note">Note</string>
     <string name="combo_note_placeholder">For example: while jumping, after a dash</string>
@@ -100,6 +107,7 @@
     <string name="combo_reset_title">Combo reset: %1$d s</string>
     <string name="combo_reset_description">How many seconds you can go without combo skills and fillers (not counting cooldown waits) before the tracker starts the combo over.</string>
     <string name="combo_tracker_limits">The tracker relies on "Skill Usage History", cooldown slots and, for skills with "Seen in history or on a slot" cleared, on key presses and resource spending.</string>
+    <string name="combo_history_hidden">"Skill Usage History" is hidden for this character, so the tracker will lose track. Turn it on: "Edit UI" → "Control hints".</string>
     <string name="combo_overlay_vertical">Vertical</string>
     <string name="combo_overlay_horizontal">Horizontal</string>
     <string name="combo_overlay_style_next">Next</string>

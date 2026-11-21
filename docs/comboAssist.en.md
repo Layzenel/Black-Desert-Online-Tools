@@ -11,10 +11,11 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
 - On the left — "Class" and "Saved combos". A combo belongs to a class and fits all of its characters.
 - The buttons above the editor and Ctrl+Z / Ctrl+Y (Ctrl+Shift+Z) undo and redo combo edits; a dragged cell moves
   under the others, and a blue pointer at a cell edge shows where it will go; deleting a combo asks for confirmation. At the bottom of the menu — "How the tracker works" and removing the rage combo.
-- "Skills" — the class skills with search and the "Succession" or "Awakening" stances; for Seraph —
+- "Skills" — the class skills with search (by name or keys: "shift lmb") and the "Succession" or "Awakening" stances; for Seraph —
   "Sacramentum" (without "Purga:" skills), "Purgatum" (without "Sacra:" skills).
 - **Black Spirit Rage combo** — above the combo, switch between "Regular combo" and "Under Black Spirit Rage"
-  ("Add Black Spirit Rage combo" if there is none yet; Seraph gets one right away). When the three Black Spirit Rage
+  ("Add Black Spirit Rage combo" if there is none yet; Seraph gets one right away); on the Rage tab, "Copy the normal
+  combo" copies the steps, fillers and optional skills so you only change the differences. When the three Black Spirit Rage
   buffs appear in the buff list with a 59-second timer, the tracker follows the Rage combo for one minute on
   a black-and-red panel with fire, then goes back to the regular combo. The tracker has to see the Rage start: if the
   app was opened mid-Rage, it waits for the next one. The timer is read in the Russian game client.
@@ -30,7 +31,7 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
   branches are ready at about the same time it takes them in turn: 1.1, then 1.2, then 1.3.
 - **"Fillers"** — skills the overlay suggests while the next step is on cooldown.
 - **"Optional skills"** — below the cell editing: skills the tracker always shows, apart from the steps (protection, buffs,
-  dodges — what you use as the fight goes), in the order you set: "+" adds, arrows move, the cross removes. A ready skill has a
+  dodges — what you use as the fight goes), in the order you set: "+" adds, dragging reorders, the corner cross or right-click removes. A ready skill has a
   gold frame, one on cooldown shows seconds. Optional cells of older combos move here on their own.
 - The editor warns about empty cells and about a chain continuation without its starter.
 
@@ -73,7 +74,9 @@ late, and the game skips some skills there (flow follow-ups and animation cancel
 Breaker). If the history skipped a skill that is on a cooldown slot, the tracker counts it when the slot goes on cooldown.
 For skills that are neither in the history nor on a slot, clear "Seen in history or on a slot" in the editor's cell
 panel (it is on by default and shared by every cell of the skill): only those skills count by key presses, by the
-character's key bindings. A press
+character's key bindings. In the cell's "Activation" you pick the command you use for the skill (any from the
+description, one of its variants or your own keys — "Record", hold and release): the tracker shows it and listens only
+to it. If "Skill Usage History" is hidden for the character (per `gamevariable.xml`), the tracker warns about it. A press
 does not mean the skill went out (it may be pressed early, during the previous one), so a skill that spends a
 noticeable amount of resource counts only when the resource bar under HP drops (any color, with or without Split HP).
 Cheap skills and skills cast while a key is held count on the press itself; if a guess is wrong, the next history

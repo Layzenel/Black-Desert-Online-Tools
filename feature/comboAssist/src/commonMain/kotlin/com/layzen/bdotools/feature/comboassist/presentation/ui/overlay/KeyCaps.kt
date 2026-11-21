@@ -21,6 +21,7 @@ import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.core.skill.domain.SkillTextPart
 import com.layzen.bdotools.core.skill.domain.parseSkillMarkup
 import com.layzen.bdotools.feature.comboassist.domain.skill.commandLineFor
+import com.layzen.bdotools.feature.comboassist.domain.keys.keyVariantLine
 import com.layzen.bdotools.feature.comboassist.presentation.state.OverlayState
 import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
@@ -32,12 +33,15 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Строка команды умения «что жать сейчас»: та, где упомянуто предыдущее умение («Во время навыка Алый коготь: ПКМ»),
- * иначе первая с клавишами. Пусто, пока описание умения не загрузилось.
+ * Строка команды умения «что жать сейчас»: выбранная в редакторе ([OverlayState.cellKeys]), иначе та, где
+ * упомянуто предыдущее умение («Во время навыка Алый коготь: ПКМ»), иначе первая с клавишами. Пусто, пока описание
+ * умения не загрузилось.
  */
 @Composable
 internal fun rememberNextCommandLine(overlay: OverlayState, skills: Map<Int, SkillItem>, loadDetails: suspend (Int) -> SkillDetails?): String {
     val skillNo = overlay.next?.skillNo ?: return ""
+    // команда, выбранная в редакторе, — вместо строк описания: игрок жмёт именно её
+    overlay.next?.node?.at?.let { overlay.cellKeys[it] }?.let { return keyVariantLine(it) }
     val language = stringResource(Res.string.combo_names_language)
     val details by produceState<SkillDetails?>(null, skillNo) { value = loadDetails(skillNo) }
     val previousName = overlay.previousSkill?.let { skills[it]?.skill?.name(language) }

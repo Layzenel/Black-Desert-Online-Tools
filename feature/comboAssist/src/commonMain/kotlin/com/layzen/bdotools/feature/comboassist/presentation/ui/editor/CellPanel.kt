@@ -1,17 +1,13 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.editor
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.feature.comboassist.domain.combo.ComboColumn
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
@@ -39,20 +35,20 @@ import com.layzen.bdotools.feature.comboassist.resources.menu_delete
 import com.layzen.bdotools.feature.comboassist.resources.menu_fork
 import com.layzen.bdotools.feature.comboassist.resources.menu_insert_left
 import com.layzen.bdotools.feature.comboassist.resources.menu_insert_right
-import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToggleSwitch
+import com.layzen.bdotools.uikit.components.ToolbarButton
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Свойства выбранной ячейки: вставить рядом, развилка, связка, видно ли умение в истории или на слоте, пометка для трекера, снять выбор, удалить. */
+/** Свойства выбранной ячейки: вставить рядом, развилка, связка, видно ли умение в истории или на слоте, команда активации умения, пометка для трекера, снять выбор, удалить. Кнопки — иконками с подсказками. */
 @Composable
-internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
+internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
     val combo = state.edited ?: return
     val at = state.selection ?: return
     val cell = combo[at] ?: return
@@ -75,11 +71,14 @@ internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
             IconActionButton(Res.string.combo_remove, Res.drawable.menu_delete) { onEvent(ComboEvent.RemoveCell) }
         }
         Column(Modifier.widthIn(max = ComboDimens.panelWidth), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-            ToggleSwitch(cell.chain, { onEvent(ComboEvent.ToggleChain) }, label = stringResource(Res.string.combo_chain), description = stringResource(Res.string.combo_chain_description))
+            HoverTooltip(stringResource(Res.string.combo_chain_description)) {
+                ToggleSwitch(cell.chain, { onEvent(ComboEvent.ToggleChain) }, label = stringResource(Res.string.combo_chain))
+            }
             cell.skillNo?.let { skillNo ->
                 HoverTooltip(stringResource(Res.string.combo_seen_in_game_hint)) {
                     ToggleSwitch(skillNo !in combo.keyTracked, { onEvent(ComboEvent.ToggleKeyTracked) }, label = stringResource(Res.string.combo_seen_in_game))
                 }
+                ActivationPicker(skillNo, cell.keys, onEvent, loadDetails)
             }
             SectionHeader(stringResource(Res.string.combo_note), description = stringResource(Res.string.combo_note_description))
             InputField(cell.note, { onEvent(ComboEvent.SetNote(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_note_placeholder))
@@ -87,13 +86,8 @@ internal fun CellPanel(state: ComboState, onEvent: (ComboEvent) -> Unit) {
     }
 }
 
-/** Кнопка с иконкой слева от подписи. */
+/** Кнопка-иконка; подпись [text] — подсказкой при наведении. */
 @Composable
 private fun IconActionButton(text: StringResource, icon: DrawableResource, onClick: () -> Unit) {
-    ActionButton(onClick = onClick) {
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalAlignment = Alignment.CenterVertically) {
-            Image(painterResource(icon), null, Modifier.size(ComboDimens.buttonIcon))
-            Text(stringResource(text), style = AppTheme.typography.button, color = AppTheme.colors.textButton)
-        }
-    }
+    ToolbarButton(painterResource(icon), stringResource(text), onClick)
 }

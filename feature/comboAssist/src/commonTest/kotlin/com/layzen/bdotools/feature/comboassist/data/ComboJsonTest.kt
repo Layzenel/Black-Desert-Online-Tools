@@ -40,6 +40,14 @@ class ComboJsonTest {
     }
 
     @Test
+    fun keepsCellKeys() {
+        // одно умение в двух шагах — разными командами
+        val columns = listOf(ComboColumn.Single(ComboCell(1, keys = setOf("Attack1"))), ComboColumn.Single(ComboCell(1, keys = setOf("Dash", "Jump"))))
+        val combo = Combo("id", "", "tosa", columns)
+        assertEquals(listOf(combo), parseCombos(combosJson(listOf(combo))))
+    }
+
+    @Test
     fun oldOptionalCellsMoveToPool() {
         // до пула были опциональные ячейки: одиночная колонка пропадает, из развилки ячейка уходит
         val text = """{"combos":[{"id":"id","name":"","classKey":"striker","columns":[

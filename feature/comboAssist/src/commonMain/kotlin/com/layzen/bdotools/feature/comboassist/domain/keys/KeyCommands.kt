@@ -44,3 +44,6 @@ private fun best(matches: List<Pair<KeyStep, Int>>): KeyStep? {
     }
     return if (tie) null else best.first
 }
+
+/** Строка команды с разметкой клавиш для действий [actions], зажатых вместе: «{KeyBind:Dash} + {KeyBind:Attack1}». */
+fun keyVariantLine(actions: Set<String>): String = actions.joinToString(" + ") { "{KeyBind:$it}" }

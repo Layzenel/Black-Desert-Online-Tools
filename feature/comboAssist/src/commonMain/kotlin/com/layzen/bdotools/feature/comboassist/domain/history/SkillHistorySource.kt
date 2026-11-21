@@ -40,4 +40,10 @@ interface SkillHistorySource {
      * умений даёт [icon]. `null`, если игра не на переднем плане, слотов нет или персонажа не понять.
      */
     suspend fun playedSlots(icon: suspend (Int) -> ByteArray?): List<ScreenSlot>?
+
+    /**
+     * Видна ли «История испол. навыков» у персонажа, последнего узнанного [playedSlots], по файлу игры (игра пишет его
+     * при смене персонажа и выходе). Пока персонаж не узнан или следить нельзя — `true`.
+     */
+    fun historyShown(): Boolean = true
 }

@@ -172,6 +172,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             is ComboEvent.EditRage -> mutableState.update { editor.refresh(it.copy(editingRage = event.rage, selection = null), skills) }
             ComboEvent.AddRage -> changeRage(ComboRage.Empty, editing = true)
             ComboEvent.RemoveRage -> changeRage(null, editing = false)
+            ComboEvent.CopyToRage -> mutableState.value.combo?.let { changeRage(ComboRage(it.columns, it.fillers, it.pool), editing = true) }
             else -> editCombo(event)
         }
     }
@@ -257,7 +258,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
     private fun followPlayedCharacter() = viewModelScope.launch {
         while (isActive) {
             interactor.playedCharacter()?.let { played ->
-                mutableState.update { it.copy(slots = played.slots, playedClass = played.classKey ?: it.playedClass) }
+                mutableState.update { it.copy(slots = played.slots, playedClass = played.classKey ?: it.playedClass, historyHidden = !played.historyShown) }
                 loadSlotProtections()
                 val s = mutableState.value
                 if (played.classKey != null && played.classKey != s.combo?.classKey && !s.dirty) {

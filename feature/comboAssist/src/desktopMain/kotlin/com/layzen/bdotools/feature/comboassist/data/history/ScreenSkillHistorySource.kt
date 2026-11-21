@@ -161,6 +161,8 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         }
     }
 
+    override fun historyShown(): Boolean = played?.historyShown ?: true
+
     override suspend fun playedSlots(icon: suspend (Int) -> ByteArray?): List<ScreenSlot>? = withContext(Dispatchers.IO) {
         // игра не на переднем плане — программа за ней не следит: ни снимков экрана, ни чтения файлов, ни загрузки иконок
         if (!isGameForeground()) return@withContext null

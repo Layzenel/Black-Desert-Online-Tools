@@ -104,7 +104,9 @@ fun Combo.fill(at: CellAt, skillNo: Int, skills: ComboSkills): ComboEdit {
     val old = this[at] ?: ComboCell()
     val skill = skills[skillNo]
     val chain = skill.onlyAfter && previousSkills(at).any { it in skill.after }
-    val filled = put(at, old.copy(skillNo = skillNo, chain = chain))
+    // команда активации — у прежнего умения: другое умение жмут иначе
+    val keys = old.keys.takeIf { old.skillNo == skillNo }
+    val filled = put(at, old.copy(skillNo = skillNo, chain = chain, keys = keys))
     val column = filled.columns[at.column]
     return when {
         column is ComboColumn.Fork && at.index == column.lanes[at.lane].lastIndex -> filled.growLane(at.column, at.lane)

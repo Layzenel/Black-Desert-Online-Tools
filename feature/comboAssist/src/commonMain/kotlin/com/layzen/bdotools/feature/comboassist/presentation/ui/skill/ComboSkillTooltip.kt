@@ -5,7 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Modifier
 import com.layzen.bdotools.composable.skill.SkillTooltipContent
 import com.layzen.bdotools.core.skill.domain.KeyBindings
 import com.layzen.bdotools.core.skill.domain.SkillDetails
@@ -22,7 +30,8 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Подсказка с карточкой умения [item] вокруг [content] — тот же тултип, что в редакторе интерфейса
  * ([SkillTooltipContent]): описание, требования, команда и эффекты с цветами справочника. Подробности грузятся
- * при наведении. [beside] — справа от элемента (строки списка в меню). [cell] — что это за ячейка в комбо.
+ * при первом наведении, и тултип показывается, когда они пришли: растущая карточка у нижнего края окна
+ * перепрыгивала из-под иконки наверх. [beside] — справа от элемента (строки списка в меню). [cell] — что это за ячейка в комбо.
  */
 @Composable
 internal fun SkillHover(
@@ -33,17 +42,26 @@ internal fun SkillHover(
     content: @Composable () -> Unit,
 ) {
     if (item == null) return content()
-    HoverTooltip(tooltip = { TooltipPanel { SkillTooltipCard(item, loadDetails, cell) } }, beside = beside) { content() }
+    val interaction = remember { MutableInteractionSource() }
+    val hovered by interaction.collectIsHoveredAsState()
+    // null — ещё не грузили; загружено, но без текста — подробностей нет
+    var details by remember(item.skillNo) { mutableStateOf<Result<SkillDetails?>?>(null) }
+    LaunchedEffect(hovered, item.skillNo) { if (hovered && details == null) details = Result.success(loadDetails(item.skillNo)) }
+    Box(Modifier.hoverable(interaction)) {
+        HoverTooltip(
+            tooltip = { TooltipPanel { SkillTooltipCard(item, details?.getOrNull(), cell) } },
+            enabled = details != null, beside = beside,
+        ) { content() }
+    }
 }
 
+/** Карточка умения [item] с загруженными подробностями [details] (`null` — подробностей нет). */
 @Composable
-internal fun SkillTooltipCard(item: SkillItem, loadDetails: suspend (Int) -> SkillDetails?, cell: CellNote?) {
+internal fun SkillTooltipCard(item: SkillItem, details: SkillDetails?, cell: CellNote?) {
     val language = stringResource(Res.string.combo_names_language)
-    // null — ещё грузится; загружено, но без текста — подробностей нет
-    val details by produceState<Result<SkillDetails?>?>(null, item.skillNo) { value = Result.success(loadDetails(item.skillNo)) }
-    val text = details?.getOrNull()?.text(language)
+    val text = details?.text(language)
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-        SkillTooltipContent(item.skill.name(language), item.icon, text, KeyBindings.Default, failed = details != null && text == null)
+        SkillTooltipContent(item.skill.name(language), item.icon, text, KeyBindings.Default, failed = text == null)
         cell?.let { CellLine(it) }
     }
 }

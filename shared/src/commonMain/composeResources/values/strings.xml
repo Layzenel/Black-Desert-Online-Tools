@@ -1,5 +1,6 @@
 <resources>
     <string name="app_title">BDO Tools</string>
+    <string name="admin_badge_hint">Программа запущена от имени администратора: трекер комбо слышит нажатия клавиш в игре.</string>
     <string name="window_close_title">Закрыть программу?</string>
     <string name="window_close_text">Если свернуть в трей, программа продолжит работать: оверлей комбо останется поверх игры. Открыть её — клик по значку в трее.</string>
     <string name="window_close_tray">Свернуть в трей</string>
