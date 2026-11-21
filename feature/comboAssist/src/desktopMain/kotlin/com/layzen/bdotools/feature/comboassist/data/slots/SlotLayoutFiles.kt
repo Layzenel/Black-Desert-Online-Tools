@@ -59,7 +59,7 @@ internal object SlotLayoutFiles {
                 val slots = parseSlotSkills(text).filterKeys { it !in hidden }.mapNotNull { (slot, skillNo) ->
                     centers[slot]?.let { (x, y) -> CooldownSlot(skillNo, x, y) }
                 }
-                modified to SlotLayout(slots, scale, height, parseKeyBindings(text))
+                modified to SlotLayout(slots, scale, height, parseKeyBindings(text), parseHistoryShown(text, accountText))
             }
         }
     } catch (e: IOException) {

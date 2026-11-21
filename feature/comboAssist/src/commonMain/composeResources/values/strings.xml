@@ -19,10 +19,12 @@
     <string name="combo_part_normal">Обычное комбо</string>
     <string name="combo_part_rage">Под гневом Чёрного духа</string>
     <string name="combo_rage_add">Добавить комбо под гневом</string>
+    <string name="combo_rage_copy">Скопировать обычное комбо</string>
     <string name="combo_rage_remove">Убрать комбо под гневом</string>
     <string name="combo_class_search">Поиск класса</string>
     <string name="combo_section_skills">Умения</string>
     <string name="combo_search">Поиск умения</string>
+    <string name="combo_key_aliases">лкм=lmb;пкм=rmb;shift=шифт;пробел=space;q=ку;e=е;f=ф;x=х;c=с</string>
     <string name="combo_suggest_title">Дальше можно</string>
     <string name="combo_suggest_chain">связка</string>
     <string name="combo_section_fillers_count">Филлеры: %1$d</string>
@@ -32,8 +34,6 @@
     <string name="combo_optional_description">Трекер показывает их всегда, отдельно от шагов и в этом порядке: готовое — в золотой рамке, на перезарядке — с секундами. Для защиты, бафов, отскоков — что жмёшь по ситуации.</string>
     <string name="combo_optional_search">Поиск умения</string>
     <string name="combo_optional_add">Добавить опциональное умение</string>
-    <string name="combo_move_left">Левее</string>
-    <string name="combo_move_right">Правее</string>
     <string name="combo_save">Сохранить</string>
     <string name="combo_save_dirty">Сохранить *</string>
     <string name="combo_delete">Удалить комбо</string>
@@ -64,6 +64,13 @@
     <string name="combo_chain">Связка</string>
     <string name="combo_chain_description">Жать сразу после предыдущего, иначе цепочка сорвётся</string>
     <string name="combo_seen_in_game">Видно в истории или на слоте</string>
+    <string name="combo_activation_title">Активация</string>
+    <string name="combo_activation_hint">Какой командой ты применяешь умение. Своя у каждой ячейки: одно умение в разных шагах жмут по-разному. Её покажет трекер, и только по ней он слушает клавиши умений со снятым флагом «Видно в истории или на слоте». Свои клавиши можно записать: зажми их и отпусти.</string>
+    <string name="combo_activation_any">Любая из описания</string>
+    <string name="combo_activation_record">Записать</string>
+    <string name="combo_activation_rerecord">Перезаписать</string>
+    <string name="combo_activation_remove">Убрать свою команду</string>
+    <string name="combo_activation_recording">Зажми клавиши умения… Esc — отмена</string>
     <string name="combo_seen_in_game_hint">Трекер узнаёт, что умение применено, по «Истории испол. навыков» и по слоту перезарядки, ушедшему на перезарядку. Снимите флаг, если умения нет ни в истории, ни на слотах (например, продолжение связки): тогда трекер будет засчитывать его по нажатию клавиш и расходу ресурса — это менее точно. Флаг общий для всех ячеек с этим умением.</string>
     <string name="combo_note">Пометка</string>
     <string name="combo_note_placeholder">Например: в прыжке, после рывка</string>
@@ -100,6 +107,7 @@
     <string name="combo_reset_title">Сброс комбо: %1$d с</string>
     <string name="combo_reset_description">Сколько секунд можно не применять умения комбо и филлеры (не считая ожидания перезарядки) — потом трекер начнёт комбо сначала.</string>
     <string name="combo_tracker_limits">Трекер опирается на «Историю испол. навыков», слоты перезарядок, а для умений со снятым флагом «Видно в истории или на слоте» — на нажатия клавиш и расход ресурса.</string>
+    <string name="combo_history_hidden">«История испол. навыков» у этого персонажа скрыта — трекер будет сбиваться. Включи её: «Редактировать UI» → «Подсказки по управлению».</string>
     <string name="combo_overlay_vertical">Вертикально</string>
     <string name="combo_overlay_horizontal">Горизонтально</string>
     <string name="combo_overlay_style_next">Следующие</string>

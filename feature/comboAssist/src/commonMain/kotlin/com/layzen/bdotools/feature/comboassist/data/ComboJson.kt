@@ -51,7 +51,7 @@ private class ColumnDto(val cell: CellDto? = null, val lanes: List<List<CellDto>
 
 /** Ячейка в файле; поля по умолчанию не пишутся. [optional] — только в старых файлах: такие ячейки переезжают в пул ([withoutOptional]). */
 @Serializable
-private class CellDto(val skill: Int? = null, val chain: Boolean = false, val optional: Boolean = false, val note: String = "")
+private class CellDto(val skill: Int? = null, val chain: Boolean = false, val optional: Boolean = false, val note: String = "", val keys: List<String>? = null)
 
 private const val FORMAT_VERSION = 1
 private val json = Json { ignoreUnknownKeys = true }
@@ -125,5 +125,5 @@ private fun ComboColumn.toDto(): ColumnDto = when (this) {
     is ComboColumn.Fork -> ColumnDto(lanes = lanes.map { lane -> lane.map { it.toDto() } })
 }
 
-private fun CellDto.toCell() = ComboCell(skill, chain, note)
-private fun ComboCell.toDto() = CellDto(skillNo, chain, note = note)
+private fun CellDto.toCell() = ComboCell(skill, chain, note, keys?.toSet())
+private fun ComboCell.toDto() = CellDto(skillNo, chain, note = note, keys = keys?.toList())

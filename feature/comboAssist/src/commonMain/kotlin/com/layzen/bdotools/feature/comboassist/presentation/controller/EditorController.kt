@@ -40,6 +40,7 @@ internal class EditorController {
             is ComboEvent.InsertCell -> at?.let { combo.insertCell(it, event.after) } ?: return state
             is ComboEvent.ClearSelection -> return refresh(state.copy(selection = null), skills)
             is ComboEvent.ToggleChain -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(chain = !it.chain)), a) } } ?: return state
+            is ComboEvent.SetKeyVariant -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(keys = event.actions)), a) } } ?: return state
             is ComboEvent.ToggleKeyTracked -> at?.let { a -> combo[a]?.skillNo?.let { ComboEdit(combo.copy(keyTracked = if (it in combo.keyTracked) combo.keyTracked - it else combo.keyTracked + it), a) } } ?: return state
             is ComboEvent.SetNote -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(note = event.text)), a) } } ?: return state
             is ComboEvent.RemoveCell -> at?.let { combo.removeCell(it) } ?: return state
@@ -51,8 +52,10 @@ internal class EditorController {
             is ComboEvent.RemovePool -> ComboEdit(combo.copy(pool = combo.pool - event.skillNo), at)
             is ComboEvent.MovePool -> {
                 val from = combo.pool.indexOf(event.skillNo)
-                val to = from + event.by
-                if (from < 0 || to !in combo.pool.indices) return state
+                if (from < 0) return state
+                // перетаскивание дальше края ставит умение крайним
+                val to = (from + event.by).coerceIn(combo.pool.indices)
+                if (to == from) return state
                 ComboEdit(combo.copy(pool = combo.pool.toMutableList().apply { add(to, removeAt(from)) }), at)
             }
             else -> return state

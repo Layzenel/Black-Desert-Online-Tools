@@ -4,6 +4,9 @@ import com.layzen.bdotools.core.xml.attributesOf
 
 private val SLOT_SKILL = Regex("""<SkillCoolTimeSlot\s+SlotNo="\d+"[^>]*>""")
 private val UI_DATA = Regex("""<UIData\s+Index="\d+"[^>]*>""")
+
+/** Номер элемента «История испол. навыков» в `UIData`. */
+private const val HISTORY_INDEX = "158"
 private val UI_SCALE = Regex("""<UiScale\s+Value="([\d.]+)"""")
 private val RESOLUTION_HEIGHT = Regex("""<Resolution\s+Width="\d+"\s+Height="(\d+)"""")
 
@@ -27,6 +30,15 @@ internal fun parseSlotCenters(accountText: String): Map<Int, Pair<Double, Double
 /** Скрытые слоты: `IsShow="false"` в файле персонажа (видимость у каждого персонажа своя). */
 internal fun parseHiddenSlots(characterText: String): Set<Int> =
     uiData(characterText).filter { (_, a) -> a["IsShow"] == "false" }.map { it.first }.toSet()
+
+/**
+ * Видна ли «История испол. навыков» (`UIData Index="158"`): `IsShow` в файле персонажа (видимость у каждого своя),
+ * без записи там — в файле аккаунта; нигде нет — видна.
+ */
+internal fun parseHistoryShown(characterText: String, accountText: String): Boolean =
+    sequenceOf(characterText, accountText).firstNotNullOfOrNull { text ->
+        UI_DATA.findAll(text).map { attributesOf(it.value) }.firstOrNull { it["Index"] == HISTORY_INDEX }?.get("IsShow")
+    } != "false"
 
 /** «Размер интерфейса» игры (100 % → 1) или `null`. */
 internal fun parseUiScale(accountText: String): Double? = UI_SCALE.find(accountText)?.groupValues?.get(1)?.toDoubleOrNull()

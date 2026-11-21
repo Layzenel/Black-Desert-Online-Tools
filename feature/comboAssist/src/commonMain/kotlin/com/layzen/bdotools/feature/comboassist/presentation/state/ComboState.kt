@@ -35,6 +35,7 @@ import com.layzen.bdotools.feature.comboassist.domain.settings.OverlaySettings
  * @property settings настройки окон поверх игры
  * @property importFailed последний выбранный для импорта файл — не файл комбо
  * @property playedClass класс персонажа, которым играют (по слотам на экране); `null` — ещё не узнан
+ * @property historyHidden у персонажа в игре скрыта «История испол. навыков» (по файлу игры): трекер ведёт комбо плохо
  * @property editingRage редактор правит комбо под гневом Чёрного духа, а не обычное
  * @property rageActive в игре висят бафы гнева Чёрного духа: трекер ведёт комбо под гневом, если оно есть
  * @property trackerNotice открыто окно «Как работает трекер» (само — при первом открытии вкладки в настольной версии)
@@ -66,6 +67,7 @@ data class ComboState(
     val settings: OverlaySettings = OverlaySettings(),
     val importFailed: Boolean = false,
     val playedClass: String? = null,
+    val historyHidden: Boolean = false,
     val editingRage: Boolean = false,
     val rageActive: Boolean = false,
     val trackerNotice: Boolean = false,

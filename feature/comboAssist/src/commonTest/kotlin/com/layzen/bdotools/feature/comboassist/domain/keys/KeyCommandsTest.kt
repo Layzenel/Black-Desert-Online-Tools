@@ -58,4 +58,10 @@ class KeyCommandsTest {
         assertEquals(forward, matchKeyStep(listOf(plain, forward), "Attack1", setOf("MoveFront", "Attack1")))
         assertNull(matchKeyStep(listOf(plain, KeyStep(3, null, listOf(setOf("Attack1")))), "Attack1", setOf("Attack1")))
     }
+
+    @Test
+    fun chosenVariantBecomesCommandLine() {
+        assertEquals("{KeyBind:Dash} + {KeyBind:Attack1}", keyVariantLine(linkedSetOf("Dash", "Attack1")))
+        assertEquals(listOf(setOf("Dash", "Attack1")), keyVariants(keyVariantLine(setOf("Dash", "Attack1"))))
+    }
 }

@@ -101,7 +101,11 @@ internal actual fun SlotTooltipWindow(
                     state.position = besideSlot(slot, state.size)
                     placed = true
                 },
-        ) { TooltipPanel { SkillTooltipCard(item, loadDetails, null) } }
+        ) {
+            // карточка — когда подробности пришли: окно тултипа подстраивается под неё один раз
+            val details by produceState<Result<SkillDetails?>?>(null, item.skillNo) { value = Result.success(loadDetails(item.skillNo)) }
+            details?.let { loaded -> TooltipPanel { SkillTooltipCard(item, loaded.getOrNull(), null) } }
+        }
     }
 }
 

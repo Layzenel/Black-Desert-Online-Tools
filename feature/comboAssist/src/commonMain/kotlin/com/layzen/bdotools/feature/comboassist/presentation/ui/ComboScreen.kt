@@ -2,7 +2,7 @@ package com.layzen.bdotools.feature.comboassist.presentation.ui
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -109,6 +109,11 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         sidebarWidth = ComboDimens.sidebarWidth,
         sidebar = { ComboSidebarContent(state, onEvent, loadDetails) },
         sidebarFooter = {
+            // отмена и повтор правок — как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
+            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+                ToolbarButton(painterResource(Res.drawable.menu_undo), stringResource(Res.string.combo_undo_tooltip), { onEvent(ComboEvent.Undo) }, enabled = state.canUndo)
+                ToolbarButton(painterResource(Res.drawable.menu_redo), stringResource(Res.string.combo_redo_tooltip), { onEvent(ComboEvent.Redo) }, enabled = state.canRedo)
+            }
             if (canWatchGame) MenuAction(stringResource(Res.string.combo_notice_open), { onEvent(ComboEvent.ShowTrackerNotice) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_info))
             if (state.importFailed) WarningText(stringResource(Res.string.combo_import_failed))
             MenuAction(stringResource(Res.string.combo_import), { onEvent(ComboEvent.ImportCombos) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_import))
@@ -121,16 +126,9 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         },
     ) {
         Column(Modifier.fillMaxSize()) {
-            // настройка оверлея есть только в настольной версии: на сайте остаётся один редактор, и в полосе — только отмена
-            ActionBar {
-                Box(Modifier.weight(1f)) {
-                    if (canWatchGame) OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
-                }
-                // отмена и повтор правок — кнопками, как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
-                if (state.mode == ComboMode.Editor || !canWatchGame) {
-                    ToolbarButton(painterResource(Res.drawable.menu_undo), stringResource(Res.string.combo_undo_tooltip), { onEvent(ComboEvent.Undo) }, enabled = state.canUndo)
-                    ToolbarButton(painterResource(Res.drawable.menu_redo), stringResource(Res.string.combo_redo_tooltip), { onEvent(ComboEvent.Redo) }, enabled = state.canRedo)
-                }
+            // настройка оверлея есть только в настольной версии: на сайте остаётся один редактор и переключать нечего
+            if (canWatchGame) ActionBar {
+                OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
             }
             Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceL),
@@ -165,7 +163,7 @@ private fun EditorContent(state: ComboState, onEvent: (ComboEvent) -> Unit, load
                 escape
             },
     ) { ComboCanvas(state, onEvent, loadDetails) }
-    CellPanel(state, onEvent)
+    CellPanel(state, onEvent, loadDetails)
     if (state.emptyCells > 0) WarningText(stringResource(Res.string.combo_warning_empty, state.emptyCells))
     state.problems.forEach { WarningText(stringResource(Res.string.combo_warning_chain, combo.label(it))) }
     OptionalSkillsEditor(state, onEvent, loadDetails)

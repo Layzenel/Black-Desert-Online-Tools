@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import com.layzen.bdotools.composable.overlay.isRunningAsAdmin
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -117,6 +118,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
         preloadComboStrings()
     }
 
+    val runningAsAdmin = remember { isRunningAsAdmin() }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep)) {
         TopNavigation(
             tabs = AppTab.available,
@@ -127,6 +129,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
             label = { stringResource(it.title) },
             icon = { painterResource(it.icon) },
             title = stringResource(Res.string.app_title),
+            titleIcon = if (runningAsAdmin) { { AdminBadge() } } else null,
             trailing = {
                 if (accountsState.accounts.size > 1 && selectedAccount != null) {
                     AccountSwitcher(selectedAccount, accountsState.accounts, accounts::select, accounts::readPortrait)
