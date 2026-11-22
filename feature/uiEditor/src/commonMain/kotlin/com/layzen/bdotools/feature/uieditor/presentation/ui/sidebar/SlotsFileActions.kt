@@ -28,6 +28,8 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_save_as
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_undo_apply
 import com.layzen.bdotools.feature.uieditor.resources.slots_undo_apply_hint
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -75,12 +77,14 @@ internal fun SlotsFileActions(state: SlotsState, onEvent: (SlotsEvent) -> Unit) 
         }
     }
     val count = state.changeCount
-    MenuAction(
-        if (count > 0) stringResource(Res.string.slots_apply_count, count) else stringResource(Res.string.slots_apply),
-        onClick = { onEvent(SlotsEvent.OpenApply) },
+    ActionButton(
+        ActionButtonState.Positive(
+            if (count > 0) stringResource(Res.string.slots_apply_count, count) else stringResource(Res.string.slots_apply),
+            enabled = state.hasChanges && !state.busy,
+            onClick = { onEvent(SlotsEvent.OpenApply) },
+        ),
         modifier = wide,
         icon = painterResource(Res.drawable.menu_apply),
-        enabled = state.hasChanges && !state.busy,
     )
 }
 

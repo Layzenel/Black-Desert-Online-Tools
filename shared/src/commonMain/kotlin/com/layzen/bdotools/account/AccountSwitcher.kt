@@ -13,6 +13,7 @@ import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.account_option
 import com.layzen.bdotools.resources.account_switcher_label
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
@@ -30,8 +31,10 @@ internal fun AccountSwitcher(
     var open by remember { mutableStateOf(false) }
     Text(stringResource(Res.string.account_switcher_label), style = AppTheme.typography.sectionTitle, color = AppTheme.colors.textBeige)
     ActionButton(
-        stringResource(Res.string.account_option, selected.id, selected.characterIds.size),
-        onClick = { open = true },
+        ActionButtonState.Neutral(
+            stringResource(Res.string.account_option, selected.id, selected.characterIds.size),
+            onClick = { open = true },
+        ),
         modifier = Modifier.width(AccountDimens.switcherWidth),
     )
     if (open) {

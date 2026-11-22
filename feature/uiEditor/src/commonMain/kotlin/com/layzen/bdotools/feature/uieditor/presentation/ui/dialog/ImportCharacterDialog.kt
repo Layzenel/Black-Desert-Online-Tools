@@ -26,6 +26,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_import_character_tit
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_characters_confirm
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_without_skills
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuItem
@@ -49,10 +50,10 @@ internal fun ImportCharacterDialog(dialog: SlotsDialog.ImportCharacter, skills: 
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.slots_cancel), onClick = close)
-            ActionButton(stringResource(Res.string.slots_import_without_skills), onClick = { onEvent(SlotsEvent.ImportWithoutSkills) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_import_without_skills), onClick = { onEvent(SlotsEvent.ImportWithoutSkills) }))
             if (dialog.chosen.isNotEmpty()) {
-                ActionButton(stringResource(Res.string.slots_import_characters_confirm), onClick = { onEvent(SlotsEvent.ConfirmImportCharacters) })
+                ActionButton(ActionButtonState.Positive(stringResource(Res.string.slots_import_characters_confirm), onClick = { onEvent(SlotsEvent.ConfirmImportCharacters) }))
             }
         },
     ) {

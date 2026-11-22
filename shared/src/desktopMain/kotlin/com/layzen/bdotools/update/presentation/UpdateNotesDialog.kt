@@ -13,6 +13,7 @@ import com.layzen.bdotools.resources.update_later
 import com.layzen.bdotools.resources.update_notes_empty
 import com.layzen.bdotools.resources.update_notes_title
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -27,8 +28,8 @@ internal fun UpdateNotesDialog(info: UpdateInfo, onClose: () -> Unit, onInstall:
         onDismissRequest = onClose,
         modifier = Modifier.width(UpdateDimens.notesDialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.update_later), onClick = onClose)
-            ActionButton(stringResource(Res.string.update_install), onClick = onInstall)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.update_later), onClick = onClose))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.update_install), onClick = onInstall))
         },
     ) {
         Column(

@@ -11,6 +11,7 @@ import com.layzen.bdotools.resources.update_checking
 import com.layzen.bdotools.resources.update_install_version
 import com.layzen.bdotools.resources.update_up_to_date
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.Toast
 import com.layzen.bdotools.uikit.components.ToolbarButton
 import org.jetbrains.compose.resources.painterResource
@@ -33,8 +34,10 @@ internal actual fun AppVersionInfo() {
         if (viewModel.version == null) return@VersionPanel
         if (current is UpdateState.Available) {
             ActionButton(
-                stringResource(Res.string.update_install_version, current.info.version.toString()),
-                onClick = { viewModel.showNotes(true) },
+                ActionButtonState.Neutral(
+                    stringResource(Res.string.update_install_version, current.info.version.toString()),
+                    onClick = { viewModel.showNotes(true) },
+                ),
             )
         } else {
             val checking = checkStatus == UpdateCheckStatus.Checking

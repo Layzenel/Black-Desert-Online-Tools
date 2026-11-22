@@ -50,8 +50,11 @@ description: Дизайн-система сайта BDO Tools в стиле ок
    плашек NEW/HOT и переключателя. `AppShapes.MenuItem` (4dp) — подсветка пункта в меню действий.
 5. **Золото — это сигнал, а не украшение.** `accentGold` используется для активного пункта навигации, текущего
    значения, результата расчёта, «новых» разделов и имени персонажа. Обычный текст бежевый или кремовый.
-6. **Кнопки всегда серые.** Главное действие выделяется не цветом, а местом: оно стоит последним —
+6. **Вид кнопки — по смыслу действия** (`ActionButtonState`). Положительное действие (применить, сохранить, OK,
+   установить, далее) — `ActionButtonState.Positive`: бронзовая кнопка, как «Выставить лот» в игре. Остальное
+   (отмена, сброс, вспомогательные) — `Neutral`, серая; удаление того, что пользователь создал сам (комбо, пресет), — `Negative`, тёмно-красная, как корзина в игре. Главное действие к тому же стоит последним —
    справа в строке действий или `WindowFooter` (порядок «Применить — Назад — OK»), внизу в `sidebarFooter` у `ToolPage`.
+   Новый вид кнопки — новый подкласс `ActionButtonState` и его ветка `when` в `ActionButton`, а не флаг.
 7. **Выделение = коричневая подложка + рамка.** Выбранный пункт меню или вариант получает `backgroundSelected` и
    `borderSelected`, выбранная плитка — рамку `accentGoldPale`.
 8. **Жирный шрифт по умолчанию.** Почти весь текст в игре жирный. Обычный вес (`body`) — только для длинных абзацев.
@@ -92,8 +95,15 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `titleBar` → `titleBarLight` | `#775D3A` → `#85693F` | подложка шапки окна и верхней навигации: светлеет книзу, как в игре |
 | `titleBarDark` | `#5E4A2E` | тёмная рамка шапки |
 | `titleBarHighlight` | `#C0A850` | золотая кромка над `ContentFrame` |
+| `windowOutline` / `windowFrame` | `#151C24` / `#6A593E` | рамка `GameWindow`: тёмная снаружи, светлая бронзовая внутри |
 | `button` / `buttonHover` / `buttonPressed` | `#44444E` / `#52525D` / `#38383F` | кнопки |
 | `buttonBorder` | `#4E4F56` | рамка кнопки |
+| `buttonPositiveTop` → `buttonPositiveMiddle` → `buttonPositiveBottom` | `#9F7B59` → `#704E38` → `#8C6144` | бронза кнопки `ActionButtonState.Positive`: темнеет к 65 % высоты и снова светлеет |
+| `buttonPositiveEdge` | `#D3A477` | светлая кромка сверху у положительной кнопки |
+| `buttonNegativeTop` → `buttonNegativeBottom` | `#603730` → `#442620` | кнопка `ActionButtonState.Negative` (удалить) |
+| `option` / `optionBorder` | `#38383D` / `#4A4A4F` | невыбранный `OptionButton` |
+| `indicator` / `indicatorBorder` / `indicatorBorderSelected` | `#292929` / `#4C4E58` / `#7E6454` | квадратик-индикатор `OptionButton` |
+| `indicatorMark` → `indicatorMarkShade` | `#FFF2E0` → `#E4C89F` | отметка выбранного индикатора (градиент сверху вниз) |
 | `border` / `borderSelected` | `#39393F` / `#685048` | рамки пунктов |
 | `divider` | `#353536` | разделители секций |
 | `track` | `#101011` | дорожка слайдера |
@@ -102,6 +112,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `textMuted` | `#A89068` | пояснения под заголовками, плейсхолдеры |
 | `textDisabled` | `#686868` | неактивные пункты и варианты |
 | `textButton` | `#E8E8E8` | текст на кнопках |
+| `textSelected` | `#F3D7AD` | подпись выбранного `OptionButton` |
 | `textNote` | `#E0783C` | заметка персонажа — оранжевая подпись над именем, как в окне «Персонажи аккаунта» игры |
 | `accentGold` | `#F8C038` | активное, текущее значение, важное |
 | `accentGoldPale` | `#D8B080` | рамка выбранной плитки |
@@ -152,8 +163,8 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `ContentFrame { }` | подложка содержимого страницы без шапки: графитовое тело окна (`backgroundSurface`), чёрная рамка и золотая кромка `titleBarHighlight` сверху; внутри колонка с отступом `spaceL` и промежутками `spaceM`. Для страницы «по центру» (портреты): заголовок, сетка и строка `MenuAction` — внутри |
 | `ToolIntro(points, image, imageDescription)` | что умеет тулза — под просьбой выбрать папку, пока данных нет: пункты с золотым тире и скриншот тулзы (`drawable/intro_*.jpg`, сжатый JPEG ~1100 px; перевод — в `drawable-<tag>/`). Пустой экран с одной кнопкой не оставляй |
 | `BulletList(points)` | список пунктов с золотым тире (ограничения, советы, что умеет тулза); на нём построен `ToolIntro`, в каталоге виден в его примере |
-| `GameWindow(title, actions, footer) { }` | окно с бронзовой шапкой: основа `ModalWindow` и примеров каталога. Для страниц тулз — `ToolPage` |
-| `WindowTitleBar`, `WindowFooter`, `Panel` | части окна, если нужна нестандартная компоновка. Шапка и `TopNavigation` рисуются одной подложкой `titleBarBackground` (как окна игры: бронза светлеет книзу, тёмная рамка, бледные шевроны «^» у правого края); новая бронзовая полоса — тоже через неё |
+| `GameWindow(title, titleBarModifier, actions, footer) { }` | окно с бронзовой шапкой: основа `ModalWindow` и примеров каталога. Рамка как у окон игры: тёмная `windowOutline` снаружи, светлая бронзовая `windowFrame` внутри, сверху кромка `titleBarHighlight`. `titleBarModifier` — для шапки (перетаскивание окна за неё). Для страниц тулз — `ToolPage` |
+| `WindowTitleBar`, `WindowFooter`, `Panel` | части окна, если нужна нестандартная компоновка. Шапка и `TopNavigation` рисуются одной подложкой `titleBarBackground` (как окна игры: бронза светлеет книзу, тёмная рамка, у правого края крупный бледный шеврон «^» с ореолом и тёмным треугольником внутри, слева от него диагональные штрихи); новая бронзовая полоса — тоже через неё |
 | `ModalWindow(title, onDismissRequest, dismissible, footer, aside) { }` | модальное окно поверх страницы: выбор, подтверждение, редактор. Пока идёт долгая операция, передавай `dismissible = false`. `aside` — панель слева от окна вровень с его верхом (описание пункта, на который навели); окно из-за неё не сдвигается |
 | `CloseButton(onClick)` | крестик (нарисован линиями): в шапке окна и для очистки поля |
 | `InfoButton(text)` | кружок с «!»; по клику над ним подсказка с `text` — ограничения поля, правила |
@@ -164,7 +175,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `ProgressBar(progress)` | полоса прогресса 0…1 |
 | `BusyOverlay(text, progress, details)` | окно ожидания поверх страницы на время долгой операции, закрыть нельзя. В браузере всё работает в одном потоке: между тяжёлыми шагами делай короткую паузу (`delay(16)`), иначе индикатор замрёт вместе со страницей |
 | `ActionMenuItem(text, onClick, enabled, icon, trailingIcon, trailingText, toggled)`, `ActionMenuDivider()` | пункт меню действий (`icon` слева, `trailingIcon` справа — белые силуэты, `trailingText` — значение золотом, `toggled` — пункт-переключатель: включён золотой, выключен приглушённый) и разделитель между пунктами. Кликается вся строка, подсветка — скруглённая плашка `AppShapes.MenuItem` с отступом от разделителей. Длинный текст переносится на вторую строку |
-| `ActionButton(text, onClick)` | любое действие |
+| `ActionButton(state, modifier, icon)`, `ActionButtonState` | любое действие. `state` — sealed-состояние: подпись, `enabled`, `onClick` и вид по подклассу — `ActionButtonState.Neutral(text, onClick = …)` (серая) , `ActionButtonState.Positive(…)` (бронзовая: применить, сохранить, OK) или `ActionButtonState.Negative(…)` (тёмно-красная: удалить). `icon` — белый силуэт слева от подписи (главное действие в `sidebarFooter`). Подложки — `ActionButtonSurfaces.kt` |
 | `SquareIconButton(onClick, selected) { }` | квадратная кнопка с иконкой (панель инструментов) |
 | `MenuItem(text, hotkey, badge, selected, highlighted)` | список разделов или тулз, как главное меню игры. Слот `icon` — не меньше квадрата иконки и шире под содержимое (отметка и портрет) |
 | `NavGroup(title, icon) { NavItem(...) }` | боковая навигация по разделам страницы |
@@ -173,7 +184,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `LinkText(text, url)` | ссылка на внешний адрес (скачать файл, открыть страницу): подчёркнутый бежевый текст, при наведении светлеет до `textPrimary`. Открывает `url` через `LocalUriHandler` — в вебе новая вкладка, на Desktop системный браузер |
 | `SectionDivider` | разделитель между секциями |
 | `LabelBadge(text, kind)` | NEW / HOT (`LabelBadgeKind.New` / `Hot`) |
-| `OptionGroup(options, selected, onSelect, label)` | выбор одного из 2–4 вариантов |
+| `OptionGroup(options, selected, onSelect, label)`, `OptionButton` | выбор одного из 2–4 вариантов, как в настройках игры: квадратик-индикатор и подпись. Невыбранный — серая подложка `option`, тёмный индикатор; выбранный — `backgroundSelected`, светлая отметка `indicatorMark` в индикаторе, текст `textSelected` |
 | `DropdownSelect(selected, options, onSelect, label, fieldText, trailing, icon, minHeight, searchPlaceholder)` | выбор из длинного списка; `fieldText` — постоянная подпись поля вместо выбранного значения (кнопка-список «Готовые пресеты»), `trailing` — элемент справа от варианта (корзина удаления), его центр — на оси стрелки поля; `icon` — картинка слева от варианта в списке и у выбранного в поле (портрет персонажа); `minHeight` — наименьшая высота поля, чтобы соседние списки были одной высоты; `searchPlaceholder` — строка поиска в списке (как у `OptionsMenu`) |
 | `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon, trailing, searchPlaceholder)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. Не выше `optionsMenuMaxHeight`, длинный прокручивается с полосой прокрутки. С `searchPlaceholder` сверху строка поиска: печатать можно сразу, крестик очищает, видны только подходящие варианты. `DropdownSelect` построен на нём |
 | `GroupedOptionsMenu(expanded, onDismissRequest, groups, groupLabel, options, selected, onSelect, label, groupIcon, icon)` | двухуровневый список: слева группы со стрелкой, при наведении справа раскрываются их варианты (с прокруткой) и прячутся, когда курсор уходит и с группы, и с вариантов. У каждой колонки своя панель своей высоты |

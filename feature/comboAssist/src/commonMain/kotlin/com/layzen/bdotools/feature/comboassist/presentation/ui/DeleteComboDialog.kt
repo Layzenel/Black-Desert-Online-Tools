@@ -9,6 +9,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_cancel_selection
 import com.layzen.bdotools.feature.comboassist.resources.combo_delete
 import com.layzen.bdotools.feature.comboassist.resources.combo_delete_confirm
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.WarningText
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -22,8 +23,8 @@ internal fun DeleteComboDialog(name: String, onCancel: () -> Unit, onConfirm: ()
         onDismissRequest = onCancel,
         modifier = Modifier.width(ComboDimens.confirmWidth),
         footer = {
-            ActionButton(stringResource(Res.string.combo_cancel_selection), onClick = onCancel)
-            ActionButton(stringResource(Res.string.combo_delete), onClick = onConfirm)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_cancel_selection), onClick = onCancel))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_delete), onClick = onConfirm))
         },
     ) {
         WarningText(stringResource(Res.string.combo_delete_confirm, name), Modifier.padding(AppTheme.dimens.spaceL))

@@ -43,6 +43,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_tracker_limits
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_opacity
 import com.layzen.bdotools.feature.comboassist.resources.combo_untitled
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.uikit.components.OptionGroup
@@ -66,8 +67,8 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
     SectionHeader(stringResource(Res.string.combo_menu_show))
     ComboList(state, onEvent, onHover)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-        if (state.overlayShown) ActionButton(stringResource(Res.string.combo_menu_hide), { onEvent(ComboEvent.HideCombo) })
-        ActionButton(stringResource(Res.string.combo_menu_edit), { onEvent(ComboEvent.SetMode(ComboMode.Editor)); onEdit() })
+        if (state.overlayShown) ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_menu_hide), onClick = { onEvent(ComboEvent.HideCombo) }))
+        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_menu_edit), onClick = { onEvent(ComboEvent.SetMode(ComboMode.Editor)); onEdit() }))
     }
     SectionHeader(stringResource(Res.string.combo_panel_tracker))
     state.combo?.let { combo ->

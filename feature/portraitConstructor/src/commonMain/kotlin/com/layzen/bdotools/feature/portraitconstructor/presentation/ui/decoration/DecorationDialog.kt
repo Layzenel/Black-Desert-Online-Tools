@@ -21,6 +21,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_decor
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_decoration_title
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_apply
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -44,11 +45,13 @@ internal fun DecorationDialog(
         onDismissRequest = { onEvent(PortraitsEvent.CloseDecoration) },
         modifier = Modifier.width(PortraitsDimens.decorationDialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseDecoration) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseDecoration) }))
             ActionButton(
-                stringResource(Res.string.portraits_editor_apply),
-                onClick = { onEvent(PortraitsEvent.ApplyDecoration) },
-                enabled = ready,
+                ActionButtonState.Positive(
+                    stringResource(Res.string.portraits_editor_apply),
+                    enabled = ready,
+                    onClick = { onEvent(PortraitsEvent.ApplyDecoration) },
+                ),
             )
         },
     ) {

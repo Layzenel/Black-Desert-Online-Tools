@@ -19,6 +19,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_delet
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_portraits
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_rename
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -40,14 +41,18 @@ internal fun FavoriteSetPortraits(state: FavoritesDialogState, onEvent: (Portrai
                 placeholder = set.dateLabel,
             )
             ActionButton(
-                stringResource(Res.string.portraits_favorites_rename),
-                onClick = { onEvent(PortraitsEvent.RenameFavorite) },
-                enabled = state.titleChanged,
+                ActionButtonState.Neutral(
+                    stringResource(Res.string.portraits_favorites_rename),
+                    enabled = state.titleChanged,
+                    onClick = { onEvent(PortraitsEvent.RenameFavorite) },
+                ),
             )
             if (state.marked.isNotEmpty()) {
                 ActionButton(
-                    stringResource(Res.string.portraits_delete_marked, state.marked.size),
-                    onClick = { onEvent(PortraitsEvent.RequestDeleteFavorites) },
+                    ActionButtonState.Neutral(
+                        stringResource(Res.string.portraits_delete_marked, state.marked.size),
+                        onClick = { onEvent(PortraitsEvent.RequestDeleteFavorites) },
+                    ),
                 )
             }
         }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.WarningText
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -36,8 +37,8 @@ internal fun ConfirmationDialog(
         onDismissRequest = onCancel,
         modifier = Modifier.width(PortraitsDimens.confirmDialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.portraits_cancel), onClick = onCancel)
-            ActionButton(confirm, onClick = onConfirm)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = onCancel))
+            ActionButton(ActionButtonState.Neutral(confirm, onClick = onConfirm))
         },
     ) {
         Column(

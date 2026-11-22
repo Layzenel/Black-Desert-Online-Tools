@@ -23,11 +23,35 @@ data class AppColors(
     val titleBarLight: Color,
     val titleBarHighlight: Color,
 
+    // Рамка окна, как у окон игры: тонкая тёмная снаружи, светлая бронзовая внутри
+    val windowOutline: Color,
+    val windowFrame: Color,
+
     // Кнопки
     val button: Color,
     val buttonHover: Color,
     val buttonPressed: Color,
     val buttonBorder: Color,
+
+    // Кнопка положительного действия (применить, сохранить, OK): бронза темнеет к середине и снова светлеет книзу,
+    // сверху светлая кромка
+    val buttonPositiveTop: Color,
+    val buttonPositiveMiddle: Color,
+    val buttonPositiveBottom: Color,
+    val buttonPositiveEdge: Color,
+
+    // Кнопка опасного действия (удалить): тёмно-красная бронза темнеет книзу
+    val buttonNegativeTop: Color,
+    val buttonNegativeBottom: Color,
+
+    // Вариант с индикатором ([OptionButton]): подложка и рамка невыбранного, квадратик-индикатор и его отметка
+    val option: Color,
+    val optionBorder: Color,
+    val indicator: Color,
+    val indicatorBorder: Color,
+    val indicatorBorderSelected: Color,
+    val indicatorMark: Color,
+    val indicatorMarkShade: Color,
 
     // Линии
     val border: Color,
@@ -41,6 +65,8 @@ data class AppColors(
     val textMuted: Color,
     val textDisabled: Color,
     val textButton: Color,
+    /** Подпись выбранного варианта. */
+    val textSelected: Color,
     /** Заметка персонажа, как оранжевая подпись в окне «Персонажи аккаунта» игры. */
     val textNote: Color,
 
@@ -81,10 +107,28 @@ val DefaultAppColors = AppColors(
     titleBarLight = Color(0xFF85693F),
     titleBarHighlight = Color(0xFFC0A850),
 
+    windowOutline = Color(0xFF151C24),
+    windowFrame = Color(0xFF6A593E),
+
     button = Color(0xFF44444E),
     buttonHover = Color(0xFF52525D),
     buttonPressed = Color(0xFF38383F),
     buttonBorder = Color(0xFF4E4F56),
+
+    buttonPositiveTop = Color(0xFF9F7B59),
+    buttonPositiveMiddle = Color(0xFF704E38),
+    buttonPositiveBottom = Color(0xFF8C6144),
+    buttonPositiveEdge = Color(0xFFD3A477),
+    buttonNegativeTop = Color(0xFF603730),
+    buttonNegativeBottom = Color(0xFF442620),
+
+    option = Color(0xFF38383D),
+    optionBorder = Color(0xFF4A4A4F),
+    indicator = Color(0xFF292929),
+    indicatorBorder = Color(0xFF4C4E58),
+    indicatorBorderSelected = Color(0xFF7E6454),
+    indicatorMark = Color(0xFFFFF2E0),
+    indicatorMarkShade = Color(0xFFE4C89F),
 
     border = Color(0xFF39393F),
     borderSelected = Color(0xFF685048),
@@ -96,6 +140,7 @@ val DefaultAppColors = AppColors(
     textMuted = Color(0xFFA89068),
     textDisabled = Color(0xFF686868),
     textButton = Color(0xFFE8E8E8),
+    textSelected = Color(0xFFF3D7AD),
     textNote = Color(0xFFE0783C),
 
     accentGold = Color(0xFFF8C038),

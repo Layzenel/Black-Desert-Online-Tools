@@ -12,7 +12,8 @@ import com.layzen.bdotools.composable.resources.overlay_tab_settings
 private const val SETTINGS_ORDER = Int.MIN_VALUE
 
 /**
- * Всё поверх игры в настольной версии: окна фич из [contributions] и одна кнопка меню оверлея с их вкладками.
+ * Всё поверх игры в настольной версии: окна фич из [contributions], кнопка меню оверлея и само меню с их вкладками
+ * (кнопка и меню — отдельные окна, каждое двигается само).
  * Пункты [OverlayContribution.settings] всех фич собираются в одну вкладку «Настройки» — первую.
  * Ставится в корень приложения рядом с окном программы, а не внутри него: свёрнутое в трей окно не перерисовывается.
  * [onOpenApp] — развернуть программу на вкладке с маршрутом из [OverlayContribution.id].
@@ -28,7 +29,8 @@ fun OverlayHost(contributions: List<OverlayContribution>, onOpenApp: (id: String
         .sortedBy { it.second.order }
     if (tabs.isEmpty()) return
     var open by remember { mutableStateOf(false) }
-    OverlayMenuWindow(open) { dragModifier, alignEnd, gameElevated ->
-        OverlayMenu(tabs, open, { open = it }, onOpenApp, dragModifier, alignEnd, gameElevated)
+    OverlayMenuWindow(open) { dragModifier, gameElevated -> OverlayMenuButton(open, { open = it }, dragModifier, gameElevated) }
+    OverlayPanelWindow(open) { dragModifier, alignEnd ->
+        if (open) OverlayMenuPanel(tabs, onOpenApp, onClose = { open = false }, dragModifier, alignEnd)
     }
 }

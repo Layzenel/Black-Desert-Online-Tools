@@ -25,6 +25,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_color
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_colors_title
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_apply
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.Skeleton
@@ -44,8 +45,8 @@ internal fun DecorationColorsDialog(state: DecorationColorsState, decorator: Por
         onDismissRequest = close,
         modifier = Modifier.width(PortraitsDimens.colorsDialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.portraits_cancel), onClick = close)
-            ActionButton(stringResource(Res.string.portraits_editor_apply), onClick = { onEvent(PortraitsEvent.ApplyDecorationColors) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = close))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.portraits_editor_apply), onClick = { onEvent(PortraitsEvent.ApplyDecorationColors) }))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {

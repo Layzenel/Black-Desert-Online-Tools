@@ -35,6 +35,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_title
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_warning
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.LoadingRow
@@ -57,14 +58,16 @@ internal fun NotesSyncDialog(state: NotesSyncDialogState, portraits: List<Portra
         onDismissRequest = close,
         modifier = Modifier.width(PortraitsDimens.notesDialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.portraits_cancel), onClick = close)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = close))
             when {
                 state.gameRunning == true ->
-                    ActionButton(stringResource(Res.string.portraits_notes_recheck), onClick = { onEvent(PortraitsEvent.OpenNotesSync) })
+                    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_notes_recheck), onClick = { onEvent(PortraitsEvent.OpenNotesSync) }))
                 !changes.isNullOrEmpty() -> ActionButton(
-                    stringResource(Res.string.portraits_notes_apply),
-                    onClick = { onEvent(PortraitsEvent.ApplyNotesSync) },
-                    enabled = state.canApply,
+                    ActionButtonState.Positive(
+                        stringResource(Res.string.portraits_notes_apply),
+                        enabled = state.canApply,
+                        onClick = { onEvent(PortraitsEvent.ApplyNotesSync) },
+                    ),
                 )
             }
         },

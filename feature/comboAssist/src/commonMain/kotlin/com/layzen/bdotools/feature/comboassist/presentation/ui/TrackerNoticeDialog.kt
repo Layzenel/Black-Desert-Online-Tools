@@ -31,6 +31,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_notice_tip_resync
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_tips
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_title
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.BulletList
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.SectionHeader
@@ -62,7 +63,7 @@ internal fun TrackerNoticeDialog(onClose: () -> Unit) {
         title = stringResource(Res.string.combo_notice_title),
         onDismissRequest = onClose,
         modifier = Modifier.width(ComboDimens.noticeWidth),
-        footer = { ActionButton(stringResource(Res.string.combo_notice_ok), onClick = onClose) },
+        footer = { ActionButton(ActionButtonState.Positive(stringResource(Res.string.combo_notice_ok), onClick = onClose)) },
     ) {
         val scroll = rememberScrollState()
         Column(

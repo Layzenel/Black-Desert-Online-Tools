@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.GameWindow
 import com.layzen.bdotools.uikit.components.LinkText
 import com.layzen.bdotools.uikit.components.Skeleton
@@ -38,8 +39,8 @@ internal fun FeedbackSample(modifier: Modifier) {
         title = stringResource(Res.string.showcase_feedback_title),
         modifier = modifier,
         footer = {
-            ActionButton(stringResource(Res.string.showcase_feedback_show_error), onClick = { toast = true })
-            ActionButton(stringResource(Res.string.showcase_feedback_show), onClick = { toast = false })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_feedback_show_error), onClick = { toast = true }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_feedback_show), onClick = { toast = false }))
         },
     ) {
         Column(

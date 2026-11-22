@@ -33,6 +33,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favor
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_sets
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_title
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.LoadingRow
@@ -52,17 +53,21 @@ internal fun FavoritesDialog(state: FavoritesDialogState, onEvent: (PortraitsEve
         onDismissRequest = { onEvent(PortraitsEvent.CloseFavorites) },
         modifier = Modifier.width(PortraitsDimens.restoreDialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.portraits_favorites_close), onClick = { onEvent(PortraitsEvent.CloseFavorites) })
-            ActionButton(stringResource(Res.string.portraits_favorites_save), onClick = { onEvent(PortraitsEvent.SaveFavorites) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_favorites_close), onClick = { onEvent(PortraitsEvent.CloseFavorites) }))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.portraits_favorites_save), onClick = { onEvent(PortraitsEvent.SaveFavorites) }))
             ActionButton(
-                stringResource(Res.string.portraits_favorites_replace),
-                onClick = { onEvent(PortraitsEvent.RequestReplaceFavorite) },
-                enabled = state.selectedSet != null,
+                ActionButtonState.Neutral(
+                    stringResource(Res.string.portraits_favorites_replace),
+                    enabled = state.selectedSet != null,
+                    onClick = { onEvent(PortraitsEvent.RequestReplaceFavorite) },
+                ),
             )
             ActionButton(
-                stringResource(Res.string.portraits_favorites_apply),
-                onClick = { onEvent(PortraitsEvent.ApplyFavorite) },
-                enabled = state.selectedSet != null,
+                ActionButtonState.Positive(
+                    stringResource(Res.string.portraits_favorites_apply),
+                    enabled = state.selectedSet != null,
+                    onClick = { onEvent(PortraitsEvent.ApplyFavorite) },
+                ),
             )
         },
     ) {

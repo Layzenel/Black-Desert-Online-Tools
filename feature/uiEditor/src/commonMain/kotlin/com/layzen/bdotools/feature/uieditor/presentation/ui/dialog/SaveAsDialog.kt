@@ -20,6 +20,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_replace
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_replace
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect
 import com.layzen.bdotools.uikit.components.InputField
@@ -40,11 +41,13 @@ internal fun SaveAsDialog(dialog: SlotsDialog.SaveAs, presets: List<String>, onE
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.slots_cancel), onClick = close)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
             ActionButton(
-                stringResource(if (replacing) Res.string.slots_save_replace else Res.string.slots_save),
-                onClick = { onEvent(SlotsEvent.ConfirmSaveAs) },
-                enabled = dialog.name.isNotBlank(),
+                ActionButtonState.Positive(
+                    stringResource(if (replacing) Res.string.slots_save_replace else Res.string.slots_save),
+                    enabled = dialog.name.isNotBlank(),
+                    onClick = { onEvent(SlotsEvent.ConfirmSaveAs) },
+                ),
             )
         },
     ) {

@@ -24,6 +24,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_import_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_unsupported_version
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_wrong_format
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.ModalWindow
@@ -44,13 +45,15 @@ internal fun ImportDialog(dialog: SlotsDialog.Import, onEvent: (SlotsEvent) -> U
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.slots_import_file), onClick = { onEvent(SlotsEvent.ImportFromFile) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_import_file), onClick = { onEvent(SlotsEvent.ImportFromFile) }))
             Spacer(Modifier.weight(1f))
-            ActionButton(stringResource(Res.string.slots_cancel), onClick = close)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
             ActionButton(
-                stringResource(Res.string.slots_import_next),
-                onClick = { onEvent(SlotsEvent.ConfirmImport) },
-                enabled = dialog.text.isNotBlank(),
+                ActionButtonState.Positive(
+                    stringResource(Res.string.slots_import_next),
+                    enabled = dialog.text.isNotBlank(),
+                    onClick = { onEvent(SlotsEvent.ConfirmImport) },
+                ),
             )
         },
     ) {

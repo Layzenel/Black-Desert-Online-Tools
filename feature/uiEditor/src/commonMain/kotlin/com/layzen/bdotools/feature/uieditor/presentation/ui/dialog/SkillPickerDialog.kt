@@ -48,6 +48,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_skill_search
 import com.layzen.bdotools.feature.uieditor.resources.slots_stance_awakening
 import com.layzen.bdotools.feature.uieditor.resources.slots_stance_succession
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect
@@ -87,7 +88,7 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
             .widthIn(min = widest)
             .width(IntrinsicSize.Max)
             .onSizeChanged { size -> with(density) { size.width.toDp() }.let { if (it > widest) widest = it } },
-        footer = { ActionButton(stringResource(Res.string.slots_cancel), onClick = close) },
+        footer = { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close)) },
         aside = tooltipSkill?.let { skillNo -> { TooltipPanel { SkillTooltip(skillNo, skills, onEvent) } } },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
