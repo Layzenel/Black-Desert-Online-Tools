@@ -23,6 +23,7 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.common.CrossIcon
 import com.layzen.bdotools.feature.comboassist.resources.combo_activation_title
 import com.layzen.bdotools.feature.comboassist.resources.combo_names_language
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.HoverTooltip
 import com.layzen.bdotools.uikit.components.OptionButton
 import com.layzen.bdotools.uikit.components.SectionHeader
@@ -58,7 +59,7 @@ internal fun ActivationPicker(skillNo: Int, chosen: Set<String>?, onEvent: (Comb
                 if (actions.isNotEmpty()) onEvent(ComboEvent.SetKeyVariant(actions))
             }
         } else {
-            ActionButton(stringResource(if (custom != null) Res.string.combo_activation_rerecord else Res.string.combo_activation_record), { recording = true })
+            ActionButton(ActionButtonState.Neutral(stringResource(if (custom != null) Res.string.combo_activation_rerecord else Res.string.combo_activation_record), onClick = { recording = true }))
         }
     }
 }

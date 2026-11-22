@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DropdownSelect
 import com.layzen.bdotools.uikit.components.GameWindow
 import com.layzen.bdotools.uikit.components.NavGroup
@@ -97,9 +98,9 @@ internal fun SettingsSample(modifier: Modifier) {
             )
         },
         footer = {
-            ActionButton(stringResource(Res.string.showcase_settings_apply), onClick = {})
-            ActionButton(stringResource(Res.string.showcase_settings_back), onClick = {})
-            ActionButton(stringResource(Res.string.showcase_settings_ok), onClick = {})
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_settings_apply), onClick = {}))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_settings_back), onClick = {}))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_settings_ok), onClick = {}))
         },
     ) {
         Row {
@@ -124,7 +125,7 @@ internal fun SettingsSample(modifier: Modifier) {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     SectionHeader(stringResource(Res.string.showcase_settings_screen_size), Modifier.weight(1f))
-                    ActionButton(stringResource(Res.string.showcase_settings_reset), onClick = {})
+                    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_settings_reset), onClick = {}))
                 }
                 SectionHeader(stringResource(Res.string.showcase_settings_screen))
                 OptionGroup(ScreenMode.entries, mode, { mode = it }, { stringResource(it.title) }, Modifier.fillMaxWidth())

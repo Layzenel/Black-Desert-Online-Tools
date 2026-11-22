@@ -20,6 +20,7 @@ import com.layzen.bdotools.resources.account_picker_cancel
 import com.layzen.bdotools.resources.account_picker_description
 import com.layzen.bdotools.resources.account_picker_title
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.verticalScrollbar
@@ -47,8 +48,8 @@ internal fun AccountPicker(
         modifier = Modifier.width(AccountDimens.pickerWidth),
         dismissible = onDismiss != null,
         footer = {
-            onDismiss?.let { ActionButton(stringResource(Res.string.account_picker_cancel), onClick = it) }
-            ActionButton(stringResource(Res.string.account_picker_apply), onClick = { onSelect(chosen) })
+            onDismiss?.let { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.account_picker_cancel), onClick = it)) }
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.account_picker_apply), onClick = { onSelect(chosen) }))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {

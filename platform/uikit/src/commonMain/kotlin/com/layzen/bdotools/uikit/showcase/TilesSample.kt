@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ActionMenuDivider
 import com.layzen.bdotools.uikit.components.ActionMenuItem
 import com.layzen.bdotools.uikit.components.GameWindow
@@ -47,7 +48,7 @@ internal fun TilesSample(modifier: Modifier) {
         ModalWindow(
             title = stringResource(Res.string.showcase_modal_title),
             onDismissRequest = { modalOpen = false },
-            footer = { ActionButton(stringResource(Res.string.showcase_modal_close), onClick = { modalOpen = false }) },
+            footer = { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_modal_close), onClick = { modalOpen = false })) },
         ) {
             SectionHeader(
                 stringResource(Res.string.showcase_modal_header),
@@ -60,8 +61,8 @@ internal fun TilesSample(modifier: Modifier) {
         title = stringResource(Res.string.showcase_exit_title),
         modifier = modifier,
         footer = {
-            ActionButton(stringResource(Res.string.showcase_exit_change_server), onClick = {}, modifier = Modifier.weight(1f))
-            ActionButton(stringResource(Res.string.showcase_exit_quit), onClick = {}, modifier = Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_change_server), onClick = {}), modifier = Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_quit), onClick = {}), modifier = Modifier.weight(1f))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceM), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
@@ -74,7 +75,7 @@ internal fun TilesSample(modifier: Modifier) {
                         color = AppTheme.colors.textBeige,
                     )
                 }
-                ActionButton(stringResource(Res.string.showcase_exit_select), onClick = { modalOpen = true })
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_select), onClick = { modalOpen = true }))
             }
             (0 until 2).forEach { row ->
                 Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {

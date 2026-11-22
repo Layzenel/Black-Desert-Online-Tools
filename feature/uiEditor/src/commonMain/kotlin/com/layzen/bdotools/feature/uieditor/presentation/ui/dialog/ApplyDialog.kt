@@ -31,6 +31,7 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_apply_target
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuItem
@@ -61,8 +62,8 @@ internal fun ApplyDialog(
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.slots_cancel), onClick = close)
-            ActionButton(stringResource(Res.string.slots_apply_confirm), onClick = { onEvent(SlotsEvent.ConfirmApply) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.slots_apply_confirm), onClick = { onEvent(SlotsEvent.ConfirmApply) }))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {

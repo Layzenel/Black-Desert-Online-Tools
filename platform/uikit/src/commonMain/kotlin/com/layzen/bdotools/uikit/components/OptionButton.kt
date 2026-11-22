@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
@@ -24,8 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
- * Вариант из группы (как «Полноэкран. режим / Большое окно / Окно»):
- * квадратик-чекбокс и подпись. Выбранный — коричневая подложка и светлый текст.
+ * Вариант из группы, как в настройках игры («Всегда / Никогда / Только в бою»): квадратик-индикатор и подпись.
+ * Невыбранный — серая подложка, тёмный индикатор и приглушённый текст; выбранный — коричневая подложка, светлая
+ * отметка в индикаторе и светлый текст.
  */
 @Composable
 fun OptionButton(
@@ -44,13 +46,13 @@ fun OptionButton(
             .heightIn(min = dimens.buttonHeight)
             .pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default)
             .clickable(interaction, null, enabled = enabled, role = Role.RadioButton, onClick = onClick)
-            .background(if (selected) colors.backgroundSelected else colors.backgroundSurface)
+            .background(if (selected) colors.backgroundSelected else colors.option)
             .border(
                 dimens.borderWidth,
                 when {
                     selected -> colors.borderSelected
-                    hovered && enabled -> colors.buttonBorder
-                    else -> colors.border
+                    hovered && enabled -> colors.textMuted
+                    else -> colors.optionBorder
                 },
             )
             .padding(horizontal = dimens.spaceS),
@@ -58,15 +60,19 @@ fun OptionButton(
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceS),
     ) {
         Box(
-            Modifier.size(dimens.checkboxSize).border(dimens.borderWidth, if (selected) colors.textBeige else colors.textDisabled),
+            Modifier.size(dimens.checkboxSize)
+                .background(colors.indicator)
+                .border(dimens.borderWidth, if (selected) colors.indicatorBorderSelected else colors.indicatorBorder),
             contentAlignment = Alignment.Center,
         ) {
-            if (selected) Box(Modifier.size(dimens.checkboxMarkSize).background(colors.danger))
+            if (selected) {
+                Box(Modifier.size(dimens.checkboxMarkSize).background(Brush.verticalGradient(listOf(colors.indicatorMark, colors.indicatorMarkShade))))
+            }
         }
         Text(
             text,
             style = AppTheme.typography.bodyBold,
-            color = if (selected) colors.textBeige else colors.textDisabled,
+            color = if (selected) colors.textSelected else colors.textDisabled,
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(1f),
             maxLines = 1,

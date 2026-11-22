@@ -28,6 +28,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_resto
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_uncheck_all
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_warning
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -70,12 +71,14 @@ internal fun AllRestore(state: RestoreDialogState, onEvent: (PortraitsEvent) -> 
                     description = stringResource(Res.string.portraits_restore_description_all),
                     warning = stringResource(Res.string.portraits_restore_warning),
                 )
-                ActionButton(stringResource(Res.string.portraits_restore_check_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(true)) })
-                ActionButton(stringResource(Res.string.portraits_restore_uncheck_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(false)) })
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_restore_check_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(true)) }))
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_restore_uncheck_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(false)) }))
                 if (state.marked.isNotEmpty()) {
                     ActionButton(
-                        stringResource(Res.string.portraits_delete_marked, state.marked.size),
-                        onClick = { onEvent(PortraitsEvent.RequestDeleteBackups) },
+                        ActionButtonState.Neutral(
+                            stringResource(Res.string.portraits_delete_marked, state.marked.size),
+                            onClick = { onEvent(PortraitsEvent.RequestDeleteBackups) },
+                        ),
                     )
                 }
             }

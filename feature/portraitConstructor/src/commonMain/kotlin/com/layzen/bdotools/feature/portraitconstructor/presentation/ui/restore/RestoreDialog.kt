@@ -24,6 +24,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_resto
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_title_all
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_title_one
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.LoadingRow
 import com.layzen.bdotools.uikit.components.ModalWindow
@@ -45,15 +46,17 @@ internal fun RestoreDialog(state: RestoreDialogState, portraits: List<PortraitIt
         modifier = Modifier.width(if (single != null) PortraitsDimens.restoreOneDialogWidth else PortraitsDimens.restoreDialogWidth),
         footer = {
             if (state.isLoadingPreviews) LoadingRow(stringResource(Res.string.portraits_restore_loading), Modifier.weight(1f))
-            ActionButton(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseRestore) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseRestore) }))
             ActionButton(
-                if (single != null) {
-                    stringResource(Res.string.portraits_restore_apply)
-                } else {
-                    stringResource(Res.string.portraits_restore_apply_count, restoreCount)
-                },
-                onClick = { onEvent(PortraitsEvent.ApplyRestore) },
-                enabled = state.selected != null && restoreCount > 0,
+                ActionButtonState.Positive(
+                    if (single != null) {
+                        stringResource(Res.string.portraits_restore_apply)
+                    } else {
+                        stringResource(Res.string.portraits_restore_apply_count, restoreCount)
+                    },
+                    enabled = state.selected != null && restoreCount > 0,
+                    onClick = { onEvent(PortraitsEvent.ApplyRestore) },
+                ),
             )
         },
     ) {

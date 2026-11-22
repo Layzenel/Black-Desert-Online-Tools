@@ -30,6 +30,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_sourc
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_url_load
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_url_placeholder
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.LoadingRow
 import com.layzen.bdotools.uikit.components.ModalWindow
@@ -53,9 +54,11 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
         dismissible = !state.isLoading,
         footer = {
             ActionButton(
-                stringResource(Res.string.portraits_cancel),
-                onClick = { onEvent(PortraitsEvent.CloseSource) },
-                enabled = !state.isLoading,
+                ActionButtonState.Neutral(
+                    stringResource(Res.string.portraits_cancel),
+                    enabled = !state.isLoading,
+                    onClick = { onEvent(PortraitsEvent.CloseSource) },
+                ),
             )
         },
     ) {
@@ -70,9 +73,11 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                     description = stringResource(Res.string.portraits_source_device_description),
                 )
                 ActionButton(
-                    stringResource(Res.string.portraits_source_device_pick),
-                    onClick = { onEvent(PortraitsEvent.PickFromDevice) },
-                    enabled = !state.isLoading,
+                    ActionButtonState.Neutral(
+                        stringResource(Res.string.portraits_source_device_pick),
+                        enabled = !state.isLoading,
+                        onClick = { onEvent(PortraitsEvent.PickFromDevice) },
+                    ),
                 )
             }
             SectionDivider()
@@ -83,9 +88,11 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                     description = stringResource(Res.string.portraits_source_clipboard_description),
                 )
                 ActionButton(
-                    stringResource(Res.string.portraits_source_clipboard_paste),
-                    onClick = { onEvent(PortraitsEvent.PasteFromClipboard) },
-                    enabled = !state.isLoading,
+                    ActionButtonState.Neutral(
+                        stringResource(Res.string.portraits_source_clipboard_paste),
+                        enabled = !state.isLoading,
+                        onClick = { onEvent(PortraitsEvent.PasteFromClipboard) },
+                    ),
                 )
             }
             SectionDivider()
@@ -101,9 +108,11 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                     modifier = Modifier.weight(1f),
                 )
                 ActionButton(
-                    stringResource(Res.string.portraits_source_url_load),
-                    onClick = { onEvent(PortraitsEvent.LoadFromUrl) },
-                    enabled = !state.isLoading && state.url.isNotBlank(),
+                    ActionButtonState.Neutral(
+                        stringResource(Res.string.portraits_source_url_load),
+                        enabled = !state.isLoading && state.url.isNotBlank(),
+                        onClick = { onEvent(PortraitsEvent.LoadFromUrl) },
+                    ),
                     modifier = Modifier.defaultMinSize(minWidth = PortraitsDimens.urlButtonMinWidth),
                 )
             }

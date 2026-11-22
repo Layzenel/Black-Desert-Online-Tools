@@ -22,6 +22,7 @@ import com.layzen.bdotools.uikit.components.ContextMenu
 import com.layzen.bdotools.uikit.components.onSecondaryClick
 import com.layzen.bdotools.uikit.components.ActionBar
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.MenuAction
@@ -61,11 +62,11 @@ internal fun ToolPageSample(modifier: Modifier) {
             )
             MenuAction(stringResource(Res.string.showcase_page_disabled), onClick = {}, enabled = false)
         },
-        sidebarFooter = { ActionButton(stringResource(Res.string.showcase_page_apply), onClick = {}, modifier = Modifier.fillMaxWidth()) },
+        sidebarFooter = { ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}), modifier = Modifier.fillMaxWidth()) },
     ) {
         Column {
             ActionBar {
-                ActionButton(stringResource(Res.string.showcase_page_undo), onClick = {})
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_undo), onClick = {}))
                 ToolbarDivider()
                 ToolbarButton(
                     painterResource(Res.drawable.showcase_tool),
@@ -74,7 +75,7 @@ internal fun ToolPageSample(modifier: Modifier) {
                     selected = mode,
                 )
                 Spacer(Modifier.weight(1f))
-                ActionButton(stringResource(Res.string.showcase_page_apply), onClick = {})
+                ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}))
             }
             Box(Modifier.fillMaxSize().onSecondaryClick { menuAt = it }) {
                 DescriptionText(stringResource(Res.string.showcase_page_body), Modifier.padding(AppTheme.dimens.spaceL))

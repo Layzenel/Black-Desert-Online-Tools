@@ -11,6 +11,7 @@ import com.layzen.bdotools.resources.window_close_text
 import com.layzen.bdotools.resources.window_close_title
 import com.layzen.bdotools.resources.window_close_tray
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
@@ -23,8 +24,8 @@ internal fun CloseChoiceDialog(onTray: () -> Unit, onExit: () -> Unit, onDismiss
         onDismissRequest = onDismiss,
         modifier = Modifier.width(WindowDimens.closeDialogWidth),
         footer = {
-            ActionButton(stringResource(Res.string.window_close_exit), onClick = onExit)
-            ActionButton(stringResource(Res.string.window_close_tray), onClick = onTray)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_exit), onClick = onExit))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_tray), onClick = onTray))
         },
     ) {
         Text(

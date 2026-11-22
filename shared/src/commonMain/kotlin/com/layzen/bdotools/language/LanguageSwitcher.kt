@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.layzen.bdotools.core.language.AppLanguage
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.OptionsMenu
 
 /**
@@ -18,7 +19,7 @@ import com.layzen.bdotools.uikit.components.OptionsMenu
 internal fun LanguageSwitcher(selected: AppLanguage, onSelect: (AppLanguage) -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
-        ActionButton(selected.tag.uppercase(), onClick = { open = true })
+        ActionButton(ActionButtonState.Neutral(selected.tag.uppercase(), onClick = { open = true }))
         OptionsMenu(
             expanded = open,
             onDismissRequest = { open = false },

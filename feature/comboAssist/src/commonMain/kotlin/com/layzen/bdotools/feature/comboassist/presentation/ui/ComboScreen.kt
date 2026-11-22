@@ -2,7 +2,6 @@ package com.layzen.bdotools.feature.comboassist.presentation.ui
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,6 +63,8 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_untitled
 import com.layzen.bdotools.feature.comboassist.resources.combo_warning_chain
 import com.layzen.bdotools.feature.comboassist.resources.combo_warning_empty
 import com.layzen.bdotools.uikit.components.ActionBar
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.OptionGroup
@@ -109,11 +110,6 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         sidebarWidth = ComboDimens.sidebarWidth,
         sidebar = { ComboSidebarContent(state, onEvent, loadDetails) },
         sidebarFooter = {
-            // отмена и повтор правок — как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
-            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-                ToolbarButton(painterResource(Res.drawable.menu_undo), stringResource(Res.string.combo_undo_tooltip), { onEvent(ComboEvent.Undo) }, enabled = state.canUndo)
-                ToolbarButton(painterResource(Res.drawable.menu_redo), stringResource(Res.string.combo_redo_tooltip), { onEvent(ComboEvent.Redo) }, enabled = state.canRedo)
-            }
             if (canWatchGame) MenuAction(stringResource(Res.string.combo_notice_open), { onEvent(ComboEvent.ShowTrackerNotice) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_info))
             if (state.importFailed) WarningText(stringResource(Res.string.combo_import_failed))
             MenuAction(stringResource(Res.string.combo_import), { onEvent(ComboEvent.ImportCombos) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_import))
@@ -121,14 +117,31 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
             if (state.combo?.rage != null) {
                 MenuAction(stringResource(Res.string.combo_rage_remove), { onEvent(ComboEvent.RemoveRage) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_delete))
             }
-            MenuAction(stringResource(Res.string.combo_delete), { onEvent(ComboEvent.AskDelete) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_delete), enabled = state.combo != null)
-            MenuAction(stringResource(if (state.dirty) Res.string.combo_save_dirty else Res.string.combo_save), { onEvent(ComboEvent.Save) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_save), enabled = state.combo != null)
+            ActionButton(
+                ActionButtonState.Negative(stringResource(Res.string.combo_delete), enabled = state.combo != null, onClick = { onEvent(ComboEvent.AskDelete) }),
+                Modifier.fillMaxWidth(),
+                icon = painterResource(Res.drawable.menu_delete),
+            )
+            ActionButton(
+                ActionButtonState.Positive(
+                    stringResource(if (state.dirty) Res.string.combo_save_dirty else Res.string.combo_save),
+                    enabled = state.combo != null,
+                    onClick = { onEvent(ComboEvent.Save) },
+                ),
+                Modifier.fillMaxWidth(),
+                icon = painterResource(Res.drawable.menu_save),
+            )
         },
     ) {
         Column(Modifier.fillMaxSize()) {
             // настройка оверлея есть только в настольной версии: на сайте остаётся один редактор и переключать нечего
             if (canWatchGame) ActionBar {
                 OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
+            }
+            // отмена и повтор правок — под табами, как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
+            ActionBar {
+                ToolbarButton(painterResource(Res.drawable.menu_undo), stringResource(Res.string.combo_undo_tooltip), { onEvent(ComboEvent.Undo) }, enabled = state.canUndo)
+                ToolbarButton(painterResource(Res.drawable.menu_redo), stringResource(Res.string.combo_redo_tooltip), { onEvent(ComboEvent.Redo) }, enabled = state.canRedo)
             }
             Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceL),

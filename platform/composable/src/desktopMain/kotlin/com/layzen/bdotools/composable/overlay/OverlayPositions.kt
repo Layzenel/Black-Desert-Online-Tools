@@ -1,6 +1,7 @@
 package com.layzen.bdotools.composable.overlay
 
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
@@ -15,6 +16,9 @@ private const val COMBO_ID = "combo"
 
 /** Окно кнопки меню оверлея. */
 internal const val MENU_ID = "menu"
+
+/** Окно меню оверлея: двигается отдельно от кнопки. */
+internal const val PANEL_ID = "menuPanel"
 
 /** Нижний край окна у [OverlayAnchor.BottomCenter] — доля высоты экрана: выше полоски здоровья. */
 private const val BOTTOM_SHARE = 0.78f
@@ -51,6 +55,19 @@ internal fun savedMenuPosition(): WindowPosition {
     saved(MENU_ID)?.let { return it }
     val combo = savedPosition(COMBO_ID, OverlayAnchor.BottomCenter, OverlayDimens.comboWindow)
     return WindowPosition(combo.x - OverlayDimens.menuButton - OverlayDimens.menuGap, combo.y)
+}
+
+/**
+ * Меню оверлея (левый верхний угол): где его оставили, а если не двигали — под кнопкой, в правой половине экрана
+ * по её правому краю.
+ */
+internal fun savedPanelPosition(): DpOffset {
+    saved(PANEL_ID)?.let { return DpOffset(it.x, it.y) }
+    val button = savedMenuPosition()
+    val screenWidth = Toolkit.getDefaultToolkit().screenSize.width.dp
+    val rightHalf = button.x + OverlayDimens.menuButton / 2 > screenWidth / 2
+    val x = if (rightHalf) button.x + OverlayDimens.menuButton - OverlayDimens.panelWidth else button.x
+    return DpOffset(x, button.y + OverlayDimens.menuButton + OverlayDimens.menuGap)
 }
 
 /** Запоминает место окна [id] после перетаскивания. */

@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.GameWindow
 import com.layzen.bdotools.uikit.components.GroupedOptionsMenu
 import com.layzen.bdotools.uikit.components.InputField
@@ -90,7 +91,7 @@ private fun GroupedPick(selected: Int, onSelect: (Int) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     val half = menuEntries.size / 2
     Box(Modifier.padding(AppTheme.dimens.spaceS)) {
-        ActionButton(stringResource(Res.string.showcase_grouped_open), onClick = { expanded = true })
+        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_grouped_open), onClick = { expanded = true }))
         GroupedOptionsMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },

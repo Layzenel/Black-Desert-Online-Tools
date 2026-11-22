@@ -10,6 +10,7 @@ import com.layzen.bdotools.resources.update_later
 import com.layzen.bdotools.resources.web_update_available
 import com.layzen.bdotools.resources.web_update_reload
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -27,7 +28,7 @@ internal actual fun AppUpdateBanner() {
             style = AppTheme.typography.bodyBold,
             color = AppTheme.colors.accentGold,
         )
-        ActionButton(stringResource(Res.string.update_later), onClick = viewModel::postpone)
-        ActionButton(stringResource(Res.string.web_update_reload), onClick = ::reloadPage)
+        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.update_later), onClick = viewModel::postpone))
+        ActionButton(ActionButtonState.Positive(stringResource(Res.string.web_update_reload), onClick = ::reloadPage))
     }
 }

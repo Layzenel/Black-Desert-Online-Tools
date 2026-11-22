@@ -23,6 +23,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_edito
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_title_one
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_zoom
 import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.ModalWindow
 import com.layzen.bdotools.uikit.components.SectionHeader
@@ -48,9 +49,9 @@ internal fun MaskEditor(state: EditorState, onEvent: (PortraitsEvent) -> Unit) {
         onDismissRequest = { onEvent(PortraitsEvent.CloseEditor) },
         modifier = Modifier.widthIn(max = PortraitsDimens.editorMaxWidth),
         footer = {
-            ActionButton(stringResource(Res.string.portraits_editor_reset), onClick = { onEvent(PortraitsEvent.ResetPlacement) })
-            ActionButton(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseEditor) })
-            ActionButton(stringResource(Res.string.portraits_editor_apply), onClick = { onEvent(PortraitsEvent.Apply) })
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_editor_reset), onClick = { onEvent(PortraitsEvent.ResetPlacement) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseEditor) }))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.portraits_editor_apply), onClick = { onEvent(PortraitsEvent.Apply) }))
         },
     ) {
         Column(
