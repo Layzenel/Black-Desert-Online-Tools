@@ -14,6 +14,9 @@
     <string name="skill_key_rmb">ПКМ</string>
     <string name="skill_key_mmb">СКМ</string>
     <string name="skill_key_space">Пробел</string>
+    <string name="skill_key_shift_short">Sh</string>
+    <string name="skill_key_lmb_short">Л</string>
+    <string name="skill_key_rmb_short">П</string>
     <string name="overlay_panel_title">BDO Tools оверлей</string>
     <string name="overlay_tab_settings">Настройки</string>
     <string name="overlay_game_admin">Игра запущена от имени администратора</string>

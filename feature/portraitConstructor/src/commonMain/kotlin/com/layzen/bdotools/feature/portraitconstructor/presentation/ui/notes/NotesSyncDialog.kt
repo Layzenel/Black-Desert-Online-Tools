@@ -22,7 +22,9 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Portra
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_apply
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_apply_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_backup
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_changes
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_description
@@ -32,6 +34,7 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_none
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_none_hint
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_recheck
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_recheck_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_title
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_notes_warning
 import com.layzen.bdotools.uikit.components.ActionButton
@@ -58,15 +61,16 @@ internal fun NotesSyncDialog(state: NotesSyncDialogState, portraits: List<Portra
         onDismissRequest = close,
         modifier = Modifier.width(PortraitsDimens.notesDialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = close))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = close, tooltip = stringResource(Res.string.portraits_cancel_tooltip)))
             when {
                 state.gameRunning == true ->
-                    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_notes_recheck), onClick = { onEvent(PortraitsEvent.OpenNotesSync) }))
+                    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_notes_recheck), onClick = { onEvent(PortraitsEvent.OpenNotesSync) }, tooltip = stringResource(Res.string.portraits_notes_recheck_tooltip)))
                 !changes.isNullOrEmpty() -> ActionButton(
                     ActionButtonState.Positive(
                         stringResource(Res.string.portraits_notes_apply),
                         enabled = state.canApply,
                         onClick = { onEvent(PortraitsEvent.ApplyNotesSync) },
+                        tooltip = stringResource(Res.string.portraits_notes_apply_tooltip),
                     ),
                 )
             }

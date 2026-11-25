@@ -3,15 +3,16 @@ package com.layzen.bdotools.uikit.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,12 +24,13 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextAlign
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 
 /**
- * Слайдер как «Масштаб интерфейса»: подписи min/max по краям, текущее значение
- * золотом по центру, тонкая тёмная дорожка и белый ромб-ползунок. [onValueChangeFinished] — палец отпустили
+ * Компактный слайдер в одну строку: тонкая тёмная дорожка, белый ромб-ползунок и текущее значение золотом справа.
+ * [onValueChangeFinished] — палец отпустили
  * (конец перетаскивания или клик): для правок, которые по ходу жеста не копятся в историю отмены.
  * Колесо мыши над слайдером меняет значение на шаг (сотая диапазона, не меньше 1) и не прокручивает страницу;
  * каждый щелчок колеса — законченная правка: [onValueChange], затем [onValueChangeFinished].
@@ -39,7 +41,6 @@ fun ValueSlider(
     onValueChange: (Int) -> Unit,
     range: IntRange,
     modifier: Modifier = Modifier,
-    showLabels: Boolean = true,
     onValueChangeFinished: () -> Unit = {},
 ) {
     val colors = AppTheme.colors
@@ -49,7 +50,7 @@ fun ValueSlider(
     val currentValue by rememberUpdatedState(value)
     // Колесо вверх — больше; шаг — сотая диапазона, но не меньше 1. Каждый щелчок — законченная правка
     val wheelStep = ((range.last - range.first) / WHEEL_STEPS).coerceAtLeast(1)
-    Column(
+    Row(
         modifier.pointerInput(range) {
             awaitPointerEventScope {
                 while (true) {
@@ -65,19 +66,12 @@ fun ValueSlider(
                 }
             }
         },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.spaceS),
     ) {
-        if (showLabels) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-                Text(range.first.toString(), style = AppTheme.typography.bodyBold, color = colors.textPrimary)
-                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    ValueText(value.toString(), color = colors.accentGold)
-                }
-                Text(range.last.toString(), style = AppTheme.typography.bodyBold, color = colors.textPrimary)
-            }
-        }
         BoxWithConstraints(
             Modifier
-                .fillMaxWidth()
+                .weight(1f)
                 .height(dimens.sliderTouchHeight)
                 .pointerHoverIcon(PointerIcon.Hand),
             contentAlignment = Alignment.CenterStart,
@@ -91,10 +85,12 @@ fun ValueSlider(
             Box(
                 Modifier
                     .matchParentSize()
-                    .pointerInput(range, widthPx) { detectTapGestures {
+                    .pointerInput(range, widthPx) {
+                        detectTapGestures {
                             currentOnChange(valueAt(it.x))
                             currentOnFinished()
-                        } }
+                        }
+                    }
                     .pointerInput(range, widthPx) {
                         detectHorizontalDragGestures(
                             onDragEnd = { currentOnFinished() },
@@ -112,6 +108,13 @@ fun ValueSlider(
                     .background(colors.textPrimary),
             )
         }
+        Text(
+            value.toString(),
+            style = AppTheme.typography.bodyBold,
+            color = colors.accentGold,
+            textAlign = TextAlign.End,
+            modifier = Modifier.widthIn(min = dimens.sliderValueWidth),
+        )
     }
 }
 

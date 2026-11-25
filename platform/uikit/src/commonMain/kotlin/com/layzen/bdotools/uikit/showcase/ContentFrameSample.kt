@@ -28,9 +28,11 @@ import com.layzen.bdotools.uikit.resources.showcase_intro_first
 import com.layzen.bdotools.uikit.resources.showcase_intro_image
 import com.layzen.bdotools.uikit.resources.showcase_intro_second
 import com.layzen.bdotools.uikit.resources.showcase_page_apply
+import com.layzen.bdotools.uikit.resources.showcase_page_apply_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_page_body
 import com.layzen.bdotools.uikit.resources.showcase_page_menu
 import com.layzen.bdotools.uikit.resources.showcase_page_open
+import com.layzen.bdotools.uikit.resources.showcase_page_open_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_palette_default
 import com.layzen.bdotools.uikit.resources.showcase_tooltip_section
 import com.layzen.bdotools.uikit.resources.showcase_tooltip_section_body
@@ -50,8 +52,8 @@ internal fun ContentFrameSample(modifier: Modifier) {
             repeat(FRAME_TILES) { Tile(Modifier.size(ShowcaseDimens.tileSize)) { Skeleton(Modifier.matchParentSize()) } }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_open), onClick = {}), Modifier.weight(1f))
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}), Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_open), onClick = {}, tooltip = stringResource(Res.string.showcase_page_open_tooltip)), Modifier.weight(1f))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}, tooltip = stringResource(Res.string.showcase_page_apply_tooltip)), Modifier.weight(1f))
         }
         ToolIntro(
             points = listOf(stringResource(Res.string.showcase_intro_first), stringResource(Res.string.showcase_intro_second)),

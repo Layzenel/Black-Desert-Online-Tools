@@ -2,6 +2,7 @@ package com.layzen.bdotools.feature.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.layzen.bdotools.feature.settings.domain.keyhint.KeyHintsInteractor
 import com.layzen.bdotools.feature.settings.domain.startup.StartupInteractor
 import com.layzen.bdotools.feature.settings.domain.startup.StartupOptions
 import com.layzen.bdotools.feature.settings.domain.theme.ThemesInteractor
@@ -13,19 +14,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Экран настроек: раздел, настройки запуска программы и тема окон. */
+/** Экран настроек: раздел, настройки запуска программы, тема окон и вид подсказок клавиш. */
 class SettingsViewModel(
     private val startup: StartupInteractor,
     private val themes: ThemesInteractor,
+    private val keyHints: KeyHintsInteractor,
 ) : ViewModel() {
 
-    private val mutableState = MutableStateFlow(SettingsState(theme = themes.selected.value))
+    private val mutableState = MutableStateFlow(SettingsState(theme = themes.selected.value, keyHints = keyHints.selected.value))
 
     /** Состояние экрана. */
     val state: StateFlow<SettingsState> = mutableState.asStateFlow()
 
     init {
         viewModelScope.launch { themes.selected.collect { theme -> mutableState.update { it.copy(theme = theme) } } }
+        viewModelScope.launch { keyHints.selected.collect { hints -> mutableState.update { it.copy(keyHints = hints) } } }
         changeStartup { startup.options() }
     }
 
@@ -35,7 +38,9 @@ class SettingsViewModel(
             is SettingsEvent.OpenSection -> mutableState.update { it.copy(section = event.section) }
             is SettingsEvent.SetLaunchAtStartup -> changeStartup { startup.setLaunchAtStartup(event.enabled) }
             is SettingsEvent.SetAlwaysAdmin -> changeStartup { startup.setAlwaysAdmin(event.enabled) }
+            is SettingsEvent.SetStartInTray -> changeStartup { startup.setStartInTray(event.enabled) }
             is SettingsEvent.SelectTheme -> themes.select(event.theme)
+            is SettingsEvent.SelectKeyHints -> keyHints.select(event.hints)
         }
     }
 

@@ -25,6 +25,11 @@ class ComboRepositoryImpl(private val storage: ComboStorage) : ComboRepository {
         Unit
     }
 
+    override suspend fun reorder(ids: List<String>) = lock.withLock {
+        storage.write(combosJson(load().sortedBy { combo -> ids.indexOf(combo.id).takeIf { it >= 0 } ?: Int.MAX_VALUE }, loadSettings()))
+        Unit
+    }
+
     override suspend fun delete(id: String) = lock.withLock {
         storage.write(combosJson(load().filter { it.id != id }, loadSettings()))
         Unit

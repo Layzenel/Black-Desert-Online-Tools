@@ -17,7 +17,7 @@ import com.layzen.bdotools.composable.resources.overlay_panel_title
 import com.layzen.bdotools.uikit.components.WindowCloseButton
 import com.layzen.bdotools.uikit.components.windowDecorationHeight
 import com.layzen.bdotools.uikit.components.GameWindow
-import com.layzen.bdotools.uikit.components.OptionGroup
+import com.layzen.bdotools.uikit.components.TabBar
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
@@ -57,7 +57,7 @@ internal fun OverlayMenuPanel(
             actions = { WindowCloseButton(onClose) },
         ) {
             Column(Modifier.padding(AppTheme.dimens.spaceM), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
-                OptionGroup(tabs.indices.toList(), index, { selected = it }, { stringResource(tabs[it].second.title) })
+                TabBar(tabs.indices.toList(), index, { selected = it }, { stringResource(tabs[it].second.title) })
                 tab.content(scope)
             }
         }

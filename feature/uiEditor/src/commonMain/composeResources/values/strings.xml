@@ -4,6 +4,7 @@
     <string name="slots_unsupported_title">Браузер не поддерживается</string>
     <string name="slots_unsupported_description">Сайту нужен доступ к папке игры, а он есть только в Chrome, Edge, Opera и Яндекс.Браузере.</string>
     <string name="slots_folder_title">Папка игры</string>
+    <string name="slots_folder_button_tooltip">Дать программе доступ к папке игры</string>
     <string name="slots_folder_description">Выберите папку «Документы\\Black Desert» — в ней лежат настройки интерфейса (UserCache\\…\\gamevariable.xml).</string>
     <string name="slots_folder_select">Выбрать папку</string>
     <string name="slots_permission_description">Подтвердите доступ к папке «%1$s», чтобы читать и менять раскладку слотов.</string>
@@ -29,12 +30,15 @@
     <string name="slots_grid_off">Х</string>
     <string name="slots_grid_size">%1$d</string>
     <string name="slots_background">Подложка</string>
-    <string name="slots_background_description">Свой скриншот игры, сделанный со скрытым интерфейсом, упростит размещение элементов.</string>
     <string name="slots_background_pick">Выбрать</string>
     <string name="slots_background_hide">Спрятать</string>
     <string name="slots_background_show">Показать</string>
     <string name="slots_background_hide_preview">Спрятать подложку</string>
     <string name="slots_background_show_preview">Показать подложку</string>
+    <string name="slots_preview_background_tooltip">Показать или скрыть фоновую картинку в просмотре</string>
+    <string name="slots_background_pick_tooltip">Выберите свой скриншот игры со скрытым интерфейсом: он ляжет под раскладку</string>
+    <string name="slots_background_hide_tooltip">Убрать подложку с холста; картинка останется</string>
+    <string name="slots_background_show_tooltip">Вернуть подложку на холст</string>
     <string name="slots_background_dim">Затенение, %</string>
 
     <!-- Выбранный слот -->
@@ -81,8 +85,11 @@
     <string name="slots_import_character_description">Умения в раскладке — класса «%1$s». Отметьте персонажей этого класса или без умений в слотах: их слоты перезарядки заменятся импортом, а «Применить» запишет умения всем отмеченным.</string>
     <string name="slots_import_character_none">Подходящего персонажа нет: класс персонажа узнаётся по умениям в его слотах.</string>
     <string name="slots_import_without_skills">Без умений</string>
+    <string name="slots_import_without_skills_tooltip">Импортировать персонажей, не перенося умения</string>
     <string name="slots_import_characters_confirm">Импортировать</string>
+    <string name="slots_import_characters_confirm_tooltip">Импортировать выбранных персонажей</string>
     <string name="slots_apply_skills">Слоты перезарядки у выбранных персонажей изменились. Снимите метку, чтобы не применять изменения.</string>
+    <string name="slots_apply_chat_lock">Если на чате в игре стоит замочек, игра оставит его на прежнем месте и размере. Снимите замочек в игре перед применением.</string>
     <string name="slots_apply_changed_skills">Умения</string>
     <string name="slots_apply_changed_memos">Заметки</string>
     <string name="slots_apply_changed_both">Умения и заметки</string>
@@ -131,7 +138,9 @@
     <string name="slots_split_hp_description">Как одноимённая настройка игры: включено — здоровье, PVP и гнев Черного духа отдельно, выключено — одна неподвижная панель слева вверху.</string>
     <string name="slots_legend_off_screen">за краем экрана</string>
     <string name="slots_undo">Отменить</string>
+    <string name="slots_preview_undo_tooltip">Отменить последнее изменение в просмотре</string>
     <string name="slots_redo">Повторить</string>
+    <string name="slots_preview_redo_tooltip">Вернуть отменённое изменение</string>
 
     <!-- Панель инструментов -->
     <string name="slots_snap_to_slots">Связка слотов</string>
@@ -187,27 +196,35 @@
 
     <!-- Панель действий -->
     <string name="slots_apply">Применить в игру</string>
+    <string name="slots_apply_tooltip">Записать изменения в файлы игры</string>
 
     <!-- Окна -->
     <string name="slots_cancel">Отмена</string>
+    <string name="slots_confirm_tooltip">Выполнить действие, о котором сказано в окне</string>
+    <string name="slots_cancel_tooltip">Закрыть окно, ничего не меняя</string>
     <string name="slots_save">Сохранить</string>
+    <string name="slots_memo_save_tooltip">Сохранить заметку</string>
     <string name="slots_save_as_title">Сохранить пресет</string>
     <string name="slots_save_as_name">Название</string>
     <string name="slots_save_as_description">Введите новое название или выберите свой пресет в списке, чтобы заменить его текущей раскладкой.</string>
     <string name="slots_save_as_replace">Заменить пресет</string>
     <string name="slots_save_replace">Заменить</string>
+    <string name="slots_save_as_confirm_tooltip">Сохранить настройки интерфейса в пресет под введённым названием</string>
     <string name="slots_import_title">Импорт раскладки</string>
     <string name="slots_import_description">Вставьте содержимое файла .json или выберите сам файл. Элементы встанут от прицела и углов экрана так же, как у автора, даже если у него другой монитор. Группы, которых нет в файле, не изменятся.</string>
     <string name="slots_import_file">Выбрать файл</string>
+    <string name="slots_import_file_tooltip">Загрузить настройки интерфейса из файла</string>
     <string name="slots_import_confirm">Импорт</string>
     <string name="slots_import_next">Далее</string>
+    <string name="slots_import_next_tooltip">Перейти к просмотру импортируемых настроек</string>
     <string name="slots_import_not_json">Не получилось прочитать JSON.</string>
     <string name="slots_import_wrong_format">Это не файл раскладки BDO Tools.</string>
     <string name="slots_import_unsupported_version">Файл из более новой версии BDO Tools — обновите сайт или программу.</string>
     <string name="slots_apply_title">Применить в игру</string>
     <string name="slots_apply_description">Полностью закройте игру: пока она запущена, она перезапишет файл своими значениями. Перед записью сохранится копия gamevariable.xml в «BDO Tools\\uiEditor\\&lt;аккаунт&gt;\\backups».</string>
     <string name="slots_apply_confirm">Игра закрыта, применить</string>
-    <string name="slots_apply_target">Куда записать</string>
+    <string name="slots_apply_confirm_tooltip">Записать изменения в файлы выбранных персонажей</string>
+    <string name="slots_apply_target">Куда записать (можно несколько)</string>
     <string name="slots_game_preset">Пресеты в игре</string>
     <string name="slots_game_preset_hint">Наборы позиций из окна «Редактирование интерфейса» игры: общий или «Пресет 1–3». Выбранный откроется в редакторе.</string>
     <string name="slots_presets_hint">Раскладка из файла игры и готовые раскладки слотов перезарядки.</string>
@@ -217,15 +234,19 @@
     <string name="slots_preview_import_title">Превью импорта</string>
     <string name="slots_preview_export_title">Превью экспорта</string>
     <string name="slots_preview_export_confirm">Экспорт</string>
+    <string name="slots_preview_confirm_tooltip">Подтвердить импорт или экспорт отмеченных элементов</string>
     <string name="slots_preview_screen">Монитор для просмотра</string>
     <string name="slots_preview_screen_description">Только для просмотра: так раскладка ляжет на чужой монитор. В файл она попадёт с якорями и у получателя встанет по его экрану.</string>
     <string name="slots_preview_resolution">Разрешение</string>
     <string name="slots_preview_resolution_value">%1$d × %2$d</string>
     <string name="slots_preview_scale">Масштаб интерфейса</string>
     <string name="slots_preview_reset_screen">Мой экран</string>
+    <string name="slots_preview_reset_screen_tooltip">Вернуть размер экрана, как в игре</string>
     <string name="slots_preview_elements">Элементы</string>
     <string name="slots_preview_include_all">Выбрать всё</string>
+    <string name="slots_preview_include_all_tooltip">Отметить все элементы</string>
     <string name="slots_preview_exclude_all">Снять всё</string>
+    <string name="slots_preview_exclude_all_tooltip">Снять отметку со всех элементов</string>
     <string name="slots_preview_hint">Колесо мыши — масштаб. Клик по элементу — отметить или снять, зажатая ЛКМ по пустому месту — обвести рамкой: отметит задетые, а если все они уже отмечены — снимет. Shift или Пробел + ЛКМ либо средняя кнопка мыши — сдвиг. Ctrl+Z — отменить. Тусклые элементы не попадут в файл.</string>
     <string name="slots_group_cooldown">Перезарядка</string>
     <string name="slots_group_hotbar">Хотбар</string>
@@ -262,7 +283,6 @@
 
     <!-- Разделы меню слева -->
     <string name="slots_game_settings">Настройки как в игре</string>
-    <string name="slots_view">Вид</string>
     <string name="slots_background_aspect">Скриншот %1$d×%2$d снят не в том соотношении сторон, что экран игры %3$d×%4$d: подложка не совпадёт с раскладкой.</string>
 
     <!-- Низ меню слева -->
@@ -276,6 +296,7 @@
     <string name="slots_notice_apply_undone">Файлы игры возвращены к состоянию до применения.</string>
 
     <!-- Подсказки: история правок и работа с файлом раскладки -->
+    <string name="slots_discard_tooltip">Сбросить все несохранённые правки к раскладке из файла игры</string>
     <string name="slots_undo_tooltip">Отменить (Ctrl+Z)</string>
     <string name="slots_redo_tooltip">Повторить (Ctrl+Y или Ctrl+Shift+Z)</string>
     <string name="slots_import_tooltip">Импорт: раскладка из файла или текста другого игрока</string>
@@ -287,6 +308,7 @@
 
     <!-- Экспорт текстом -->
     <string name="slots_preview_copy">Копировать текстом</string>
+    <string name="slots_preview_copy_tooltip">Скопировать картинку просмотра в буфер обмена</string>
     <string name="slots_notice_layout_copied">Раскладка скопирована. Вставьте её в чат — другой игрок вставит текст в «Импорт».</string>
 
     <!-- Применение при запущенной игре -->

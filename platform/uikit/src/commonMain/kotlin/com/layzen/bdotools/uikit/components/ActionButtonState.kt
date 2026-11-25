@@ -22,6 +22,9 @@ sealed interface ActionButtonState {
     /** Что делать по нажатию. */
     val onClick: () -> Unit
 
+    /** Что делает кнопка — коротко, подсказкой при наведении. Есть у каждой кнопки приложения. */
+    val tooltip: String?
+
     /**
      * Обычное действие (отмена, сброс, открыть, вспомогательные): серая кнопка с лёгким градиентом, как «Назад»
      * в настройках игры; под курсором — коричневая.
@@ -32,6 +35,7 @@ sealed interface ActionButtonState {
         override val hotkey: String? = null,
         override val enabled: Boolean = true,
         override val onClick: () -> Unit,
+        override val tooltip: String? = null,
     ) : ActionButtonState
 
     /**
@@ -47,6 +51,7 @@ sealed interface ActionButtonState {
         override val hotkey: String? = null,
         override val enabled: Boolean = true,
         override val onClick: () -> Unit,
+        override val tooltip: String? = null,
     ) : ActionButtonState
 
     /**
@@ -59,6 +64,7 @@ sealed interface ActionButtonState {
         override val hotkey: String? = null,
         override val enabled: Boolean = true,
         override val onClick: () -> Unit,
+        override val tooltip: String? = null,
     ) : ActionButtonState
 
     /** Опасное действие (удалить): тёмно-красная кнопка, как корзина в игре. Недоступная — как [Neutral]. */
@@ -68,5 +74,6 @@ sealed interface ActionButtonState {
         override val hotkey: String? = null,
         override val enabled: Boolean = true,
         override val onClick: () -> Unit,
+        override val tooltip: String? = null,
     ) : ActionButtonState
 }

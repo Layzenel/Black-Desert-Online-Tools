@@ -54,11 +54,13 @@ internal class GameController(
     /** По умолчанию раскладка пишется в тот набор, который открыт в редакторе. */
     fun openApply() {
         val edited = context.current.loaded?.edited ?: return
-        context.update { it.copy(dialog = SlotsDialog.ConfirmApply(edited, gameRunning = isGameRunning() == true)) }
+        context.update { it.copy(dialog = SlotsDialog.ConfirmApply(setOf(edited), gameRunning = isGameRunning() == true)) }
     }
 
-    /** Меняет в диалоге применения набор позиций, в который запишется раскладка. */
-    fun selectApplyTarget(preset: GamePreset) = updateApplyDialog { it.copy(target = preset) }
+    /** Ставит или снимает в диалоге применения отметку набора [preset], в который запишется раскладка. */
+    fun toggleApplyTarget(preset: GamePreset) = updateApplyDialog {
+        it.copy(targets = if (preset in it.targets) it.targets - preset else it.targets + preset)
+    }
 
     /** Снимает или ставит в диалоге применения отметку персонажа [characterNo]: без отметки его слоты не запишутся. */
     fun toggleApplyCharacter(characterNo: String) = updateApplyDialog {
@@ -66,7 +68,7 @@ internal class GameController(
     }
 
     /**
-     * Записывает раскладку в выбранный набор, после записи он и открыт в редакторе. Если игра успела переписать
+     * Записывает раскладку во все отмеченные наборы, после записи открыт первый из них в редакторе. Если игра успела переписать
      * файл, ничего не пишется: перечитываем файл, но оставляем раскладку — её можно применить ещё раз, закрыв игру.
      */
     fun confirmApply() = context.launch(busy = true) {
@@ -77,12 +79,12 @@ internal class GameController(
             context.update { it.copy(dialog = dialog.copy(gameRunning = true)) }
             return@launch
         }
-        val target = dialog.target
+        val targets = dialog.targets
         context.update { it.copy(dialog = null) }
         try {
-            val backup = interactor.apply(loaded, context.current.layout, target)
+            val backup = interactor.apply(loaded, context.current.layout, targets)
             skills.write(loaded.account, dialog.skipped)
-            refresh(loaded.account, target)
+            refresh(loaded.account, targets.min())
             context.update { it.copy(activePreset = PresetRef.Game, notice = SlotsNotice.Applied(backup), canUndoApply = true) }
         } catch (e: SlotsException) {
             if (e.error == SlotsError.FileChanged) refresh(loaded.account, loaded.edited)

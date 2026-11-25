@@ -16,7 +16,9 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.core.account.GameAccount
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.account_picker_apply
+import com.layzen.bdotools.resources.account_picker_apply_tooltip
 import com.layzen.bdotools.resources.account_picker_cancel
+import com.layzen.bdotools.resources.account_picker_cancel_tooltip
 import com.layzen.bdotools.resources.account_picker_description
 import com.layzen.bdotools.resources.account_picker_title
 import com.layzen.bdotools.uikit.components.ActionButton
@@ -48,8 +50,8 @@ internal fun AccountPicker(
         modifier = Modifier.width(AccountDimens.pickerWidth),
         dismissible = onDismiss != null,
         footer = {
-            onDismiss?.let { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.account_picker_cancel), onClick = it)) }
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.account_picker_apply), onClick = { onSelect(chosen) }))
+            onDismiss?.let { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.account_picker_cancel), onClick = it, tooltip = stringResource(Res.string.account_picker_cancel_tooltip))) }
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.account_picker_apply), onClick = { onSelect(chosen) }, tooltip = stringResource(Res.string.account_picker_apply_tooltip)))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {

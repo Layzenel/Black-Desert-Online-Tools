@@ -17,13 +17,13 @@ Lay out cooldown slots and other interface elements on a canvas instead of dragg
 - Backdrop — your own game screenshot to see how the layout will look in the game, or another player's
   screenshot to place elements like they do. If the screenshot's aspect ratio differs from the game screen, the
   editor warns you.
-- Undo and redo — Ctrl+Z and Ctrl+Y (or Ctrl+Shift+Z).
+- Undo and redo — Ctrl+Z and Ctrl+Y (or Ctrl+Shift+Z); "Discard changes" returns the layout from the game file.
 
 ## Presets
 
 - **"In-game presets"** — edit the general interface set or presets 1–3 from the game's "Interface Editing" window.
 - **"Ready-made presets"** — the layout from the game file and ready-made cooldown slot layouts.
-- **"My presets"** — your saved layouts: you can overwrite one with the current layout or delete it.
+- **"My presets"** — your saved layouts: you can overwrite one with the current layout or delete it, and drag to reorder them.
 
 ## Settings as in the game
 
@@ -91,7 +91,7 @@ not written yet.
 
 ![Apply to game](screenshots/uiEditor-apply.en.png)
 
-- You can choose where to write: the general set or "Preset 1–3".
+- You can choose where to write, several at once: the general set and "Preset 1–3".
 - If skills or labels in slots changed, the window shows which characters change and what exactly.
   Uncheck a character to leave their file as it is.
 - The Windows program detects a running game and won't write until you close it.

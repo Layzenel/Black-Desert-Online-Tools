@@ -9,6 +9,8 @@ import com.layzen.bdotools.feature.settings.resources.settings_always_admin_desc
 import com.layzen.bdotools.feature.settings.resources.settings_launch_at_startup
 import com.layzen.bdotools.feature.settings.resources.settings_launch_at_startup_description
 import com.layzen.bdotools.feature.settings.resources.settings_startup_desktop_only
+import com.layzen.bdotools.feature.settings.resources.settings_start_in_tray
+import com.layzen.bdotools.feature.settings.resources.settings_start_in_tray_description
 import com.layzen.bdotools.feature.settings.resources.settings_startup_title
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToggleSwitch
@@ -35,6 +37,13 @@ internal fun GeneralSettings(state: SettingsState, onEvent: (SettingsEvent) -> U
         onCheckedChange = { onEvent(SettingsEvent.SetAlwaysAdmin(it)) },
         label = stringResource(Res.string.settings_always_admin),
         description = stringResource(Res.string.settings_always_admin_description),
+        enabled = enabled,
+    )
+    ToggleSwitch(
+        checked = startup.startInTray,
+        onCheckedChange = { onEvent(SettingsEvent.SetStartInTray(it)) },
+        label = stringResource(Res.string.settings_start_in_tray),
+        description = stringResource(Res.string.settings_start_in_tray_description),
         enabled = enabled,
     )
 }

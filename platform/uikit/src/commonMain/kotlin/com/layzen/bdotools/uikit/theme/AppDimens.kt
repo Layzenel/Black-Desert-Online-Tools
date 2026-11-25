@@ -91,9 +91,20 @@ data class AppDimens(
     val checkBoxTouchSize: Dp = 28.dp,
 
     // Слайдер
-    val sliderTouchHeight: Dp = 20.dp,
+    val sliderTouchHeight: Dp = 16.dp,
     val sliderTrackHeight: Dp = 3.dp,
-    val sliderThumbSize: Dp = 10.dp,
+    val sliderThumbSize: Dp = 9.dp,
+    // место под значение справа: соседние слайдеры одной длины, пока число не длиннее трёх знаков
+    val sliderValueWidth: Dp = 28.dp,
+
+    // Вкладки, как «Продажа / Покупка» на рынке игры: ширина по подписи, но не уже tabMinWidth
+    val tabMinWidth: Dp = 120.dp,
+    val tabHeight: Dp = 28.dp,
+
+    // Значок перетаскивания ⠿ (2×3 точки) у пунктов, порядок которых меняют мышью
+    val dragHandleWidth: Dp = 8.dp,
+    val dragHandleHeight: Dp = 12.dp,
+    val dragHandleDot: Dp = 2.dp,
 
     // Превью темы окон
     val themePreviewWidth: Dp = 300.dp,

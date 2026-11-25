@@ -4,9 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import com.layzen.bdotools.uikit.theme.AppTheme
 
-/** Ряд взаимоисключающих вариантов одинаковой ширины. */
+/** Ряд взаимоисключающих вариантов одинаковой ширины; [icon] — картинка варианта вместо подписи ([OptionButton]). */
 @Composable
 fun <T> OptionGroup(
     options: List<T>,
@@ -14,6 +15,7 @@ fun <T> OptionGroup(
     onSelect: (T) -> Unit,
     label: @Composable (T) -> String,
     modifier: Modifier = Modifier,
+    icon: @Composable (T) -> Painter? = { null },
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
         options.forEach { option ->
@@ -22,6 +24,7 @@ fun <T> OptionGroup(
                 selected = option == selected,
                 onClick = { onSelect(option) },
                 modifier = Modifier.weight(1f),
+                icon = icon(option),
             )
         }
     }

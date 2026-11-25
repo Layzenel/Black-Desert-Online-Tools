@@ -6,7 +6,7 @@ import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
 import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettingsRepository
 
 /**
- * Настройки строкой «показывать,размер,непрозрачность,FPS,вид FPS,сетка,шаг сетки» (`true,100,80,false,Compact,false,Medium`).
+ * Настройки строкой «показывать,размер,непрозрачность,FPS,вид FPS,сетка,шаг сетки,непрозрачность сетки» (`true,100,80,false,Compact,false,Medium,100`).
  * Испорченная строка читается как настройки по умолчанию; FPS, сетка и их виды появились позже — строка без них
  * читается с выключенными FPS и сеткой.
  *
@@ -22,13 +22,14 @@ class PingSettingsRepositoryImpl(private val storage: PingSettingsStorage) : Pin
         val fpsStyle = FpsStyle.entries.firstOrNull { it.name == parts.getOrNull(4) } ?: FpsStyle.Compact
         val gridShown = parts.getOrNull(5)?.toBooleanStrictOrNull() ?: false
         val gridStep = GridStep.entries.firstOrNull { it.name == parts.getOrNull(6) } ?: GridStep.Medium
-        return PingSettings(shown, scale, opacity, fpsShown, fpsStyle, gridShown, gridStep)
+        val gridOpacity = parts.getOrNull(7)?.toIntOrNull() ?: PingSettings().gridOpacity
+        return PingSettings(shown, scale, opacity, fpsShown, fpsStyle, gridShown, gridStep, gridOpacity)
     }
 
     override suspend fun save(settings: PingSettings) = storage.write(
         listOf(
             settings.shown, settings.scale, settings.opacity, settings.fpsShown, settings.fpsStyle.name,
-            settings.gridShown, settings.gridStep.name,
+            settings.gridShown, settings.gridStep.name, settings.gridOpacity,
         ).joinToString(SEPARATOR),
     )
 

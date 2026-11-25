@@ -27,13 +27,13 @@ interface SlotsRepository {
     suspend fun load(account: String, edited: GamePreset = GamePreset.General): LoadedGame
 
     /**
-     * Записывает [layout] в набор [target] файла аккаунта. Видимость общего набора игра хранит ещё и у каждого
-     * персонажа, поэтому для него поменявшийся `IsShow` записывается и в файлы персонажей; у пресетов 1–3
-     * видимость лежит в самих записях. «Настройка быстрых слотов» одна на аккаунт и пишется при любом [target],
+     * Записывает [layout] в наборы [targets] файла аккаунта одной записью и одной резервной копией. Видимость общего набора игра хранит ещё и у каждого
+     * персонажа, поэтому для общего набора поменявшийся `IsShow` записывается и в файлы персонажей; у пресетов 1–3
+     * видимость лежит в самих записях. «Настройка быстрых слотов» одна на аккаунт и пишется при любом наборе,
      * если поменялась. Окна чата пишутся в тот же набор, их видимость в общем наборе — ещё и персонажам.
      * Возвращает путь резервной копии.
      */
-    suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String
+    suspend fun apply(loaded: LoadedGame, layout: SlotLayout, targets: Set<GamePreset>): String
 
     /**
      * Возвращает файлы аккаунта [account] — `gamevariable.xml` и файлы персонажей — к текстам до последнего [apply]
@@ -60,7 +60,7 @@ interface SlotsRepository {
     /** Сохраняет подложку аккаунта [account]; `null` удаляет её. */
     suspend fun writeBackground(account: String, bytes: ByteArray?)
 
-    /** Пресеты аккаунта [account]; файлы, которые не удалось прочитать, пропускаются. */
+    /** Пресеты аккаунта [account] в порядке, заданном [savePresetOrder] (остальные — по алфавиту); нечитаемые файлы пропускаются. */
     suspend fun presets(account: String): List<NamedLayout>
 
     /** Сохраняет пресет аккаунта [account]; пресет с таким же названием перезаписывается. */
@@ -68,6 +68,9 @@ interface SlotsRepository {
 
     /** Удаляет пресет аккаунта [account] с названием [name]. */
     suspend fun deletePreset(account: String, name: String)
+
+    /** Запоминает порядок пресетов аккаунта [account] — их названия сверху вниз; [presets] отдаёт их в этом порядке. */
+    suspend fun savePresetOrder(account: String, names: List<String>)
 
     /** Имя файла для экспорта и папки пресетов: название без символов, запрещённых в Windows. */
     fun fileName(name: String): String

@@ -94,6 +94,9 @@ class ComboInteractor(
     /** Удаляет комбо. */
     suspend fun delete(id: String) = combos.delete(id)
 
+    /** Сохраняет новый порядок комбо [ids]. */
+    suspend fun reorder(ids: List<String>) = combos.reorder(ids)
+
     /** Настройки оверлея. */
     suspend fun settings(): OverlaySettings = combos.settings()
 

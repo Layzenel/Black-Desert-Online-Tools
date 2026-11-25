@@ -7,8 +7,16 @@
     <string name="combo_section_class">Choose class</string>
     <string name="combo_section_combo">Saved combos</string>
     <string name="combo_none">No combos</string>
-    <string name="combo_search_by_keys">Search by keys</string>
+    <string name="combo_search_by_keys">Press the skill keys to keep only skills with that command in the list</string>
+    <string name="combo_search_start_keys">Start input</string>
+    <string name="combo_name_title">Combo name</string>
+    <string name="combo_name_cancel_tooltip">Close without saving the combo</string>
+    <string name="combo_name_save_tooltip">Save the combo under this name</string>
+    <string name="combo_discard_tooltip">Discard all unsaved combo changes</string>
+    <string name="combo_rage_add_tooltip">Add a Black Spirit Rage version of the combo</string>
+    <string name="combo_rage_copy_tooltip">Copy the normal combo into the Rage combo to change only the differences</string>
     <string name="combo_new">New combo</string>
+    <string name="combo_new_tooltip">Start a new empty combo for the selected class</string>
     <string name="combo_untitled">Untitled</string>
     <string name="combo_name_placeholder">Combo name</string>
     <string name="combo_stance_succession">Succession</string>
@@ -20,6 +28,7 @@
     <string name="combo_rage_add">Add Black Spirit Rage combo</string>
     <string name="combo_rage_copy">Copy the normal combo</string>
     <string name="combo_rage_remove">Remove Rage combo</string>
+    <string name="combo_rage_remove_tooltip">Remove the part of the combo used during the Black Spirit Rage</string>
     <string name="combo_class_search">Search classes</string>
     <string name="combo_section_skills">Skills</string>
     <string name="combo_search">Search skills</string>
@@ -34,13 +43,18 @@
     <string name="combo_optional_search">Search skills</string>
     <string name="combo_optional_add">Add an optional skill</string>
     <string name="combo_save">Save</string>
+    <string name="combo_save_tooltip">Save the combo to the saved list</string>
     <string name="combo_save_dirty">Save *</string>
     <string name="combo_delete">Delete combo</string>
+    <string name="combo_delete_confirm_tooltip">Delete the selected combos from the list</string>
+    <string name="combo_delete_tooltip">Delete the selected combo from the list</string>
     <string name="combo_delete_confirm">The combo "%1$s" will be deleted. This cannot be undone.</string>
     <string name="combo_undo_tooltip">Undo (Ctrl+Z)</string>
     <string name="combo_redo_tooltip">Redo (Ctrl+Y or Ctrl+Shift+Z)</string>
-    <string name="combo_export">Export combo</string>
-    <string name="combo_import">Import combos</string>
+    <string name="combo_export">Export</string>
+    <string name="combo_export_tooltip">Save the selected combo to a file</string>
+    <string name="combo_import">Import</string>
+    <string name="combo_import_tooltip">Load combos from a file into the list</string>
     <string name="combo_import_failed">This file is not a BDO Tools combo.</string>
     <string name="combo_loading">Loading skills</string>
     <string name="combo_catalog_failed">The skill catalog did not download. Check your connection and open the tab again.</string>
@@ -60,6 +74,7 @@
     <string name="combo_insert_left">Insert left</string>
     <string name="combo_insert_right">Insert right</string>
     <string name="combo_cancel_selection">Cancel</string>
+    <string name="combo_cancel_selection_tooltip">Close the window without deleting anything</string>
     <string name="combo_chain">Chain</string>
     <string name="combo_chain_description">Press right after the previous skill, or the chain breaks</string>
     <string name="combo_seen_in_game">Seen in history or on a slot</string>
@@ -68,6 +83,7 @@
     <string name="combo_activation_any">Any from description</string>
     <string name="combo_activation_record">Record</string>
     <string name="combo_activation_rerecord">Re-record</string>
+    <string name="combo_activation_record_tooltip">Record the keys that trigger this skill</string>
     <string name="combo_activation_remove">Remove your command</string>
     <string name="combo_activation_recording">Hold the skill keys… Esc cancels</string>
     <string name="combo_seen_in_game_hint">The tracker learns that the skill was used from "Skill Usage History" and from its cooldown slot going on cooldown. Clear the flag if the skill is neither in the history nor on a slot (a chain follow-up, for example): the tracker will then count it by key presses and resource spending, which is less accurate. The flag is shared by every cell with this skill.</string>
@@ -109,12 +125,15 @@
     <string name="combo_tracker_limits">The tracker relies on "Skill Usage History", cooldown slots and, for skills with "Seen in history or on a slot" cleared, on key presses and resource spending.</string>
     <string name="combo_history_hidden">"Skill Usage History" is hidden for this character, so the tracker will lose track. Turn it on: "Edit UI" → the eye on "Skill Usage History".</string>
     <string name="combo_overlay_vertical">Vertical</string>
+    <string name="combo_overlay_rotate_tooltip">Rotate the combo overlay between horizontal and vertical layout</string>
     <string name="combo_overlay_horizontal">Horizontal</string>
     <string name="combo_overlay_style_next">Next</string>
     <string name="combo_overlay_style_focus">Focus</string>
     <string name="combo_menu_show">Show combo</string>
     <string name="combo_menu_hide">Hide combo</string>
+    <string name="combo_menu_hide_tooltip">Remove the combo from the game screen</string>
     <string name="combo_menu_edit">Edit combo</string>
+    <string name="combo_menu_edit_tooltip">Open the combo in the editor</string>
     <string name="combo_menu_empty">No saved combos</string>
     <string name="combo_panel_tab_combo">Combo</string>
     <string name="combo_panel_scale">Overlay size: %1$d %</string>
@@ -147,5 +166,7 @@
     <string name="combo_notice_tip_history">Do not cover "Skill Usage History" with other windows and do not move it: the program looks for it in its default place.</string>
     <string name="combo_notice_tip_resync">If the tracker gets lost, start the combo from its first skill: it will recognize it and continue from there. If that does not help, use no combo skills for a few seconds: the tracker will start the combo over.</string>
     <string name="combo_notice_ok">Got it</string>
+    <string name="combo_notice_ok_tooltip">Close the notice window</string>
     <string name="combo_notice_open">How the tracker works</string>
+    <string name="combo_notice_open_tooltip">Show how the combo tracker works and what it needs</string>
 </resources>

@@ -18,7 +18,9 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.PaletteDra
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.paletteDragSource
 import com.layzen.bdotools.feature.comboassist.resources.combo_search_by_keys
 import com.layzen.bdotools.feature.comboassist.resources.menu_keyboard
-import com.layzen.bdotools.uikit.components.ToolbarButton
+import com.layzen.bdotools.feature.comboassist.resources.combo_search_start_keys
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.core.skill.domain.SkillDetails
@@ -67,10 +69,16 @@ internal fun SkillPalette(state: ComboState, onEvent: (ComboEvent) -> Unit, load
     var recording by remember { mutableStateOf(false) }
     InputField(
         state.query, { onEvent(ComboEvent.Query(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_search),
-        trailing = {
-            if (state.query.isNotEmpty()) CloseButton({ onEvent(ComboEvent.Query("")) })
-            ToolbarButton(painterResource(Res.drawable.menu_keyboard), stringResource(Res.string.combo_search_by_keys), { recording = true })
-        },
+        trailing = if (state.query.isEmpty()) null else { { CloseButton({ onEvent(ComboEvent.Query("")) }) } },
+    )
+    ActionButton(
+        ActionButtonState.Neutral(
+            stringResource(Res.string.combo_search_start_keys),
+            icon = painterResource(Res.drawable.menu_keyboard),
+            onClick = { recording = true },
+            tooltip = stringResource(Res.string.combo_search_by_keys),
+        ),
+        Modifier.fillMaxWidth(),
     )
     // нажатые клавиши ищут умения по команде активации: запрос — их подписи, как если бы их набрали («Shift + F»)
     if (recording) {

@@ -17,12 +17,27 @@ sealed interface ComboEvent {
     data class Query(val text: String) : ComboEvent
     data object Save : ComboEvent
 
+    /** Сохранить нельзя без названия: открыть окно, где его вводят. */
+    data object AskName : ComboEvent
+
+    /** Закрыть окно названия, не сохраняя. */
+    data object CancelName : ComboEvent
+
+    /** Из окна названия: назвать открытое комбо [name] и сохранить. */
+    data class SaveAs(val name: String) : ComboEvent
+
     /** Спросить, удалять ли открытое комбо: само удаление — [Delete] из окна подтверждения. */
     data object AskDelete : ComboEvent
 
     /** Не удалять: закрыть окно подтверждения. */
     data object CancelDelete : ComboEvent
     data object Delete : ComboEvent
+
+    /** Переставить сохранённое комбо с места [from] на место [to] (перетаскивание в списке). */
+    data class MoveCombo(val from: Int, val to: Int) : ComboEvent
+
+    /** Сбросить все несохранённые правки открытого комбо: вернуть сохранённую версию (новое — пустым). */
+    data object Discard : ComboEvent
 
     /** Ctrl+Z: вернуть комбо, каким оно было до последней правки. */
     data object Undo : ComboEvent

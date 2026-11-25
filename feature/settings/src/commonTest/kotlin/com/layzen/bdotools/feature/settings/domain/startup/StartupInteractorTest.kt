@@ -26,6 +26,14 @@ class StartupInteractorTest {
     }
 
     @Test
+    fun startInTrayKeepsOtherOptions() = runTest {
+        val repository = MemoryRepository(StartupOptions(supported = true, alwaysAdmin = true))
+        val result = StartupInteractor(repository).setStartInTray(true)
+
+        assertEquals(StartupOptions(supported = true, alwaysAdmin = true, startInTray = true), result)
+    }
+
+    @Test
     fun unsupportedSystemIsNotTouched() = runTest {
         val repository = MemoryRepository(StartupOptions())
         val result = StartupInteractor(repository).setLaunchAtStartup(true)

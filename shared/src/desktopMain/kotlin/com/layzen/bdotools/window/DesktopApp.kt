@@ -21,7 +21,9 @@ import com.layzen.bdotools.AppRoot
 import com.layzen.bdotools.AppScreen
 import com.layzen.bdotools.composable.overlay.OverlayContribution
 import com.layzen.bdotools.composable.overlay.OverlayHost
+import com.layzen.bdotools.core.folder.GameFolderSettings
 import org.koin.compose.getKoin
+import java.awt.SystemTray
 import com.layzen.bdotools.navigation.AppTab
 import com.layzen.bdotools.navigation.Destination
 import com.layzen.bdotools.navigation.openTab
@@ -34,7 +36,8 @@ import com.layzen.bdotools.navigation.openTab
  */
 @Composable
 fun ApplicationScope.DesktopApp(title: String, icon: Painter) {
-    var visible by remember { mutableStateOf(true) }
+    // «Запускать в трее»: окно сразу скрыто; без трея (SystemTray не поддерживается) его было бы не открыть
+    var visible by remember { mutableStateOf(!(GameFolderSettings().startInTray && SystemTray.isSupported())) }
     var askClose by remember { mutableStateOf(false) }
     var raise by remember { mutableIntStateOf(0) }
     val backStack = remember { mutableStateListOf<Destination>(Destination.Tab(AppTab.Portraits)) }
@@ -49,6 +52,7 @@ fun ApplicationScope.DesktopApp(title: String, icon: Painter) {
         AppRoot(backStack) {
             Window(onCloseRequest = { askClose = true }, state = state, visible = visible, title = title, icon = icon) {
                 LaunchedEffect(raise) { if (raise > 0) window.toFront() }
+                TitleBarColor(window, visible)
                 // окно Compose подставляет своего владельца ViewModel — возвращаем общий
                 CompositionLocalProvider(LocalViewModelStoreOwner provides owner) {
                     AppScreen(backStack)

@@ -15,6 +15,7 @@ import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenArea
 import com.layzen.bdotools.feature.uieditor.domain.screen.position
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
 import com.layzen.bdotools.feature.uieditor.presentation.state.GridStep
+import com.layzen.bdotools.feature.uieditor.presentation.state.PresetRef
 import kotlin.math.roundToInt
 
 /** Шаг стрелки с Shift, если привязка к сетке выключена. */
@@ -141,6 +142,13 @@ internal class EditorController(private val context: SlotsContext) {
     fun undo() = context.update {
         val previous = it.history.lastOrNull() ?: return@update it
         it.copy(layout = previous, history = it.history.dropLast(1), future = it.future + it.layout, activePreset = null)
+    }
+
+    /** Возвращает раскладку, какой она записана в файле игры (и у выбранного персонажа); сброс — шаг «Отменить». */
+    fun discardChanges() {
+        val state = context.current
+        val saved = state.loaded?.game?.layout?.withCharacterSkills(state.skills.selectedCharacter) ?: return
+        context.editLayout(PresetRef.Game) { saved }
     }
 
     /** Повторяет последнюю отменённую правку. */

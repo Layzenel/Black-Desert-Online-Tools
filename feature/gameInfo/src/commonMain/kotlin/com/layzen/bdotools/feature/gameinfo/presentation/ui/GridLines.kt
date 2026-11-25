@@ -16,7 +16,10 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * игры; [uiHeight] — высота экрана в UI-px, по ней шаг переводится в пиксели холста.
  */
 @Composable
-internal fun GridLines(step: GridStep, uiHeight: Double) {
+internal fun GridLines(step: GridStep, opacity: Int, uiHeight: Double) {
+    // ползунок 20–100 % растянут на всю альфу: на минимуме сетка совсем прозрачная, на максимуме — во всю силу.
+    // Множитель входит в альфу каждой линии: прежде её подменяла постоянная, и ползунок ничего не менял
+    val fade = ((opacity - OPACITY.first).toFloat() / (OPACITY.last - OPACITY.first)).coerceIn(0f, 1f)
     val line = AppTheme.colors.textPrimary
     val axis = AppTheme.colors.accentGold
     Canvas(Modifier.fillMaxSize()) {
@@ -29,12 +32,12 @@ internal fun GridLines(step: GridStep, uiHeight: Double) {
             var k = 1
             while (k * spacing <= reach) {
                 val alpha = if (k % majorEvery == 0) GameInfoDimens.GRID_MAJOR_ALPHA else GameInfoDimens.GRID_ALPHA
-                drawCross(center, k * spacing, line.copy(alpha = alpha), width)
+                drawCross(center, k * spacing, line.copy(alpha = alpha * fade), width)
                 k++
             }
         }
-        drawLine(axis.copy(alpha = GameInfoDimens.GRID_AXIS_ALPHA), Offset(center.x, 0f), Offset(center.x, size.height), width)
-        drawLine(axis.copy(alpha = GameInfoDimens.GRID_AXIS_ALPHA), Offset(0f, center.y), Offset(size.width, center.y), width)
+        drawLine(axis.copy(alpha = GameInfoDimens.GRID_AXIS_ALPHA * fade), Offset(center.x, 0f), Offset(center.x, size.height), width)
+        drawLine(axis.copy(alpha = GameInfoDimens.GRID_AXIS_ALPHA * fade), Offset(0f, center.y), Offset(size.width, center.y), width)
     }
 }
 

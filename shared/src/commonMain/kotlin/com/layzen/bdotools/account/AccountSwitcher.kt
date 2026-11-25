@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import com.layzen.bdotools.core.account.GameAccount
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.account_option
+import com.layzen.bdotools.resources.account_option_tooltip
 import com.layzen.bdotools.resources.account_switcher_label
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
@@ -34,6 +35,7 @@ internal fun AccountSwitcher(
         ActionButtonState.Neutral(
             stringResource(Res.string.account_option, selected.id, selected.characterIds.size),
             onClick = { open = true },
+            tooltip = stringResource(Res.string.account_option_tooltip),
         ),
         modifier = Modifier.width(AccountDimens.switcherWidth),
     )

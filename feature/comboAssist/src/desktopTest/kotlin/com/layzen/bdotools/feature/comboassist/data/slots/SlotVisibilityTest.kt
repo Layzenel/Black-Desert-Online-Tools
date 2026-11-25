@@ -36,13 +36,22 @@ class SlotVisibilityTest {
     }
 
     @Test
-    fun allHideQuicklyWhenAlmostNothingIsRecognized() {
+    fun allHideOnlyAfterLongStretchWithNothingRecognized() {
         val visibility = SlotVisibility(3)
-        repeat(3) { visibility.onCheck(listOf(true, false, false)) }
+        repeat(100) { visibility.onCheck(listOf(true, false, false)) } // в бою узнаётся один слот — видны все
+        assertEquals(emptySet(), visibility.hidden)
+        repeat(14) { visibility.onCheck(listOf(false, false, false)) } // короткий провал узнавания не прячет
         assertEquals(emptySet(), visibility.hidden)
         visibility.onCheck(listOf(false, false, false))
         assertEquals(setOf(0, 1, 2), visibility.hidden)
-        visibility.onCheck(listOf(true, true, false))
+        visibility.onCheck(listOf(true, false, false))
+        assertEquals(emptySet(), visibility.hidden)
+    }
+
+    @Test
+    fun nothingHidesWhenRecognitionRarelyWorks() {
+        val visibility = SlotVisibility(3)
+        repeat(300) { i -> visibility.onCheck(listOf(i % 50 == 0, false, false)) } // узнаётся раз в 5 с
         assertEquals(emptySet(), visibility.hidden)
     }
 

@@ -16,6 +16,9 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.RestoreDialogState
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.previewKey
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_check_all_tooltip
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_delete_marked_tooltip
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_uncheck_all_tooltip
 import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.grid.PortraitGridLayout
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.grid.PortraitTile
@@ -71,13 +74,14 @@ internal fun AllRestore(state: RestoreDialogState, onEvent: (PortraitsEvent) -> 
                     description = stringResource(Res.string.portraits_restore_description_all),
                     warning = stringResource(Res.string.portraits_restore_warning),
                 )
-                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_restore_check_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(true)) }))
-                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_restore_uncheck_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(false)) }))
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_restore_check_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(true)) }, tooltip = stringResource(Res.string.portraits_restore_check_all_tooltip)))
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_restore_uncheck_all), onClick = { onEvent(PortraitsEvent.CheckAllRestorePortraits(false)) }, tooltip = stringResource(Res.string.portraits_restore_uncheck_all_tooltip)))
                 if (state.marked.isNotEmpty()) {
                     ActionButton(
                         ActionButtonState.Neutral(
                             stringResource(Res.string.portraits_delete_marked, state.marked.size),
                             onClick = { onEvent(PortraitsEvent.RequestDeleteBackups) },
+                            tooltip = stringResource(Res.string.portraits_restore_delete_marked_tooltip),
                         ),
                     )
                 }

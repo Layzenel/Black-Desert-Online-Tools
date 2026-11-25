@@ -26,13 +26,17 @@ import com.layzen.bdotools.uikit.components.Tile
 import com.layzen.bdotools.uikit.components.ValueText
 import com.layzen.bdotools.uikit.resources.Res
 import com.layzen.bdotools.uikit.resources.showcase_exit_change_server
+import com.layzen.bdotools.uikit.resources.showcase_exit_change_server_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_exit_character
 import com.layzen.bdotools.uikit.resources.showcase_exit_family
 import com.layzen.bdotools.uikit.resources.showcase_exit_quit
+import com.layzen.bdotools.uikit.resources.showcase_exit_quit_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_exit_select
+import com.layzen.bdotools.uikit.resources.showcase_exit_select_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_exit_tile_stats
 import com.layzen.bdotools.uikit.resources.showcase_exit_title
 import com.layzen.bdotools.uikit.resources.showcase_modal_close
+import com.layzen.bdotools.uikit.resources.showcase_modal_close_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_modal_description
 import com.layzen.bdotools.uikit.resources.showcase_modal_header
 import com.layzen.bdotools.uikit.resources.showcase_modal_title
@@ -48,7 +52,7 @@ internal fun TilesSample(modifier: Modifier) {
         ModalWindow(
             title = stringResource(Res.string.showcase_modal_title),
             onDismissRequest = { modalOpen = false },
-            footer = { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_modal_close), onClick = { modalOpen = false })) },
+            footer = { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_modal_close), onClick = { modalOpen = false }, tooltip = stringResource(Res.string.showcase_modal_close_tooltip))) },
         ) {
             SectionHeader(
                 stringResource(Res.string.showcase_modal_header),
@@ -61,8 +65,8 @@ internal fun TilesSample(modifier: Modifier) {
         title = stringResource(Res.string.showcase_exit_title),
         modifier = modifier,
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_change_server), onClick = {}), modifier = Modifier.weight(1f))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_quit), onClick = {}), modifier = Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_change_server), onClick = {}, tooltip = stringResource(Res.string.showcase_exit_change_server_tooltip)), modifier = Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_quit), onClick = {}, tooltip = stringResource(Res.string.showcase_exit_quit_tooltip)), modifier = Modifier.weight(1f))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceM), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
@@ -75,7 +79,7 @@ internal fun TilesSample(modifier: Modifier) {
                         color = AppTheme.colors.textBeige,
                     )
                 }
-                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_select), onClick = { modalOpen = true }))
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_exit_select), onClick = { modalOpen = true }, tooltip = stringResource(Res.string.showcase_exit_select_tooltip)))
             }
             (0 until 2).forEach { row ->
                 Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {

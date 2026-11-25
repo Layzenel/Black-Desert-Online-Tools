@@ -8,8 +8,11 @@ package com.layzen.bdotools.feature.comboassist.data.slots
  *
  * По своей иконке узнаётся меньшинство слотов (2026-11-20: 5 из 20, а пара — лишь раз в 0,6 с, на перезарядке),
  * поэтому решают два правила:
- * - **все слоты** закрыты, если [GROUP_HIDE_CHECKS] проверок подряд узнано меньше [MIN_RECOGNIZED] — окно умений,
- *   настроек, скрытый интерфейс; появляются с первой удачной;
+ * - **все слоты** закрыты, если [GROUP_HIDE_CHECKS] проверок подряд не узнано ни одного — окно умений,
+ *   настроек, скрытый интерфейс; появляются с первой удачной. В бою иконки темнеют на перезарядке и узнаются
+ *   редко: с прежними «меньше двух за 0,4 с» трекер и схема пропадали на несколько секунд (2026-11-25, `slots.log`).
+ *   И только если узнавание обычно работает ([groupShare] ≥ [RELIABLE_SHARE]): у игрока 2026-11-25 слоты почти не
+ *   узнавались совсем, и правило прятало трекер и схему всё время — тогда считаем, что не закрыто ничего;
  * - **отдельный слот** закрыт, только если он узнаётся стабильно ([reliable]), а теперь не узнаётся
  *   [SLOT_HIDE_CHECKS] проверок подряд — окно закрыло часть слотов. Слот, который узнаётся редко (2026-11-20: раз
  *   в 2 с) или ни разу, видим вместе со всеми: о нём самом ничего не известно, а прятать его — моргать значками.
@@ -23,9 +26,12 @@ internal class SlotVisibility(private val count: Int) {
     private val share = DoubleArray(count)
     private var groupMissed = 0
 
+    /** Доля проверок, где узнан хоть один слот (скользящее среднее); пока все закрыты, не меняется. */
+    private var groupShare = 0.0
+
     /** Номера (по порядку раскладки) слотов, которые сейчас не видны. */
     val hidden: Set<Int>
-        get() = if (groupMissed >= GROUP_HIDE_CHECKS) (0 until count).toSet()
+        get() = if (groupMissed >= GROUP_HIDE_CHECKS && groupShare >= RELIABLE_SHARE) (0 until count).toSet()
         else (0 until count).filter { reliable(it) && missed[it] >= SLOT_HIDE_CHECKS }.toSet()
 
     /** Слот узнаётся стабильно: по нему одному можно понять, закрыт ли он. */
@@ -39,7 +45,9 @@ internal class SlotVisibility(private val count: Int) {
             if (ok || missed[slot] < SLOT_HIDE_CHECKS) share[slot] = share[slot] * (1 - SHARE_STEP) + if (ok) SHARE_STEP else 0.0
             missed[slot] = if (ok) 0 else missed[slot] + 1
         }
-        groupMissed = if (recognized.count { it } >= MIN_RECOGNIZED) 0 else groupMissed + 1
+        val any = recognized.count { it } >= MIN_RECOGNIZED
+        if (any || groupMissed < GROUP_HIDE_CHECKS) groupShare = groupShare * (1 - SHARE_STEP) + if (any) SHARE_STEP else 0.0
+        groupMissed = if (any) 0 else groupMissed + 1
     }
 
     companion object {
@@ -47,10 +55,10 @@ internal class SlotVisibility(private val count: Int) {
         private const val GAP = 8.0
 
         /** Сколько слотов должно узнаться, чтобы слоты в целом считались видимыми. */
-        private const val MIN_RECOGNIZED = 2
+        private const val MIN_RECOGNIZED = 1
 
-        /** Сколько проверок подряд почти без узнанных слотов — и скрыты все (анимация окна их не прячет). */
-        private const val GROUP_HIDE_CHECKS = 4
+        /** Сколько проверок подряд (1,5 с) без узнанных слотов — и скрыты все: бой с иконками на перезарядке их не прячет. */
+        private const val GROUP_HIDE_CHECKS = 15
 
         /** Сколько проверок подряд без узнавания — и скрыт отдельный стабильный слот. */
         private const val SLOT_HIDE_CHECKS = 15

@@ -138,6 +138,14 @@ internal const val SLOTS_BRIDGE_SOURCE = """({ savedRoot, child, toBase64, fromB
         },
         presetRead: async (account, name) =>
             'OK:' + await readText(await (await (await area(account, PRESETS, false)).getFileHandle(name)).getFile()),
+        // порядок пресетов — файл order.txt рядом с ними; нет файла — пусто
+        async presetOrderRead(account) {
+            try {
+                return 'OK:' + await readText(await (await (await area(account, PRESETS, false)).getFileHandle('order.txt')).getFile());
+            } catch (e) {
+                return 'OK:';
+            }
+        },
         // мост передаёт два аргумента, поэтому аккаунт и имя файла приходят одной строкой «аккаунт/файл»
         async presetWrite(path, text) {
             const account = path.substring(0, path.indexOf('/'));

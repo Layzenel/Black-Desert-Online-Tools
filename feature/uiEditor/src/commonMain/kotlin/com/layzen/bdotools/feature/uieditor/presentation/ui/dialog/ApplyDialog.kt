@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.dialog
 
+import com.layzen.bdotools.feature.uieditor.resources.slots_apply_chat_lock
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,19 +25,20 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_apply_changed_both
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_changed_memos
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_changed_skills
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_confirm
+import com.layzen.bdotools.feature.uieditor.resources.slots_apply_confirm_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_game_running
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_skills
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_target
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
+import com.layzen.bdotools.feature.uieditor.resources.slots_cancel_tooltip
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.uikit.components.ModalWindow
-import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.WarningText
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -62,19 +64,31 @@ internal fun ApplyDialog(
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.slots_apply_confirm), onClick = { onEvent(SlotsEvent.ConfirmApply) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close, tooltip = stringResource(Res.string.slots_cancel_tooltip)))
+            ActionButton(
+                ActionButtonState.Positive(
+                    stringResource(Res.string.slots_apply_confirm),
+                    enabled = dialog.targets.isNotEmpty(),
+                    onClick = { onEvent(SlotsEvent.ConfirmApply) },
+                    tooltip = stringResource(Res.string.slots_apply_confirm_tooltip),
+                ),
+            )
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
             SectionHeader(stringResource(Res.string.slots_apply_target))
-            OptionGroup(presets, dialog.target, { onEvent(SlotsEvent.SelectApplyTarget(it)) }, { gamePresetTitle(it) })
+            Column {
+                presets.forEach { preset -> ApplyTargetRow(preset, preset in dialog.targets, onEvent) }
+            }
             if (skillTargets.isNotEmpty()) {
                 WarningText(stringResource(Res.string.slots_apply_skills))
                 Column {
                     skillTargets.forEach { character -> ApplyCharacterRow(character, layout, skills, dialog.skipped, onEvent) }
                 }
             }
+            // замочек чата игра хранит не в текстовых настройках (2026-11-25: gamevariable.xml аккаунта, персонажа,
+            // лобби и корня при снятии не меняются) — снять его программа не может, только предупредить
+            WarningText(stringResource(Res.string.slots_apply_chat_lock))
             if (dialog.gameRunning) WarningText(stringResource(Res.string.slots_apply_game_running))
             WarningText(stringResource(Res.string.slots_apply_description))
             DescriptionText(stringResource(Res.string.slots_apply_archive_hint))
@@ -117,5 +131,17 @@ private fun changesText(layout: SlotLayout, character: CharacterSkills): String 
             skillsChanged -> Res.string.slots_apply_changed_skills
             else -> Res.string.slots_apply_changed_memos
         },
+    )
+}
+
+/** Набор позиций в диалоге применения: отметка — писать ли в него. */
+@Composable
+private fun ApplyTargetRow(preset: GamePreset, chosen: Boolean, onEvent: (SlotsEvent) -> Unit) {
+    val toggle = { onEvent(SlotsEvent.ToggleApplyTarget(preset)) }
+    MenuItem(
+        gamePresetTitle(preset),
+        onClick = toggle,
+        icon = { CheckBox(chosen, onCheckedChange = { toggle() }) },
+        selected = chosen,
     )
 }

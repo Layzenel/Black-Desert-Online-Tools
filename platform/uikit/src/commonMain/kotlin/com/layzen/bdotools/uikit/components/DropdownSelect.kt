@@ -39,7 +39,8 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * [selected] тогда может быть `null` — в списке ничего не подсвечено. [trailing] — элемент справа от варианта в списке,
  * как у [OptionsMenu]. [icon] — картинка слева от названия варианта: в списке и в поле у выбранного (портрет персонажа).
  * [minHeight] — наименьшая высота поля: так соседние списки делают одной высоты, даже если в одном из них портрет.
- * [searchPlaceholder] — строка поиска наверху списка, как у [OptionsMenu].
+ * [searchPlaceholder] — строка поиска наверху списка, как у [OptionsMenu]. [query] и [onQueryChange] — набор с клавиатуры,
+ * пока список открыт, уходит в своё поле поиска над списком ([OptionsMenu]). [onMove] — пункты переставляются мышью.
  */
 @Composable
 fun <T> DropdownSelect(
@@ -53,6 +54,9 @@ fun <T> DropdownSelect(
     icon: (@Composable (T) -> Unit)? = null,
     minHeight: Dp = AppTheme.dimens.inputHeight,
     searchPlaceholder: String? = null,
+    query: String? = null,
+    onQueryChange: (String) -> Unit = {},
+    onMove: ((from: Int, to: Int) -> Unit)? = null,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -110,6 +114,9 @@ fun <T> DropdownSelect(
             icon = icon,
             trailing = trailing,
             searchPlaceholder = searchPlaceholder,
+            query = query,
+            onQueryChange = onQueryChange,
+            onMove = onMove,
             modifier = if (anchorWidth != Dp.Unspecified) Modifier.width(anchorWidth) else Modifier,
         )
     }

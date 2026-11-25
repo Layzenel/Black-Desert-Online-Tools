@@ -3,6 +3,7 @@
     <string name="showcase_menu_title">Меню</string>
     <string name="showcase_menu_search">Что хотите найти?</string>
     <string name="showcase_grouped_open">Выбрать из списка</string>
+    <string name="showcase_grouped_open_tooltip">Открыть список с группами</string>
     <string name="showcase_grouped_first">Первые</string>
     <string name="showcase_grouped_rest">Остальные</string>
     <string name="showcase_menu_recent">Недавнее меню</string>
@@ -18,8 +19,11 @@
     <string name="showcase_settings_title">Настройки</string>
     <string name="showcase_settings_help">?</string>
     <string name="showcase_settings_apply">Применить</string>
+    <string name="showcase_settings_apply_tooltip">Применить настройки, не закрывая окно</string>
     <string name="showcase_settings_back">Назад</string>
+    <string name="showcase_settings_back_tooltip">Вернуться назад без изменений</string>
     <string name="showcase_settings_ok">OK</string>
+    <string name="showcase_settings_ok_tooltip">Применить настройки и закрыть окно</string>
     <string name="showcase_settings_performance">Производительность</string>
     <string name="showcase_settings_video">Видео</string>
     <string name="showcase_settings_window">Окно</string>
@@ -29,6 +33,7 @@
     <string name="showcase_settings_audio">Аудио</string>
     <string name="showcase_settings_screen_size">Установите размер экрана игры.</string>
     <string name="showcase_settings_reset">Сброс</string>
+    <string name="showcase_settings_reset_tooltip">Вернуть настройки по умолчанию</string>
     <string name="showcase_settings_screen">Настройки экрана</string>
     <string name="showcase_settings_mode_fullscreen">Полноэкран. режим</string>
     <string name="showcase_settings_mode_borderless">Большое окно</string>
@@ -45,8 +50,11 @@
     <!-- Каталог компонентов: окно «Выход из игры» -->
     <string name="showcase_exit_title">Выход из игры</string>
     <string name="showcase_exit_change_server">Сменить сервер</string>
+    <string name="showcase_exit_change_server_tooltip">Пример подсказки: сменить сервер</string>
     <string name="showcase_exit_quit">Выход</string>
+    <string name="showcase_exit_quit_tooltip">Пример подсказки: выйти из игры</string>
     <string name="showcase_exit_select">Выбрать</string>
+    <string name="showcase_exit_select_tooltip">Открыть окно выбора</string>
     <string name="showcase_exit_character">Ур.%1$d %2$s</string>
     <string name="showcase_exit_family">Откровение небес</string>
     <string name="showcase_exit_tile_stats">%1$d  %2$d</string>
@@ -56,9 +64,12 @@
     <string name="showcase_modal_header">Модальное окно</string>
     <string name="showcase_modal_description">Закрывается крестиком, клавишей Esc или кликом мимо окна.</string>
     <string name="showcase_modal_close">Закрыть</string>
+    <string name="showcase_modal_close_tooltip">Закрыть окно</string>
     <string name="showcase_feedback_title">Загрузка и сообщения</string>
     <string name="showcase_feedback_show">Сообщение</string>
+    <string name="showcase_feedback_show_tooltip">Показать обычное сообщение внизу окна</string>
     <string name="showcase_feedback_show_error">Ошибка</string>
+    <string name="showcase_feedback_show_error_tooltip">Показать сообщение об ошибке внизу окна</string>
     <string name="showcase_feedback_message">Изменения сохранены.</string>
     <string name="showcase_feedback_error">Не удалось записать файл.</string>
     <string name="showcase_feedback_link">Исходный код на GitHub</string>
@@ -112,12 +123,17 @@
 
     <string name="showcase_page_menu">Меню страницы</string>
     <string name="showcase_page_open">Открыть файл</string>
+    <string name="showcase_page_open_tooltip">Пример подсказки: открыть страницу</string>
     <string name="showcase_page_mode">Режим правки</string>
+    <string name="showcase_page_mode_tooltip">Включить или выключить режим</string>
     <string name="showcase_page_hotkey">Esc</string>
     <string name="showcase_page_disabled">Недоступно</string>
+    <string name="showcase_page_disabled_tooltip">Недоступная кнопка: подсказка видна и у неё</string>
     <string name="showcase_page_undo">Отменить</string>
+    <string name="showcase_page_undo_tooltip">Отменить последнее действие</string>
     <string name="showcase_page_tool">Прилипание</string>
     <string name="showcase_page_apply">Применить</string>
+    <string name="showcase_page_apply_tooltip">Пример подсказки: применить настройки</string>
     <string name="showcase_intro_first">Что тулза умеет — одной строкой.</string>
     <string name="showcase_intro_second">Второй пункт: зачем ей доступ к файлам.</string>
     <string name="showcase_intro_image">Пример картинки тулзы</string>

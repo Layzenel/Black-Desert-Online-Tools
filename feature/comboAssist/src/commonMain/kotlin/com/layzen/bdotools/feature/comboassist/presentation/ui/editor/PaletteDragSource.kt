@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalViewConfiguration
  * Строку списка с умением [skillNo] можно потянуть на холст: положение курсора уходит в [drag]. Клик по строке
  * остаётся кликом. Жест ловится на первом проходе событий ([PointerEventPass.Initial]) — раньше клика строки,
  * подсказки умения и прокрутки списка, которые иначе забирают его себе; начатое перетаскивание поглощает события,
- * чтобы отпускание не засчиталось кликом и список не прокрутился.
+ * чтобы отпускание не засчиталось кликом и список не прокрутился. Нажатие на полосу прокрутки списка умение не тянет.
  */
 internal fun Modifier.paletteDragSource(skillNo: Int, drag: PaletteDrag): Modifier = composed {
     var origin by remember { mutableStateOf(Offset.Zero) }
@@ -27,6 +27,8 @@ internal fun Modifier.paletteDragSource(skillNo: Int, drag: PaletteDrag): Modifi
     onGloballyPositioned { origin = it.positionInRoot() }.pointerInput(skillNo) {
         awaitEachGesture {
             val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+            // нажатие забрала полоса прокрутки списка (она стоит выше и ловит его раньше): тянут её, а не умение
+            if (down.isConsumed) return@awaitEachGesture
             var dragging = false
             while (true) {
                 val change = awaitPointerEvent(PointerEventPass.Initial).changes.firstOrNull { it.id == down.id } ?: break

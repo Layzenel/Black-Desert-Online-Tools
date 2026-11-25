@@ -1,5 +1,14 @@
 package com.layzen.bdotools.uikit.showcase
 
+import com.layzen.bdotools.uikit.components.TabBar
+import com.layzen.bdotools.uikit.components.DragHandle
+import com.layzen.bdotools.uikit.components.MenuItem
+import com.layzen.bdotools.uikit.components.rememberReorderState
+import com.layzen.bdotools.uikit.components.reorderItem
+import androidx.compose.runtime.key
+import com.layzen.bdotools.uikit.resources.showcase_menu_recent
+import com.layzen.bdotools.uikit.resources.showcase_menu_game_info
+import com.layzen.bdotools.uikit.resources.showcase_menu_character
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,8 +40,10 @@ import com.layzen.bdotools.uikit.components.ToggleSwitch
 import com.layzen.bdotools.uikit.components.ValueSlider
 import com.layzen.bdotools.uikit.resources.Res
 import com.layzen.bdotools.uikit.resources.showcase_settings_apply
+import com.layzen.bdotools.uikit.resources.showcase_settings_apply_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_settings_audio
 import com.layzen.bdotools.uikit.resources.showcase_settings_back
+import com.layzen.bdotools.uikit.resources.showcase_settings_back_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_settings_camera
 import com.layzen.bdotools.uikit.resources.showcase_settings_crop
 import com.layzen.bdotools.uikit.resources.showcase_settings_crop_description
@@ -43,9 +54,11 @@ import com.layzen.bdotools.uikit.resources.showcase_settings_mode_borderless
 import com.layzen.bdotools.uikit.resources.showcase_settings_mode_fullscreen
 import com.layzen.bdotools.uikit.resources.showcase_settings_mode_windowed
 import com.layzen.bdotools.uikit.resources.showcase_settings_ok
+import com.layzen.bdotools.uikit.resources.showcase_settings_ok_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_settings_performance
 import com.layzen.bdotools.uikit.resources.showcase_settings_quality
 import com.layzen.bdotools.uikit.resources.showcase_settings_reset
+import com.layzen.bdotools.uikit.resources.showcase_settings_reset_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_settings_resolution
 import com.layzen.bdotools.uikit.resources.showcase_settings_resolution_description
 import com.layzen.bdotools.uikit.resources.showcase_settings_resolution_warning
@@ -98,9 +111,9 @@ internal fun SettingsSample(modifier: Modifier) {
             )
         },
         footer = {
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_settings_apply), onClick = {}))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_settings_back), onClick = {}))
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_settings_ok), onClick = {}))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_settings_apply), onClick = {}, tooltip = stringResource(Res.string.showcase_settings_apply_tooltip)))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_settings_back), onClick = {}, tooltip = stringResource(Res.string.showcase_settings_back_tooltip)))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_settings_ok), onClick = {}, tooltip = stringResource(Res.string.showcase_settings_ok_tooltip)))
         },
     ) {
         Row {
@@ -123,9 +136,10 @@ internal fun SettingsSample(modifier: Modifier) {
                 Modifier.weight(1f).padding(dimens.spaceL),
                 verticalArrangement = Arrangement.spacedBy(dimens.spaceM),
             ) {
+                TabsAndOrderSample()
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     SectionHeader(stringResource(Res.string.showcase_settings_screen_size), Modifier.weight(1f))
-                    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_settings_reset), onClick = {}))
+                    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_settings_reset), onClick = {}, tooltip = stringResource(Res.string.showcase_settings_reset_tooltip)))
                 }
                 SectionHeader(stringResource(Res.string.showcase_settings_screen))
                 OptionGroup(ScreenMode.entries, mode, { mode = it }, { stringResource(it.title) }, Modifier.fillMaxWidth())
@@ -169,4 +183,19 @@ internal fun SettingsSample(modifier: Modifier) {
 private fun SampleNavGroup(title: StringResource, children: (@Composable () -> Unit)? = null) {
     val text = stringResource(title)
     NavGroup(text, icon = { Text(text.take(1)) }, children = children)
+}
+
+/** Вкладки [TabBar] и список, порядок которого меняют перетаскиванием за ⠿ ([DragHandle]). */
+@Composable
+private fun TabsAndOrderSample() {
+    val tabs = listOf(Res.string.showcase_settings_video, Res.string.showcase_settings_audio)
+    var tab by remember { mutableStateOf(tabs.first()) }
+    TabBar(tabs, tab, { tab = it }, { stringResource(it) })
+    var items by remember { mutableStateOf(listOf(Res.string.showcase_menu_recent, Res.string.showcase_menu_game_info, Res.string.showcase_menu_character)) }
+    val reorder = rememberReorderState { from, to -> items = items.toMutableList().apply { add(to, removeAt(from)) } }
+    Column(Modifier.fillMaxWidth()) {
+        items.forEachIndexed { index, item ->
+            key(item) { MenuItem(stringResource(item), {}, Modifier.fillMaxWidth().reorderItem(reorder, index), icon = { DragHandle(reorder, index) }) }
+        }
+    }
 }

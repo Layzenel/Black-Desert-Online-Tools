@@ -39,8 +39,8 @@ class GameSettingsInteractor(
     suspend fun refresh(account: String, edited: GamePreset): LoadedGame = repository.load(account, edited)
 
     /** См. [SlotsRepository.apply]. */
-    suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String =
-        repository.apply(loaded, layout, target)
+    suspend fun apply(loaded: LoadedGame, layout: SlotLayout, targets: Set<GamePreset>): String =
+        repository.apply(loaded, layout, targets)
 
     /** См. [SlotsRepository.undoLastApply]. */
     suspend fun undoLastApply(account: String): Boolean = repository.undoLastApply(account)

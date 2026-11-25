@@ -7,6 +7,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import com.layzen.bdotools.composable.resources.skill_key_shift_short
+import com.layzen.bdotools.composable.resources.skill_key_lmb_short
+import com.layzen.bdotools.composable.resources.skill_key_rmb_short
+import com.layzen.bdotools.core.keyhint.KEY_CODE_LMB
+import com.layzen.bdotools.core.keyhint.KEY_CODE_RMB
+import com.layzen.bdotools.core.keyhint.KEY_CODE_SHIFT
+import com.layzen.bdotools.core.keyhint.KeyHintStyle
 import com.layzen.bdotools.core.skill.domain.KeyBindings
 import com.layzen.bdotools.core.skill.domain.SkillTextPart
 import com.layzen.bdotools.core.skill.domain.parseSkillMarkup
@@ -42,7 +49,8 @@ fun skillPartsText(parts: List<SkillTextPart>, keys: KeyBindings): String {
 
 /**
  * Подпись клавиши действия: по имени действия из `{KeyBind:…}` берёт клавишу из [keys]; кнопки мыши и пробел —
- * на языке интерфейса, остальные — [keyName]. Действие без клавиши остаётся своим именем.
+ * на языке интерфейса, остальные — [keyName]. Shift при выборе «Сокращение» в настройках — «Sh». Картинку клавиши,
+ * если она выбрана, рисует [rememberKeyIcon], а здесь остаётся текст. Действие без клавиши остаётся своим именем.
  */
 @Composable
 fun rememberKeyLabel(keys: KeyBindings): (action: String) -> String {
@@ -52,7 +60,18 @@ fun rememberKeyLabel(keys: KeyBindings): (action: String) -> String {
         4 to stringResource(Res.string.skill_key_mmb),
         32 to stringResource(Res.string.skill_key_space),
     )
-    return { action -> keys[action]?.let { translated[it] ?: keyName(it) } ?: action }
+    // сокращения клавиш, у которых их можно выбрать в настройках (Отображение)
+    val short = mapOf(
+        KEY_CODE_SHIFT to stringResource(Res.string.skill_key_shift_short),
+        KEY_CODE_LMB to stringResource(Res.string.skill_key_lmb_short),
+        KEY_CODE_RMB to stringResource(Res.string.skill_key_rmb_short),
+    )
+    val hints = rememberKeyHints()
+    return { action ->
+        keys[action]?.let { code ->
+            short[code]?.takeIf { hints.styleOf(code) == KeyHintStyle.Short } ?: translated[code] ?: keyName(code)
+        } ?: action
+    }
 }
 
 /** Текст куска: обычный — как есть, клавиша — её подпись. */

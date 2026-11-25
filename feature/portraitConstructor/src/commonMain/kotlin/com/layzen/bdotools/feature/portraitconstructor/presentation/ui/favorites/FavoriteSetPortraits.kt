@@ -16,8 +16,10 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.grid.Port
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.grid.PortraitTile
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_delete_marked
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_delete_marked_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_portraits
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_rename
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_rename_tooltip
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.InputField
@@ -45,6 +47,7 @@ internal fun FavoriteSetPortraits(state: FavoritesDialogState, onEvent: (Portrai
                     stringResource(Res.string.portraits_favorites_rename),
                     enabled = state.titleChanged,
                     onClick = { onEvent(PortraitsEvent.RenameFavorite) },
+                    tooltip = stringResource(Res.string.portraits_favorites_rename_tooltip),
                 ),
             )
             if (state.marked.isNotEmpty()) {
@@ -52,6 +55,7 @@ internal fun FavoriteSetPortraits(state: FavoritesDialogState, onEvent: (Portrai
                     ActionButtonState.Neutral(
                         stringResource(Res.string.portraits_delete_marked, state.marked.size),
                         onClick = { onEvent(PortraitsEvent.RequestDeleteFavorites) },
+                        tooltip = stringResource(Res.string.portraits_favorites_delete_marked_tooltip),
                     ),
                 )
             }

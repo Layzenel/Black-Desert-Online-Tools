@@ -23,7 +23,7 @@ class UndoApplyTest {
     fun restoresAllFilesWrittenByLastApply() = runTest {
         assertFalse(repository.undoLastApply(ACCOUNT))
         val loaded = repository.load(ACCOUNT)
-        repository.apply(loaded, loaded.game.layout.copy(splitHp = true), GamePreset.General)
+        repository.apply(loaded, loaded.game.layout.copy(splitHp = true), setOf(GamePreset.General))
         assertNotEquals(gameVariable, storage.gameVariable)
         assertNotEquals(character, storage.characters.values.single())
 

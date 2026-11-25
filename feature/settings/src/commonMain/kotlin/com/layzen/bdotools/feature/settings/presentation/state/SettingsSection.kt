@@ -1,8 +1,10 @@
 package com.layzen.bdotools.feature.settings.presentation.state
 
 import com.layzen.bdotools.feature.settings.resources.Res
+import com.layzen.bdotools.feature.settings.resources.settings_display
 import com.layzen.bdotools.feature.settings.resources.settings_general
 import com.layzen.bdotools.feature.settings.resources.settings_overlay
+import com.layzen.bdotools.feature.settings.resources.settings_section_display
 import com.layzen.bdotools.feature.settings.resources.settings_section_general
 import com.layzen.bdotools.feature.settings.resources.settings_section_overlay
 import com.layzen.bdotools.feature.settings.resources.settings_section_theme
@@ -14,5 +16,6 @@ import org.jetbrains.compose.resources.StringResource
 enum class SettingsSection(val title: StringResource, val icon: DrawableResource) {
     General(Res.string.settings_section_general, Res.drawable.settings_general),
     Theme(Res.string.settings_section_theme, Res.drawable.settings_theme),
+    Display(Res.string.settings_section_display, Res.drawable.settings_display),
     Overlay(Res.string.settings_section_overlay, Res.drawable.settings_overlay),
 }

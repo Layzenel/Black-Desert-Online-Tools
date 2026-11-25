@@ -24,6 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Класс комбо: поле поиска над списком классов — список показывает только классы, в названии которых есть набранное.
+ * Пока список открыт, набор с клавиатуры попадает в это же поле.
  * [selected] — выбранный класс, [onSelect] — выбор другого, [tint] — цвет иконок классов.
  */
 @Composable
@@ -40,5 +41,7 @@ internal fun ClassSelect(selected: CharacterClass, onSelect: (CharacterClass) ->
     DropdownSelect(
         selected, shown, onSelect, { titles.getValue(it) }, Modifier.fillMaxWidth(),
         icon = { Image(painterResource(it.icon), null, Modifier.size(ComboDimens.paletteIcon), colorFilter = tint) },
+        query = query,
+        onQueryChange = { query = it },
     )
 }

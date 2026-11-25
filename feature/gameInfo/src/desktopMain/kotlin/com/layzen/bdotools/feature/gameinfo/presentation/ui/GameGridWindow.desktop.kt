@@ -19,10 +19,12 @@ import java.awt.GraphicsEnvironment
  * (оконный режим сетку не сдвигает вслед за окном игры).
  */
 @Composable
-internal actual fun GameGridWindow(step: GridStep, uiHeight: Double) {
+internal actual fun GameGridWindow(step: GridStep, opacity: Int, uiHeight: Double) {
     val shown by rememberOverlayShown()
     val screen = remember { GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice.defaultConfiguration.bounds }
     val state = rememberWindowState(position = WindowPosition(screen.x.dp, screen.y.dp), size = DpSize(screen.width.dp, screen.height.dp))
+    // прозрачное окно на весь экран — самая крупная поверхность отрисовки: скрытым его не держим
+    if (!shown) return
     Window(
         onCloseRequest = {},
         state = state,
@@ -34,6 +36,6 @@ internal actual fun GameGridWindow(step: GridStep, uiHeight: Double) {
         alwaysOnTop = true,
     ) {
         LaunchedEffect(window) { setClickThrough(window, enabled = true) }
-        GridLines(step, uiHeight)
+        GridLines(step, opacity, uiHeight)
     }
 }

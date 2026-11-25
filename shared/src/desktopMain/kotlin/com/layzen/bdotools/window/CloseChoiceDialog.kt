@@ -7,9 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.window_close_exit
+import com.layzen.bdotools.resources.window_close_exit_tooltip
 import com.layzen.bdotools.resources.window_close_text
 import com.layzen.bdotools.resources.window_close_title
 import com.layzen.bdotools.resources.window_close_tray
+import com.layzen.bdotools.resources.window_close_tray_tooltip
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ModalWindow
@@ -24,8 +26,8 @@ internal fun CloseChoiceDialog(onTray: () -> Unit, onExit: () -> Unit, onDismiss
         onDismissRequest = onDismiss,
         modifier = Modifier.width(WindowDimens.closeDialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_exit), onClick = onExit))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_tray), onClick = onTray))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_exit), onClick = onExit, tooltip = stringResource(Res.string.window_close_exit_tooltip)))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_tray), onClick = onTray, tooltip = stringResource(Res.string.window_close_tray_tooltip)))
         },
     ) {
         Text(

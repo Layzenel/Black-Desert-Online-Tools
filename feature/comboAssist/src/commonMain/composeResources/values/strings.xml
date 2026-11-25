@@ -7,8 +7,16 @@
     <string name="combo_section_class">Выберите класс</string>
     <string name="combo_section_combo">Сохранённые комбо</string>
     <string name="combo_none">Нет комбо</string>
-    <string name="combo_search_by_keys">Поиск по клавишам</string>
+    <string name="combo_search_by_keys">Нажми клавиши умения — в списке останутся умения с этой командой</string>
+    <string name="combo_search_start_keys">Начать ввод</string>
+    <string name="combo_name_title">Название комбо</string>
+    <string name="combo_name_cancel_tooltip">Закрыть окно, не сохраняя комбо</string>
+    <string name="combo_name_save_tooltip">Сохранить комбо под этим названием</string>
+    <string name="combo_discard_tooltip">Сбросить все несохранённые изменения комбо</string>
+    <string name="combo_rage_add_tooltip">Добавить вариант комбо под гневом Чёрного духа</string>
+    <string name="combo_rage_copy_tooltip">Скопировать обычное комбо в комбо под гневом, чтобы поменять только отличия</string>
     <string name="combo_new">Новое комбо</string>
+    <string name="combo_new_tooltip">Начать новое пустое комбо выбранного класса</string>
     <string name="combo_untitled">Без названия</string>
     <string name="combo_name_placeholder">Название комбо</string>
     <string name="combo_stance_succession">Наследие</string>
@@ -20,6 +28,7 @@
     <string name="combo_rage_add">Добавить комбо под гневом</string>
     <string name="combo_rage_copy">Скопировать обычное комбо</string>
     <string name="combo_rage_remove">Убрать комбо под гневом</string>
+    <string name="combo_rage_remove_tooltip">Убрать из комбо часть, которая идёт в гневе Чёрного духа</string>
     <string name="combo_class_search">Поиск класса</string>
     <string name="combo_section_skills">Умения</string>
     <string name="combo_search">Поиск умения</string>
@@ -34,13 +43,18 @@
     <string name="combo_optional_search">Поиск умения</string>
     <string name="combo_optional_add">Добавить опциональное умение</string>
     <string name="combo_save">Сохранить</string>
+    <string name="combo_save_tooltip">Сохранить комбо в список сохранённых</string>
     <string name="combo_save_dirty">Сохранить *</string>
     <string name="combo_delete">Удалить комбо</string>
+    <string name="combo_delete_confirm_tooltip">Удалить выбранные комбо из списка</string>
+    <string name="combo_delete_tooltip">Удалить выбранное комбо из списка</string>
     <string name="combo_delete_confirm">Комбо «%1$s» будет удалено. Отменить удаление будет нельзя.</string>
     <string name="combo_undo_tooltip">Отменить (Ctrl+Z)</string>
     <string name="combo_redo_tooltip">Повторить (Ctrl+Y или Ctrl+Shift+Z)</string>
-    <string name="combo_export">Экспорт комбо</string>
-    <string name="combo_import">Импорт комбо</string>
+    <string name="combo_export">Экспорт</string>
+    <string name="combo_export_tooltip">Сохранить выбранное комбо в файл</string>
+    <string name="combo_import">Импорт</string>
+    <string name="combo_import_tooltip">Загрузить комбо из файла в список</string>
     <string name="combo_import_failed">Этот файл — не комбо BDO Tools.</string>
     <string name="combo_loading">Загружаю умения</string>
     <string name="combo_catalog_failed">Справочник умений не скачался. Проверь интернет и открой вкладку снова.</string>
@@ -60,6 +74,7 @@
     <string name="combo_insert_left">Вставить слева</string>
     <string name="combo_insert_right">Вставить справа</string>
     <string name="combo_cancel_selection">Отмена</string>
+    <string name="combo_cancel_selection_tooltip">Закрыть окно, ничего не удаляя</string>
     <string name="combo_chain">Связка</string>
     <string name="combo_chain_description">Жать сразу после предыдущего, иначе цепочка сорвётся</string>
     <string name="combo_seen_in_game">Видно в истории или на слоте</string>
@@ -68,6 +83,7 @@
     <string name="combo_activation_any">Любая из описания</string>
     <string name="combo_activation_record">Записать</string>
     <string name="combo_activation_rerecord">Перезаписать</string>
+    <string name="combo_activation_record_tooltip">Записать клавиши, которыми запускается это умение</string>
     <string name="combo_activation_remove">Убрать свою команду</string>
     <string name="combo_activation_recording">Зажми клавиши умения… Esc — отмена</string>
     <string name="combo_seen_in_game_hint">Трекер узнаёт, что умение применено, по «Истории испол. навыков» и по слоту перезарядки, ушедшему на перезарядку. Снимите флаг, если умения нет ни в истории, ни на слотах (например, продолжение связки): тогда трекер будет засчитывать его по нажатию клавиш и расходу ресурса — это менее точно. Флаг общий для всех ячеек с этим умением.</string>
@@ -109,12 +125,15 @@
     <string name="combo_tracker_limits">Трекер опирается на «Историю испол. навыков», слоты перезарядок, а для умений со снятым флагом «Видно в истории или на слоте» — на нажатия клавиш и расход ресурса.</string>
     <string name="combo_history_hidden">«История испол. навыков» у этого персонажа скрыта — трекер будет сбиваться. Включи её: «Редактировать UI» → глазик у «История испол. навыков».</string>
     <string name="combo_overlay_vertical">Вертикально</string>
+    <string name="combo_overlay_rotate_tooltip">Повернуть оверлей комбо: расположить его горизонтально или вертикально</string>
     <string name="combo_overlay_horizontal">Горизонтально</string>
     <string name="combo_overlay_style_next">Следующие</string>
     <string name="combo_overlay_style_focus">Фокус</string>
     <string name="combo_menu_show">Показать комбо</string>
     <string name="combo_menu_hide">Скрыть комбо</string>
+    <string name="combo_menu_hide_tooltip">Убрать комбо с экрана игры</string>
     <string name="combo_menu_edit">Редактировать комбо</string>
+    <string name="combo_menu_edit_tooltip">Открыть комбо в редакторе</string>
     <string name="combo_menu_empty">Сохранённых комбо нет</string>
     <string name="combo_panel_tab_combo">Комбо</string>
     <string name="combo_panel_scale">Размер оверлея: %1$d %</string>
@@ -147,5 +166,7 @@
     <string name="combo_notice_tip_history">Не закрывайте «Историю испол. навыков» другими окнами и не меняйте её место: программа ищет её там, где она стоит по умолчанию.</string>
     <string name="combo_notice_tip_resync">Трекер сбился — начните комбо с первого умения: он узнает его и продолжит оттуда. Если не помогло, несколько секунд не применяйте умений комбо — трекер начнёт его сначала.</string>
     <string name="combo_notice_ok">Понятно</string>
+    <string name="combo_notice_ok_tooltip">Закрыть окно с пояснением</string>
     <string name="combo_notice_open">Как работает трекер</string>
+    <string name="combo_notice_open_tooltip">Показать, как работает трекер комбо и что ему нужно</string>
 </resources>

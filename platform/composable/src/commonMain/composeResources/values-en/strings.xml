@@ -14,6 +14,9 @@
     <string name="skill_key_rmb">RMB</string>
     <string name="skill_key_mmb">MMB</string>
     <string name="skill_key_space">Space</string>
+    <string name="skill_key_shift_short">Sh</string>
+    <string name="skill_key_lmb_short">L</string>
+    <string name="skill_key_rmb_short">R</string>
     <string name="overlay_panel_title">BDO Tools overlay</string>
     <string name="overlay_tab_settings">Settings</string>
     <string name="overlay_game_admin">The game is running as administrator</string>

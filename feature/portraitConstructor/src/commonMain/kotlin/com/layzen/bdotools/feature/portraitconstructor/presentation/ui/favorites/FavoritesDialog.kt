@@ -15,6 +15,10 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.label
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.FavoritesDialogState
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.ConfirmationDialog
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_apply_tooltip
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_close_tooltip
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_replace_tooltip
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_favorites_save_tooltip
 import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_delete_confirm
@@ -53,13 +57,14 @@ internal fun FavoritesDialog(state: FavoritesDialogState, onEvent: (PortraitsEve
         onDismissRequest = { onEvent(PortraitsEvent.CloseFavorites) },
         modifier = Modifier.width(PortraitsDimens.restoreDialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_favorites_close), onClick = { onEvent(PortraitsEvent.CloseFavorites) }))
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.portraits_favorites_save), onClick = { onEvent(PortraitsEvent.SaveFavorites) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_favorites_close), onClick = { onEvent(PortraitsEvent.CloseFavorites) }, tooltip = stringResource(Res.string.portraits_favorites_close_tooltip)))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.portraits_favorites_save), onClick = { onEvent(PortraitsEvent.SaveFavorites) }, tooltip = stringResource(Res.string.portraits_favorites_save_tooltip)))
             ActionButton(
                 ActionButtonState.Neutral(
                     stringResource(Res.string.portraits_favorites_replace),
                     enabled = state.selectedSet != null,
                     onClick = { onEvent(PortraitsEvent.RequestReplaceFavorite) },
+                    tooltip = stringResource(Res.string.portraits_favorites_replace_tooltip),
                 ),
             )
             ActionButton(
@@ -67,6 +72,7 @@ internal fun FavoritesDialog(state: FavoritesDialogState, onEvent: (PortraitsEve
                     stringResource(Res.string.portraits_favorites_apply),
                     enabled = state.selectedSet != null,
                     onClick = { onEvent(PortraitsEvent.ApplyFavorite) },
+                    tooltip = stringResource(Res.string.portraits_favorites_apply_tooltip),
                 ),
             )
         },

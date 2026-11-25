@@ -24,7 +24,6 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
     private val mutableState = MutableStateFlow(GameInfoState(fpsAvailable = interactor.fpsAvailable))
     private var pingWatcher: Job? = null
     private var fpsWatcher: Job? = null
-    private var directXWatcher: Job? = null
 
     /** Состояние вкладки и окна пинга. */
     val state: StateFlow<GameInfoState> = mutableState.asStateFlow()
@@ -55,6 +54,7 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
                 if (mutableState.value.settings.gridShown) readUiHeight()
             }
             is GameInfoEvent.SetGridStep -> change(save = true) { it.copy(gridStep = event.step) }
+            is GameInfoEvent.SetGridOpacity -> change(event.save) { it.copy(gridOpacity = event.percent) }
             is GameInfoEvent.SetScale -> change(event.save) { it.copy(scale = event.percent) }
             is GameInfoEvent.SetOpacity -> change(event.save) { it.copy(opacity = event.percent) }
         }
@@ -78,10 +78,6 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
             interactor.watchFps().collect { fps -> mutableState.update { it.copy(fps = fps) } }
         }
         if (fpsWatcher == null) mutableState.update { it.copy(fps = null) }
-        directXWatcher = directXWatcher.keepIf(state.windowShown && interactor.supported) {
-            interactor.watchDirectX().collect { directX -> mutableState.update { it.copy(directX = directX) } }
-        }
-        if (directXWatcher == null) mutableState.update { it.copy(directX = null) }
     }
 
     /** Читает размер экрана игры для сетки; не прочиталось — подсказка в настройках. */

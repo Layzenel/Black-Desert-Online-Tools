@@ -30,11 +30,12 @@ While the game hides the cursor (combat mode), the button and windows pass click
   bottom of the icon, as in game. Crowd controls against monsters only are not shown; they hide together with the shields.
   Hover a shield or a crowd control icon to see its name.
 
-- "Show grid" and "Grid step (game UI units)" (10, 25 or 50) — a grid over the game screen to line windows up. It assumes the game is fullscreen or windowed fullscreen on the primary monitor; the resolution and interface size come from `gamevariable.xml`.
+- "Show grid" and "Grid step (game UI units)" (10, 25 or 50) and a "Grid opacity" slider (20 to 100 %) — a grid over the game screen to line windows up, measured from the crosshair (the screen center). It assumes the game is fullscreen or windowed fullscreen on the primary monitor; the resolution and interface size come from `gamevariable.xml`.
 
 **"Combo"** — saved combos: "Show combo" (the schema of the combo under the cursor appears next to the menu), "Hide
 combo" (game watching stops too) and "Edit combo" (opens the app). In the right half of the screen the menu opens to
 the left, and overlay windows stay inside the screen.
+The menu lets you pick any combo, even one that does not fit the character's class, and combos can be reordered by dragging.
 How to build a combo — [Combo Assist](comboAssist.en.md).
 
 - "Tracker" — the style: "Next" or "Focus".
@@ -45,7 +46,7 @@ How to build a combo — [Combo Assist](comboAssist.en.md).
 
 ## Ping
 
-The info panel (ping, FPS, "1%") has a fixed width and shows the game's DirectX version, "DX11" or "DX12", detected from the game process modules.
+The info panel (ping, FPS, "1%", freezes) has a fixed width.
 
 Latency to the game server in milliseconds, as in Windows Resource Monitor. The server is looked up again when you
 change channel or reconnect.

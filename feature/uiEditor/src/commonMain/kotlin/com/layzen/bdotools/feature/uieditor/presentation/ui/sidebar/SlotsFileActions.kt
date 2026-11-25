@@ -18,6 +18,7 @@ import com.layzen.bdotools.feature.uieditor.resources.menu_save
 import com.layzen.bdotools.feature.uieditor.resources.menu_undo_apply
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply
 import com.layzen.bdotools.feature.uieditor.resources.slots_apply_count
+import com.layzen.bdotools.feature.uieditor.resources.slots_apply_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_export
 import com.layzen.bdotools.feature.uieditor.resources.slots_export_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_import
@@ -86,6 +87,7 @@ internal fun SlotsFileActions(state: SlotsState, onEvent: (SlotsEvent) -> Unit) 
             icon = painterResource(Res.drawable.menu_apply),
             enabled = state.hasChanges && !state.busy,
             onClick = { onEvent(SlotsEvent.OpenApply) },
+            tooltip = stringResource(Res.string.slots_apply_tooltip),
         ),
         modifier = wide,
     )

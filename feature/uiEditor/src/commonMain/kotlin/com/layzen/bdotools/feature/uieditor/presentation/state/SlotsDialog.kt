@@ -64,7 +64,7 @@ sealed interface SlotsDialog {
      * [skipped] — персонажи (`CharacterNo`), с которых сняли отметку: их навыки и надписи не запишутся.
      * [gameRunning] — игра запущена (видно только на Desktop): запись не начнётся, пока её не закроют.
      */
-    data class ConfirmApply(val target: GamePreset, val skipped: Set<String> = emptySet(), val gameRunning: Boolean = false) : SlotsDialog
+    data class ConfirmApply(val targets: Set<GamePreset>, val skipped: Set<String> = emptySet(), val gameRunning: Boolean = false) : SlotsDialog
 
     data class ConfirmDelete(val name: String) : SlotsDialog
 

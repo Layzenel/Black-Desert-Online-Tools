@@ -7,8 +7,11 @@ import java.awt.image.BufferedImage
 /**
  * Снимок области [logical] (логические координаты Java) в настоящих пикселях [width]×[height]: Robot берёт
  * логические координаты, лучший вариант снимка — настоящий, без уменьшения от масштаба Windows.
+ * Снимков 20 и больше в секунду, поэтому без масштаба Windows (логические пиксели — настоящие) берётся один
+ * обычный снимок: снимок с вариантами создаёт лишние картинки на каждый кадр.
  */
 internal fun captureScreen(robot: Robot, logical: Rectangle, width: Int, height: Int): BufferedImage {
+    if (logical.width == width && logical.height == height) return robot.createScreenCapture(logical)
     val variants = robot.createMultiResolutionScreenCapture(logical).resolutionVariants
     val best = variants.maxBy { it.getWidth(null) }
     if (best is BufferedImage && best.width == width && best.height == height) return best

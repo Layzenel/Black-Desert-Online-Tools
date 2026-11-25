@@ -38,6 +38,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.SkillTooltip
 import com.layzen.bdotools.feature.uieditor.presentation.ui.skill.rememberAltPressed
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
+import com.layzen.bdotools.feature.uieditor.resources.slots_cancel_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_hide_absolute
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_hide_pve_controls
 import com.layzen.bdotools.feature.uieditor.resources.slots_skill_names_language
@@ -88,7 +89,7 @@ internal fun SkillPickerDialog(dialog: SlotsDialog.PickSkill, skills: SkillsStat
             .widthIn(min = widest)
             .width(IntrinsicSize.Max)
             .onSizeChanged { size -> with(density) { size.width.toDp() }.let { if (it > widest) widest = it } },
-        footer = { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close)) },
+        footer = { ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close, tooltip = stringResource(Res.string.slots_cancel_tooltip))) },
         aside = tooltipSkill?.let { skillNo -> { TooltipPanel { SkillTooltip(skillNo, skills, onEvent) } } },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {

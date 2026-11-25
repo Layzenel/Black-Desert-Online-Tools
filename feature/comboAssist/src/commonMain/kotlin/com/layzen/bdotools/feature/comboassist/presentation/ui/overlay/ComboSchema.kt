@@ -1,5 +1,11 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.overlay
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -152,10 +158,33 @@ private fun SchemaCell(
     }
     val hovered: @Composable () -> Unit = { if (tooltips) SkillHover(item, loadDetails, cell = CellNote(combo.label(at), chain)) { icon() } else icon() }
     if (!keys) { hovered(); return }
-    // клавиши под иконкой при любой ориентации; ячейка по центру — стрелки и связи встают по оси иконки
+    if (combo.vertical) {
+        // столбцом: клавиши под иконкой, ячейка по центру — вертикальные стрелки встают по оси иконки
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXxs)) {
+            hovered()
+            SchemaCellKeys(at, skillNo, overlay, loadDetails)
+        }
+    } else {
+        IconCenteredKeys(hovered) { modifier -> SchemaCellKeys(at, skillNo, overlay, loadDetails, modifier) }
+    }
+}
+
+/**
+ * Иконка [icon] и клавиши [keys] под ней, а над иконкой — пустое место высотой с клавиши: середина ячейки совпадает
+ * с серединой иконки. В ряду всё выравнивается по середине — так стрелки и связи идут от центра иконки, а иконки
+ * одной ветки стоят на одной линии, даже если подписи клавиш разной высоты.
+ */
+@Composable
+private fun IconCenteredKeys(icon: @Composable () -> Unit, keys: @Composable (Modifier) -> Unit) {
+    val density = LocalDensity.current
+    // высота клавиш (0, пока их нет): столько же пустого места над иконкой
+    var keysHeight by remember { mutableStateOf(0.dp) }
+    // обычная колонка, а не своя раскладка: схема меряет ряды через IntrinsicSize, и своя раскладка без
+    // intrinsic-размеров раздвигала умения на большие промежутки
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXxs)) {
-        hovered()
-        SchemaCellKeys(at, skillNo, overlay, loadDetails)
+        Spacer(Modifier.height(keysHeight))
+        icon()
+        keys(Modifier.onSizeChanged { keysHeight = with(density) { it.height.toDp() } })
     }
 }
 

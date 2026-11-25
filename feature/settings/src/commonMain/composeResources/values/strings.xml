@@ -1,12 +1,15 @@
 <resources>
     <string name="settings_section_general">Основное</string>
     <string name="settings_section_theme">Тема</string>
+    <string name="settings_section_display">Отображение</string>
     <string name="settings_section_overlay">Оверлей</string>
     <string name="settings_startup_title">Запуск программы</string>
     <string name="settings_launch_at_startup">Запускать вместе с Windows</string>
     <string name="settings_launch_at_startup_description">Программа откроется при входе в Windows. С правами администратора — без вопроса Windows.</string>
     <string name="settings_always_admin">Всегда запускать от имени администратора</string>
     <string name="settings_always_admin_description">Трекеру комбо, пингу и FPS нужны права администратора. Windows будет спрашивать разрешение при каждом запуске. Действует со следующего запуска.</string>
+    <string name="settings_start_in_tray">Запускать в трее</string>
+    <string name="settings_start_in_tray_description">При запуске программа не открывает окно, а сразу сворачивается в трей. Окно открывается кликом по значку в трее.</string>
     <string name="settings_startup_desktop_only">Эти настройки есть только в установленной настольной версии.</string>
     <string name="settings_theme_title">Тема интерфейса</string>
     <string name="settings_theme_description">Меняет шапку окон, украшение над ней и кнопку закрытия, как «Настройки темы интерфейса» в игре. Наведите на тему, чтобы увидеть превью.</string>
@@ -16,6 +19,18 @@
     <string name="settings_theme_spring">Сезон: Весна</string>
     <string name="settings_theme_morning">Страна Утра</string>
     <string name="settings_theme_preview_title">BDO Tools</string>
+    <string name="settings_display_title">Подсказки клавиш</string>
+    <string name="settings_display_description">Как показывать клавиши умений в трекере, схеме и редакторе комбо: словом, сокращением или картинкой.</string>
+    <string name="settings_display_shift">Клавиша Shift</string>
+    <string name="settings_display_lmb">Левая кнопка мыши</string>
+    <string name="settings_display_rmb">Правая кнопка мыши</string>
+    <string name="settings_key_text_shift">Shift</string>
+    <string name="settings_key_text_shift_short">Sh</string>
+    <string name="settings_key_text_lmb">ЛКМ</string>
+    <string name="settings_key_text_rmb">ПКМ</string>
+    <string name="settings_key_text_lmb_short">Л</string>
+    <string name="settings_key_text_rmb_short">П</string>
+    <string name="settings_key_style_icon">Картинка</string>
     <string name="settings_overlay_title">Оверлей</string>
     <string name="settings_overlay_soon">Настройки оверлея появятся здесь позже.</string>
 </resources>

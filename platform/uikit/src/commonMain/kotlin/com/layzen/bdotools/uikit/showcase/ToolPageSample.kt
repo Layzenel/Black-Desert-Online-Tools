@@ -16,6 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntOffset
+import com.layzen.bdotools.uikit.resources.showcase_page_apply_tooltip
+import com.layzen.bdotools.uikit.resources.showcase_page_disabled_tooltip
+import com.layzen.bdotools.uikit.resources.showcase_page_mode_tooltip
+import com.layzen.bdotools.uikit.resources.showcase_page_open_tooltip
+import com.layzen.bdotools.uikit.resources.showcase_page_undo_tooltip
 import kotlin.math.roundToInt
 import com.layzen.bdotools.uikit.components.ActionMenuItem
 import com.layzen.bdotools.uikit.components.ContextMenu
@@ -52,23 +57,24 @@ internal fun ToolPageSample(modifier: Modifier) {
         modifier = modifier.height(ShowcaseDimens.toolPageHeight),
         sidebar = {
             SectionHeader(stringResource(Res.string.showcase_page_menu))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_open), onClick = {}), Modifier.fillMaxWidth())
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_open), onClick = {}, tooltip = stringResource(Res.string.showcase_page_open_tooltip)), Modifier.fillMaxWidth())
             ActionButton(
                 ActionButtonState.Toggle(
                     stringResource(Res.string.showcase_page_mode),
                     checked = mode,
                     hotkey = if (mode) stringResource(Res.string.showcase_page_hotkey) else null,
                     onClick = { mode = !mode },
+                    tooltip = stringResource(Res.string.showcase_page_mode_tooltip),
                 ),
                 Modifier.fillMaxWidth(),
             )
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_disabled), enabled = false, onClick = {}), Modifier.fillMaxWidth())
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_disabled), enabled = false, onClick = {}, tooltip = stringResource(Res.string.showcase_page_disabled_tooltip)), Modifier.fillMaxWidth())
         },
-        sidebarFooter = { ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}), modifier = Modifier.fillMaxWidth()) },
+        sidebarFooter = { ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}, tooltip = stringResource(Res.string.showcase_page_apply_tooltip)), modifier = Modifier.fillMaxWidth()) },
     ) {
         Column {
             ActionBar {
-                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_undo), onClick = {}))
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_undo), onClick = {}, tooltip = stringResource(Res.string.showcase_page_undo_tooltip)))
                 ToolbarDivider()
                 ToolbarButton(
                     painterResource(Res.drawable.showcase_tool),
@@ -77,7 +83,7 @@ internal fun ToolPageSample(modifier: Modifier) {
                     selected = mode,
                 )
                 Spacer(Modifier.weight(1f))
-                ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}))
+                ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}, tooltip = stringResource(Res.string.showcase_page_apply_tooltip)))
             }
             Box(Modifier.fillMaxSize().onSecondaryClick { menuAt = it }) {
                 DescriptionText(stringResource(Res.string.showcase_page_body), Modifier.padding(AppTheme.dimens.spaceL))

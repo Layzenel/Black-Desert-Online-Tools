@@ -13,10 +13,10 @@ internal object GameInfoDimens {
     val frameGraphLine = 1.dp
     val gridLine = 1.dp
 
-    /** Прозрачность обычной линии сетки, каждой [MAJOR_EVERY] линии и осей через центр экрана. */
-    const val GRID_ALPHA = 0.12f
-    const val GRID_MAJOR_ALPHA = 0.22f
-    const val GRID_AXIS_ALPHA = 0.7f
+    /** Прозрачность обычной линии сетки, каждой [MAJOR_EVERY] линии и осей через центр экрана при непрозрачности 100 %. */
+    const val GRID_ALPHA = 0.5f
+    const val GRID_MAJOR_ALPHA = 0.8f
+    const val GRID_AXIS_ALPHA = 1f
 
     /** Каждая какая по счёту линия — заметная: у сетки 50 — каждая вторая, у мелких — каждая пятая. */
     const val MAJOR_EVERY_FINE = 5

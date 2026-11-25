@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,7 +24,8 @@ import com.layzen.bdotools.uikit.theme.AppShapes
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
- * Переключатель-пилюля: включён — золотой с кремовым кружком справа.
+ * Переключатель-пилюля: включён — золотой с кремовым кружком справа. Рядом — только подпись [label];
+ * пояснение [description] показывается подсказкой при наведении, а не текстом под подписью.
  *
  * @param enabled `false` — недоступен: не нажимается, подпись серая (почему — пиши рядом)
  */
@@ -38,6 +38,15 @@ fun ToggleSwitch(
     description: String? = null,
     enabled: Boolean = true,
 ) {
+    if (description == null) {
+        ToggleRow(checked, onCheckedChange, modifier, label, enabled)
+    } else {
+        HoverTooltip(description, modifier) { ToggleRow(checked, onCheckedChange, Modifier, label, enabled) }
+    }
+}
+
+@Composable
+private fun ToggleRow(checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier, label: String?, enabled: Boolean) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
     Row(
@@ -61,11 +70,6 @@ fun ToggleSwitch(
                     .background(if (checked) colors.toggleThumbOn else colors.toggleThumbOff, AppShapes.Pill),
             )
         }
-        if (label != null || description != null) {
-            Column {
-                if (label != null) Text(label, style = AppTheme.typography.sectionTitle, color = if (enabled) colors.textBeige else colors.textDisabled)
-                if (description != null) DescriptionText(description)
-            }
-        }
+        if (label != null) Text(label, style = AppTheme.typography.sectionTitle, color = if (enabled) colors.textBeige else colors.textDisabled)
     }
 }

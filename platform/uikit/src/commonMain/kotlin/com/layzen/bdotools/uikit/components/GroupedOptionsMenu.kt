@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -143,7 +142,7 @@ private fun <T> OptionsColumn(
         options.forEach { option ->
             // ключ — сам вариант: при поиске строки меняются, и правый клик не должен достаться соседу
             key(option) {
-                DropdownMenuItem(
+                MenuOption(
                     text = { MenuOptionText(label(option), highlighted = option == selected) },
                     leadingIcon = icon?.let { { it(option) } },
                     onClick = { onClick(option) },
@@ -166,7 +165,7 @@ private fun GroupItem(
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
     LaunchedEffect(hovered) { onHoverChange(hovered) }
-    DropdownMenuItem(
+    MenuOption(
         text = { MenuOptionText(text, highlighted = open) },
         leadingIcon = icon,
         trailingIcon = { SubmenuArrow() },

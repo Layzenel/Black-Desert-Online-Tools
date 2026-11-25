@@ -36,6 +36,10 @@ compose.desktop {
         mainClass = "com.layzen.bdotools.desktop.MainKt"
         // по версии программа понимает, вышло ли обновление (проверка в shared/.../update)
         jvmArgs("-Dbdotools.version=$desktopVersion")
+        // Память: без -Xmx JVM брала до четверти ОЗУ и не отдавала её. Программе хватает 512 МБ (иконки маленькие,
+        // самое крупное — подложка-скриншот ~15 МБ); последовательный GC с узким запасом кучи возвращает
+        // свободную память системе после сборки, а не держит её про запас
+        jvmArgs("-Xms32m", "-Xmx512m", "-XX:+UseSerialGC", "-XX:MinHeapFreeRatio=10", "-XX:MaxHeapFreeRatio=30")
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi)

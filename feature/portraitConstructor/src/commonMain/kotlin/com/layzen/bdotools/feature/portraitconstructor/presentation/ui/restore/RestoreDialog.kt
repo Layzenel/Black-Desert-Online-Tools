@@ -16,9 +16,11 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_backups_delete_text
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_backups_delete_title
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_delete_confirm
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_apply
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_apply_count
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_apply_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_empty
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_loading
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_restore_title_all
@@ -46,7 +48,7 @@ internal fun RestoreDialog(state: RestoreDialogState, portraits: List<PortraitIt
         modifier = Modifier.width(if (single != null) PortraitsDimens.restoreOneDialogWidth else PortraitsDimens.restoreDialogWidth),
         footer = {
             if (state.isLoadingPreviews) LoadingRow(stringResource(Res.string.portraits_restore_loading), Modifier.weight(1f))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseRestore) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseRestore) }, tooltip = stringResource(Res.string.portraits_cancel_tooltip)))
             ActionButton(
                 ActionButtonState.Positive(
                     if (single != null) {
@@ -56,6 +58,7 @@ internal fun RestoreDialog(state: RestoreDialogState, portraits: List<PortraitIt
                     },
                     enabled = state.selected != null && restoreCount > 0,
                     onClick = { onEvent(PortraitsEvent.ApplyRestore) },
+                    tooltip = stringResource(Res.string.portraits_restore_apply_tooltip),
                 ),
             )
         },

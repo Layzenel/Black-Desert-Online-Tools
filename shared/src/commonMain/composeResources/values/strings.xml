@@ -5,7 +5,9 @@
     <string name="window_close_title">Закрыть программу?</string>
     <string name="window_close_text">Если свернуть в трей, программа продолжит работать: оверлей комбо останется поверх игры. Открыть её — клик по значку в трее.</string>
     <string name="window_close_tray">Свернуть в трей</string>
+    <string name="window_close_tray_tooltip">Закрыть окно, оставив программу работать в трее</string>
     <string name="window_close_exit">Закрыть</string>
+    <string name="window_close_exit_tooltip">Полностью закрыть программу</string>
     <!-- Заголовок вкладки браузера: страница и название приложения -->
     <string name="page_title">%1$s — %2$s</string>
 
@@ -26,7 +28,9 @@
     <string name="account_picker_title">Выберите аккаунт</string>
     <string name="account_picker_description">На этом ПК играли с нескольких аккаунтов, а портреты у них лежат в одной папке. Тулзы покажут только выбранный аккаунт, сменить его можно в верхней навигации.</string>
     <string name="account_picker_apply">Выбрать</string>
+    <string name="account_picker_apply_tooltip">Работать с выбранным аккаунтом</string>
     <string name="account_picker_cancel">Отмена</string>
+    <string name="account_picker_cancel_tooltip">Закрыть окно, не меняя аккаунт</string>
     <string name="account_last_played">Последний</string>
     <string name="account_details">Последняя игра: %1$s · персонажей: %2$d</string>
     <string name="account_played_today">сегодня</string>
@@ -39,6 +43,7 @@
     <string name="account_more_portraits">+%1$d</string>
     <string name="account_switcher_label">Аккаунт</string>
     <string name="account_option">%1$s · %2$d перс.</string>
+    <string name="account_option_tooltip">Выбрать другой аккаунт Black Desert</string>
 
     <!-- Оговорка внизу окна: формулировку требует «Руководство по созданию фан-контента» Pearl Abyss -->
     <string name="app_disclaimer_short">Неофициальный фанатский проект, не связан с Pearl Abyss. Наведите, чтобы прочитать полностью.</string>
@@ -54,6 +59,7 @@
     <!-- Обновление сайта -->
     <string name="web_update_available">Вышла новая версия сайта %1$s. Обновите страницу, чтобы получить изменения.</string>
     <string name="web_update_reload">Обновить страницу</string>
+    <string name="web_update_reload_tooltip">Перезагрузить страницу, чтобы получить новую версию</string>
 
     <!-- Обновление настольной версии -->
     <string name="update_check">Проверить обновления</string>
@@ -61,8 +67,11 @@
     <string name="update_up_to_date">Установлена последняя версия.</string>
     <string name="update_check_failed">Не удалось проверить обновления. Проверьте интернет.</string>
     <string name="update_install_version">Обновить до %1$s</string>
+    <string name="update_install_version_tooltip">Показать, что нового в этой версии, и обновить</string>
     <string name="update_later">Позже</string>
+    <string name="update_later_tooltip">Отложить обновление страницы</string>
     <string name="update_install">Обновить</string>
+    <string name="update_install_tooltip">Скачать и установить обновление</string>
     <string name="update_downloading">Скачиваю версию %1$s: %2$d%%. После скачивания программа закроется, обновится и запустится снова.</string>
     <string name="update_failed">Не удалось скачать или распаковать обновление. Проверьте интернет и место на диске и попробуйте ещё раз.</string>
     <!-- Окно консоли, которое заменяет файлы программы: без скобок, &, <, > и |, их cmd считает командами -->
@@ -71,6 +80,8 @@
     <string name="update_script_copying">Заменяю файлы программы новой версией...</string>
     <string name="update_script_failed">Не удалось заменить файлы. Запускаю прежнюю версию.</string>
     <string name="update_retry">Повторить</string>
+    <string name="update_retry_tooltip">Повторить скачивание и установку обновления</string>
     <string name="update_notes_title">Что нового в версии %1$s</string>
     <string name="update_notes_empty">Список изменений для этой версии не указан.</string>
+    <string name="language_switcher_tooltip">Выбрать язык интерфейса</string>
 </resources>

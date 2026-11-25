@@ -16,18 +16,22 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.Portraits
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.notice.noticeText
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_clipboard
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_clipboard_description
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_clipboard_paste
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_clipboard_paste_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_device
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_device_description
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_device_pick
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_device_pick_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_loading
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_title_all
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_title_one
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_url
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_url_description
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_url_load
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_url_load_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_source_url_placeholder
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
@@ -58,6 +62,7 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                     stringResource(Res.string.portraits_cancel),
                     enabled = !state.isLoading,
                     onClick = { onEvent(PortraitsEvent.CloseSource) },
+                    tooltip = stringResource(Res.string.portraits_cancel_tooltip),
                 ),
             )
         },
@@ -77,6 +82,7 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                         stringResource(Res.string.portraits_source_device_pick),
                         enabled = !state.isLoading,
                         onClick = { onEvent(PortraitsEvent.PickFromDevice) },
+                        tooltip = stringResource(Res.string.portraits_source_device_pick_tooltip),
                     ),
                 )
             }
@@ -92,6 +98,7 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                         stringResource(Res.string.portraits_source_clipboard_paste),
                         enabled = !state.isLoading,
                         onClick = { onEvent(PortraitsEvent.PasteFromClipboard) },
+                        tooltip = stringResource(Res.string.portraits_source_clipboard_paste_tooltip),
                     ),
                 )
             }
@@ -112,6 +119,7 @@ internal fun SourceDialog(state: SourceDialogState, onEvent: (PortraitsEvent) ->
                         stringResource(Res.string.portraits_source_url_load),
                         enabled = !state.isLoading && state.url.isNotBlank(),
                         onClick = { onEvent(PortraitsEvent.LoadFromUrl) },
+                        tooltip = stringResource(Res.string.portraits_source_url_load_tooltip),
                     ),
                     modifier = Modifier.defaultMinSize(minWidth = PortraitsDimens.urlButtonMinWidth),
                 )
