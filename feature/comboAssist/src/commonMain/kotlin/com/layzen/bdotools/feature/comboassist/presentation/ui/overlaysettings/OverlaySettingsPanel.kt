@@ -41,7 +41,7 @@ internal fun OverlaySettingsPanel(state: ComboState, onEvent: (ComboEvent) -> Un
         ScaledOverlay(settings.comboScale, settings.comboOpacity) { ComboOverlayContent(combo, state.overlay, state.skills, loadDetails, state.rageTracked) }
         SectionHeader(stringResource(Res.string.combo_panel_schema))
         ScaledOverlay(settings.comboScale, settings.comboOpacity) {
-            SchemaOverlay(combo, state.overlay, state.skills, loadDetails, onPress = { onEvent(ComboEvent.Press(it)) }, rage = state.rageTracked)
+            SchemaOverlay(combo, state.overlay, state.skills, loadDetails, onPress = { onEvent(ComboEvent.Press(it)) }, rage = state.rageTracked, keys = settings.schemaKeys)
         }
         ActionButton(ActionButtonState.Neutral(stringResource(if (combo.vertical) Res.string.combo_overlay_horizontal else Res.string.combo_overlay_vertical), onClick = { onEvent(ComboEvent.ToggleVertical) }))
     }

@@ -57,7 +57,7 @@ internal fun comboOverlayContribution(): OverlayContribution = OverlayContributi
             val viewModel: ComboViewModel = koinViewModel()
             val state by viewModel.state.collectAsState()
             // схема комбо под курсором — рядом с меню, чтобы было видно, что это за комбо
-            OverlayComboTab(state, viewModel::onEvent, onEdit = scope::openApp, onHover = { combo -> scope.aside(combo?.let { { ComboPreview(it, viewModel) } }) })
+            OverlayComboTab(state, viewModel::onEvent, onEdit = scope::openApp, onHover = { combo -> scope.aside(combo?.let { { ComboPreview(it, state.combo?.vertical ?: it.vertical, state.settings.schemaKeys, viewModel) } }) })
             DisposableEffect(Unit) { onDispose { scope.aside(null) } }
         },
     ),
@@ -88,7 +88,7 @@ private fun ComboOverlayWindows(viewModel: ComboViewModel) {
             val size = if (combo.vertical) ComboDimens.overlayWindowVertical else ComboDimens.overlayWindow
             GameOverlayWindow(SCHEMA_WINDOW, OverlayAnchor.CenterLeft, size) {
                 ScaledOverlay(settings.comboScale, settings.comboOpacity) {
-                    SchemaOverlay(combo, state.overlay, state.skills, viewModel::details, inGame = true, rage = state.rageTracked)
+                    SchemaOverlay(combo, state.overlay, state.skills, viewModel::details, inGame = true, rage = state.rageTracked, keys = settings.schemaKeys)
                 }
             }
         }

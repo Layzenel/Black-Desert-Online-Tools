@@ -14,7 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.composable.resources.Res
 import com.layzen.bdotools.composable.resources.overlay_panel_title
-import com.layzen.bdotools.uikit.components.CloseButton
+import com.layzen.bdotools.uikit.components.WindowCloseButton
+import com.layzen.bdotools.uikit.components.windowDecorationHeight
 import com.layzen.bdotools.uikit.components.GameWindow
 import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -46,13 +47,14 @@ internal fun OverlayMenuPanel(
             aside = content
         }
     }
-    Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+    // место над окном под украшение темы: окно меню — отдельное окно ОС, за его краем ничего не рисуется
+    Row(Modifier.padding(top = windowDecorationHeight()), horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
         if (alignEnd) aside?.invoke()
         GameWindow(
             stringResource(Res.string.overlay_panel_title),
             Modifier.width(OverlayDimens.panelWidth),
             titleBarModifier = dragModifier,
-            actions = { CloseButton(onClose) },
+            actions = { WindowCloseButton(onClose) },
         ) {
             Column(Modifier.padding(AppTheme.dimens.spaceM), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceM)) {
                 OptionGroup(tabs.indices.toList(), index, { selected = it }, { stringResource(tabs[it].second.title) })

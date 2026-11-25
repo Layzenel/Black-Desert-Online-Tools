@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.layzen.bdotools.feature.gameinfo.domain.fps.FpsStyle
 import com.layzen.bdotools.feature.gameinfo.domain.fps.FrameStats
+import com.layzen.bdotools.feature.gameinfo.domain.graphics.DirectXVersion
 import com.layzen.bdotools.feature.gameinfo.domain.ping.PingQuality
 import com.layzen.bdotools.feature.gameinfo.domain.ping.pingQuality
 import com.layzen.bdotools.feature.gameinfo.resources.Res
+import com.layzen.bdotools.feature.gameinfo.resources.game_info_directx
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_ms
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_unknown
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -30,7 +32,7 @@ import org.jetbrains.compose.resources.stringResource
  * график времени кадра шириной со строку.
  */
 @Composable
-internal fun PingBadge(ping: Int?, showPing: Boolean, fps: FrameStats?, showFps: Boolean, fpsStyle: FpsStyle) {
+internal fun PingBadge(ping: Int?, showPing: Boolean, fps: FrameStats?, showFps: Boolean, fpsStyle: FpsStyle, directX: DirectXVersion?) {
     Column(
         Modifier.width(IntrinsicSize.Max)
             .background(AppTheme.colors.backgroundDeep.copy(alpha = BACKDROP_ALPHA)).border(GameInfoDimens.frame, AppTheme.colors.border)
@@ -40,6 +42,9 @@ internal fun PingBadge(ping: Int?, showPing: Boolean, fps: FrameStats?, showFps:
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS), verticalAlignment = Alignment.CenterVertically) {
             if (showPing) PingValue(ping)
             if (showFps) FpsValue(fps, fpsStyle)
+            if (directX != null) {
+                Text(stringResource(Res.string.game_info_directx, directX.number), style = AppTheme.typography.sectionTitle, color = AppTheme.colors.textMuted)
+            }
         }
         if (showFps && fpsStyle == FpsStyle.Detailed && fps != null) FrameGraph(fps)
     }
@@ -51,10 +56,10 @@ private fun PingValue(ping: Int?) {
     val quality = pingQuality(ping)
     val color = qualityColor(quality)
     PingIcon(quality, color)
-    Text(
+    // ширина — под трёхзначный пинг, чтобы панель не прыгала
+    FixedWidthText(
         if (ping != null) stringResource(Res.string.game_info_ping_ms, ping) else stringResource(Res.string.game_info_ping_unknown),
-        style = AppTheme.typography.sectionTitle,
-        color = color,
+        stringResource(Res.string.game_info_ping_ms, WIDEST_PING), AppTheme.typography.sectionTitle, color,
     )
 }
 
@@ -68,3 +73,6 @@ private fun qualityColor(quality: PingQuality?): Color = when (quality) {
 }
 
 private const val BACKDROP_ALPHA = 0.8f
+
+/** Самый широкий пинг, под который резервируется место. */
+private const val WIDEST_PING = 999

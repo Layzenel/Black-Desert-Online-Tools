@@ -37,6 +37,7 @@ fun ComponentShowcase(modifier: Modifier = Modifier) {
             FeedbackSample(Modifier.width(ShowcaseDimens.tilesWindowWidth))
             ToolPageSample(Modifier.width(ShowcaseDimens.toolPageWidth))
             ContentFrameSample(Modifier.width(ShowcaseDimens.tilesWindowWidth))
+            ThemesSample()
         }
     }
 }

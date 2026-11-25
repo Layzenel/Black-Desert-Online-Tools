@@ -41,10 +41,14 @@ private const val GAME_INFO_ID = "game-info"
 
 private const val INFO_ORDER = 20
 
-/** Что фича добавляет поверх игры: окно пинга и вкладку «Информация» в меню оверлея. */
+/** Что фича добавляет поверх игры: окно пинга, сетку на весь экран, вкладку «Информация» и пункты «Настроек» меню оверлея. */
 internal fun gameInfoOverlayContribution(): OverlayContribution = OverlayContribution(
     id = GAME_INFO_ID,
-    windows = { PingWindow(koinViewModel()) },
+    windows = {
+        PingWindow(koinViewModel())
+        GridWindow(koinViewModel())
+    },
+    settings = { GridSettings(koinViewModel()) },
     tabs = listOf(OverlayTab(INFO_ORDER, Res.string.game_info_tab) { InfoTab(koinViewModel()) }),
 )
 
@@ -54,7 +58,7 @@ private fun PingWindow(viewModel: GameInfoViewModel) {
     if (!viewModel.supported || !state.windowShown) return
     GameOverlayWindow(PING_WINDOW, OverlayAnchor.TopRight, GameInfoDimens.pingWindow) {
         ScaledOverlay(state.settings.scale, state.settings.opacity) {
-            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown, state.settings.fpsStyle)
+            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown, state.settings.fpsStyle, state.directX)
         }
     }
 }
@@ -100,3 +104,11 @@ private val FpsStyle.title: StringResource
 
 /** Непрозрачность пинга, проценты. */
 private val OPACITY = 20..100
+
+/** Сетка на весь экран игры, пока она включена и размер экрана игры прочитан. */
+@Composable
+private fun GridWindow(viewModel: GameInfoViewModel) {
+    val state by viewModel.state.collectAsState()
+    val uiHeight = state.uiHeight
+    if (viewModel.supported && state.settings.gridShown && uiHeight != null) GameGridWindow(state.settings.gridStep, uiHeight)
+}

@@ -34,6 +34,14 @@ import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.CellPanel
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.ComboCanvas
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.ComboParts
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.PaletteDrag
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.PaletteDragGhost
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.foundation.layout.Box
 import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.OptionalSkillsEditor
 import com.layzen.bdotools.feature.comboassist.presentation.ui.sidebar.ComboSidebarContent
 import com.layzen.bdotools.feature.comboassist.presentation.ui.overlaysettings.OverlaySettingsPanel
@@ -66,7 +74,6 @@ import com.layzen.bdotools.uikit.components.ActionBar
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
-import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.components.ToolPage
 import com.layzen.bdotools.uikit.components.WarningText
@@ -94,6 +101,10 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
     // Ctrl+Z ловит сама страница: поле ввода отменяет свой текст само и до неё клавишу не пускает
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { focus.requestFocus() }
+    val paletteDrag = remember { PaletteDrag() }
+    // начало страницы в окне: иконка перетаскиваемого умения рисуется поверх неё в координатах окна
+    var origin by remember { mutableStateOf(Offset.Zero) }
+    Box(Modifier.fillMaxSize().onGloballyPositioned { origin = it.positionInRoot() }) {
     ToolPage(
         modifier = Modifier.fillMaxSize().focusRequester(focus).onKeyEvent { event ->
             // Ctrl+Z — отменить, Ctrl+Y и Ctrl+Shift+Z — повторить, как в редакторе интерфейса
@@ -108,28 +119,32 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
             action != null
         }.focusable(),
         sidebarWidth = ComboDimens.sidebarWidth,
-        sidebar = { ComboSidebarContent(state, onEvent, loadDetails) },
+        sidebar = { ComboSidebarContent(state, onEvent, loadDetails, paletteDrag) },
         sidebarFooter = {
-            if (canWatchGame) MenuAction(stringResource(Res.string.combo_notice_open), { onEvent(ComboEvent.ShowTrackerNotice) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_info))
+            if (canWatchGame) ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_notice_open), icon = painterResource(Res.drawable.menu_info), onClick = { onEvent(ComboEvent.ShowTrackerNotice) }), Modifier.fillMaxWidth())
             if (state.importFailed) WarningText(stringResource(Res.string.combo_import_failed))
-            MenuAction(stringResource(Res.string.combo_import), { onEvent(ComboEvent.ImportCombos) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_import))
-            MenuAction(stringResource(Res.string.combo_export), { onEvent(ComboEvent.ExportCombo) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_export), enabled = state.combo != null)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_import), icon = painterResource(Res.drawable.menu_import), onClick = { onEvent(ComboEvent.ImportCombos) }), Modifier.fillMaxWidth())
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_export), icon = painterResource(Res.drawable.menu_export), enabled = state.combo != null, onClick = { onEvent(ComboEvent.ExportCombo) }), Modifier.fillMaxWidth())
             if (state.combo?.rage != null) {
-                MenuAction(stringResource(Res.string.combo_rage_remove), { onEvent(ComboEvent.RemoveRage) }, Modifier.fillMaxWidth(), icon = painterResource(Res.drawable.menu_delete))
+                ActionButton(ActionButtonState.Negative(stringResource(Res.string.combo_rage_remove), icon = painterResource(Res.drawable.menu_delete), onClick = { onEvent(ComboEvent.RemoveRage) }), Modifier.fillMaxWidth())
             }
             ActionButton(
-                ActionButtonState.Negative(stringResource(Res.string.combo_delete), enabled = state.combo != null, onClick = { onEvent(ComboEvent.AskDelete) }),
+                ActionButtonState.Negative(
+                    text = stringResource(Res.string.combo_delete),
+                    icon = painterResource(Res.drawable.menu_delete),
+                    enabled = state.combo != null,
+                    onClick = { onEvent(ComboEvent.AskDelete) }
+                ),
                 Modifier.fillMaxWidth(),
-                icon = painterResource(Res.drawable.menu_delete),
             )
             ActionButton(
                 ActionButtonState.Positive(
-                    stringResource(if (state.dirty) Res.string.combo_save_dirty else Res.string.combo_save),
+                    text = stringResource(if (state.dirty) Res.string.combo_save_dirty else Res.string.combo_save),
+                    icon = painterResource(Res.drawable.menu_save),
                     enabled = state.combo != null,
                     onClick = { onEvent(ComboEvent.Save) },
                 ),
                 Modifier.fillMaxWidth(),
-                icon = painterResource(Res.drawable.menu_save),
             )
         },
     ) {
@@ -148,9 +163,11 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL),
             ) {
                 if (state.mode == ComboMode.Overlay && canWatchGame) OverlaySettingsPanel(state, onEvent, loadDetails)
-                else EditorContent(state, onEvent, loadDetails)
+                else EditorContent(state, onEvent, loadDetails, paletteDrag)
             }
         }
+    }
+    PaletteDragGhost(paletteDrag, origin) { state.skills[it]?.icon }
     }
     if (state.trackerNotice) TrackerNoticeDialog { onEvent(ComboEvent.CloseTrackerNotice) }
     val deleted = state.combo
@@ -161,7 +178,7 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
 }
 
 @Composable
-private fun EditorContent(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
+private fun EditorContent(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?, paletteDrag: PaletteDrag) {
     val combo = state.edited ?: return
     ComboParts(state, onEvent)
     DescriptionText(stringResource(Res.string.combo_empty_hint))
@@ -175,7 +192,7 @@ private fun EditorContent(state: ComboState, onEvent: (ComboEvent) -> Unit, load
                 if (escape) onEvent(ComboEvent.ClearSelection)
                 escape
             },
-    ) { ComboCanvas(state, onEvent, loadDetails) }
+    ) { ComboCanvas(state, onEvent, loadDetails, paletteDrag) }
     CellPanel(state, onEvent, loadDetails)
     if (state.emptyCells > 0) WarningText(stringResource(Res.string.combo_warning_empty, state.emptyCells))
     state.problems.forEach { WarningText(stringResource(Res.string.combo_warning_chain, combo.label(it))) }

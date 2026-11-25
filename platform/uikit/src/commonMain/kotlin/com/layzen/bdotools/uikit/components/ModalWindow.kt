@@ -43,7 +43,7 @@ fun ModalWindow(
                 GameWindow(
                     title = title,
                     modifier = modifier.padding(margin),
-                    actions = { if (dismissible) CloseButton(onClick = onDismissRequest) },
+                    actions = { if (dismissible) WindowCloseButton(onClick = onDismissRequest) },
                     footer = footer,
                     content = content,
                 )

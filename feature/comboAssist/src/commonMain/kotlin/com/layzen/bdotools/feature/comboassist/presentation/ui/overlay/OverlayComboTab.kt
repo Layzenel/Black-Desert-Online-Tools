@@ -2,7 +2,7 @@ package com.layzen.bdotools.feature.comboassist.presentation.ui.overlay
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
@@ -34,10 +34,13 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_menu_edit
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_empty
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_hide
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_show
+import com.layzen.bdotools.feature.comboassist.resources.menu_edit
+import com.layzen.bdotools.feature.comboassist.resources.menu_hide
 import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_vertical
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_scale
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_schema
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_tracker
+import com.layzen.bdotools.feature.comboassist.resources.combo_schema_keys
 import com.layzen.bdotools.feature.comboassist.resources.combo_schema_show
 import com.layzen.bdotools.feature.comboassist.resources.combo_tracker_limits
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_opacity
@@ -66,9 +69,18 @@ import org.jetbrains.compose.resources.stringResource
 internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, onEdit: () -> Unit, onHover: (Combo?) -> Unit = {}) {
     SectionHeader(stringResource(Res.string.combo_menu_show))
     ComboList(state, onEvent, onHover)
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-        if (state.overlayShown) ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_menu_hide), onClick = { onEvent(ComboEvent.HideCombo) }))
-        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_menu_edit), onClick = { onEvent(ComboEvent.SetMode(ComboMode.Editor)); onEdit() }))
+    Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+        if (state.overlayShown) {
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_menu_hide), icon = painterResource(Res.drawable.menu_hide), onClick = { onEvent(ComboEvent.HideCombo) }), Modifier.weight(1f))
+        }
+        ActionButton(
+            ActionButtonState.Neutral(
+                stringResource(Res.string.combo_menu_edit),
+                icon = painterResource(Res.drawable.menu_edit),
+                onClick = { onEvent(ComboEvent.SetMode(ComboMode.Editor)); onEdit() },
+            ),
+            Modifier.weight(1f),
+        )
     }
     SectionHeader(stringResource(Res.string.combo_panel_tracker))
     state.combo?.let { combo ->
@@ -77,6 +89,7 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
     DescriptionText(stringResource(Res.string.combo_tracker_limits))
     SectionHeader(stringResource(Res.string.combo_panel_schema))
     ToggleSwitch(state.settings.schemaShown, { onEvent(ComboEvent.ToggleSchema) }, label = stringResource(Res.string.combo_schema_show))
+    ToggleSwitch(state.settings.schemaKeys, { onEvent(ComboEvent.ToggleSchemaKeys) }, label = stringResource(Res.string.combo_schema_keys))
     state.combo?.let { combo ->
         ToggleSwitch(combo.vertical, { onEvent(ComboEvent.ToggleVertical) }, label = stringResource(Res.string.combo_overlay_vertical))
     }

@@ -3,7 +3,6 @@ package com.layzen.bdotools.feature.portraitconstructor.presentation.ui
 import androidx.compose.ui.unit.dp
 
 internal object PortraitsDimens {
-    val gridMaxWidth = 1032.dp
     val sourceDialogWidth = 520.dp
     val editorMaxWidth = 1100.dp
     val editorViewportMaxHeight = 560.dp

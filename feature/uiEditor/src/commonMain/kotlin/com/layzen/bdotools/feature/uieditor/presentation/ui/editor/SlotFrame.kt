@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -72,15 +75,17 @@ internal fun SlotFrame(
     val iconWidth = with(density) { (id.width * scale).toDp() }
     // У больших окон глазик в игре такой же, как у слота, а не во всю ширину
     val eyeSize = with(density) { (minOf(id.width, id.height, SlotGroup.Cooldown.width) * scale).toDp() } * SlotsDimens.EYE_SHARE
+    // у слота хотбара рамка начинается над ним — с полосы всплывающей настройки; номер, иконка и глаз — в самом слоте
+    val popup = with(density) { (id.popupHeight * scale).toDp() }
     Box(
         Modifier
             .offset {
                 IntOffset(
                     (screen.iconLeft(id, position) * scale).roundToInt(),
-                    (screen.iconTop(id, position) * scale).roundToInt(),
+                    ((screen.iconTop(id, position) - id.popupHeight) * scale).roundToInt(),
                 )
             }
-            .size(iconWidth, with(density) { (id.height * scale).toDp() }),
+            .size(iconWidth, with(density) { ((id.height + id.popupHeight) * scale).toDp() }),
     ) {
         // Подсказка есть у каждой рамки и только выключается: иначе при её появлении рамка пересоздаётся и рвёт жест
         HoverTooltip(tooltip = { skillTooltip?.invoke() }, modifier = Modifier.fillMaxSize(), enabled = skillTooltip != null) {
@@ -89,6 +94,14 @@ internal fun SlotFrame(
                     .fillMaxSize()
                     .alpha(if (visible) 1f else SlotsDimens.HIDDEN_ALPHA)
                     .background(fill.copy(alpha = fillAlpha))
+                    // плашка всплывающей настройки слота хотбара — залитая полоса сверху внутри рамки, как вкладки у чата
+                    .drawBehind {
+                        val stripHeight = popup.toPx()
+                        if (stripHeight > 0f) {
+                            drawRect(border.copy(alpha = border.alpha * SlotsDimens.SLOT_FILL_ALPHA), size = Size(size.width, stripHeight))
+                            drawLine(border, Offset(0f, stripHeight), Offset(size.width, stripHeight), SlotsDimens.slotBorder.toPx())
+                        }
+                    }
                     .border(if (selected) SlotsDimens.selectedSlotBorder else SlotsDimens.slotBorder, border)
                     .pointerHoverIcon(PointerIcon.Hand)
                     .elementGestures(
@@ -100,7 +113,8 @@ internal fun SlotFrame(
                         dragStart = { SlotsEvent.DragStart(id, it) },
                         skillDragStart = if (skillDraggable) ({ SlotsEvent.SkillDragStart(id) }) else null,
                         doubleClick = if (pickSkillOnDoubleClick) ({ SlotsEvent.OpenSkillPicker(id) }) else null,
-                    ),
+                    )
+                    .padding(top = popup),
                 contentAlignment = Alignment.Center,
             ) {
                 val label = when (id.group) {
@@ -129,7 +143,7 @@ internal fun SlotFrame(
                 visible = visible,
                 eyeSize = eyeSize,
                 onToggle = { onEvent(SlotsEvent.ToggleVisibility(id)) },
-                modifier = Modifier.align(Alignment.TopCenter).padding(top = eyeSize * SlotsDimens.EYE_TOP_SHARE),
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = popup + eyeSize * SlotsDimens.EYE_TOP_SHARE),
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.layzen.bdotools.uikit.theme
 
+import com.layzen.bdotools.core.theme.WindowTheme
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.LocalContentColor
@@ -17,14 +18,19 @@ val LocalAppColors = staticCompositionLocalOf { DefaultAppColors }
 val LocalAppTypography = staticCompositionLocalOf { appTypography() }
 /** Отступы и размеры текущей темы. Читать через [AppTheme.dimens]. */
 val LocalAppDimens = staticCompositionLocalOf { AppDimens() }
+/** Тема окон (шапка, украшение, крестик). Читать через [AppTheme.window]; превью темы подменяет её у себя. */
+val LocalWindowTheme = staticCompositionLocalOf { WindowTheme.Default }
 
 /**
  * Корневая тема. Оборачивает контент и в Material 3, чтобы стандартные
  * компоненты (DropdownMenu, Text без стиля) тоже получили тёмную палитру.
+ *
+ * @param windowTheme тема окон, выбранная пользователем
  */
 @Composable
 fun AppTheme(
     fontFamily: FontFamily = FontFamily.Default,
+    windowTheme: WindowTheme = WindowTheme.Default,
     content: @Composable () -> Unit,
 ) {
     val colors = DefaultAppColors
@@ -35,6 +41,7 @@ fun AppTheme(
             LocalAppColors provides colors,
             LocalAppTypography provides typography,
             LocalAppDimens provides AppDimens(),
+            LocalWindowTheme provides windowTheme,
             LocalContentColor provides colors.textPrimary,
             LocalTextSelectionColors provides TextSelectionColors(
                 handleColor = colors.accentGold,
@@ -56,6 +63,9 @@ object AppTheme {
     /** Общие отступы и размеры компонентов. */
     val dimens: AppDimens
         @Composable @ReadOnlyComposable get() = LocalAppDimens.current
+    /** Как выглядят окна в выбранной теме: шапка, украшение над ней, крестик. */
+    val window: WindowThemeStyle
+        @Composable @ReadOnlyComposable get() = LocalWindowTheme.current.style
 }
 
 private fun AppColors.toMaterialScheme() = darkColorScheme(

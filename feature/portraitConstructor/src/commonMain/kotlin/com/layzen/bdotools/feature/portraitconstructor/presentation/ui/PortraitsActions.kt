@@ -33,7 +33,8 @@ import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_resto
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_upload
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_upload_hint
 import com.layzen.bdotools.uikit.components.HoverTooltip
-import com.layzen.bdotools.uikit.components.MenuAction
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -104,7 +105,7 @@ private fun RowScope.HintedAction(
     // TooltipBox не передаёт weight в Row, поэтому вес — у обёртки, а подсказка внутри неё
     Box(Modifier.weight(1f)) {
         HoverTooltip(hint) {
-            MenuAction(text, onClick, Modifier.fillMaxWidth(), icon = icon, hotkey = hotkey, selected = selected, enabled = enabled)
+            ActionButton(ActionButtonState.Toggle(text, selected, icon, hotkey, enabled, onClick), Modifier.fillMaxWidth())
         }
     }
 }

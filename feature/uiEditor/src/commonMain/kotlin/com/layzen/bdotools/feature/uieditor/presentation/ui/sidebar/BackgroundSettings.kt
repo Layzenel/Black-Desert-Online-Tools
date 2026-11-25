@@ -18,7 +18,8 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_background_descripti
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_hide
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_pick
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_show
-import com.layzen.bdotools.uikit.components.MenuAction
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
@@ -50,18 +51,22 @@ internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit
             },
         )
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
-            MenuAction(
-                stringResource(Res.string.slots_background_pick),
-                onClick = { onEvent(SlotsEvent.PickBackground) },
-                modifier = Modifier.weight(1f),
-                icon = painterResource(Res.drawable.menu_image),
+            ActionButton(
+                ActionButtonState.Neutral(
+                    stringResource(Res.string.slots_background_pick),
+                    icon = painterResource(Res.drawable.menu_image),
+                    onClick = { onEvent(SlotsEvent.PickBackground) },
+                ),
+                Modifier.weight(1f),
             )
             if (state.background != null) {
-                MenuAction(
-                    stringResource(if (state.backgroundShown) Res.string.slots_background_hide else Res.string.slots_background_show),
-                    onClick = { onEvent(SlotsEvent.ToggleBackground) },
-                    modifier = Modifier.weight(1f),
-                    icon = painterResource(if (state.backgroundShown) Res.drawable.menu_hide else Res.drawable.menu_show),
+                ActionButton(
+                    ActionButtonState.Neutral(
+                        stringResource(if (state.backgroundShown) Res.string.slots_background_hide else Res.string.slots_background_show),
+                        icon = painterResource(if (state.backgroundShown) Res.drawable.menu_hide else Res.drawable.menu_show),
+                        onClick = { onEvent(SlotsEvent.ToggleBackground) },
+                    ),
+                    Modifier.weight(1f),
                 )
             }
         }

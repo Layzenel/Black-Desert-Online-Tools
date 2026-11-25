@@ -33,20 +33,39 @@ data class AppColors(
     val buttonPressed: Color,
     val buttonBorder: Color,
 
-    // Кнопка положительного действия (применить, сохранить, OK): бронза темнеет к середине и снова светлеет книзу,
-    // сверху светлая кромка
+    // Обычная кнопка действия ([ActionButton]), как «Назад» в настройках игры: серая подложка чуть темнеет книзу,
+    // светлая кромка внутри тёмной рамки; под курсором — коричневая, недоступная — плоская серая
+    val actionButtonTop: Color,
+    val actionButtonBottom: Color,
+    val actionButtonEdge: Color,
+    val actionButtonHoverTop: Color,
+    val actionButtonHoverBottom: Color,
+    val actionButtonHoverEdge: Color,
+    val actionButtonDisabled: Color,
+    val actionButtonDisabledEdge: Color,
+
+    // Кнопка положительного действия (применить, сохранить, OK): бронза темнеет к середине и снова светлеет книзу
     val buttonPositiveTop: Color,
     val buttonPositiveMiddle: Color,
     val buttonPositiveBottom: Color,
-    val buttonPositiveEdge: Color,
 
     // Кнопка опасного действия (удалить): тёмно-красная бронза темнеет книзу
     val buttonNegativeTop: Color,
     val buttonNegativeBottom: Color,
 
-    // Вариант с индикатором ([OptionButton]): подложка и рамка невыбранного, квадратик-индикатор и его отметка
+    // Вариант с индикатором ([OptionButton]): подложка и рамка невыбранного и наведённого, квадратик-индикатор и его отметка
     val option: Color,
     val optionBorder: Color,
+    val optionHover: Color,
+    val optionHoverBorder: Color,
+
+    // Переключатель ([ToggleSwitch]), как в настройках игры: выключен — тёмная дорожка и серый кружок внутри,
+    // включён — тёмное золото и крупный кремовый кружок во всю высоту
+    val toggleTrack: Color,
+    val toggleTrackBorder: Color,
+    val toggleThumbOff: Color,
+    val toggleOn: Color,
+    val toggleThumbOn: Color,
     val indicator: Color,
     val indicatorBorder: Color,
     val indicatorBorderSelected: Color,
@@ -115,15 +134,31 @@ val DefaultAppColors = AppColors(
     buttonPressed = Color(0xFF38383F),
     buttonBorder = Color(0xFF4E4F56),
 
+    actionButtonTop = Color(0xFF4C4D57),
+    actionButtonBottom = Color(0xFF42434D),
+    actionButtonEdge = Color(0xFF686A73),
+    actionButtonHoverTop = Color(0xFF5E4D44),
+    actionButtonHoverBottom = Color(0xFF53443C),
+    actionButtonHoverEdge = Color(0xFF806652),
+    actionButtonDisabled = Color(0xFF424243),
+    actionButtonDisabledEdge = Color(0xFF575758),
+
     buttonPositiveTop = Color(0xFF9F7B59),
     buttonPositiveMiddle = Color(0xFF704E38),
     buttonPositiveBottom = Color(0xFF8C6144),
-    buttonPositiveEdge = Color(0xFFD3A477),
     buttonNegativeTop = Color(0xFF603730),
     buttonNegativeBottom = Color(0xFF442620),
 
-    option = Color(0xFF38383D),
-    optionBorder = Color(0xFF4A4A4F),
+    option = Color(0xFF35353A),
+    optionBorder = Color(0xFF4D4D55),
+    optionHover = Color(0xFF625244),
+    optionHoverBorder = Color(0xFF866550),
+
+    toggleTrack = Color(0xFF34343A),
+    toggleTrackBorder = Color(0xFF4D4E55),
+    toggleThumbOff = Color(0xFF686868),
+    toggleOn = Color(0xFF926C2D),
+    toggleThumbOn = Color(0xFFFFEDD4),
     indicator = Color(0xFF292929),
     indicatorBorder = Color(0xFF4C4E58),
     indicatorBorderSelected = Color(0xFF7E6454),

@@ -57,6 +57,19 @@ fun Combo.moveCell(from: CellAt, to: CellAt, side: DropSide): ComboEdit {
     return ComboEdit(placed.combo.put(slot, cell).removeCell(source).combo, null)
 }
 
+/**
+ * Вставляет умение [skillNo] рядом с ячейкой [to] со стороны [side]: перед или после неё ([insertCell]), над или под
+ * ней — новой веткой. Пустую ячейку [to] (первый шаг нового комбо, место после последнего) умение заполняет само.
+ * Дальше как [fill] (связка, пустая ячейка после последней, выбор).
+ */
+fun Combo.insertSkill(to: CellAt, side: DropSide, skillNo: Int, skills: ComboSkills): ComboEdit {
+    val target = this[to] ?: return ComboEdit(this, null)
+    if (target.skillNo == null) return fill(to, skillNo, skills)
+    val placed = if (side == DropSide.Before || side == DropSide.After) insertCell(to, after = side == DropSide.After) else insertLane(to, below = side == DropSide.Below)
+    val slot = placed.selection ?: return placed
+    return placed.combo.fill(slot, skillNo, skills)
+}
+
 /** Вставляет ветку из одной пустой ячейки над веткой [at] или, при [below], под ней и выбирает её. */
 private fun Combo.insertLane(at: CellAt, below: Boolean): ComboEdit {
     val lane = if (below) at.lane + 1 else at.lane

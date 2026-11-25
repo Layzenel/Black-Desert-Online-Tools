@@ -11,11 +11,18 @@
     <string name="game_info_fps_style_detailed">Detailed</string>
     <string name="game_info_fps_needs_admin">FPS can be turned on only when BDO Tools runs as administrator: Windows shares the game frame events with administrators only.</string>
 
+    <!-- Overlay menu: Settings tab -->
+    <string name="game_info_grid_show">Show grid</string>
+    <string name="game_info_grid_step">Grid step (game UI units)</string>
+    <string name="game_info_grid_unreadable">Could not read the game resolution and interface size from gamevariable.xml, so the grid is hidden. Pick an account in the app.</string>
+
     <!-- Ping over the game -->
     <string name="game_info_ping_ms">%1$d ms</string>
     <string name="game_info_ping_unknown">— ms</string>
     <string name="game_info_fps_value">%1$d FPS</string>
     <string name="game_info_fps_unknown">— FPS</string>
     <string name="game_info_fps_low">1% %1$d</string>
+    <string name="game_info_fps_low_unknown">1% —</string>
     <string name="game_info_fps_freezes">freezes %1$d</string>
+    <string name="game_info_directx">DX%1$d</string>
 </resources>

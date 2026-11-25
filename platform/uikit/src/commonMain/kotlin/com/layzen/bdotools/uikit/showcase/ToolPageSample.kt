@@ -25,7 +25,6 @@ import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.SectionHeader
-import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.components.ToolPage
 import com.layzen.bdotools.uikit.components.ToolbarButton
 import com.layzen.bdotools.uikit.components.ToolbarDivider
@@ -53,14 +52,17 @@ internal fun ToolPageSample(modifier: Modifier) {
         modifier = modifier.height(ShowcaseDimens.toolPageHeight),
         sidebar = {
             SectionHeader(stringResource(Res.string.showcase_page_menu))
-            MenuAction(stringResource(Res.string.showcase_page_open), onClick = {})
-            MenuAction(
-                stringResource(Res.string.showcase_page_mode),
-                onClick = { mode = !mode },
-                selected = mode,
-                hotkey = if (mode) stringResource(Res.string.showcase_page_hotkey) else null,
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_open), onClick = {}), Modifier.fillMaxWidth())
+            ActionButton(
+                ActionButtonState.Toggle(
+                    stringResource(Res.string.showcase_page_mode),
+                    checked = mode,
+                    hotkey = if (mode) stringResource(Res.string.showcase_page_hotkey) else null,
+                    onClick = { mode = !mode },
+                ),
+                Modifier.fillMaxWidth(),
             )
-            MenuAction(stringResource(Res.string.showcase_page_disabled), onClick = {}, enabled = false)
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_disabled), enabled = false, onClick = {}), Modifier.fillMaxWidth())
         },
         sidebarFooter = { ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}), modifier = Modifier.fillMaxWidth()) },
     ) {

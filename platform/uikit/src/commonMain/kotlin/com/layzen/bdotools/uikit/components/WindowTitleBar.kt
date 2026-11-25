@@ -27,7 +27,7 @@ fun WindowTitleBar(
         modifier
             .fillMaxWidth()
             .height(dimens.titleBarHeight)
-            .titleBarBackground(colors, dimens.borderWidth)
+            .titleBarBackground()
             .padding(horizontal = dimens.spaceM),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceS),

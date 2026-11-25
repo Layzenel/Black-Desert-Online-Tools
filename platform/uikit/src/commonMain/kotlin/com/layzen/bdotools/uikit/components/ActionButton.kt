@@ -6,9 +6,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,16 +23,25 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.layzen.bdotools.uikit.resources.Res
+import com.layzen.bdotools.uikit.resources.class_agent
+import com.layzen.bdotools.uikit.resources.class_archer
+import com.layzen.bdotools.uikit.resources.class_berserker
 import com.layzen.bdotools.uikit.theme.AppTheme
+import org.jetbrains.compose.resources.painterResource
 
 /**
- * Прямоугольная кнопка, как «Применить», «Сброс», «Выход». Подпись, доступность, действие и вид — в [state]:
- * [ActionButtonState.Neutral] — серая, [ActionButtonState.Positive] — бронзовая, [ActionButtonState.Negative] —
- * тёмно-красная.
- * [icon] — белый силуэт слева от подписи, цвет ему задаёт кнопка.
+ * Прямоугольная кнопка, как «Применить», «Сброс», «Выход», — любое действие в приложении. Подпись, иконка, горячая
+ * клавиша, доступность, действие и вид — в [state]: [ActionButtonState.Neutral] — серая,
+ * [ActionButtonState.Toggle] — включатель режима, [ActionButtonState.Positive] — бронзовая,
+ * [ActionButtonState.Negative] — тёмно-красная. В строке кнопок каждой — `Modifier.weight(1f)`, в столбце —
+ * `Modifier.fillMaxWidth()`; содержимое стоит по центру.
  */
 @Composable
-fun ActionButton(state: ActionButtonState, modifier: Modifier = Modifier, icon: Painter? = null) {
+fun ActionButton(state: ActionButtonState, modifier: Modifier = Modifier) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
     val interaction = remember { MutableInteractionSource() }
@@ -38,6 +49,8 @@ fun ActionButton(state: ActionButtonState, modifier: Modifier = Modifier, icon: 
     val pressed by interaction.collectIsPressedAsState()
     val surface = when (state) {
         is ActionButtonState.Neutral -> neutralSurface(colors, dimens.borderWidth, state.enabled, hovered, pressed)
+        // включённый режим выглядит как кнопка под курсором
+        is ActionButtonState.Toggle -> neutralSurface(colors, dimens.borderWidth, state.enabled, hovered || state.checked, pressed)
         is ActionButtonState.Positive -> if (state.enabled) {
             positiveSurface(colors, dimens.borderWidth, hovered, pressed)
         } else {
@@ -49,20 +62,55 @@ fun ActionButton(state: ActionButtonState, modifier: Modifier = Modifier, icon: 
             neutralSurface(colors, dimens.borderWidth, enabled = false, hovered, pressed)
         }
     }
-    val textColor = if (state.enabled) colors.textButton else colors.textDisabled
+    val textColor = when {
+        !state.enabled -> colors.textDisabled
+        state is ActionButtonState.Toggle && state.checked -> colors.accentGold
+        else -> colors.textButton
+    }
+    // без подписи — квадратная кнопка-иконка панели инструментов (ToolbarButton)
+    val iconOnly = state.text.isEmpty() && state.icon != null
     Row(
         modifier
-            .defaultMinSize(minWidth = dimens.buttonMinWidth, minHeight = dimens.buttonHeight)
+            .defaultMinSize(minWidth = if (iconOnly) dimens.buttonHeight else dimens.buttonMinWidth, minHeight = dimens.buttonHeight)
             .pointerHoverIcon(if (state.enabled) PointerIcon.Hand else PointerIcon.Default)
             .clickable(interaction, indication = null, enabled = state.enabled, role = Role.Button, onClick = state.onClick)
             .then(surface)
-            .padding(horizontal = dimens.spaceL, vertical = dimens.spaceXs),
+            .padding(horizontal = if (iconOnly) dimens.spaceXs else dimens.spaceL, vertical = dimens.spaceXs),
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceS, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (icon != null) {
-            Image(icon, contentDescription = null, modifier = Modifier.size(dimens.menuActionIconSize), colorFilter = ColorFilter.tint(textColor))
+        state.icon?.let { icon ->
+            val size = if (iconOnly) dimens.iconSize else dimens.menuActionIconSize
+            Image(icon, contentDescription = null, modifier = Modifier.size(size), colorFilter = ColorFilter.tint(textColor))
         }
-        Text(text = state.text, style = AppTheme.typography.button, color = textColor, maxLines = 1)
+        if (!iconOnly) Text(
+            text = state.text,
+            style = AppTheme.typography.button,
+            color = textColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            // в узкой кнопке подпись сжимается и обрезается, иконка и клавиша остаются целыми
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        state.hotkey?.let { Text(it, style = AppTheme.typography.caption, color = colors.textMuted, maxLines = 1) }
+    }
+}
+
+internal class ActionButtonPreviews {
+    @Preview
+    @Composable
+    fun ActionButtonPreview() {
+        val modifier = Modifier.requiredWidth(150.dp)
+        val neutralActionButtonState = ActionButtonState.Neutral(text = "Neutral", icon = painterResource(Res.drawable.class_agent), enabled = true, onClick = {})
+        val positiveActionButtonState = ActionButtonState.Positive(text = "Positive", icon = painterResource(Res.drawable.class_archer), enabled = true, onClick = {})
+        val negativeActionButtonState = ActionButtonState.Negative(text = "Negative", icon = painterResource(Res.drawable.class_berserker), enabled = true, onClick = {})
+
+        AppTheme {
+            Column {
+                ActionButton(modifier = modifier, state = neutralActionButtonState)
+                ActionButton(modifier = modifier, state = positiveActionButtonState)
+                ActionButton(modifier = modifier, state = negativeActionButtonState)
+            }
+        }
     }
 }

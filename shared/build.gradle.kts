@@ -26,6 +26,7 @@ kotlin {
             implementation(project(":feature:uiEditor"))
             implementation(project(":feature:comboAssist"))
             implementation(project(":feature:gameInfo"))
+            implementation(project(":feature:settings"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

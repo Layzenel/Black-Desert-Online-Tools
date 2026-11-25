@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -69,15 +70,25 @@ import org.jetbrains.compose.resources.stringResource
  * Ячейку перетаскивают на другую: к левому или правому краю — встаёт перед или после неё, к верхнему или нижнему —
  * новой веткой над или под ней; синяя черта в промежутке показывает, куда. Ячейку ветки можно бросить слева или справа
  * от неё самой — она выйдет из развилки. ПКМ по ячейке удаляет её. Выбранная ячейка в золотой
- * рамке, цель перетаскивания — в синей, продолжение связки не после своего запуска — в красной.
+ * рамке, цель перетаскивания — в синей, продолжение связки не после своего запуска — в красной. Умение из списка слева
+ * тянут на холст так же и оно встаёт на место синей черты ([paletteDrag]).
  */
 @Composable
-internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
+internal fun ComboCanvas(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?, paletteDrag: PaletteDrag) {
     val combo = state.edited ?: return
     val bounds = remember(combo.columns) { mutableStateMapOf<CellAt, Rect>() }
     var drag by remember { mutableStateOf<CellDrag?>(null) }
     val slop = with(LocalDensity.current) { ComboDimens.dropSlop.toPx() }
-    val dragTarget = drag?.let { d -> CellDrop.find(bounds, d.from, combo.columns[d.from.column] is ComboColumn.Fork, d.pointer, slop) }
+    val cellTarget = drag?.let { d -> CellDrop.find(bounds, d.from, combo.columns[d.from.column] is ComboColumn.Fork, d.pointer, slop) }
+    // умение из списка: ячейки-источника нет, поэтому любая ячейка под курсором — цель
+    val paletteTarget = paletteDrag.skillNo?.let { CellDrop.find(bounds, NO_CELL, false, paletteDrag.pointer, slop) }
+    val dragTarget = cellTarget ?: paletteTarget
+    LaunchedEffect(paletteDrag.released) {
+        if (!paletteDrag.released) return@LaunchedEffect
+        val skillNo = paletteDrag.skillNo
+        if (skillNo != null && paletteTarget != null) onEvent(ComboEvent.DropSkill(skillNo, paletteTarget.at, paletteTarget.side))
+        paletteDrag.clear()
+    }
     val dragging = CanvasDrag(
         current = drag,
         target = dragTarget,
@@ -218,6 +229,9 @@ private fun EditorCell(
         }
     }
 }
+
+/** Адрес «никакой ячейки»: источник перетаскивания, когда тянут умение из списка. */
+private val NO_CELL = CellAt(-1, -1, -1)
 
 private const val DRAGGED_ALPHA = 0.85f
 private const val DRAGGED_LAYER = -1f

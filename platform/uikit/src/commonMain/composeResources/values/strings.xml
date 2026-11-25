@@ -69,10 +69,10 @@
     <string name="character_class_berserker">Варвар</string>
     <string name="character_class_warrior">Воин</string>
     <string name="character_class_wizard">Волшебник</string>
-    <string name="character_class_sorceress">Волшебница</string>
+    <string name="character_class_sorceress">Колдунья</string>
     <string name="character_class_wukong">Вуконг</string>
     <string name="character_class_drakania">Драканиа</string>
-    <string name="character_class_witch">Колдунья</string>
+    <string name="character_class_witch">Волшебница</string>
     <string name="character_class_corsair">Корсар</string>
     <string name="character_class_kunoichi">Куноичи</string>
     <string name="character_class_lahn">Лан</string>
@@ -132,4 +132,5 @@
     <string name="crowd_control_title_floating">Подбрасывание</string>
     <string name="crowd_control_title_knockback">Отталкивание</string>
     <string name="crowd_control_title_freezing">Заморозка</string>
+    <string name="showcase_theme_window">Окно в теме</string>
 </resources>

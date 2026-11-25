@@ -13,14 +13,14 @@ import com.layzen.bdotools.feature.comboassist.domain.skill.ComboStance
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.PaletteDrag
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_name_placeholder
 import com.layzen.bdotools.feature.comboassist.resources.combo_new
 import com.layzen.bdotools.feature.comboassist.resources.combo_none
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_combo
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_class
-import com.layzen.bdotools.feature.comboassist.resources.combo_section_class_description
-import com.layzen.bdotools.feature.comboassist.resources.combo_section_combo_description
+import com.layzen.bdotools.feature.comboassist.resources.menu_add
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_purgatum
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_sacramentum
 import com.layzen.bdotools.feature.comboassist.resources.combo_stance_awakening
@@ -28,7 +28,8 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_stance_succession
 import com.layzen.bdotools.feature.comboassist.resources.combo_untitled
 import com.layzen.bdotools.uikit.components.DropdownSelect
 import com.layzen.bdotools.uikit.components.InputField
-import com.layzen.bdotools.uikit.components.MenuAction
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.SectionDivider
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.icons.icon
@@ -39,21 +40,21 @@ import org.jetbrains.compose.resources.stringResource
 
 /** Меню слева: комбо и его класс, список умений, филлеры. Комбо всегда повторяется с первой ячейки. */
 @Composable
-internal fun ComboSidebarContent(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
+internal fun ComboSidebarContent(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?, paletteDrag: PaletteDrag) {
     val tint = ColorFilter.tint(AppTheme.colors.textBeige)
-    SectionHeader(stringResource(Res.string.combo_section_class), description = stringResource(Res.string.combo_section_class_description))
+    SectionHeader(stringResource(Res.string.combo_section_class))
     ClassSelect(state.characterClass, { onEvent(ComboEvent.SelectClass(it)) }, tint)
     // у классов Освобождения стоек нет (кроме Серафима): все навыки в одном наборе
     val stances = ComboStance.of(state.characterClass)
     if (stances.isNotEmpty()) StanceSelect(state, stances, onEvent)
-    SectionHeader(stringResource(Res.string.combo_section_combo), description = stringResource(Res.string.combo_section_combo_description))
+    SectionHeader(stringResource(Res.string.combo_section_combo))
     SavedCombos(state, onEvent, tint)
-    MenuAction(stringResource(Res.string.combo_new), { onEvent(ComboEvent.NewCombo) })
+    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_new), icon = painterResource(Res.drawable.menu_add), onClick = { onEvent(ComboEvent.NewCombo) }), Modifier.fillMaxWidth())
     state.combo?.let { combo ->
         InputField(combo.name, { onEvent(ComboEvent.Rename(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_name_placeholder))
     }
     SectionDivider()
-    SkillPalette(state, onEvent, loadDetails)
+    SkillPalette(state, onEvent, loadDetails, paletteDrag)
     SectionDivider()
     FillersSection(state, onEvent, loadDetails)
 }

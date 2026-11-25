@@ -148,6 +148,7 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             is ComboEvent.SetMode -> setMode(event.mode)
             is ComboEvent.Press -> trainingStep { training.press(event.skillNo) }
             ComboEvent.ToggleSchema -> updateSettings { it.copy(schemaShown = !it.schemaShown) }
+            ComboEvent.ToggleSchemaKeys -> updateSettings { it.copy(schemaKeys = !it.schemaKeys) }
             ComboEvent.ShowTrackerNotice -> mutableState.update { it.copy(trackerNotice = true) }
             ComboEvent.CloseTrackerNotice -> {
                 mutableState.update { it.copy(trackerNotice = false) }

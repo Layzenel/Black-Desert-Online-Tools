@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.gameinfo.data
 
 import com.layzen.bdotools.feature.gameinfo.domain.fps.FpsStyle
+import com.layzen.bdotools.feature.gameinfo.domain.grid.GridStep
 import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -16,8 +17,8 @@ class PingSettingsRepositoryImplTest {
     @Test
     fun savedSettingsReadBack() = runTest {
         val repository = PingSettingsRepositoryImpl(MemoryStorage())
-        repository.save(PingSettings(shown = true, scale = 150, opacity = 70, fpsShown = true, fpsStyle = FpsStyle.Detailed))
-        assertEquals(PingSettings(true, 150, 70, fpsShown = true, fpsStyle = FpsStyle.Detailed), repository.settings())
+        repository.save(PingSettings(true, 150, 70, true, FpsStyle.Detailed, gridShown = true, gridStep = GridStep.Game))
+        assertEquals(PingSettings(true, 150, 70, true, FpsStyle.Detailed, true, GridStep.Game), repository.settings())
     }
 
     @Test

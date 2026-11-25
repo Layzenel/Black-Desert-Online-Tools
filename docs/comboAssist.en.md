@@ -8,7 +8,7 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
 
 ## Editor
 
-- On the left — "Class" and "Saved combos". A combo belongs to a class and fits all of its characters.
+- On the left — "Choose class" and "Saved combos". A combo belongs to a class and fits all of its characters.
 - The buttons above the editor and Ctrl+Z / Ctrl+Y (Ctrl+Shift+Z) undo and redo combo edits; a dragged cell moves
   under the others, and a blue pointer at a cell edge shows where it will go; deleting a combo asks for confirmation. At the bottom of the menu — "How the tracker works" and removing the rage combo.
 - "Skills" — the class skills with search (by name or keys: "shift lmb") and the "Succession" or "Awakening" stances; for Seraph —
@@ -19,6 +19,8 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
   buffs appear in the buff list with a 59-second timer, the tracker follows the Rage combo for one minute on
   a black-and-red panel with fire, then goes back to the regular combo. The tracker has to see the Rage start: if the
   app was opened mid-Rage, it waits for the next one. The timer is read in the Russian game client.
+- The keyboard button in the skill search ("Search by keys") records a key combination, for example Shift + F, and finds skills with those keys.
+- A skill from the list can be dragged onto the combo canvas.
 - Select a cell and click a skill on the left: a new cell appears after it, and "Can follow" above the list shows
   what usually comes next, with chains marked.
 - Drag an icon to an edge of another cell: the left or right edge puts the skill before or after it, the top or
@@ -62,7 +64,7 @@ on screen and guides you through the combo. The tracker shows what to press now,
   5 s by default, not counting cooldown waits), the combo starts over.
 
 A separate window can show the **combo layout** — the whole combo with the current step marked, vertical or
-horizontal.
+horizontal. Skill activation keys on the layout are turned on in the overlay menu, "Combo" tab → "Combo layout"; the combo preview on hover uses the same orientation.
 
 > [!IMPORTANT]
 > Turn on "Skill Usage History" in game and run the app **as administrator**: the game runs with administrator

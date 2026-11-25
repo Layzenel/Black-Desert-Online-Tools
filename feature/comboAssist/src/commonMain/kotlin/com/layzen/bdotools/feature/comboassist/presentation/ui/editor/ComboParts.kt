@@ -1,8 +1,10 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.editor
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
 import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.resources.Res
@@ -12,7 +14,8 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_rage_add
 import com.layzen.bdotools.feature.comboassist.resources.combo_rage_copy
 import com.layzen.bdotools.feature.comboassist.resources.menu_copy
 import com.layzen.bdotools.feature.comboassist.resources.menu_add
-import com.layzen.bdotools.uikit.components.MenuAction
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
@@ -28,7 +31,7 @@ internal fun ComboParts(state: ComboState, onEvent: (ComboEvent) -> Unit) {
     // переключатель частей во всю ширину: кнопка копии — под ним, иначе её не видно
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {
         if (combo.rage == null) {
-            MenuAction(stringResource(Res.string.combo_rage_add), { onEvent(ComboEvent.AddRage) }, icon = painterResource(Res.drawable.menu_add))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_rage_add), icon = painterResource(Res.drawable.menu_add), onClick = { onEvent(ComboEvent.AddRage) }), Modifier.fillMaxWidth())
             return@Column
         }
         OptionGroup(
@@ -37,7 +40,7 @@ internal fun ComboParts(state: ComboState, onEvent: (ComboEvent) -> Unit) {
         )
         // комбо под гневом обычно — то же комбо с парой замен: копия обычного, а дальше правятся отличия
         if (state.rageEdited) {
-            MenuAction(stringResource(Res.string.combo_rage_copy), { onEvent(ComboEvent.CopyToRage) }, icon = painterResource(Res.drawable.menu_copy))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_rage_copy), icon = painterResource(Res.drawable.menu_copy), onClick = { onEvent(ComboEvent.CopyToRage) }), Modifier.fillMaxWidth())
         }
     }
 }

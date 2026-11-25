@@ -58,7 +58,7 @@ fun <T> TopNavigation(
         modifier
             .fillMaxWidth()
             .height(dimens.topNavigationHeight)
-            .titleBarBackground(colors, dimens.borderWidth)
+            .titleBarBackground()
             .padding(start = dimens.spaceL),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceXl),

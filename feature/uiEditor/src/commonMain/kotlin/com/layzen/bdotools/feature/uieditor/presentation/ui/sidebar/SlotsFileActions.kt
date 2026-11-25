@@ -31,7 +31,6 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_undo_apply_hint
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.HoverTooltip
-import com.layzen.bdotools.uikit.components.MenuAction
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -58,33 +57,37 @@ internal fun SlotsFileActions(state: SlotsState, onEvent: (SlotsEvent) -> Unit) 
     }
     HintedAction(Res.string.slots_save_as, Res.string.slots_save_as_tooltip, Res.drawable.menu_save, wide) { onEvent(SlotsEvent.OpenSaveAs) }
     HoverTooltip(stringResource(Res.string.slots_reload_hint), wide) {
-        MenuAction(
-            stringResource(Res.string.slots_reload),
-            onClick = { onEvent(SlotsEvent.Reload) },
-            modifier = wide,
-            icon = painterResource(Res.drawable.menu_reload),
+        ActionButton(
+            ActionButtonState.Neutral(
+                stringResource(Res.string.slots_reload),
+                icon = painterResource(Res.drawable.menu_reload),
+                onClick = { onEvent(SlotsEvent.Reload) },
+            ),
+            wide,
         )
     }
     if (state.canUndoApply) {
         HoverTooltip(stringResource(Res.string.slots_undo_apply_hint), wide) {
-            MenuAction(
-                stringResource(Res.string.slots_undo_apply),
-                onClick = { onEvent(SlotsEvent.OpenUndoApply) },
-                modifier = wide,
-                icon = painterResource(Res.drawable.menu_undo_apply),
-                enabled = !state.busy,
+            ActionButton(
+                ActionButtonState.Neutral(
+                    stringResource(Res.string.slots_undo_apply),
+                    icon = painterResource(Res.drawable.menu_undo_apply),
+                    enabled = !state.busy,
+                    onClick = { onEvent(SlotsEvent.OpenUndoApply) },
+                ),
+                wide,
             )
         }
     }
     val count = state.changeCount
     ActionButton(
         ActionButtonState.Positive(
-            if (count > 0) stringResource(Res.string.slots_apply_count, count) else stringResource(Res.string.slots_apply),
+            text = if (count > 0) stringResource(Res.string.slots_apply_count, count) else stringResource(Res.string.slots_apply),
+            icon = painterResource(Res.drawable.menu_apply),
             enabled = state.hasChanges && !state.busy,
             onClick = { onEvent(SlotsEvent.OpenApply) },
         ),
         modifier = wide,
-        icon = painterResource(Res.drawable.menu_apply),
     )
 }
 
@@ -94,7 +97,7 @@ private fun HintedAction(text: StringResource, hint: StringResource, icon: Drawa
     // TooltipBox не передаёт weight в Row, поэтому модификатор — у обёртки, а подсказка внутри неё
     Box(modifier) {
         HoverTooltip(stringResource(hint), Modifier.fillMaxWidth()) {
-            MenuAction(stringResource(text), onClick = onClick, modifier = Modifier.fillMaxWidth(), icon = painterResource(icon))
+            ActionButton(ActionButtonState.Neutral(stringResource(text), icon = painterResource(icon), onClick = onClick), Modifier.fillMaxWidth())
         }
     }
 }

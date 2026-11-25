@@ -18,7 +18,8 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_preview_screen
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_screen_description
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect
-import com.layzen.bdotools.uikit.components.MenuAction
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ValueSlider
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -55,12 +56,14 @@ internal fun PreviewScreenSettings(screen: ScreenSpace, gameScreen: ScreenSpace,
         )
         DescriptionText(stringResource(Res.string.slots_preview_scale))
         ValueSlider(scale, { onEvent(SlotsEvent.PreviewScreen(screen.copy(uiScale = it / 100.0))) }, range = SCALES)
-        MenuAction(
-            stringResource(Res.string.slots_preview_reset_screen),
-            onClick = { onEvent(SlotsEvent.PreviewScreen(gameScreen)) },
-            modifier = Modifier.fillMaxWidth(),
-            icon = painterResource(Res.drawable.menu_reload),
-            enabled = screen != gameScreen,
+        ActionButton(
+            ActionButtonState.Neutral(
+                stringResource(Res.string.slots_preview_reset_screen),
+                icon = painterResource(Res.drawable.menu_reload),
+                enabled = screen != gameScreen,
+                onClick = { onEvent(SlotsEvent.PreviewScreen(gameScreen)) },
+            ),
+            Modifier.fillMaxWidth(),
         )
     }
 }
