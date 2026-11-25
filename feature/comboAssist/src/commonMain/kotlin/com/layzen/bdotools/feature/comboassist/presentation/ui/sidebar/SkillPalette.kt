@@ -7,6 +7,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.layzen.bdotools.uikit.components.verticalScrollbar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.layzen.bdotools.composable.skill.rememberKeyLabel
+import com.layzen.bdotools.core.skill.domain.KeyBindings
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.KeyRecorder
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.PaletteDrag
+import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.paletteDragSource
+import com.layzen.bdotools.feature.comboassist.resources.combo_search_by_keys
+import com.layzen.bdotools.feature.comboassist.resources.menu_keyboard
+import com.layzen.bdotools.uikit.components.ToolbarButton
+import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
@@ -34,13 +47,16 @@ import org.jetbrains.compose.resources.stringResource
 
 /** Умения класса: сверху — что можно поставить после выбранной ячейки (связки из данных), ниже — поиск и весь список. */
 @Composable
-internal fun SkillPalette(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?) {
+internal fun SkillPalette(state: ComboState, onEvent: (ComboEvent) -> Unit, loadDetails: suspend (Int) -> SkillDetails?, paletteDrag: PaletteDrag) {
     val language = stringResource(Res.string.combo_names_language)
     if (state.suggestions.isNotEmpty()) {
         SectionHeader(stringResource(Res.string.combo_suggest_title))
         val chain = stringResource(Res.string.combo_suggest_chain)
-        state.suggestions.mapNotNull { state.skills[it] }.forEach { item ->
-            SkillRow(item, state, onEvent, loadDetails, hint = if (item.skill.onlyAfter) chain else null)
+        // колонкой без промежутков, как список умений ниже
+        Column(Modifier.fillMaxWidth()) {
+            state.suggestions.mapNotNull { state.skills[it] }.forEach { item ->
+                SkillRow(item, onEvent, loadDetails, paletteDrag, hint = if (item.skill.onlyAfter) chain else null)
+            }
         }
     }
     SectionHeader(stringResource(Res.string.combo_section_skills))
@@ -48,10 +64,22 @@ internal fun SkillPalette(state: ComboState, onEvent: (ComboEvent) -> Unit, load
         state.loading && state.skills.isEmpty() -> LoadingRow(stringResource(Res.string.combo_loading))
         state.catalogFailed -> WarningText(stringResource(Res.string.combo_catalog_failed))
     }
+    var recording by remember { mutableStateOf(false) }
     InputField(
         state.query, { onEvent(ComboEvent.Query(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_search),
-        trailing = { if (state.query.isNotEmpty()) CloseButton({ onEvent(ComboEvent.Query("")) }) },
+        trailing = {
+            if (state.query.isNotEmpty()) CloseButton({ onEvent(ComboEvent.Query("")) })
+            ToolbarButton(painterResource(Res.drawable.menu_keyboard), stringResource(Res.string.combo_search_by_keys), { recording = true })
+        },
     )
+    // нажатые клавиши ищут умения по команде активации: запрос — их подписи, как если бы их набрали («Shift + F»)
+    if (recording) {
+        val keyLabel = rememberKeyLabel(KeyBindings.Default)
+        KeyRecorder(keyLabel) { actions ->
+            recording = false
+            if (actions.isNotEmpty()) onEvent(ComboEvent.Query(actions.joinToString(" + ") { keyLabel(it) }))
+        }
+    }
     // список своей высоты с прокруткой, чтобы под ним были видны филлеры
     val search = rememberSkillSearch(state.query)
     val scroll = rememberScrollState()
@@ -61,23 +89,23 @@ internal fun SkillPalette(state: ComboState, onEvent: (ComboEvent) -> Unit, load
             .filter { it.skill.cooldownMs > 0 || it.skill.onlyAfter }
             .filter(search)
             .sortedBy { it.skill.name(language).lowercase() }
-            .forEach { item -> SkillRow(item, state, onEvent, loadDetails, hint = null, cooldownMs = item.skill.cooldownMs) }
+            .forEach { item -> SkillRow(item, onEvent, loadDetails, paletteDrag, hint = null, cooldownMs = item.skill.cooldownMs) }
     }
 }
 
 @Composable
 private fun SkillRow(
     item: SkillItem,
-    state: ComboState,
     onEvent: (ComboEvent) -> Unit,
     loadDetails: suspend (Int) -> SkillDetails?,
+    paletteDrag: PaletteDrag,
     hint: String?,
     cooldownMs: Long = 0,
 ) {
     val language = stringResource(Res.string.combo_names_language)
     SkillHover(item, loadDetails, beside = true) {
         MenuItem(
-            item.skill.name(language), { onEvent(ComboEvent.Fill(item.skillNo)) }, Modifier.fillMaxWidth(),
+            item.skill.name(language), { onEvent(ComboEvent.Fill(item.skillNo)) }, Modifier.fillMaxWidth().paletteDragSource(item.skillNo, paletteDrag),
             icon = { SkillIconView(item.icon, ComboDimens.paletteIcon) },
             hotkey = hint,
             badge = if (cooldownMs > 0) ({ CooldownBadge(cooldownMs) }) else null,

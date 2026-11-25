@@ -1,12 +1,20 @@
 package com.layzen.bdotools.uikit.components
 
+import androidx.compose.ui.graphics.painter.Painter
+
 /**
  * Состояние [ActionButton]: подпись, доступность, действие и вид кнопки по смыслу действия — сам подкласс.
  * Новый вид кнопки — новый подкласс и его ветка в [ActionButton].
  */
 sealed interface ActionButtonState {
-    /** Подпись кнопки, в одну строку. */
+    /** Подпись кнопки, в одну строку; длинная обрезается многоточием. Пустая при [icon] — квадратная кнопка-иконка. */
     val text: String
+
+    /** Иконка слева от подписи — белый силуэт, цвет ей задаёт кнопка. */
+    val icon: Painter?
+
+    /** Горячая клавиша или подсказка справа от подписи, приглушённым текстом (`Esc` у включённого режима). */
+    val hotkey: String?
 
     /** Кнопка нажимается; недоступная — серая, с приглушённым текстом. */
     val enabled: Boolean
@@ -14,9 +22,29 @@ sealed interface ActionButtonState {
     /** Что делать по нажатию. */
     val onClick: () -> Unit
 
-    /** Обычное действие (отмена, сброс, удаление, вспомогательные): серая кнопка с лёгким градиентом. */
+    /**
+     * Обычное действие (отмена, сброс, открыть, вспомогательные): серая кнопка с лёгким градиентом, как «Назад»
+     * в настройках игры; под курсором — коричневая.
+     */
     data class Neutral(
         override val text: String,
+        override val icon: Painter? = null,
+        override val hotkey: String? = null,
+        override val enabled: Boolean = true,
+        override val onClick: () -> Unit,
+    ) : ActionButtonState
+
+    /**
+     * Включатель режима («Порядок», «Растянуть»): выключенный — как [Neutral], включённый — коричневый, как кнопка под
+     * курсором, с золотой подписью. Нажатие переключает режим.
+     *
+     * @property checked режим включён
+     */
+    data class Toggle(
+        override val text: String,
+        val checked: Boolean,
+        override val icon: Painter? = null,
+        override val hotkey: String? = null,
         override val enabled: Boolean = true,
         override val onClick: () -> Unit,
     ) : ActionButtonState
@@ -27,6 +55,8 @@ sealed interface ActionButtonState {
      */
     data class Positive(
         override val text: String,
+        override val icon: Painter? = null,
+        override val hotkey: String? = null,
         override val enabled: Boolean = true,
         override val onClick: () -> Unit,
     ) : ActionButtonState
@@ -34,6 +64,8 @@ sealed interface ActionButtonState {
     /** Опасное действие (удалить): тёмно-красная кнопка, как корзина в игре. Недоступная — как [Neutral]. */
     data class Negative(
         override val text: String,
+        override val icon: Painter? = null,
+        override val hotkey: String? = null,
         override val enabled: Boolean = true,
         override val onClick: () -> Unit,
     ) : ActionButtonState

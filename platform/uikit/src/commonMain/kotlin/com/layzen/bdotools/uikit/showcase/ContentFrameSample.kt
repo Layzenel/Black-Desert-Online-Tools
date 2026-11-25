@@ -14,7 +14,8 @@ import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.uikit.components.ColorPalette
 import com.layzen.bdotools.uikit.components.ContentFrame
 import com.layzen.bdotools.uikit.components.DescriptionText
-import com.layzen.bdotools.uikit.components.MenuAction
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.Skeleton
 import com.layzen.bdotools.uikit.components.Tile
@@ -49,8 +50,8 @@ internal fun ContentFrameSample(modifier: Modifier) {
             repeat(FRAME_TILES) { Tile(Modifier.size(ShowcaseDimens.tileSize)) { Skeleton(Modifier.matchParentSize()) } }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-            MenuAction(stringResource(Res.string.showcase_page_open), onClick = {}, modifier = Modifier.weight(1f))
-            MenuAction(stringResource(Res.string.showcase_page_apply), onClick = {}, modifier = Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_page_open), onClick = {}), Modifier.weight(1f))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}), Modifier.weight(1f))
         }
         ToolIntro(
             points = listOf(stringResource(Res.string.showcase_intro_first), stringResource(Res.string.showcase_intro_second)),

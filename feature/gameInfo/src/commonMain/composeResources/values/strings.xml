@@ -11,11 +11,18 @@
     <string name="game_info_fps_style_detailed">Подробно</string>
     <string name="game_info_fps_needs_admin">FPS можно включить, только если BDO Tools запущена от имени администратора: события о кадрах игры Windows отдаёт только администратору.</string>
 
+    <!-- Меню оверлея: вкладка «Настройки» -->
+    <string name="game_info_grid_show">Показать сетку</string>
+    <string name="game_info_grid_step">Шаг сетки (единицы интерфейса игры)</string>
+    <string name="game_info_grid_unreadable">Не удалось прочитать разрешение и размер интерфейса игры из gamevariable.xml, сетка не показывается. Выберите аккаунт в программе.</string>
+
     <!-- Пинг поверх игры -->
     <string name="game_info_ping_ms">%1$d мс</string>
     <string name="game_info_ping_unknown">— мс</string>
     <string name="game_info_fps_value">%1$d FPS</string>
     <string name="game_info_fps_unknown">— FPS</string>
     <string name="game_info_fps_low">1% %1$d</string>
+    <string name="game_info_fps_low_unknown">1% —</string>
     <string name="game_info_fps_freezes">фризы %1$d</string>
+    <string name="game_info_directx">DX%1$d</string>
 </resources>

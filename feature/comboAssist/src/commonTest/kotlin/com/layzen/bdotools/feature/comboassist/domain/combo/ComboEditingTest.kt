@@ -15,6 +15,14 @@ class ComboEditingTest {
     private val empty = Combo("c", "c", "striker", listOf(ComboColumn.Single(ComboCell())))
 
     @Test
+    fun droppedSkillFillsEmptyCellAndGoesBesideFilledOne() {
+        val first = empty.insertSkill(CellAt(0), DropSide.After, CRIMSON_FANG, skills)
+        assertEquals(CRIMSON_FANG, first.combo[CellAt(0)]!!.skillNo)
+        val second = first.combo.insertSkill(CellAt(0), DropSide.Before, DEATHSTRIKE, skills)
+        assertEquals(listOf(DEATHSTRIKE, CRIMSON_FANG), second.combo.columns.take(2).map { it.lanes[0][0].skillNo })
+    }
+
+    @Test
     fun fillingLastCellAddsNewSlotAndSetsChainFromData() {
         val first = empty.fill(CellAt(0), CRIMSON_FANG, skills)
         assertEquals(CellAt(1), first.selection)

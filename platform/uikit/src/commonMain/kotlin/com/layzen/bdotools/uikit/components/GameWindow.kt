@@ -31,6 +31,7 @@ fun GameWindow(
     val frame = AppTheme.dimens.borderWidth
     Column(
         modifier
+            .windowDecoration()
             .border(frame, colors.windowOutline)
             .padding(frame)
             .border(frame, colors.windowFrame)

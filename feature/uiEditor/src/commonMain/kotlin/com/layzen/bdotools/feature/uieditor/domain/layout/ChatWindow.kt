@@ -15,6 +15,13 @@ internal const val CHAT_MIN_HEIGHT = 100
 private const val CHAT_MAX_WIDTH_SHARE = 2.0 / 3
 
 /**
+ * Высота плашки вкладок чата сверху его окна, UI-px: она входит в `SizeY`, сообщения начинаются под ней. Замер
+ * 2026-11-25 по скриншотам 2560×1440 при масштабе 0.8: рамка режима правки начинается на ≈16,5 px (≈26 UI-px) выше,
+ * чем окно сообщений в игре, низ у них общий.
+ */
+internal const val CHAT_TAB_BAR_HEIGHT = 26
+
+/**
  * Окно чата — запись `UIData` с `Index="32"`; окна различает `WindowIndex`, он же ключ в [SlotLayout.chats].
  * [center] — центр окна от центра экрана, как у слотов (`RelativePosX/Y`), [width] и [height] — `SizeX/SizeY` в UI-px.
  * [visible] — `IsShow`, глазик в режиме правки

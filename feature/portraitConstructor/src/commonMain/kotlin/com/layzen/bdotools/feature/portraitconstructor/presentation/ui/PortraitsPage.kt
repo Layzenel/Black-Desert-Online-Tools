@@ -38,7 +38,7 @@ internal fun PortraitsPage(state: PortraitsState, onEvent: (PortraitsEvent) -> U
     LaunchedEffect(reordering) { if (reordering) focus.requestFocus() }
     ContentFrame(
         Modifier
-            .widthIn(max = PortraitsDimens.gridMaxWidth)
+            .widthIn(max = AppTheme.dimens.frameMaxWidth)
             .focusRequester(focus)
             .focusable()
             .onPreviewKeyEvent { event ->

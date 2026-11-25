@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import com.layzen.bdotools.uikit.theme.AppShapes
 import com.layzen.bdotools.uikit.theme.AppTheme
 
@@ -49,12 +50,16 @@ fun ToggleSwitch(
         Box(
             Modifier
                 .size(width = dimens.toggleWidth, height = dimens.toggleHeight)
-                .background(if (checked) colors.accentGold else colors.backgroundItem, AppShapes.Pill)
-                .border(dimens.borderWidth, if (checked) colors.accentGoldPale else colors.buttonBorder, AppShapes.Pill)
-                .padding(dimens.spaceXxs),
+                .background(if (checked) colors.toggleOn else colors.toggleTrack, AppShapes.Pill)
+                .border(dimens.borderWidth, if (checked) colors.windowOutline else colors.toggleTrackBorder, AppShapes.Pill)
+                .padding(if (checked) 0.dp else dimens.spaceXxs),
             contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,
         ) {
-            Box(Modifier.size(dimens.toggleThumbSize).background(if (checked) colors.textPrimary else colors.textDisabled, AppShapes.Pill))
+            // включённый кружок во всю высоту дорожки, как в игре
+            Box(
+                Modifier.size(if (checked) dimens.toggleHeight else dimens.toggleThumbSize)
+                    .background(if (checked) colors.toggleThumbOn else colors.toggleThumbOff, AppShapes.Pill),
+            )
         }
         if (label != null || description != null) {
             Column {

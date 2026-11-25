@@ -1,17 +1,15 @@
 package com.layzen.bdotools.uikit.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
-import com.layzen.bdotools.uikit.theme.AppTheme
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 /**
- * Кнопка-иконка панели инструментов с подсказкой [description] при наведении.
- * [selected] — включённый режим (золотая иконка), [enabled] = `false` — серая иконка, клик не срабатывает.
- * [icon] — белый силуэт, цвет ему задаёт кнопка.
+ * Квадратная кнопка-иконка панели инструментов — [ActionButton] без подписи, с подсказкой [description] при наведении.
+ * [selected] — включённый режим ([ActionButtonState.Toggle]: коричневая, золотая иконка), [enabled] = `false` —
+ * серая иконка, клик не срабатывает. [icon] — белый силуэт, цвет ему задаёт кнопка.
  */
 @Composable
 fun ToolbarButton(
@@ -22,21 +20,12 @@ fun ToolbarButton(
     enabled: Boolean = true,
     selected: Boolean = false,
 ) {
-    val colors = AppTheme.colors
+    val state = if (selected) {
+        ActionButtonState.Toggle(text = "", checked = true, icon = icon, enabled = enabled, onClick = onClick)
+    } else {
+        ActionButtonState.Neutral(text = "", icon = icon, enabled = enabled, onClick = onClick)
+    }
     HoverTooltip(description, modifier) {
-        SquareIconButton(onClick, enabled = enabled, selected = selected) {
-            Image(
-                icon,
-                contentDescription = description,
-                modifier = Modifier.size(AppTheme.dimens.iconSize),
-                colorFilter = ColorFilter.tint(
-                    when {
-                        !enabled -> colors.textDisabled
-                        selected -> colors.accentGold
-                        else -> colors.textButton
-                    },
-                ),
-            )
-        }
+        ActionButton(state, Modifier.semantics { contentDescription = description })
     }
 }

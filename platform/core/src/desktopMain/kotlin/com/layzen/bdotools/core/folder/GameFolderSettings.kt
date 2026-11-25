@@ -14,6 +14,7 @@ private const val PREFERENCES_NODE = "com/layzen/bdotools/portraits"
 private const val FOLDER_KEY = "gameFolder"
 private const val ACCOUNT_KEY = "account"
 private const val LANGUAGE_KEY = "language"
+private const val THEME_KEY = "theme"
 
 /** «Документы» пользователя с учётом переноса в OneDrive; запасной вариант — `user.home\Documents`. */
 internal fun defaultDocumentsDirectory(): Path? =
@@ -22,7 +23,7 @@ internal fun defaultDocumentsDirectory(): Path? =
 
 /**
  * Запоминает выбранную папку `Black Desert` между запусками — одну на все тулзы настольной версии,
- * как одна запись IndexedDB на сайте, — а с ней выбранный аккаунт и язык интерфейса. Хранится в [Preferences] пользователя
+ * как одна запись IndexedDB на сайте, — а с ней выбранный аккаунт, язык интерфейса и тему окон. Хранится в [Preferences] пользователя
  * (в Windows — в реестре `HKCU\Software\JavaSoft\Prefs`).
  *
  * @property documents папка «Документы» пользователя, где ищется `Black Desert`, если папку ещё не выбирали
@@ -55,6 +56,14 @@ class GameFolderSettings(
         get() = preferences.get(LANGUAGE_KEY, null)
         set(value) {
             if (value == null) preferences.remove(LANGUAGE_KEY) else preferences.put(LANGUAGE_KEY, value)
+            preferences.flush()
+        }
+
+    /** Код темы окон, выбранной пользователем, или `null`, если он ещё не выбирал. */
+    var theme: String?
+        get() = preferences.get(THEME_KEY, null)
+        set(value) {
+            if (value == null) preferences.remove(THEME_KEY) else preferences.put(THEME_KEY, value)
             preferences.flush()
         }
 

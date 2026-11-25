@@ -1,6 +1,8 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
+import com.layzen.bdotools.feature.uieditor.domain.layout.CHAT_TAB_BAR_HEIGHT
 import com.layzen.bdotools.feature.uieditor.domain.layout.ChatWindow
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotGroup
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
@@ -40,7 +43,7 @@ import org.jetbrains.compose.resources.stringResource
  * в центре название и размер в UI-px, справа сверху ручка, за которую окно растягивают (левый нижний угол стоит
  * на месте). Клик выбирает окно (с Ctrl — добавляет к выбору), его место и размер правятся в боковой панели;
  * перетаскивание двигает окно вместе со всем выбранным. [selected] — окно выбрано: светлая толстая рамка. [shown] — видно ли окно в игре с учётом главного чата: невидимое
- * приглушено, а окно за краем экрана [screen] залито красным, как слот. Слева сверху плашки [ChatTab]: у главного окна — его вкладки [tabs] (`WindowIndex`) с «Вынести»,
+ * приглушено, а окно за краем экрана [screen] залито красным, как слот. Сверху плашка вкладок высотой [CHAT_TAB_BAR_HEIGHT], в ней слева [ChatTab]: у главного окна — его вкладки [tabs] (`WindowIndex`) с «Вынести»,
  * у отдельного — оно само с «Внести».
  */
 @Composable
@@ -84,10 +87,14 @@ internal fun ChatFrame(
             onToggle = { onEvent(SlotsEvent.ToggleChatVisibility(window)) },
             modifier = Modifier.align(Alignment.TopCenter).padding(top = inset),
         )
-        // Плашки слева сверху: у главного окна — его вкладки с «Вынести», у отдельного — оно само с «Внести»
+        // Плашка вкладок во всю ширину сверху, как в игре: в ней слева — у главного окна его вкладки с «Вынести»,
+        // у отдельного — оно само с «Внести»
         Row(
-            Modifier.align(Alignment.TopStart).padding(AppTheme.dimens.spaceXs),
+            Modifier.align(Alignment.TopStart).fillMaxWidth().height(with(density) { (CHAT_TAB_BAR_HEIGHT * scale).toDp() })
+                .background(color.copy(alpha = SlotsDimens.SLOT_FILL_ALPHA))
+                .padding(horizontal = AppTheme.dimens.spaceXs),
             horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (window == ChatWindow.MAIN) {
                 tabs.forEach { tab -> ChatTab(tab, combined = true, onMove = { onEvent(SlotsEvent.DetachChat(tab)) }) }

@@ -33,7 +33,8 @@ import com.layzen.bdotools.feature.uieditor.resources.slots_preview_summary_scal
 import com.layzen.bdotools.feature.uieditor.resources.slots_redo
 import com.layzen.bdotools.feature.uieditor.resources.slots_undo
 import com.layzen.bdotools.uikit.components.DescriptionText
-import com.layzen.bdotools.uikit.components.MenuAction
+import com.layzen.bdotools.uikit.components.ActionButton
+import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.painterResource
@@ -54,32 +55,38 @@ internal fun PreviewActions(
     val all = dialog.layout.layout.positions.keys
     val allChats = dialog.layout.layout.chats.keys
     ButtonRow {
-        MenuAction(stringResource(Res.string.slots_undo), { onEvent(SlotsEvent.PreviewUndo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_undo), enabled = dialog.past.isNotEmpty())
-        MenuAction(stringResource(Res.string.slots_redo), { onEvent(SlotsEvent.PreviewRedo) }, Modifier.weight(1f), painterResource(Res.drawable.menu_redo), enabled = dialog.future.isNotEmpty())
+        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_undo), painterResource(Res.drawable.menu_undo), enabled = dialog.past.isNotEmpty(), onClick = { onEvent(SlotsEvent.PreviewUndo) }), Modifier.weight(1f))
+        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_redo), painterResource(Res.drawable.menu_redo), enabled = dialog.future.isNotEmpty(), onClick = { onEvent(SlotsEvent.PreviewRedo) }), Modifier.weight(1f))
     }
     ButtonRow {
-        MenuAction(
-            stringResource(Res.string.slots_preview_include_all),
-            { onEvent(SlotsEvent.PreviewInclude(all, true, allChats)) },
+        ActionButton(
+            ActionButtonState.Neutral(
+                stringResource(Res.string.slots_preview_include_all),
+                painterResource(Res.drawable.menu_select_all),
+                enabled = dialog.included.size < all.size || dialog.includedChats.size < allChats.size,
+                onClick = { onEvent(SlotsEvent.PreviewInclude(all, true, allChats)) },
+            ),
             Modifier.weight(1f),
-            painterResource(Res.drawable.menu_select_all),
-            enabled = dialog.included.size < all.size || dialog.includedChats.size < allChats.size,
         )
-        MenuAction(
-            stringResource(Res.string.slots_preview_exclude_all),
-            { onEvent(SlotsEvent.PreviewInclude(all, false, allChats)) },
+        ActionButton(
+            ActionButtonState.Neutral(
+                stringResource(Res.string.slots_preview_exclude_all),
+                painterResource(Res.drawable.menu_select_none),
+                enabled = dialog.hasIncluded,
+                onClick = { onEvent(SlotsEvent.PreviewInclude(all, false, allChats)) },
+            ),
             Modifier.weight(1f),
-            painterResource(Res.drawable.menu_select_none),
-            enabled = dialog.hasIncluded,
         )
     }
     if (hasBackground) {
         ButtonRow {
-            MenuAction(
-                stringResource(if (backgroundShown) Res.string.slots_background_hide_preview else Res.string.slots_background_show_preview),
-                { onEvent(SlotsEvent.ToggleBackground) },
+            ActionButton(
+                ActionButtonState.Neutral(
+                    stringResource(if (backgroundShown) Res.string.slots_background_hide_preview else Res.string.slots_background_show_preview),
+                    painterResource(if (backgroundShown) Res.drawable.menu_hide else Res.drawable.menu_show),
+                    onClick = { onEvent(SlotsEvent.ToggleBackground) },
+                ),
                 Modifier.weight(1f),
-                painterResource(if (backgroundShown) Res.drawable.menu_hide else Res.drawable.menu_show),
             )
         }
         if (backgroundShown) BackgroundDimSlider(backgroundDim, onEvent)
@@ -87,23 +94,27 @@ internal fun PreviewActions(
     DescriptionText(summary(dialog))
     if (dialog.mode == PreviewMode.Export) {
         ButtonRow {
-            MenuAction(
-                stringResource(Res.string.slots_preview_copy),
-                { onEvent(SlotsEvent.CopyPreview) },
+            ActionButton(
+                ActionButtonState.Neutral(
+                    stringResource(Res.string.slots_preview_copy),
+                    painterResource(Res.drawable.menu_copy),
+                    enabled = dialog.hasIncluded,
+                    onClick = { onEvent(SlotsEvent.CopyPreview) },
+                ),
                 Modifier.weight(1f),
-                painterResource(Res.drawable.menu_copy),
-                enabled = dialog.hasIncluded,
             )
         }
     }
     ButtonRow {
-        MenuAction(stringResource(Res.string.slots_cancel), { onEvent(SlotsEvent.CloseDialog) }, Modifier.weight(1f), painterResource(Res.drawable.menu_cancel))
-        MenuAction(
-            stringResource(if (dialog.mode == PreviewMode.Import) Res.string.slots_import_confirm else Res.string.slots_preview_export_confirm),
-            { onEvent(SlotsEvent.ConfirmPreview) },
+        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), painterResource(Res.drawable.menu_cancel), onClick = { onEvent(SlotsEvent.CloseDialog) }), Modifier.weight(1f))
+        ActionButton(
+            ActionButtonState.Positive(
+                stringResource(if (dialog.mode == PreviewMode.Import) Res.string.slots_import_confirm else Res.string.slots_preview_export_confirm),
+                painterResource(if (dialog.mode == PreviewMode.Import) Res.drawable.menu_import else Res.drawable.menu_export),
+                enabled = dialog.hasIncluded,
+                onClick = { onEvent(SlotsEvent.ConfirmPreview) },
+            ),
             Modifier.weight(1f),
-            painterResource(if (dialog.mode == PreviewMode.Import) Res.drawable.menu_import else Res.drawable.menu_export),
-            enabled = dialog.hasIncluded,
         )
     }
 }

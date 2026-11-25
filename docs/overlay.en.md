@@ -15,6 +15,7 @@ The BDO Tools icon on top of the game opens the "BDO Tools overlay" menu. The ic
 is remembered.
 Right-click the icon to turn the overlay on or off: when it is off, the icon is faded and overlay windows are hidden,
 but the icon stays. A shield inside the icon instead of the diamond means the game is running as administrator.
+The shield in the app's top bar shows whether it runs as administrator; its tooltip explains what that gives: key presses for the combo tracker, exact ping and the FPS counter.
 Any overlay window (tracker, layout, ping) can be dragged with the left mouse button, and its place is remembered.
 While the game hides the cursor (combat mode), the button and windows pass clicks to the game.
 
@@ -29,18 +30,22 @@ While the game hides the cursor (combat mode), the button and windows pass click
   bottom of the icon, as in game. Crowd controls against monsters only are not shown; they hide together with the shields.
   Hover a shield or a crowd control icon to see its name.
 
+- "Show grid" and "Grid step (game UI units)" (10, 25 or 50) — a grid over the game screen to line windows up. It assumes the game is fullscreen or windowed fullscreen on the primary monitor; the resolution and interface size come from `gamevariable.xml`.
+
 **"Combo"** — saved combos: "Show combo" (the schema of the combo under the cursor appears next to the menu), "Hide
 combo" (game watching stops too) and "Edit combo" (opens the app). In the right half of the screen the menu opens to
 the left, and overlay windows stay inside the screen.
 How to build a combo — [Combo Assist](comboAssist.en.md).
 
 - "Tracker" — the style: "Next" or "Focus".
-- "Combo layout" — "Show layout" and "Vertical": the orientation applies only to the layout.
+- "Combo layout" — "Show layout", "Vertical" and "Show skill activation keys" on the layout. The orientation applies to the layout and to the combo preview on hover.
 - "Overlay size" (20 to 100 %) and "Overlay opacity" — for the tracker and the layout.
 
 **"Info"** — "Show game ping", "Show FPS" (style "Compact" or "Detailed"), "Info panel size" (20 to 100 %) and "Info panel opacity".
 
 ## Ping
+
+The info panel (ping, FPS, "1%") has a fixed width and shows the game's DirectX version, "DX11" or "DX12", detected from the game process modules.
 
 Latency to the game server in milliseconds, as in Windows Resource Monitor. The server is looked up again when you
 change channel or reconnect.

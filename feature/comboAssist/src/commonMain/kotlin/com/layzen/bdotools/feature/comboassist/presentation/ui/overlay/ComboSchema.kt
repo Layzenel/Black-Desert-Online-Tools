@@ -43,7 +43,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * сверху вниз (ветки развилки рядом). Пройденные шаги тусклые, последний — в светлой рамке, следующий — в золотой
  * и мягко пульсирует, невыбранные ветки и опциональные шаги бледные, сгоревшие перечёркнуты. Переходы плавные.
  * [onPress] — клик по иконке (тренировка); `null` — иконки не кликаются.
- * [tooltips] — тултип умения при наведении (в окне поверх игры его нет).
+ * [tooltips] — тултип умения при наведении (в окне поверх игры его нет). [keys] — под умением его клавиши.
  */
 @Composable
 internal fun ComboSchema(
@@ -53,6 +53,7 @@ internal fun ComboSchema(
     loadDetails: suspend (Int) -> SkillDetails?,
     onPress: ((Int) -> Unit)?,
     tooltips: Boolean = true,
+    keys: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val vertical = combo.vertical
@@ -74,7 +75,7 @@ internal fun ComboSchema(
                             cells.forEachIndexed { index, cell ->
                                 if (cell.skillNo == null) return@forEachIndexed
                                 if (index > 0) Connector(cell.chain, vertical)
-                                SchemaCell(combo, CellAt(column, lane, index), cell.skillNo, cell.chain, overlay, skills, loadDetails, onPress, tooltips)
+                                SchemaCell(combo, CellAt(column, lane, index), cell.skillNo, cell.chain, overlay, skills, loadDetails, onPress, tooltips, keys)
                             }
                         }
                     }
@@ -115,6 +116,7 @@ private fun SchemaCell(
     loadDetails: suspend (Int) -> SkillDetails?,
     onPress: ((Int) -> Unit)?,
     tooltips: Boolean,
+    keys: Boolean,
 ) {
     val id = overlay.nodeAt[at]
     val next = overlay.next?.node?.id == id && id != null
@@ -148,7 +150,13 @@ private fun SchemaCell(
             crossed = id in overlay.burned,
         )
     }
-    if (tooltips) SkillHover(item, loadDetails, cell = CellNote(combo.label(at), chain)) { icon() } else icon()
+    val hovered: @Composable () -> Unit = { if (tooltips) SkillHover(item, loadDetails, cell = CellNote(combo.label(at), chain)) { icon() } else icon() }
+    if (!keys) { hovered(); return }
+    // клавиши под иконкой при любой ориентации; ячейка по центру — стрелки и связи встают по оси иконки
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXxs)) {
+        hovered()
+        SchemaCellKeys(at, skillNo, overlay, loadDetails)
+    }
 }
 
 private const val DONE_ALPHA = 0.35f

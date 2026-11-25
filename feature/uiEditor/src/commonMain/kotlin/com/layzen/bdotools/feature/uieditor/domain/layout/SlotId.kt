@@ -21,6 +21,9 @@ data class SlotId(val group: SlotGroup, val number: Int) {
     /** Высота рамки в UI-px. */
     val height: Int get() = interfaceElement?.height ?: group.height
 
+    /** Полоса над рамкой под всплывающую настройку слота, в UI-px ([SlotGroup.popupHeight]). */
+    val popupHeight: Int get() = group.popupHeight
+
     /**
      * Есть ли элемент на экране игры при «Настройке быстрых слотов» [customQuickSlots] (см. [SlotLayout.customQuickSlots]):
      * 20 слотов хотбара и «Быстрый слот» друг друга заменяют. При выключенном «Разделении HP» [splitHp]

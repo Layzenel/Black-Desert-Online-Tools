@@ -1,5 +1,11 @@
 package com.layzen.bdotools.uikit.components
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.painter.Painter
+import com.layzen.bdotools.uikit.theme.AppTheme
+import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -9,22 +15,31 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.unit.Dp
-import com.layzen.bdotools.uikit.theme.AppColors
 
 /**
- * Подложка шапки, как у окон игры: бронза светлеет книзу, по краю тёмная рамка, у правого края — крупный бледный
- * шеврон «^» с ореолом и тёмным треугольником внутри, слева от него — диагональные штрихи. Для [WindowTitleBar] и
- * [TopNavigation].
- *
- * @param border толщина рамки
+ * Подложка шапки, как у окон игры: цвет темы окон ([AppTheme.window]) светлеет или темнеет книзу, по краю тёмная рамка.
+ * У правого края — узор темы, а в классической теме — крупный бледный шеврон «^» с ореолом и тёмным треугольником
+ * внутри, слева от него — диагональные штрихи. Для [WindowTitleBar] и [TopNavigation].
  */
-internal fun Modifier.titleBarBackground(colors: AppColors, border: Dp): Modifier = drawBehind {
-    drawRect(Brush.verticalGradient(listOf(colors.titleBar, colors.titleBarLight)))
-    clipRect { drawChevron() }
-    val stroke = border.toPx()
-    drawRect(colors.titleBarDark, style = Stroke(stroke * 2))
-    drawLine(Color.Black, Offset(0f, size.height - stroke / 2), Offset(size.width, size.height - stroke / 2), stroke)
+@Composable
+internal fun Modifier.titleBarBackground(): Modifier {
+    val style = AppTheme.window
+    val border = AppTheme.dimens.borderWidth
+    val header = style.header?.let { painterResource(it) }
+    return drawBehind {
+        drawRect(Brush.verticalGradient(listOf(style.titleBarTop, style.titleBarBottom)))
+        clipRect { if (header != null) drawHeaderPattern(header) else drawChevron() }
+        val stroke = border.toPx()
+        drawRect(style.titleBarDark, style = Stroke(stroke * 2))
+        drawLine(Color.Black, Offset(0f, size.height - stroke / 2), Offset(size.width, size.height - stroke / 2), stroke)
+    }
+}
+
+/** Узор темы у правого края во всю высоту шапки; его левый край сам растворяется в цвете шапки. */
+private fun DrawScope.drawHeaderPattern(header: Painter) {
+    val height = size.height
+    val width = header.intrinsicSize.width * height / header.intrinsicSize.height
+    translate(left = size.width - width) { with(header) { draw(Size(width, height)) } }
 }
 
 /** Шеврон с вершиной у верхнего края (стороны под 45°) и штрихи слева от него. */

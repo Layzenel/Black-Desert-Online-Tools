@@ -18,7 +18,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
 /**
  * Схема комбо целиком на подложке тултипа игры — отдельное окно поверх игры рядом с трекером, слева направо или
  * сверху вниз ([Combo.vertical]). [onPress] — клик по иконке (предпросмотр). [inGame] — окно поверх игры: во всю длину
- * без прокрутки (окно растёт под схему) и без тултипов умений.
+ * без прокрутки (окно растёт под схему) и без тултипов умений. [keys] — под умениями их клавиши.
  */
 @Composable
 internal fun SchemaOverlay(
@@ -29,6 +29,7 @@ internal fun SchemaOverlay(
     onPress: ((Int) -> Unit)? = null,
     inGame: Boolean = false,
     rage: Boolean = false,
+    keys: Boolean = false,
 ) {
     // вертикальная схема прокручивается в своей высоте: на странице программы над ней уже есть прокрутка
     val scroll = when {
@@ -38,7 +39,7 @@ internal fun SchemaOverlay(
     }
     OverlayPanel(rage) {
         Row(scroll.padding(AppTheme.dimens.spaceXs)) {
-            ComboSchema(combo, overlay, skills, loadDetails, onPress, tooltips = !inGame)
+            ComboSchema(combo, overlay, skills, loadDetails, onPress, tooltips = !inGame, keys = keys)
         }
     }
 }

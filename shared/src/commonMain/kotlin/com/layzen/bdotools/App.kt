@@ -24,12 +24,16 @@ import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.account.accountsModule
 import com.layzen.bdotools.core.language.AppLanguages
 import com.layzen.bdotools.core.language.languageModule
+import com.layzen.bdotools.core.theme.AppThemes
+import com.layzen.bdotools.core.theme.themeModule
 import com.layzen.bdotools.core.skill.skillCatalogModule
 import com.layzen.bdotools.feature.portraitconstructor.di.portraitsModule
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsRoute
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.preloadPortraitsStrings
 import com.layzen.bdotools.feature.comboassist.di.comboModule
 import com.layzen.bdotools.feature.gameinfo.di.gameInfoModule
+import com.layzen.bdotools.feature.settings.di.settingsModule
+import com.layzen.bdotools.feature.settings.presentation.ui.SettingsRoute
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboRoute
 import com.layzen.bdotools.navigation.openTab
 import com.layzen.bdotools.feature.comboassist.presentation.ui.preloadComboStrings
@@ -45,7 +49,10 @@ import com.layzen.bdotools.navigation.PlatformNavigation
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.app_title
 import com.layzen.bdotools.resources.page_title
+import com.layzen.bdotools.uikit.components.ToolbarButton
 import com.layzen.bdotools.uikit.components.TopNavigation
+import com.layzen.bdotools.resources.menu_settings
+import com.layzen.bdotools.resources.settings_open
 import com.layzen.bdotools.uikit.showcase.ComponentShowcase
 import com.layzen.bdotools.uikit.theme.AppTheme
 import com.layzen.bdotools.update.di.updateModule
@@ -62,11 +69,13 @@ private val featureModules = listOf(
     accountsModule,
     skillCatalogModule,
     languageModule,
+    themeModule,
     updateModule,
     portraitsModule,
     slotsModule,
     comboModule,
     gameInfoModule,
+    settingsModule,
 )
 
 /** Корень сайта: Koin, тема, язык ([AppRoot]) и экран с верхней навигацией ([AppScreen]). */
@@ -85,7 +94,8 @@ fun App() {
 @Composable
 fun AppRoot(backStack: SnapshotStateList<Destination>, content: @Composable () -> Unit) {
     KoinApplication(configuration = koinConfiguration { modules(featureModules) }) {
-        AppTheme {
+        val theme by koinInject<AppThemes>().selected.collectAsState()
+        AppTheme(windowTheme = theme) {
             val languages = koinInject<AppLanguages>()
             val language by languages.selected.collectAsState()
             // смена языка не возвращает на первую вкладку и не сбивает адрес
@@ -136,6 +146,12 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
                 }
                 LanguageSwitcher(language, languages::select)
                 AppVersionInfo()
+                ToolbarButton(
+                    painterResource(Res.drawable.menu_settings),
+                    stringResource(Res.string.settings_open),
+                    onClick = { if (current != Destination.Settings) backStack.add(Destination.Settings) },
+                    selected = current == Destination.Settings,
+                )
             },
         )
         if (accountsState.needsChoice) {
@@ -145,6 +161,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
         Box(Modifier.weight(1f)) {
             when (current) {
                 Destination.Showcase -> ComponentShowcase()
+                Destination.Settings -> SettingsRoute()
                 is Destination.Tab -> Box(
                     Modifier
                         .fillMaxSize()

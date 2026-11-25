@@ -22,12 +22,14 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import com.layzen.bdotools.uikit.theme.AppShapes
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
  * Вариант из группы, как в настройках игры («Всегда / Никогда / Только в бою»): квадратик-индикатор и подпись.
- * Невыбранный — серая подложка, тёмный индикатор и приглушённый текст; выбранный — коричневая подложка, светлая
- * отметка в индикаторе и светлый текст.
+ * Как вкладки в настройках игры: невыбранный — серая подложка, тёмный индикатор и приглушённый текст; под курсором —
+ * светло-коричневая подложка и светлый текст; выбранный — коричневая подложка, светлая отметка в индикаторе.
+ * Тёмная рамка снаружи и светлая кромка внутри, углы скруглены [AppShapes.Control].
  */
 @Composable
 fun OptionButton(
@@ -41,19 +43,30 @@ fun OptionButton(
     val dimens = AppTheme.dimens
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
+    val highlighted = hovered && enabled && !selected
     Row(
         modifier
             .heightIn(min = dimens.buttonHeight)
             .pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default)
             .clickable(interaction, null, enabled = enabled, role = Role.RadioButton, onClick = onClick)
-            .background(if (selected) colors.backgroundSelected else colors.option)
+            .border(dimens.borderWidth, colors.windowOutline, AppShapes.Control)
+            .padding(dimens.borderWidth)
+            .background(
+                when {
+                    selected -> colors.backgroundSelected
+                    highlighted -> colors.optionHover
+                    else -> colors.option
+                },
+                AppShapes.ControlInner,
+            )
             .border(
                 dimens.borderWidth,
                 when {
                     selected -> colors.borderSelected
-                    hovered && enabled -> colors.textMuted
+                    highlighted -> colors.optionHoverBorder
                     else -> colors.optionBorder
                 },
+                AppShapes.ControlInner,
             )
             .padding(horizontal = dimens.spaceS),
         verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +85,7 @@ fun OptionButton(
         Text(
             text,
             style = AppTheme.typography.bodyBold,
-            color = if (selected) colors.textSelected else colors.textDisabled,
+            color = if (selected || highlighted) colors.textSelected else colors.textDisabled,
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(1f),
             maxLines = 1,

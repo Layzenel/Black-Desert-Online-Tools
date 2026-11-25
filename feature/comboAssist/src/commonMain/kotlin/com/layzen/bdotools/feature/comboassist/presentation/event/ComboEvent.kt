@@ -39,6 +39,9 @@ sealed interface ComboEvent {
     data class SelectCell(val at: CellAt) : ComboEvent
     data class Fill(val skillNo: Int) : ComboEvent
     data class InsertColumn(val index: Int) : ComboEvent
+
+    /** Умение [skillNo] из списка бросили на холст у ячейки [at] со стороны [side]: оно встаёт туда новой ячейкой. */
+    data class DropSkill(val skillNo: Int, val at: CellAt, val side: DropSide) : ComboEvent
     data class ToFork(val column: Int) : ComboEvent
     data class AddLane(val column: Int) : ComboEvent
     data class GrowLane(val column: Int, val lane: Int) : ComboEvent
@@ -66,6 +69,9 @@ sealed interface ComboEvent {
     data class SetMode(val mode: ComboMode) : ComboEvent
     data class Press(val skillNo: Int) : ComboEvent
     data object ToggleSchema : ComboEvent
+
+    /** Из меню оверлея: показывать под умениями схемы клавиши их применения. */
+    data object ToggleSchemaKeys : ComboEvent
 
     /** Показать окно «Как работает трекер». */
     data object ShowTrackerNotice : ComboEvent

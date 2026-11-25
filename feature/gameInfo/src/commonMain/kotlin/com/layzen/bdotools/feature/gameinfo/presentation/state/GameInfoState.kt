@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.gameinfo.presentation.state
 
 import com.layzen.bdotools.feature.gameinfo.domain.fps.FrameStats
+import com.layzen.bdotools.feature.gameinfo.domain.graphics.DirectXVersion
 import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
 
 /**
@@ -10,13 +11,19 @@ import com.layzen.bdotools.feature.gameinfo.domain.ping.PingSettings
  * @property needsAdmin пинг не собрать без прав администратора — подсказка во вкладке
  * @property fps кадры игры за последние секунды; `null` — не узнать или FPS не показывают
  * @property fpsAvailable FPS можно включить: программа запущена от администратора в настольной версии
- * @property settings как показывать пинг и FPS
+ * @property directX версия DirectX игры; `null` — не узнать или панель не показывают
+ * @property uiHeight высота экрана игры в UI-px для сетки; `null` — ещё не прочитана или прочитать не удалось
+ * @property gridUnreadable сетка включена, но размер экрана игры прочитать не удалось — подсказка в настройках
+ * @property settings как показывать пинг, FPS и сетку
  */
 data class GameInfoState(
     val ping: Int? = null,
     val needsAdmin: Boolean = false,
     val fps: FrameStats? = null,
     val fpsAvailable: Boolean = false,
+    val directX: DirectXVersion? = null,
+    val uiHeight: Double? = null,
+    val gridUnreadable: Boolean = false,
     val settings: PingSettings = PingSettings(),
 ) {
     /** FPS включён и его можно мерить: сохранённая настройка без прав администратора не действует. */

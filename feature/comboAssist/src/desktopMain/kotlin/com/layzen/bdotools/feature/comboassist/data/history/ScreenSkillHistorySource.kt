@@ -5,6 +5,7 @@ import com.layzen.bdotools.feature.comboassist.data.keys.KeyStepWatch
 import com.layzen.bdotools.feature.comboassist.data.rage.BuffListPlace
 import com.layzen.bdotools.feature.comboassist.data.resource.ResourceWatch
 import com.layzen.bdotools.feature.comboassist.data.rage.rageBuffs
+import com.layzen.bdotools.feature.comboassist.data.slots.CooldownSlot
 import com.layzen.bdotools.feature.comboassist.data.slots.CooldownSlotWatch
 import com.layzen.bdotools.feature.comboassist.data.slots.HistoryMerge
 import com.layzen.bdotools.feature.comboassist.data.slots.PlayedCharacterDetector
@@ -52,6 +53,12 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
 
     /** Слоты персонажа, последнего узнанного в [playedSlots]: по ним проверяется, видны ли слоты. */
     @Volatile private var played: SlotLayout? = null
+
+    /**
+     * Слоты персонажа, у которого историю уже прочитали с экрана: она точно видна, даже если файл игры ещё говорит
+     * обратное (игра пишет файл персонажа только при смене персонажа, телепорте и выходе).
+     */
+    @Volatile private var historySeenSlots: List<CooldownSlot>? = null
 
     /** Иконки умений из слотов для другого потока: [slotVisibility] сравнивает их своим [IconMatcher]. */
     @Volatile private var slotIconsShared: Map<Int, ByteArray> = emptyMap()
@@ -126,6 +133,7 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
                     if (step.shift) log.line(now, "line opened by shift")
                     if (match.accepted) {
                         lines.recognized()
+                        historySeenSlots = played?.slots
                         miss = null
                         log.line(now, "skill ${match.skillNo} score %.1f second %.1f".format(match.score, match.second))
                         emitAll(merge.onHistory(match.skillNo!!, now), now, log, history = match.skillNo)
@@ -149,7 +157,8 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
             val drops = resource.onFrame(robot, now)
             keys.onFrame(now, active = true, played?.keys, keySteps, merge, drops)
             emitAll(merge.onTick(now), now, log, history = null)
-            delay(FRAME_MS)
+            // период кадра считается от его начала: время снимков и разбора не прибавляется к паузе
+            delay((FRAME_MS - (start.elapsedNow().inWholeMilliseconds - now)).coerceAtLeast(MIN_PAUSE_MS))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -161,7 +170,7 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         }
     }
 
-    override fun historyShown(): Boolean = played?.historyShown ?: true
+    override fun historyShown(): Boolean = played?.let { it.historyShown || it.slots == historySeenSlots } ?: true
 
     override suspend fun playedSlots(icon: suspend (Int) -> ByteArray?): List<ScreenSlot>? = withContext(Dispatchers.IO) {
         // игра не на переднем плане — программа за ней не следит: ни снимков экрана, ни чтения файлов, ни загрузки иконок
@@ -189,7 +198,11 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
     }
 
     private companion object {
-        const val FRAME_MS = 50L
+        /** Период кадра: строка истории и слоты опрашиваются 30 раз в секунду. */
+        const val FRAME_MS = 33L
+
+        /** Наименьшая пауза между кадрами: слежение не должно занять весь процессор. */
+        const val MIN_PAUSE_MS = 5L
 
         /** Сколько иконок слотов качать одновременно. */
         const val ICON_DOWNLOADS = 16

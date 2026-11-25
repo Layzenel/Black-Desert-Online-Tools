@@ -20,6 +20,7 @@ private class SettingsDto(
     val comboScale: Int = 100,
     val comboOpacity: Int = 100,
     val schemaShown: Boolean = false,
+    val schemaKeys: Boolean = false,
     val slotShields: Boolean = false,
     val slotControls: Boolean = false,
     val trackerNoticeSeen: Boolean = false,
@@ -74,7 +75,7 @@ internal fun parseCombos(text: String): List<Combo> = json.decodeFromString<Comb
 
 /** Настройки оверлея из файла комбо; неверный файл — исключение, как у [parseCombos]. */
 internal fun parseSettings(text: String): OverlaySettings =
-    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen, it.resetSeconds) }
+    json.decodeFromString<ComboFileDto>(text).settings.let { OverlaySettings(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.schemaKeys, it.slotShields, it.slotControls, it.trackerNoticeSeen, it.resetSeconds) }
 
 /** Записывает комбо [combos] и настройки [settings] в формат файла. */
 internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = OverlaySettings()): String = json.encodeToString(
@@ -94,7 +95,7 @@ internal fun combosJson(combos: List<Combo>, settings: OverlaySettings = Overlay
                 rage = combo.rage?.let { rage -> RageDto(rage.columns.map { it.toDto() }, rage.fillers, rage.pool) },
             )
         },
-        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.slotShields, it.slotControls, it.trackerNoticeSeen, it.resetSeconds) },
+        settings = settings.let { SettingsDto(it.slotTooltips, it.comboScale, it.comboOpacity, it.schemaShown, it.schemaKeys, it.slotShields, it.slotControls, it.trackerNoticeSeen, it.resetSeconds) },
     ),
 )
 

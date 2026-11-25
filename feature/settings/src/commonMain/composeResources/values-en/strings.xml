@@ -1,0 +1,21 @@
+<resources>
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_theme">Theme</string>
+    <string name="settings_section_overlay">Overlay</string>
+    <string name="settings_startup_title">Startup</string>
+    <string name="settings_launch_at_startup">Launch with Windows</string>
+    <string name="settings_launch_at_startup_description">The app opens when you sign in to Windows. With administrator rights, Windows does not ask.</string>
+    <string name="settings_always_admin">Always run as administrator</string>
+    <string name="settings_always_admin_description">The combo tracker, ping and FPS need administrator rights. Windows will ask for permission on every launch. Takes effect on the next launch.</string>
+    <string name="settings_startup_desktop_only">These settings are only available in the installed desktop version.</string>
+    <string name="settings_theme_title">Interface theme</string>
+    <string name="settings_theme_description">Changes the window title bar, the decoration above it and the close button, like the in-game interface theme setting. Hover over a theme to preview it.</string>
+    <string name="settings_theme_classic">Classic</string>
+    <string name="settings_theme_summer">Season: Summer</string>
+    <string name="settings_theme_winter">Season: Winter</string>
+    <string name="settings_theme_spring">Season: Spring</string>
+    <string name="settings_theme_morning">Land of the Morning Light</string>
+    <string name="settings_theme_preview_title">BDO Tools</string>
+    <string name="settings_overlay_title">Overlay</string>
+    <string name="settings_overlay_soon">Overlay settings will appear here later.</string>
+</resources>

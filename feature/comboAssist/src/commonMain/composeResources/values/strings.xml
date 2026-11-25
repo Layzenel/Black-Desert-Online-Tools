@@ -4,11 +4,10 @@
     <string name="combo_names_language">ru</string>
 
     <!-- Меню -->
-    <string name="combo_section_class">Класс</string>
-    <string name="combo_section_class_description">Выберите класс для создания или редактирования комбо.</string>
+    <string name="combo_section_class">Выберите класс</string>
     <string name="combo_section_combo">Сохранённые комбо</string>
-    <string name="combo_section_combo_description">Комбо привязано к классу и подходит всем его персонажам.</string>
     <string name="combo_none">Нет комбо</string>
+    <string name="combo_search_by_keys">Поиск по клавишам</string>
     <string name="combo_new">Новое комбо</string>
     <string name="combo_untitled">Без названия</string>
     <string name="combo_name_placeholder">Название комбо</string>
@@ -102,12 +101,13 @@
 
     <!-- Настройка оверлея -->
     <string name="combo_schema_show">Показать схему</string>
+    <string name="combo_schema_keys">Показывать клавиши активации умений</string>
     <string name="combo_panel_tracker">Трекер</string>
     <string name="combo_panel_schema">Схема комбо</string>
     <string name="combo_reset_title">Сброс комбо: %1$d с</string>
     <string name="combo_reset_description">Сколько секунд можно не применять умения комбо и филлеры (не считая ожидания перезарядки) — потом трекер начнёт комбо сначала.</string>
     <string name="combo_tracker_limits">Трекер опирается на «Историю испол. навыков», слоты перезарядок, а для умений со снятым флагом «Видно в истории или на слоте» — на нажатия клавиш и расход ресурса.</string>
-    <string name="combo_history_hidden">«История испол. навыков» у этого персонажа скрыта — трекер будет сбиваться. Включи её: «Редактировать UI» → «Подсказки по управлению».</string>
+    <string name="combo_history_hidden">«История испол. навыков» у этого персонажа скрыта — трекер будет сбиваться. Включи её: «Редактировать UI» → глазик у «История испол. навыков».</string>
     <string name="combo_overlay_vertical">Вертикально</string>
     <string name="combo_overlay_horizontal">Горизонтально</string>
     <string name="combo_overlay_style_next">Следующие</string>
@@ -137,7 +137,7 @@
     <string name="combo_notice_source_resource">Полоска ресурса (MP, WP, ярость и т. п.). Умение, которое тратит заметно ресурса, засчитывается по нажатию, только когда полоска просела: нажатие, на которое игра не ответила, шаг не двигает, а умение, нажатое заранее во время анимации прошлого, засчитается, когда действительно начнётся.</string>
     <string name="combo_notice_limits">Ограничения</string>
     <string name="combo_notice_limit_admin">Чтобы слышать клавиши, программу нужно запускать от имени администратора: игра работает с правами администратора, и иначе Windows не отдаёт её нажатия.</string>
-    <string name="combo_notice_limit_history_off">История должна быть включена: «Редактировать UI» → «Подсказки по управлению» → «История испол. навыков». Где её нет (например, в Чёрном храме), трекер ведёт только по клавишам и ошибается чаще.</string>
+    <string name="combo_notice_limit_history_off">История должна быть включена: «Редактировать UI» → глазик у «История испол. навыков». Где её нет (например, в Чёрном храме), трекер ведёт только по клавишам и ошибается чаще.</string>
     <string name="combo_notice_limit_history_gaps">Игра пишет в историю не все умения: продолжения связок и умения, которые отменяют анимацию прошлого, часто пропускаются. Если такого умения нет и на слотах перезарядок, снимите у него в редакторе флаг «Видно в истории или на слоте» — тогда трекер будет узнавать его по клавишам.</string>
     <string name="combo_notice_limit_cheap">Дешёвые умения (расход меньше пары пикселей полоски) и умения, которые игра применяет сама, пока клавиша зажата, засчитываются по нажатию и удержанию без проверки. Если вы нажали клавиши, а умение не вышло, трекер может уйти на шаг вперёд — первое же умение из истории вернёт его на место.</string>
     <string name="combo_notice_limit_keys">Трекер узнаёт только клавиши из настроек управления игры. Макросы, сторонние программы и кнопки, переназначенные в программе мыши, он может не понять.</string>

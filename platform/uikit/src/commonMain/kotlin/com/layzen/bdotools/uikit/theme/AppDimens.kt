@@ -23,6 +23,8 @@ data class AppDimens(
     // Каркас страницы
     val topNavigationHeight: Dp = 48.dp,
     val contentMaxWidth: Dp = 760.dp,
+    // ширина страницы на подложке ContentFrame (портреты, настройки)
+    val frameMaxWidth: Dp = 1032.dp,
     val sidebarWidth: Dp = 180.dp,
     val introImageMaxHeight: Dp = 480.dp,
 
@@ -36,7 +38,6 @@ data class AppDimens(
     val menuItemHeight: Dp = 44.dp,
     val menuIconBoxSize: Dp = 24.dp,
     val navItemHeight: Dp = 34.dp,
-    val menuActionHeight: Dp = 32.dp,
     val menuActionIconSize: Dp = 16.dp,
     val iconSize: Dp = 20.dp,
     val infoTipMaxWidth: Dp = 260.dp,
@@ -93,4 +94,8 @@ data class AppDimens(
     val sliderTouchHeight: Dp = 20.dp,
     val sliderTrackHeight: Dp = 3.dp,
     val sliderThumbSize: Dp = 10.dp,
+
+    // Превью темы окон
+    val themePreviewWidth: Dp = 300.dp,
+    val themePreviewLine: Dp = 10.dp,
 )

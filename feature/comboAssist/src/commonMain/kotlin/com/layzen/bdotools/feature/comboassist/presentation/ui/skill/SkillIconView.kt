@@ -20,10 +20,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
+import com.layzen.bdotools.uikit.components.Skeleton
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /**
- * Иконка умения: тёмный квадрат, пока иконка грузится. На перезарядке иконка плавно темнеет, по центру — секунды,
+ * Иконка умения: пульсирующая заглушка [Skeleton], пока иконка грузится. На перезарядке иконка плавно темнеет, по центру — секунды,
  * внизу — тонкая полоска оставшейся доли; [crossed] — перечёркнута (сгоревший шаг).
  *
  * @param cooldownLeftMs сколько осталось до отката, мс; 0 — готово
@@ -41,7 +42,8 @@ internal fun SkillIconView(
     crossed: Boolean = false,
 ) {
     Box(modifier.size(size).background(AppTheme.colors.backgroundInput).border(frameWidth, frame), contentAlignment = Alignment.Center) {
-        icon?.let { Image(it, contentDescription = null, Modifier.size(size), contentScale = ContentScale.Crop) }
+        if (icon == null) Skeleton(Modifier.size(size))
+        else Image(icon, contentDescription = null, Modifier.size(size), contentScale = ContentScale.Crop)
         val shadeAlpha by animateFloatAsState(if (cooldownLeftMs > 0) SHADE else 0f, tween(FADE_MS))
         if (shadeAlpha > 0f) {
             val share = if (cooldownMs > 0) (cooldownLeftMs.toFloat() / cooldownMs).coerceIn(0f, 1f) else 0f

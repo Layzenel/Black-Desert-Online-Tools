@@ -27,10 +27,10 @@ data class ScreenSpace(val resolutionWidth: Int, val resolutionHeight: Int, val 
     /** Верхний край иконки с центром в [position]. */
     fun iconTop(id: SlotId, position: SlotPosition): Double = height / 2 + position.y - id.height / 2.0
 
-    /** Помещается ли иконка на экран целиком. */
+    /** Помещается ли иконка на экран целиком, вместе с полосой всплывающей настройки над ней. */
     fun fits(id: SlotId, position: SlotPosition): Boolean {
         val left = iconLeft(id, position)
         val top = iconTop(id, position)
-        return left >= 0 && top >= 0 && left + id.width <= width && top + id.height <= height
+        return left >= 0 && top - id.popupHeight >= 0 && left + id.width <= width && top + id.height <= height
     }
 }

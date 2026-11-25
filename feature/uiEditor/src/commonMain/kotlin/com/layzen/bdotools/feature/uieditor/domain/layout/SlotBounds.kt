@@ -21,10 +21,10 @@ data class SlotBounds(val left: Double, val top: Double, val right: Double, val 
     val yLines: List<Double> get() = listOf(top, centerY, bottom)
 
     companion object {
-        /** Рамка элемента [id] с центром в [position]. */
+        /** Рамка элемента [id] с центром в [position] вместе с полосой всплывающей настройки над ним. */
         fun of(id: SlotId, position: SlotPosition) = SlotBounds(
             left = position.x - id.width / 2.0,
-            top = position.y - id.height / 2.0,
+            top = position.y - id.height / 2.0 - id.popupHeight,
             right = position.x + id.width / 2.0,
             bottom = position.y + id.height / 2.0,
         )

@@ -13,6 +13,7 @@ import com.layzen.bdotools.feature.comboassist.domain.combo.previousSkills
 import com.layzen.bdotools.feature.comboassist.domain.combo.put
 import com.layzen.bdotools.feature.comboassist.domain.combo.removeCell
 import com.layzen.bdotools.feature.comboassist.domain.combo.moveCell
+import com.layzen.bdotools.feature.comboassist.domain.combo.insertSkill
 import com.layzen.bdotools.feature.comboassist.domain.combo.toFork
 import com.layzen.bdotools.feature.comboassist.domain.skill.ComboSkills
 import com.layzen.bdotools.feature.comboassist.presentation.event.ComboEvent
@@ -45,6 +46,7 @@ internal class EditorController {
             is ComboEvent.SetNote -> at?.let { a -> combo[a]?.let { ComboEdit(combo.put(a, it.copy(note = event.text)), a) } } ?: return state
             is ComboEvent.RemoveCell -> at?.let { combo.removeCell(it) } ?: return state
             is ComboEvent.RemoveAt -> combo.removeCell(event.at)
+            is ComboEvent.DropSkill -> combo.insertSkill(event.at, event.side, event.skillNo, skills)
             is ComboEvent.MoveCell -> combo.moveCell(event.from, event.to, event.side)
             is ComboEvent.AddFiller -> ComboEdit(combo.copy(fillers = (combo.fillers + event.skillNo).distinct()), at)
             is ComboEvent.RemoveFiller -> ComboEdit(combo.copy(fillers = combo.fillers - event.skillNo), at)

@@ -132,4 +132,5 @@
     <string name="crowd_control_title_floating">Floating</string>
     <string name="crowd_control_title_knockback">Knockback</string>
     <string name="crowd_control_title_freezing">Freezing</string>
+    <string name="showcase_theme_window">Themed window</string>
 </resources>

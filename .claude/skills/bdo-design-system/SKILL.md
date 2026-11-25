@@ -46,7 +46,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
    Если нужного токена нет, добавь его в тему, а не в фичу.
 3. **Сначала готовый компонент.** Material3-компоненты (`Button`, `Card`, `TextField`, `Switch`, `Slider`) в фичах
    не используются: они не похожи на игру. Исключение — `Text` со стилем из `AppTheme.typography`.
-4. **Почти прямые углы.** `AppShapes.Sharp` (0dp) или `AppShapes.Small` (2dp). `AppShapes.Pill` — только для
+4. **Почти прямые углы.** `AppShapes.Sharp` (0dp) или `AppShapes.Small` (2dp); кнопки и варианты — `AppShapes.Control` (3dp, снято со скриншотов игры). `AppShapes.Pill` — только для
    плашек NEW/HOT и переключателя. `AppShapes.MenuItem` (4dp) — подсветка пункта в меню действий.
 5. **Золото — это сигнал, а не украшение.** `accentGold` используется для активного пункта навигации, текущего
    значения, результата расчёта, «новых» разделов и имени персонажа. Обычный текст бежевый или кремовый.
@@ -55,6 +55,9 @@ description: Дизайн-система сайта BDO Tools в стиле ок
    (отмена, сброс, вспомогательные) — `Neutral`, серая; удаление того, что пользователь создал сам (комбо, пресет), — `Negative`, тёмно-красная, как корзина в игре. Главное действие к тому же стоит последним —
    справа в строке действий или `WindowFooter` (порядок «Применить — Назад — OK»), внизу в `sidebarFooter` у `ToolPage`.
    Новый вид кнопки — новый подкласс `ActionButtonState` и его ветка `when` в `ActionButton`, а не флаг.
+   **Кнопка в приложении одна — `ActionButton`**: в окнах, в строке действий под страницей, в меню слева у `ToolPage`,
+   в меню оверлея. Своих «кнопок-пунктов» с другой подложкой не заводи: два стиля одной роли уже были и разошлись.
+   Включатель режима («Порядок» в портретах) — `ActionButtonState.Toggle`.
 7. **Выделение = коричневая подложка + рамка.** Выбранный пункт меню или вариант получает `backgroundSelected` и
    `borderSelected`, выбранная плитка — рамку `accentGoldPale`.
 8. **Жирный шрифт по умолчанию.** Почти весь текст в игре жирный. Обычный вес (`body`) — только для длинных абзацев.
@@ -67,11 +70,11 @@ description: Дизайн-система сайта BDO Tools в стиле ок
     - **редактору нужно всё место** (холст слотов) — `ToolPage` на всё окно (вкладка с `fillsScreen = true`
       в `AppTab`): параметры в меню слева, главные действия внизу меню (`sidebarFooter`), правка — в `ActionBar`;
     - **содержимое своего размера** (сетка портретов) — колонка по центру страницы с ограниченной шириной
-      (`widthIn(max = …)`) на подложке `ContentFrame`: заголовок секции, содержимое и строка `MenuAction` под ним,
+      (`widthIn(max = …)`) на подложке `ContentFrame`: заголовок секции, содержимое и строка `ActionButton` под ним,
       каждому `Modifier.weight(1f)`,
       главное действие последним справа.
 11. **Подписи пунктов меню и кнопок — в одну строку.** Если подпись не влезает, её сокращают («Загрузить»
-    вместо «Загрузить изображение»), а не переносят. `MenuAction` обрезает лишнее многоточием.
+    вместо «Загрузить изображение»), а не переносят. `ActionButton` обрезает лишнее многоточием.
     Подробности действия — в описании секции (`SectionHeader(description = …)`).
 12. **Вёрстка не зависит от языка.** Интерфейс переводится (скилл `resources-externalization`, раздел «Языки»),
     и перевод бывает длиннее русского текста. Не подгоняй ширину кнопки, колонки или окна под русскую подпись:
@@ -98,10 +101,15 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `windowOutline` / `windowFrame` | `#151C24` / `#6A593E` | рамка `GameWindow`: тёмная снаружи, светлая бронзовая внутри |
 | `button` / `buttonHover` / `buttonPressed` | `#44444E` / `#52525D` / `#38383F` | кнопки |
 | `buttonBorder` | `#4E4F56` | рамка кнопки |
-| `buttonPositiveTop` → `buttonPositiveMiddle` → `buttonPositiveBottom` | `#9F7B59` → `#704E38` → `#8C6144` | бронза кнопки `ActionButtonState.Positive`: темнеет к 65 % высоты и снова светлеет |
-| `buttonPositiveEdge` | `#D3A477` | светлая кромка сверху у положительной кнопки |
-| `buttonNegativeTop` → `buttonNegativeBottom` | `#603730` → `#442620` | кнопка `ActionButtonState.Negative` (удалить) |
-| `option` / `optionBorder` | `#38383D` / `#4A4A4F` | невыбранный `OptionButton` |
+| `actionButtonTop` → `actionButtonBottom`, `actionButtonEdge` | `#4C4D57` → `#42434D`, `#686A73` | обычная кнопка (`ActionButtonState.Neutral`): тёмная рамка `windowOutline` снаружи, светлая кромка внутри |
+| `actionButtonHoverTop` → `actionButtonHoverBottom`, `actionButtonHoverEdge` | `#5E4D44` → `#53443C`, `#806652` | она же под курсором — коричневая, как «Назад» в игре |
+| `actionButtonDisabled`, `actionButtonDisabledEdge` | `#424243`, `#575758` | любая недоступная кнопка — плоская серая |
+| `buttonPositiveTop` → `buttonPositiveMiddle` → `buttonPositiveBottom` | `#9F7B59` → `#704E38` → `#8C6144` | бронза `ActionButtonState.Positive`: темнеет к 65 % высоты и снова светлеет |
+| `buttonNegativeTop` → `buttonNegativeBottom` | `#603730` → `#442620` | `ActionButtonState.Negative` (удалить): темнеет книзу |
+| `option` / `optionBorder` | `#35353A` / `#4D4D55` | невыбранный `OptionButton` (внутри тёмной рамки `windowOutline`) |
+| `optionHover` / `optionHoverBorder` | `#625244` / `#866550` | `OptionButton` под курсором |
+| `toggleTrack` / `toggleTrackBorder` / `toggleThumbOff` | `#34343A` / `#4D4E55` / `#686868` | выключенный `ToggleSwitch`: серый кружок внутри дорожки |
+| `toggleOn` / `toggleThumbOn` | `#926C2D` / `#FFEDD4` | включённый `ToggleSwitch`: тёмное золото и крупный кремовый кружок во всю высоту |
 | `indicator` / `indicatorBorder` / `indicatorBorderSelected` | `#292929` / `#4C4E58` / `#7E6454` | квадратик-индикатор `OptionButton` |
 | `indicatorMark` → `indicatorMarkShade` | `#FFF2E0` → `#E4C89F` | отметка выбранного индикатора (градиент сверху вниз) |
 | `border` / `borderSelected` | `#39393F` / `#685048` | рамки пунктов |
@@ -122,6 +130,16 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `badgeNew` / `badgeHot` | `#D09820` / `#D05020` | плашки NEW / HOT |
 | `rageDeep` / `rageDark` | `#0C0505` / `#3A0A0A` | подложка трекера комбо под гневом Чёрного духа (градиент сверху `rageDark` → вниз `rageDeep`) |
 | `rageBorder` / `rageFlame` / `rageEmber` | `#7A1414` / `#B4140E` / `#E8501C` | его рамка и огонь: языки пламени `rageFlame`, угли и разгорающаяся рамка `rageEmber`. Только для гнева, не для ошибок |
+
+## Темы окон
+
+Как «Настройки темы интерфейса» в игре: Классика, Сезон: Лето, Сезон: Зима, Сезон: Весна, Страна Утра.
+Тема (`WindowTheme` в `platform/core`, `core.theme`; выбор — `AppThemes`, помнится как язык) меняет только окна:
+цвет шапки и узор у её правого края (`titleBarBackground`, в классике — шеврон), украшение над окном
+(`windowDecoration`) и кнопку закрытия (`WindowCloseButton`). Вид темы — `WindowTheme.style` (`WindowThemeStyle`
+в `theme/WindowThemeStyles.kt`), текущая — `AppTheme.window`, корень передаёт её в `AppTheme(windowTheme = …)`.
+Картинки `drawable/theme_*` вырезаны из скриншотов игры, присланных пользователем: левый край узора шапки
+растворяется, фон украшений прозрачный. Остальная палитра от темы не зависит.
 
 ## Типографика
 
@@ -150,7 +168,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `TopNavigation(tabs, selected, onSelect, label, icon, title, titleIcon, trailing)` | верхняя навигация сайта; используется один раз, в `shared/App.kt`. `titleIcon` — значок перед названием (в настольной версии — щит «запущено от имени администратора»). У вкладки иконка `icon` (белый силуэт, красится в цвет подписи) и справа от неё подпись до двух строк, выровненная по левому краю (перенос `\n` в строке ресурса). `trailing` — элементы у правого края (версия, выбор аккаунта, на сайте — `ToolbarButton` скачивания настольной версии) |
 | `ToolPage(sidebar, sidebarWidth, sidebarFooter) { }` | страница тулзы без шапки: меню слева во всю высоту (`backgroundSurface`, прокручивается само, отступ `spaceL`, между частями `spaceM`) и содержимое справа на всё свободное место. `sidebarFooter` прижат к низу меню и не прокручивается — для главных действий. Годится и внутри большого `ModalWindow` (превью импорта в слотах) |
 | `ActionBar { }` | строка инструментов правки над содержимым `ToolPage` (отменить, повторить — в подсказке горячая клавиша). Работа с файлами и главное действие — внизу меню, в `sidebarFooter` |
-| `ToolbarButton(icon, description, onClick, enabled, selected)`, `ToolbarDivider()` | панель инструментов в `ActionBar`: кнопка-иконка (белый силуэт, цвет задаёт кнопка) с подсказкой `description` при наведении; `selected` — включённый режим (золотая иконка). `ToolbarDivider` отделяет группы кнопок. Подпись у иконки только в подсказке, поэтому она обязательна |
+| `ToolbarButton(icon, description, onClick, enabled, selected)`, `ToolbarDivider()` | любая кнопка-иконка без подписи (панель инструментов в `ActionBar`, верхняя навигация, инструменты над сеткой): квадратный `ActionButton` без подписи (белый силуэт, цвет задаёт кнопка) с подсказкой `description` при наведении; `selected` — включённый режим (`ActionButtonState.Toggle`: коричневая, золотая иконка). `ToolbarDivider` отделяет группы кнопок. Подпись у иконки только в подсказке, поэтому она обязательна |
 | `HoverTooltip(text) { }` | всплывающая подсказка под элементом при наведении курсора, как у `ToolbarButton` (на нём и построена). Для пояснения, которому не место под подписью: например, у `ToggleSwitch` в узком меню. Снизу не влезает — встаёт над элементом |
 | `HoverTooltip(tooltip = { }, enabled, beside) { }` | подсказка с любым содержимым (карточка навыка): появляется сразу, пропадает, как только курсор ушёл или элемент нажали, по таймеру не гаснет. `enabled = false` прячет её, не пересоздавая элемент — можно выключать посреди жеста или по клавише-модификатору. `beside = true` — справа от элемента (строки списка в меню), иначе под ним |
 | `TooltipPanel { }` | подложка подсказки, как тултип игры: тело `backgroundDeep` в двойной рамке (внешняя `borderSelected`, зазор `tooltipFrameGap`, внутренняя `border`) и тень `menuShadow` — для своей подсказки, например в `aside` у `ModalWindow` |
@@ -159,14 +177,16 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `ContextMenu<K>(expanded, onDismissRequest, submenu = { key -> ... }) { submenuTrigger -> ActionMenuItem(...) }`, `Modifier.onSecondaryClick(onClick)` | меню правого клика: `onSecondaryClick` отдаёт точку нажатия и поглощает его до дочерних элементов, `ContextMenu` ставится в пустой `Box` с `offset` в этой точке и раскрывается от его угла (у правого или нижнего края окна — влево или вверх), после чего стоит на месте. Вложенные панели выезжают справа (у правого края — слева), пока курсор над пунктом с `Modifier` из `submenuTrigger(ключ)` или над панелью (открыта одна); панель встаёт напротив своего пункта, у нижнего края сдвигается вверх сама, не двигая меню. Нажатие мимо меню закрывает его и доходит до страницы: правый клик в другом месте сразу открывает там новое меню (сбрасывай точку меню в `onDismissRequest`, только если она не сменилась). Пункты — `ActionMenuItem` (недоступные с `enabled = false`) и `ActionMenuDivider` |
 | `Modifier.panCursor(cursor)`, `PanCursor` | курсор-рука над рабочей областью: `Open` — сдвиг возможен, `Grabbing` — область схвачена. На Desktop руки нарисованы в коде (`HandCursor.kt`), в вебе включается CSS `grab`/`grabbing` для всего холста Compose, поэтому не-`None` ставь, только пока курсор над областью |
 | `Modifier.resizeCursor(dragging)` | курсор «диагональные стрелки» (↗↙) над ручкой растягивания окна за правый верхний угол; `dragging = true` держит его, пока ручку тянут. На Desktop — системный курсор, в вебе — CSS `nesw-resize` для холста Compose |
-| `MenuAction(text, onClick, icon, hotkey, selected, enabled)` | действие-пункт: иконка (`Painter`, белый силуэт), подпись в одну строку с многоточием, горячая клавиша справа. В меню `ToolPage` — столбиком, под содержимым страницы — строкой (`Modifier.weight(1f)` каждому, как в портретах). `selected` — включённый режим (золотой текст), его пункт выключает режим |
-| `ContentFrame { }` | подложка содержимого страницы без шапки: графитовое тело окна (`backgroundSurface`), чёрная рамка и золотая кромка `titleBarHighlight` сверху; внутри колонка с отступом `spaceL` и промежутками `spaceM`. Для страницы «по центру» (портреты): заголовок, сетка и строка `MenuAction` — внутри |
+| `ContentFrame { }` | подложка содержимого страницы без шапки: графитовое тело окна (`backgroundSurface`), чёрная рамка и золотая кромка `titleBarHighlight` сверху; внутри колонка с отступом `spaceL` и промежутками `spaceM`. Для страницы «по центру» (портреты): заголовок, сетка и строка `ActionButton` — внутри |
 | `ToolIntro(points, image, imageDescription)` | что умеет тулза — под просьбой выбрать папку, пока данных нет: пункты с золотым тире и скриншот тулзы (`drawable/intro_*.jpg`, сжатый JPEG ~1100 px; перевод — в `drawable-<tag>/`). Пустой экран с одной кнопкой не оставляй |
 | `BulletList(points)` | список пунктов с золотым тире (ограничения, советы, что умеет тулза); на нём построен `ToolIntro`, в каталоге виден в его примере |
-| `GameWindow(title, titleBarModifier, actions, footer) { }` | окно с бронзовой шапкой: основа `ModalWindow` и примеров каталога. Рамка как у окон игры: тёмная `windowOutline` снаружи, светлая бронзовая `windowFrame` внутри, сверху кромка `titleBarHighlight`. `titleBarModifier` — для шапки (перетаскивание окна за неё). Для страниц тулз — `ToolPage` |
+| `GameWindow(title, titleBarModifier, actions, footer) { }` | окно с шапкой в цвете темы окон и украшением темы над ней: основа `ModalWindow` и примеров каталога. Рамка как у окон игры: тёмная `windowOutline` снаружи, светлая бронзовая `windowFrame` внутри, сверху кромка `titleBarHighlight`. `titleBarModifier` — для шапки (перетаскивание окна за неё). Для страниц тулз — `ToolPage` |
 | `WindowTitleBar`, `WindowFooter`, `Panel` | части окна, если нужна нестандартная компоновка. Шапка и `TopNavigation` рисуются одной подложкой `titleBarBackground` (как окна игры: бронза светлеет книзу, тёмная рамка, у правого края крупный бледный шеврон «^» с ореолом и тёмным треугольником внутри, слева от него диагональные штрихи); новая бронзовая полоса — тоже через неё |
 | `ModalWindow(title, onDismissRequest, dismissible, footer, aside) { }` | модальное окно поверх страницы: выбор, подтверждение, редактор. Пока идёт долгая операция, передавай `dismissible = false`. `aside` — панель слева от окна вровень с его верхом (описание пункта, на который навели); окно из-за неё не сдвигается |
 | `CloseButton(onClick)` | крестик (нарисован линиями): в шапке окна и для очистки поля |
+| `WindowCloseButton(onClick)` | кнопка закрытия в шапке окна (`ModalWindow`, меню оверлея): рисунок зависит от темы окон — крестик, морская звезда, снежинка, клевер, цветок |
+| `Modifier.windowDecoration()`, `windowDecorationHeight()` | украшение темы окон над шапкой (картинки над левым и правым краем, за пределами элемента); у `GameWindow` уже есть. Отдельному окну ОС оставь над окном `windowDecorationHeight()` места |
+| `WindowThemePreview(theme, title)` | превью окна в теме `theme` — в подсказке при наведении на тему, как в игре |
 | `InfoButton(text)` | кружок с «!»; по клику над ним подсказка с `text` — ограничения поля, правила |
 | `HoverActionsBox(actions = { ActionMenuItem(...) }) { }` | действия над элементом (плиткой) по наведению курсора: элемент размывается (`hoverBlurRadius`) и затемняется, поверх встаёт чёткая золотая рамка, пункты — по центру внутри элемента и не перекрывают соседей. Подсвечивать элемент самому не нужно. Всплывающих меню-тултипов в дизайн-системе нет: действия показываются внутри элемента |
 | `RunningGoblin()`, `LoadingRow(text)` | индикатор загрузки — чёрный гоблин со светлой обводкой бежит на месте (цвета `silhouette`, `silhouetteOutline`); строка «гоблин + текст» для короткого ожидания внутри окна |
@@ -175,8 +195,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `ProgressBar(progress)` | полоса прогресса 0…1 |
 | `BusyOverlay(text, progress, details)` | окно ожидания поверх страницы на время долгой операции, закрыть нельзя. В браузере всё работает в одном потоке: между тяжёлыми шагами делай короткую паузу (`delay(16)`), иначе индикатор замрёт вместе со страницей |
 | `ActionMenuItem(text, onClick, enabled, icon, trailingIcon, trailingText, toggled)`, `ActionMenuDivider()` | пункт меню действий (`icon` слева, `trailingIcon` справа — белые силуэты, `trailingText` — значение золотом, `toggled` — пункт-переключатель: включён золотой, выключен приглушённый) и разделитель между пунктами. Кликается вся строка, подсветка — скруглённая плашка `AppShapes.MenuItem` с отступом от разделителей. Длинный текст переносится на вторую строку |
-| `ActionButton(state, modifier, icon)`, `ActionButtonState` | любое действие. `state` — sealed-состояние: подпись, `enabled`, `onClick` и вид по подклассу — `ActionButtonState.Neutral(text, onClick = …)` (серая) , `ActionButtonState.Positive(…)` (бронзовая: применить, сохранить, OK) или `ActionButtonState.Negative(…)` (тёмно-красная: удалить). `icon` — белый силуэт слева от подписи (главное действие в `sidebarFooter`). Подложки — `ActionButtonSurfaces.kt` |
-| `SquareIconButton(onClick, selected) { }` | квадратная кнопка с иконкой (панель инструментов) |
+| `ActionButton(state, modifier)`, `ActionButtonState` | любое действие, единственная кнопка приложения. `state` — sealed-состояние: подпись, `icon` (белый силуэт слева), `hotkey` (приглушённый текст справа), `enabled`, `onClick` и вид по подклассу — `ActionButtonState.Neutral(text, onClick = …)` (серая, под курсором коричневая), `ActionButtonState.Toggle(text, checked, …)` (включатель режима: включённый — коричневый с золотой подписью), `ActionButtonState.Positive(…)` (бронзовая с градиентом: применить, сохранить, OK) или `ActionButtonState.Negative(…)` (тёмно-красная: удалить). Ширину задаёт место: в строке — `Modifier.weight(1f)`, в столбце — `Modifier.fillMaxWidth()`; длинная подпись обрезается многоточием. Подложки — `ActionButtonSurfaces.kt` |
 | `MenuItem(text, hotkey, badge, selected, highlighted)` | список разделов или тулз, как главное меню игры. Слот `icon` — не меньше квадрата иконки и шире под содержимое (отметка и портрет) |
 | `NavGroup(title, icon) { NavItem(...) }` | боковая навигация по разделам страницы |
 | `SectionHeader(title, description, warning)` | заголовок блока настроек или параметров |
@@ -219,8 +238,8 @@ fun EnhancementScreen(state: EnhancementState, onEvent: (EnhancementEvent) -> Un
         SectionDivider()
         ValueText(stringResource(Res.string.enhancement_chance_value, state.chance))
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
-            MenuAction(stringResource(Res.string.enhancement_reset), { onEvent(EnhancementEvent.Reset) }, Modifier.weight(1f))
-            MenuAction(stringResource(Res.string.enhancement_calculate), { onEvent(EnhancementEvent.Calculate) }, Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.enhancement_reset), onClick = { onEvent(EnhancementEvent.Reset) }), Modifier.weight(1f))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.enhancement_calculate), onClick = { onEvent(EnhancementEvent.Calculate) }), Modifier.weight(1f))
         }
     }
 }
