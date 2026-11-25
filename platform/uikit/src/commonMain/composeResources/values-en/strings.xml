@@ -3,6 +3,7 @@
     <string name="showcase_menu_title">Menu</string>
     <string name="showcase_menu_search">What are you looking for?</string>
     <string name="showcase_grouped_open">Pick from list</string>
+    <string name="showcase_grouped_open_tooltip">Open the grouped list</string>
     <string name="showcase_grouped_first">First</string>
     <string name="showcase_grouped_rest">Others</string>
     <string name="showcase_menu_recent">Recent Menu</string>
@@ -18,8 +19,11 @@
     <string name="showcase_settings_title">Settings</string>
     <string name="showcase_settings_help">?</string>
     <string name="showcase_settings_apply">Apply</string>
+    <string name="showcase_settings_apply_tooltip">Apply the settings without closing the window</string>
     <string name="showcase_settings_back">Back</string>
+    <string name="showcase_settings_back_tooltip">Go back without changes</string>
     <string name="showcase_settings_ok">OK</string>
+    <string name="showcase_settings_ok_tooltip">Apply the settings and close the window</string>
     <string name="showcase_settings_performance">Performance</string>
     <string name="showcase_settings_video">Video</string>
     <string name="showcase_settings_window">Window</string>
@@ -29,6 +33,7 @@
     <string name="showcase_settings_audio">Audio</string>
     <string name="showcase_settings_screen_size">Set the game screen size.</string>
     <string name="showcase_settings_reset">Reset</string>
+    <string name="showcase_settings_reset_tooltip">Restore the default settings</string>
     <string name="showcase_settings_screen">Screen Settings</string>
     <string name="showcase_settings_mode_fullscreen">Fullscreen</string>
     <string name="showcase_settings_mode_borderless">Borderless</string>
@@ -45,8 +50,11 @@
     <!-- Component catalog: "Exit Game" window -->
     <string name="showcase_exit_title">Exit Game</string>
     <string name="showcase_exit_change_server">Change Server</string>
+    <string name="showcase_exit_change_server_tooltip">Tooltip example: change the server</string>
     <string name="showcase_exit_quit">Exit</string>
+    <string name="showcase_exit_quit_tooltip">Tooltip example: quit the game</string>
     <string name="showcase_exit_select">Select</string>
+    <string name="showcase_exit_select_tooltip">Open the selection window</string>
     <string name="showcase_exit_character">Lv.%1$d %2$s</string>
     <string name="showcase_exit_family">Revelation of the Heavens</string>
     <string name="showcase_exit_tile_stats">%1$d  %2$d</string>
@@ -56,9 +64,12 @@
     <string name="showcase_modal_header">Modal Window</string>
     <string name="showcase_modal_description">Closes with the cross, the Esc key, or a click outside the window.</string>
     <string name="showcase_modal_close">Close</string>
+    <string name="showcase_modal_close_tooltip">Close the window</string>
     <string name="showcase_feedback_title">Loading and Messages</string>
     <string name="showcase_feedback_show">Message</string>
+    <string name="showcase_feedback_show_tooltip">Show a regular message at the bottom of the window</string>
     <string name="showcase_feedback_show_error">Error</string>
+    <string name="showcase_feedback_show_error_tooltip">Show an error message at the bottom of the window</string>
     <string name="showcase_feedback_message">Changes saved.</string>
     <string name="showcase_feedback_error">Failed to write the file.</string>
     <string name="showcase_feedback_link">Source code on GitHub</string>
@@ -112,12 +123,17 @@
 
     <string name="showcase_page_menu">Page Menu</string>
     <string name="showcase_page_open">Open File</string>
+    <string name="showcase_page_open_tooltip">Tooltip example: open the page</string>
     <string name="showcase_page_mode">Edit Mode</string>
+    <string name="showcase_page_mode_tooltip">Turn the mode on or off</string>
     <string name="showcase_page_hotkey">Esc</string>
     <string name="showcase_page_disabled">Unavailable</string>
+    <string name="showcase_page_disabled_tooltip">Disabled button: the tooltip is shown here too</string>
     <string name="showcase_page_undo">Undo</string>
+    <string name="showcase_page_undo_tooltip">Undo the last action</string>
     <string name="showcase_page_tool">Snapping</string>
     <string name="showcase_page_apply">Apply</string>
+    <string name="showcase_page_apply_tooltip">Tooltip example: apply the settings</string>
     <string name="showcase_intro_first">What the tool does, in one line.</string>
     <string name="showcase_intro_second">Second point: why it needs file access.</string>
     <string name="showcase_intro_image">Example tool picture</string>

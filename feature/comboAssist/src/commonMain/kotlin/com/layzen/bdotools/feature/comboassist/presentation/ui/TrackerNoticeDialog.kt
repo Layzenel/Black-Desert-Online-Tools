@@ -21,6 +21,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_notice_limit_keys
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_limit_rage
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_limits
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_ok
+import com.layzen.bdotools.feature.comboassist.resources.combo_notice_ok_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_source_history
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_source_keys
 import com.layzen.bdotools.feature.comboassist.resources.combo_notice_source_resource
@@ -63,7 +64,7 @@ internal fun TrackerNoticeDialog(onClose: () -> Unit) {
         title = stringResource(Res.string.combo_notice_title),
         onDismissRequest = onClose,
         modifier = Modifier.width(ComboDimens.noticeWidth),
-        footer = { ActionButton(ActionButtonState.Positive(stringResource(Res.string.combo_notice_ok), onClick = onClose)) },
+        footer = { ActionButton(ActionButtonState.Positive(stringResource(Res.string.combo_notice_ok), onClick = onClose, tooltip = stringResource(Res.string.combo_notice_ok_tooltip))) },
     ) {
         val scroll = rememberScrollState()
         Column(

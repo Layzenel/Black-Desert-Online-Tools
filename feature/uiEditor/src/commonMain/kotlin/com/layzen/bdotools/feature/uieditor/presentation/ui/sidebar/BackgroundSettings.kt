@@ -14,9 +14,11 @@ import com.layzen.bdotools.feature.uieditor.resources.menu_image
 import com.layzen.bdotools.feature.uieditor.resources.menu_show
 import com.layzen.bdotools.feature.uieditor.resources.slots_background
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_aspect
-import com.layzen.bdotools.feature.uieditor.resources.slots_background_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_hide
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_pick
+import com.layzen.bdotools.feature.uieditor.resources.slots_background_hide_tooltip
+import com.layzen.bdotools.feature.uieditor.resources.slots_background_pick_tooltip
+import com.layzen.bdotools.feature.uieditor.resources.slots_background_show_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_background_show
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
@@ -43,7 +45,6 @@ internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit
         val image = state.background
         SectionHeader(
             stringResource(Res.string.slots_background),
-            description = stringResource(Res.string.slots_background_description),
             warning = if (screen != null && image != null && !sameAspect(image.width, image.height, screen.resolutionWidth, screen.resolutionHeight)) {
                 stringResource(Res.string.slots_background_aspect, image.width, image.height, screen.resolutionWidth, screen.resolutionHeight)
             } else {
@@ -56,6 +57,7 @@ internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit
                     stringResource(Res.string.slots_background_pick),
                     icon = painterResource(Res.drawable.menu_image),
                     onClick = { onEvent(SlotsEvent.PickBackground) },
+                    tooltip = stringResource(Res.string.slots_background_pick_tooltip),
                 ),
                 Modifier.weight(1f),
             )
@@ -65,6 +67,7 @@ internal fun BackgroundSettings(state: SlotsState, onEvent: (SlotsEvent) -> Unit
                         stringResource(if (state.backgroundShown) Res.string.slots_background_hide else Res.string.slots_background_show),
                         icon = painterResource(if (state.backgroundShown) Res.drawable.menu_hide else Res.drawable.menu_show),
                         onClick = { onEvent(SlotsEvent.ToggleBackground) },
+                        tooltip = stringResource(if (state.backgroundShown) Res.string.slots_background_hide_tooltip else Res.string.slots_background_show_tooltip),
                     ),
                     Modifier.weight(1f),
                 )

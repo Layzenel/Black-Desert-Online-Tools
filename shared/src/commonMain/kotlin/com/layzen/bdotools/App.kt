@@ -25,6 +25,7 @@ import com.layzen.bdotools.core.account.accountsModule
 import com.layzen.bdotools.core.language.AppLanguages
 import com.layzen.bdotools.core.language.languageModule
 import com.layzen.bdotools.core.theme.AppThemes
+import com.layzen.bdotools.core.keyhint.keyHintModule
 import com.layzen.bdotools.core.theme.themeModule
 import com.layzen.bdotools.core.skill.skillCatalogModule
 import com.layzen.bdotools.feature.portraitconstructor.di.portraitsModule
@@ -70,6 +71,7 @@ private val featureModules = listOf(
     skillCatalogModule,
     languageModule,
     themeModule,
+    keyHintModule,
     updateModule,
     portraitsModule,
     slotsModule,

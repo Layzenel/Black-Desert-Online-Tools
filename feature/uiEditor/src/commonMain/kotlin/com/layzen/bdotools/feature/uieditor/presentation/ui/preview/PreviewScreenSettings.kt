@@ -11,6 +11,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.icon
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.menu_reload
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_reset_screen
+import com.layzen.bdotools.feature.uieditor.resources.slots_preview_reset_screen_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_resolution
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_resolution_value
 import com.layzen.bdotools.feature.uieditor.resources.slots_preview_scale
@@ -62,6 +63,7 @@ internal fun PreviewScreenSettings(screen: ScreenSpace, gameScreen: ScreenSpace,
                 icon = painterResource(Res.drawable.menu_reload),
                 enabled = screen != gameScreen,
                 onClick = { onEvent(SlotsEvent.PreviewScreen(gameScreen)) },
+                tooltip = stringResource(Res.string.slots_preview_reset_screen_tooltip),
             ),
             Modifier.fillMaxWidth(),
         )

@@ -14,10 +14,13 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Replac
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_apply
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_apply_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_hint
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_hint_cells
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_reset
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_reset_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_rotation
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_title_all
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_title_one
@@ -49,9 +52,9 @@ internal fun MaskEditor(state: EditorState, onEvent: (PortraitsEvent) -> Unit) {
         onDismissRequest = { onEvent(PortraitsEvent.CloseEditor) },
         modifier = Modifier.widthIn(max = PortraitsDimens.editorMaxWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_editor_reset), onClick = { onEvent(PortraitsEvent.ResetPlacement) }))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseEditor) }))
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.portraits_editor_apply), onClick = { onEvent(PortraitsEvent.Apply) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_editor_reset), onClick = { onEvent(PortraitsEvent.ResetPlacement) }, tooltip = stringResource(Res.string.portraits_editor_reset_tooltip)))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseEditor) }, tooltip = stringResource(Res.string.portraits_cancel_tooltip)))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.portraits_editor_apply), onClick = { onEvent(PortraitsEvent.Apply) }, tooltip = stringResource(Res.string.portraits_editor_apply_tooltip)))
         },
     ) {
         Column(

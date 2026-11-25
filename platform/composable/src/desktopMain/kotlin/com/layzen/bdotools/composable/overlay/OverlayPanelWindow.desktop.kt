@@ -1,5 +1,6 @@
 package com.layzen.bdotools.composable.overlay
 
+import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -36,6 +37,8 @@ internal actual fun OverlayPanelWindow(open: Boolean, content: @Composable (drag
     LaunchedEffect(open) { if (open) panel = savedPanelPosition() }
     var measured by remember { mutableStateOf(DpSize(OverlayDimens.panelWidth, OverlayDimens.menuButton)) }
     val state = rememberWindowState(position = WindowPosition(panel.x, panel.y), size = measured)
+    // скрытое окно не держим: у каждого окна своя поверхность отрисовки в памяти; место и размер — в state выше
+    if (!shown) return
     Window(
         onCloseRequest = {},
         state = state,
@@ -54,14 +57,21 @@ internal actual fun OverlayPanelWindow(open: Boolean, content: @Composable (drag
         }
         val screen = window.graphicsConfiguration.bounds
         val alignEnd = (panel.x + OverlayDimens.panelWidth / 2).value > screen.x + screen.width / 2
-        // скрытому окну Compose возвращает прежний размер, поэтому размер и место ставятся заново и при показе
-        LaunchedEffect(panel, measured, alignEnd, shown) {
-            state.size = measured
+        // скрытому окну Compose возвращает прежний размер, поэтому размер и место ставятся заново и при показе.
+        // Размер и место — одним setBounds: порознь окно сначала росло вправо, потом уезжало влево, и меню у правого
+        // края прыгало вместе со схемой рядом. Перетаскивание (место меню) окно двигает само ([windowDrag]): если ставить
+        // окно и здесь, два источника спорили, и меню дёргалось за курсором
+        LaunchedEffect(measured, alignEnd, shown) {
             val left = if (alignEnd) panel.x + OverlayDimens.panelWidth - measured.width else panel.x
+            window.setBounds(left.value.roundToInt(), panel.y.value.roundToInt(), measured.width.value.roundToInt(), measured.height.value.roundToInt())
+            // состояние окна — то же, что у самого окна: иначе Compose при перерисовке вернул бы прежние размер и место
+            state.size = measured
             state.position = WindowPosition(left, panel.y)
         }
         val density = LocalDensity.current
-        val fit = Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
+        // меню прижато к своему краю окна: пока окно ещё старого размера, новое содержимое рядом уходит за край, а меню
+        // остаётся на месте
+        val fit = Modifier.wrapContentSize(if (alignEnd) Alignment.TopEnd else Alignment.TopStart, unbounded = true)
             .onSizeChanged {
                 // закрытое меню пустое (0×0): окно такого размера не перерисовывается и при открытии не узнало бы
                 // размер меню — оставалось невидимым

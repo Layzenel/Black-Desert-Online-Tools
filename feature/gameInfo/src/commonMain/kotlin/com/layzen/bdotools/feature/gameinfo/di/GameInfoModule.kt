@@ -1,7 +1,6 @@
 package com.layzen.bdotools.feature.gameinfo.di
 
 import com.layzen.bdotools.feature.gameinfo.data.PingSettingsRepositoryImpl
-import com.layzen.bdotools.feature.gameinfo.data.createGameDirectXSource
 import com.layzen.bdotools.feature.gameinfo.data.createGameFpsSource
 import com.layzen.bdotools.feature.gameinfo.data.createGamePingSource
 import com.layzen.bdotools.feature.gameinfo.data.createGameScreenSource
@@ -21,7 +20,6 @@ import org.koin.dsl.module
 val gameInfoModule = module {
     single { createGamePingSource() }
     single { createGameFpsSource() }
-    single { createGameDirectXSource() }
     single { createGameScreenSource() }
     single { createPingSettingsStorage() }
     singleOf(::PingSettingsRepositoryImpl) bind PingSettingsRepository::class

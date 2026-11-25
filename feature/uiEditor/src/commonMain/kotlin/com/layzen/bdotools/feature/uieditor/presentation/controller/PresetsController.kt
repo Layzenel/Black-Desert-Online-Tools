@@ -4,6 +4,7 @@ import com.layzen.bdotools.feature.uieditor.domain.file.AnchoredLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.BuiltInLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.PresetsInteractor
+import com.layzen.bdotools.feature.uieditor.domain.preset.moved
 import com.layzen.bdotools.feature.uieditor.domain.screen.ScreenSpace
 import com.layzen.bdotools.feature.uieditor.presentation.SlotsContext
 import com.layzen.bdotools.feature.uieditor.presentation.state.PresetRef
@@ -31,6 +32,15 @@ internal class PresetsController(
         val preset = context.current.presets.firstOrNull { it.name == name } ?: return
         val screen = screen() ?: return
         context.editLayout(PresetRef.User(name)) { it.overlaidWith(preset.layout.placeOn(screen)) }
+    }
+
+    /** Переставляет пресет пользователя с места [from] на место [to] и запоминает порядок в файлах аккаунта. */
+    fun moveUserPreset(from: Int, to: Int) {
+        val account = context.current.loaded?.account ?: return
+        val moved = context.current.presets.moved(from, to)
+        if (moved == context.current.presets) return
+        context.update { it.copy(presets = moved) }
+        context.launch { interactor.saveOrder(account, moved.map { it.name }) }
     }
 
     /** Открывает диалог сохранения пресета с названием активного пользовательского пресета. */

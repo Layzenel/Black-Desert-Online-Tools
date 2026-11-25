@@ -5,10 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,24 +21,20 @@ import androidx.compose.ui.window.PopupProperties
 import com.layzen.bdotools.uikit.theme.AppTheme
 
 /** Подсказка [text] под [content], пока над ним курсор: как у кнопок панели инструментов. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HoverTooltip(text: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    TooltipBox(
-        positionProvider = rememberBelowAnchor(),
-        tooltip = {
-            TooltipPanel {
-                Text(
-                    text,
-                    style = AppTheme.typography.caption,
-                    color = AppTheme.colors.textPrimary,
-                    modifier = Modifier.widthIn(max = AppTheme.dimens.tooltipMaxWidth),
-                )
-            }
-        },
-        state = rememberTooltipState(),
-        modifier = modifier,
-        content = content,
+    // сразу, как у кнопок ([HoverHint]): у TooltipBox Material3 своя задержка, и подсказки появлялись по-разному
+    HoverTooltip(tooltip = { HintText(text) }, modifier = modifier, content = content)
+}
+
+/** Текст подсказки: мелкий, переносится по ширине `tooltipMaxWidth`. */
+@Composable
+private fun HintText(text: String) {
+    Text(
+        text,
+        style = AppTheme.typography.caption,
+        color = AppTheme.colors.textPrimary,
+        modifier = Modifier.widthIn(max = AppTheme.dimens.tooltipMaxWidth),
     )
 }
 
@@ -94,3 +87,16 @@ private fun rememberBelowAnchor(): BelowAnchorPositionProvider {
     return remember(gap) { BelowAnchorPositionProvider(gap) }
 }
 
+
+/**
+ * Текстовая подсказка [text] под элементом, внутри которого она стоит, пока [visible] (курсор над элементом) —
+ * сразу, у всех кнопок одинаково. Места в раскладке не занимает: так подсказку получает элемент
+ * с `weight` или `fillMaxWidth`, которому обёртка-`Box` сломала бы ширину ([ActionButton]).
+ */
+@Composable
+internal fun HoverHint(text: String, visible: Boolean) {
+    if (!visible) return
+    Popup(popupPositionProvider = rememberBelowAnchor(), properties = PopupProperties(focusable = false)) {
+        TooltipPanel { HintText(text) }
+    }
+}

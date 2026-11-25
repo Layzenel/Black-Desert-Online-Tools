@@ -20,11 +20,14 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.character.characterT
 import com.layzen.bdotools.feature.uieditor.presentation.ui.character.className
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
+import com.layzen.bdotools.feature.uieditor.resources.slots_cancel_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_character_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_character_none
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_character_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_characters_confirm
+import com.layzen.bdotools.feature.uieditor.resources.slots_import_characters_confirm_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_without_skills
+import com.layzen.bdotools.feature.uieditor.resources.slots_import_without_skills_tooltip
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.CheckBox
@@ -50,10 +53,10 @@ internal fun ImportCharacterDialog(dialog: SlotsDialog.ImportCharacter, skills: 
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_import_without_skills), onClick = { onEvent(SlotsEvent.ImportWithoutSkills) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close, tooltip = stringResource(Res.string.slots_cancel_tooltip)))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_import_without_skills), onClick = { onEvent(SlotsEvent.ImportWithoutSkills) }, tooltip = stringResource(Res.string.slots_import_without_skills_tooltip)))
             if (dialog.chosen.isNotEmpty()) {
-                ActionButton(ActionButtonState.Positive(stringResource(Res.string.slots_import_characters_confirm), onClick = { onEvent(SlotsEvent.ConfirmImportCharacters) }))
+                ActionButton(ActionButtonState.Positive(stringResource(Res.string.slots_import_characters_confirm), onClick = { onEvent(SlotsEvent.ConfirmImportCharacters) }, tooltip = stringResource(Res.string.slots_import_characters_confirm_tooltip)))
             }
         },
     ) {

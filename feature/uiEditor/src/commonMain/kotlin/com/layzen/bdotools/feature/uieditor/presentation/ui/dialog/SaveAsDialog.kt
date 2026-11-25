@@ -13,7 +13,9 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
+import com.layzen.bdotools.feature.uieditor.resources.slots_cancel_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_save
+import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_confirm_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_name
 import com.layzen.bdotools.feature.uieditor.resources.slots_save_as_replace
@@ -41,12 +43,13 @@ internal fun SaveAsDialog(dialog: SlotsDialog.SaveAs, presets: List<String>, onE
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close, tooltip = stringResource(Res.string.slots_cancel_tooltip)))
             ActionButton(
                 ActionButtonState.Positive(
                     stringResource(if (replacing) Res.string.slots_save_replace else Res.string.slots_save),
                     enabled = dialog.name.isNotBlank(),
                     onClick = { onEvent(SlotsEvent.ConfirmSaveAs) },
+                    tooltip = stringResource(Res.string.slots_save_as_confirm_tooltip),
                 ),
             )
         },

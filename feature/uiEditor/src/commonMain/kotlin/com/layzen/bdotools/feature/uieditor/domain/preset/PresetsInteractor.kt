@@ -19,4 +19,7 @@ class PresetsInteractor(private val repository: SlotsRepository) {
         repository.deletePreset(account, name)
         return repository.presets(account)
     }
+
+    /** Запоминает порядок пресетов — их названия сверху вниз (см. [SlotsRepository.savePresetOrder]). */
+    suspend fun saveOrder(account: String, names: List<String>) = repository.savePresetOrder(account, names)
 }

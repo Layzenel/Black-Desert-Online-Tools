@@ -9,6 +9,8 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
+import com.layzen.bdotools.feature.uieditor.resources.slots_cancel_tooltip
+import com.layzen.bdotools.feature.uieditor.resources.slots_confirm_tooltip
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ModalWindow
@@ -24,8 +26,8 @@ internal fun ConfirmDialog(title: String, text: String, confirm: String, onCance
         onDismissRequest = onCancel,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = onCancel))
-            ActionButton(ActionButtonState.Neutral(confirm, onClick = onConfirm))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = onCancel, tooltip = stringResource(Res.string.slots_cancel_tooltip)))
+            ActionButton(ActionButtonState.Neutral(confirm, onClick = onConfirm, tooltip = stringResource(Res.string.slots_confirm_tooltip)))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL)) { WarningText(text) }

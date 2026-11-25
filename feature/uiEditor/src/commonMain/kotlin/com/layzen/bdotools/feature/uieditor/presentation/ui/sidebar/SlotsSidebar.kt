@@ -5,7 +5,6 @@ import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_game_settings
-import com.layzen.bdotools.feature.uieditor.resources.slots_view
 import com.layzen.bdotools.uikit.components.SectionDivider
 import com.layzen.bdotools.uikit.components.SectionHeader
 import org.jetbrains.compose.resources.stringResource
@@ -31,7 +30,6 @@ internal fun SlotsSidebar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
         SplitHpSettings(state.layout.splitHp) { onEvent(SlotsEvent.SetSplitHp(it)) }
     }
     SectionDivider()
-    SectionHeader(stringResource(Res.string.slots_view))
     GridSettings(state, onEvent)
     if (state.skills.selected != null) SkillFrameTransparency(state.skillFrameTransparency, onEvent)
     BackgroundSettings(state, onEvent)

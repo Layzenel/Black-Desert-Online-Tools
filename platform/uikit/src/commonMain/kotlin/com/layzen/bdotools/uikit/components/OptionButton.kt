@@ -1,5 +1,8 @@
 package com.layzen.bdotools.uikit.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +33,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Как вкладки в настройках игры: невыбранный — серая подложка, тёмный индикатор и приглушённый текст; под курсором —
  * светло-коричневая подложка и светлый текст; выбранный — коричневая подложка, светлая отметка в индикаторе.
  * Тёмная рамка снаружи и светлая кромка внутри, углы скруглены [AppShapes.Control].
+ * [icon] — картинка (белый силуэт) вместо подписи, цвета подписи; [text] тогда — её описание для экранного диктора.
  */
 @Composable
 fun OptionButton(
@@ -38,6 +42,7 @@ fun OptionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    icon: Painter? = null,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -82,13 +87,20 @@ fun OptionButton(
                 Box(Modifier.size(dimens.checkboxMarkSize).background(Brush.verticalGradient(listOf(colors.indicatorMark, colors.indicatorMarkShade))))
             }
         }
-        Text(
-            text,
-            style = AppTheme.typography.bodyBold,
-            color = if (selected || highlighted) colors.textSelected else colors.textDisabled,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f),
-            maxLines = 1,
-        )
+        val contentColor = if (selected || highlighted) colors.textSelected else colors.textDisabled
+        if (icon != null) {
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                Image(icon, contentDescription = text, modifier = Modifier.size(dimens.iconSize), colorFilter = ColorFilter.tint(contentColor))
+            }
+        } else {
+            Text(
+                text,
+                style = AppTheme.typography.bodyBold,
+                color = contentColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+            )
+        }
     }
 }

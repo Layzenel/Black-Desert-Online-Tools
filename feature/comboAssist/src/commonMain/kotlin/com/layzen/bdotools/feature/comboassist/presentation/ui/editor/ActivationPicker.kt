@@ -17,6 +17,7 @@ import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_activation_any
 import com.layzen.bdotools.feature.comboassist.resources.combo_activation_hint
 import com.layzen.bdotools.feature.comboassist.resources.combo_activation_record
+import com.layzen.bdotools.feature.comboassist.resources.combo_activation_record_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_activation_remove
 import com.layzen.bdotools.feature.comboassist.resources.combo_activation_rerecord
 import com.layzen.bdotools.feature.comboassist.presentation.ui.common.CrossIcon
@@ -59,7 +60,7 @@ internal fun ActivationPicker(skillNo: Int, chosen: Set<String>?, onEvent: (Comb
                 if (actions.isNotEmpty()) onEvent(ComboEvent.SetKeyVariant(actions))
             }
         } else {
-            ActionButton(ActionButtonState.Neutral(stringResource(if (custom != null) Res.string.combo_activation_rerecord else Res.string.combo_activation_record), onClick = { recording = true }))
+            ActionButton(ActionButtonState.Neutral(stringResource(if (custom != null) Res.string.combo_activation_rerecord else Res.string.combo_activation_record), onClick = { recording = true }, tooltip = stringResource(Res.string.combo_activation_record_tooltip)))
         }
     }
 }

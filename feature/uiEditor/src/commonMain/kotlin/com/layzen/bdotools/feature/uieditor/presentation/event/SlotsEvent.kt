@@ -41,6 +41,8 @@ sealed interface SlotsEvent {
     data class SetPosition(val id: SlotId, val position: SlotPosition) : SlotsEvent
     data object Undo : SlotsEvent
     data object Redo : SlotsEvent
+    /** Сбросить все несохранённые правки к раскладке из файла игры; шаг попадает в «Отменить». */
+    data object DiscardChanges : SlotsEvent
     data class SetGrid(val step: GridStep) : SlotsEvent
     data class SetSnapToGrid(val enabled: Boolean) : SlotsEvent
     data class SetSnapStep(val step: Int) : SlotsEvent
@@ -143,6 +145,8 @@ sealed interface SlotsEvent {
     data object UseGameLayout : SlotsEvent
     data class UseBuiltIn(val layout: BuiltInLayout) : SlotsEvent
     data class UseUserPreset(val name: String) : SlotsEvent
+    /** Пресет пользователя перетащили с места [from] на место [to] в списке. */
+    data class MoveUserPreset(val from: Int, val to: Int) : SlotsEvent
     data object OpenSaveAs : SlotsEvent
     data class SaveAsNameChanged(val name: String) : SlotsEvent
     data object ConfirmSaveAs : SlotsEvent
@@ -178,7 +182,7 @@ sealed interface SlotsEvent {
 
     // Запись в игру и подложка
     data object OpenApply : SlotsEvent
-    data class SelectApplyTarget(val preset: GamePreset) : SlotsEvent
+    data class ToggleApplyTarget(val preset: GamePreset) : SlotsEvent
 
     /** Отметка персонажа [characterNo] в диалоге применения: записывать ли ему навыки и надписи. */
     data class ToggleApplyCharacter(val characterNo: String) : SlotsEvent

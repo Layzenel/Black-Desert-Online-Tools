@@ -14,6 +14,7 @@
     <!-- Overlay menu: Settings tab -->
     <string name="game_info_grid_show">Show grid</string>
     <string name="game_info_grid_step">Grid step (game UI units)</string>
+    <string name="game_info_grid_opacity">Grid opacity: %1$d %</string>
     <string name="game_info_grid_unreadable">Could not read the game resolution and interface size from gamevariable.xml, so the grid is hidden. Pick an account in the app.</string>
 
     <!-- Ping over the game -->
@@ -24,5 +25,4 @@
     <string name="game_info_fps_low">1% %1$d</string>
     <string name="game_info_fps_low_unknown">1% —</string>
     <string name="game_info_fps_freezes">freezes %1$d</string>
-    <string name="game_info_directx">DX%1$d</string>
 </resources>

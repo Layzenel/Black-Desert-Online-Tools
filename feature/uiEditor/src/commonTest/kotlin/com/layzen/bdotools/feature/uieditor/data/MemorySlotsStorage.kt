@@ -30,6 +30,8 @@ class MemorySlotsStorage(var gameVariable: String, val characters: MutableMap<St
     override suspend fun readPreset(account: String, fileName: String) = error("no presets")
     override suspend fun writePreset(account: String, fileName: String, text: String) = Unit
     override suspend fun deletePreset(account: String, fileName: String) = Unit
+    override suspend fun readPresetOrder(account: String) = emptyList<String>()
+    override suspend fun writePresetOrder(account: String, names: List<String>) = Unit
     override suspend fun readBackground(account: String): ByteArray? = null
     override suspend fun writeBackground(account: String, bytes: ByteArray?) = Unit
     override suspend fun adoptLooseFiles(account: String) = Unit

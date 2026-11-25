@@ -20,7 +20,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import com.layzen.bdotools.feature.comboassist.domain.combo.Combo
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import com.layzen.bdotools.composable.overlay.OverlayScalePercent
 import com.layzen.bdotools.core.game.CharacterClass
@@ -31,8 +30,10 @@ import com.layzen.bdotools.feature.comboassist.presentation.state.ComboState
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_edit
+import com.layzen.bdotools.feature.comboassist.resources.combo_menu_edit_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_empty
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_hide
+import com.layzen.bdotools.feature.comboassist.resources.combo_menu_hide_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_menu_show
 import com.layzen.bdotools.feature.comboassist.resources.menu_edit
 import com.layzen.bdotools.feature.comboassist.resources.menu_hide
@@ -49,6 +50,9 @@ import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.MenuItem
+import com.layzen.bdotools.uikit.components.DragHandle
+import com.layzen.bdotools.uikit.components.rememberReorderState
+import com.layzen.bdotools.uikit.components.reorderItem
 import com.layzen.bdotools.uikit.components.OptionGroup
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToggleSwitch
@@ -71,13 +75,14 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
     ComboList(state, onEvent, onHover)
     Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
         if (state.overlayShown) {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_menu_hide), icon = painterResource(Res.drawable.menu_hide), onClick = { onEvent(ComboEvent.HideCombo) }), Modifier.weight(1f))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_menu_hide), icon = painterResource(Res.drawable.menu_hide), onClick = { onEvent(ComboEvent.HideCombo) }, tooltip = stringResource(Res.string.combo_menu_hide_tooltip)), Modifier.weight(1f))
         }
         ActionButton(
             ActionButtonState.Neutral(
                 stringResource(Res.string.combo_menu_edit),
                 icon = painterResource(Res.drawable.menu_edit),
                 onClick = { onEvent(ComboEvent.SetMode(ComboMode.Editor)); onEdit() },
+                tooltip = stringResource(Res.string.combo_menu_edit_tooltip),
             ),
             Modifier.weight(1f),
         )
@@ -109,8 +114,8 @@ internal fun OverlayComboTab(state: ComboState, onEvent: (ComboEvent) -> Unit, o
 }
 
 /**
- * Сохранённые комбо всех классов с иконкой и названием класса справа; открытое в оверлее подсвечено. Комбо не того
- * класса, которым играют ([ComboState.playedClass]), бледные и не выбираются. Список своей высоты.
+ * Сохранённые комбо всех классов с иконкой и названием класса справа; открытое в оверлее подсвечено. Любое комбо
+ * выбирается, даже если не подходит классу в игре. Порядок меняется перетаскиванием за ⠿. Список своей высоты.
  */
 @Composable
 private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit, onHover: (Combo?) -> Unit) {
@@ -123,17 +128,17 @@ private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit, onHover:
     val scroll = rememberScrollState()
     var hovered by remember { mutableStateOf<Combo?>(null) }
     LaunchedEffect(hovered) { onHover(hovered) }
+    val reorder = rememberReorderState { from, to -> onEvent(ComboEvent.MoveCombo(from, to)) }
     Column(Modifier.fillMaxWidth().heightIn(max = ComboDimens.overlayPanelListHeight).verticalScrollbar(scroll).verticalScroll(scroll)) {
-        state.combos.forEach { combo ->
+        state.combos.forEachIndexed { index, combo ->
             val characterClass = CharacterClass.entries.firstOrNull { it.key == combo.classKey }
-            // комбо другого класса персонажу в игре не подходит: видно, но не выбирается
-            val fits = state.playedClass == null || combo.classKey == state.playedClass
             val hover = remember { MutableInteractionSource() }
             val over by hover.collectIsHoveredAsState()
             LaunchedEffect(over) { if (over) hovered = combo else if (hovered?.id == combo.id) hovered = null }
             MenuItem(
-                combo.name.ifBlank { untitled }, { if (fits) onEvent(ComboEvent.ShowCombo(combo.id)) },
-                Modifier.fillMaxWidth().hoverable(hover).alpha(if (fits) 1f else UNFIT_ALPHA),
+                combo.name.ifBlank { untitled }, { onEvent(ComboEvent.ShowCombo(combo.id)) },
+                Modifier.fillMaxWidth().reorderItem(reorder, index).hoverable(hover),
+                icon = { DragHandle(reorder, index) },
                 hotkey = characterClass?.let { stringResource(it.title) },
                 badge = characterClass?.let { { Image(painterResource(it.icon), null, Modifier.size(ComboDimens.paletteIcon), colorFilter = tint) } },
                 selected = state.overlayShown && state.combo?.id == combo.id,
@@ -144,6 +149,3 @@ private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit, onHover:
 
 /** Непрозрачность оверлея комбо, проценты: совсем прозрачный не нужен — его не найти. */
 private val COMBO_OPACITY = 20..100
-
-/** Комбо другого класса — бледное. */
-private const val UNFIT_ALPHA = 0.4f

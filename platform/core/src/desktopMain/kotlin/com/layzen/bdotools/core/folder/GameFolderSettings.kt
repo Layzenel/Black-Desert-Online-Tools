@@ -15,6 +15,8 @@ private const val FOLDER_KEY = "gameFolder"
 private const val ACCOUNT_KEY = "account"
 private const val LANGUAGE_KEY = "language"
 private const val THEME_KEY = "theme"
+private const val KEY_HINTS_KEY = "keyHints"
+private const val START_IN_TRAY_KEY = "startInTray"
 
 /** «Документы» пользователя с учётом переноса в OneDrive; запасной вариант — `user.home\Documents`. */
 internal fun defaultDocumentsDirectory(): Path? =
@@ -64,6 +66,22 @@ class GameFolderSettings(
         get() = preferences.get(THEME_KEY, null)
         set(value) {
             if (value == null) preferences.remove(THEME_KEY) else preferences.put(THEME_KEY, value)
+            preferences.flush()
+        }
+
+    /** Строка вида подсказок клавиш умений (`KeyHints.encode`) или `null`, если пользователь ещё не выбирал. */
+    var keyHints: String?
+        get() = preferences.get(KEY_HINTS_KEY, null)
+        set(value) {
+            if (value == null) preferences.remove(KEY_HINTS_KEY) else preferences.put(KEY_HINTS_KEY, value)
+            preferences.flush()
+        }
+
+    /** Программа при запуске не показывает окно, а сразу сворачивается в трей. */
+    var startInTray: Boolean
+        get() = preferences.getBoolean(START_IN_TRAY_KEY, false)
+        set(value) {
+            preferences.putBoolean(START_IN_TRAY_KEY, value)
             preferences.flush()
         }
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -38,7 +39,7 @@ import org.jetbrains.compose.resources.painterResource
  * клавиша, доступность, действие и вид — в [state]: [ActionButtonState.Neutral] — серая,
  * [ActionButtonState.Toggle] — включатель режима, [ActionButtonState.Positive] — бронзовая,
  * [ActionButtonState.Negative] — тёмно-красная. В строке кнопок каждой — `Modifier.weight(1f)`, в столбце —
- * `Modifier.fillMaxWidth()`; содержимое стоит по центру.
+ * `Modifier.fillMaxWidth()`; содержимое стоит по центру. [ActionButtonState.tooltip] — подсказка при наведении.
  */
 @Composable
 fun ActionButton(state: ActionButtonState, modifier: Modifier = Modifier) {
@@ -69,30 +70,35 @@ fun ActionButton(state: ActionButtonState, modifier: Modifier = Modifier) {
     }
     // без подписи — квадратная кнопка-иконка панели инструментов (ToolbarButton)
     val iconOnly = state.text.isEmpty() && state.icon != null
-    Row(
-        modifier
-            .defaultMinSize(minWidth = if (iconOnly) dimens.buttonHeight else dimens.buttonMinWidth, minHeight = dimens.buttonHeight)
-            .pointerHoverIcon(if (state.enabled) PointerIcon.Hand else PointerIcon.Default)
-            .clickable(interaction, indication = null, enabled = state.enabled, role = Role.Button, onClick = state.onClick)
-            .then(surface)
-            .padding(horizontal = if (iconOnly) dimens.spaceXs else dimens.spaceL, vertical = dimens.spaceXs),
-        horizontalArrangement = Arrangement.spacedBy(dimens.spaceS, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        state.icon?.let { icon ->
-            val size = if (iconOnly) dimens.iconSize else dimens.menuActionIconSize
-            Image(icon, contentDescription = null, modifier = Modifier.size(size), colorFilter = ColorFilter.tint(textColor))
+    // подсказка — вне ряда: лишний элемент ряда получал бы промежуток spacedBy, и кнопка под
+    // курсором расширялась. Размер от modifier (weight, fillMaxWidth) доходит до ряда через propagateMinConstraints
+    Box(modifier, propagateMinConstraints = true) {
+        Row(
+            Modifier
+                .defaultMinSize(minWidth = if (iconOnly) dimens.buttonHeight else dimens.buttonMinWidth, minHeight = dimens.buttonHeight)
+                .pointerHoverIcon(if (state.enabled) PointerIcon.Hand else PointerIcon.Default)
+                .clickable(interaction, indication = null, enabled = state.enabled, role = Role.Button, onClick = state.onClick)
+                .then(surface)
+                .padding(horizontal = if (iconOnly) dimens.spaceXs else dimens.spaceL, vertical = dimens.spaceXs),
+            horizontalArrangement = Arrangement.spacedBy(dimens.spaceS, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            state.icon?.let { icon ->
+                val size = if (iconOnly) dimens.iconSize else dimens.menuActionIconSize
+                Image(icon, contentDescription = null, modifier = Modifier.size(size), colorFilter = ColorFilter.tint(textColor))
+            }
+            if (!iconOnly) Text(
+                text = state.text,
+                style = AppTheme.typography.button,
+                color = textColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                // в узкой кнопке подпись сжимается и обрезается, иконка и клавиша остаются целыми
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            state.hotkey?.let { Text(it, style = AppTheme.typography.caption, color = colors.textMuted, maxLines = 1) }
         }
-        if (!iconOnly) Text(
-            text = state.text,
-            style = AppTheme.typography.button,
-            color = textColor,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            // в узкой кнопке подпись сжимается и обрезается, иконка и клавиша остаются целыми
-            modifier = Modifier.weight(1f, fill = false),
-        )
-        state.hotkey?.let { Text(it, style = AppTheme.typography.caption, color = colors.textMuted, maxLines = 1) }
+        state.tooltip?.let { HoverHint(it, hovered && !pressed) }
     }
 }
 

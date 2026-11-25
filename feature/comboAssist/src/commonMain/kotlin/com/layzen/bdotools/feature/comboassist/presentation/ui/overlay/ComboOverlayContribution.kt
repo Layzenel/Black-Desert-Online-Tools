@@ -28,8 +28,6 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shie
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_shields_description
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_tooltips
 import com.layzen.bdotools.feature.comboassist.resources.combo_setting_slot_tooltips_description
-import com.layzen.bdotools.uikit.components.HoverTooltip
-import com.layzen.bdotools.uikit.components.SectionDivider
 import com.layzen.bdotools.uikit.components.ToggleSwitch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -106,11 +104,9 @@ private fun SettingsSection(viewModel: ComboViewModel) {
     SettingToggle(state.settings.slotTooltips, Res.string.combo_setting_slot_tooltips, Res.string.combo_setting_slot_tooltips_description) {
         viewModel.onEvent(ComboEvent.ToggleSlotTooltips)
     }
-    SectionDivider()
     SettingToggle(state.settings.slotShields, Res.string.combo_setting_slot_shields, Res.string.combo_setting_slot_shields_description) {
         viewModel.onEvent(ComboEvent.ToggleSlotShields)
     }
-    SectionDivider()
     SettingToggle(state.settings.slotControls, Res.string.combo_setting_slot_controls, Res.string.combo_setting_slot_controls_description) {
         viewModel.onEvent(ComboEvent.ToggleSlotControls)
     }
@@ -119,7 +115,5 @@ private fun SettingsSection(viewModel: ComboViewModel) {
 /** Переключатель настройки с названием [label]; пояснение [hint] — в подсказке при наведении курсора. */
 @Composable
 private fun SettingToggle(checked: Boolean, label: StringResource, hint: StringResource, onToggle: () -> Unit) {
-    HoverTooltip(stringResource(hint)) {
-        ToggleSwitch(checked, { onToggle() }, label = stringResource(label))
-    }
+    ToggleSwitch(checked, { onToggle() }, label = stringResource(label), description = stringResource(hint))
 }

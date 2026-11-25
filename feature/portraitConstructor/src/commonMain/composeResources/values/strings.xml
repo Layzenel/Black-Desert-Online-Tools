@@ -9,6 +9,7 @@
     <string name="portraits_desktop_description">Портреты можно менять и без браузера: программа BDO Tools для Windows умеет всё то же, что и сайт, и работает с папкой игры напрямую.</string>
     <string name="portraits_desktop_download">Скачать установщик (.msi)</string>
     <string name="portraits_folder_title">Папка игры</string>
+    <string name="portraits_folder_button_tooltip">Дать программе доступ к папке игры</string>
     <string name="portraits_folder_description">Выберите папку «Документы\\Black Desert». Сайт прочитает портреты из FaceTexture, порядок персонажей из UserCache и сможет записать новые портреты.</string>
     <string name="portraits_folder_description_desktop">Выберите папку «Документы\\Black Desert». Программа прочитает портреты из FaceTexture, порядок персонажей из UserCache и сможет записать новые портреты. Папка запомнится до следующего запуска.</string>
     <string name="portraits_folder_select">Выбрать папку</string>
@@ -34,15 +35,20 @@
     <string name="portraits_source_device">С устройства</string>
     <string name="portraits_source_device_description">PNG, JPG, WEBP, BMP или GIF с этого компьютера.</string>
     <string name="portraits_source_device_pick">Выбрать файл</string>
+    <string name="portraits_source_device_pick_tooltip">Выбрать картинку на этом устройстве</string>
     <string name="portraits_source_clipboard">Из буфера обмена</string>
     <string name="portraits_source_clipboard_description">Скопированное изображение (из браузера, «Ножниц», редактора) или файл картинки.</string>
     <string name="portraits_source_clipboard_paste">Вставить</string>
+    <string name="portraits_source_clipboard_paste_tooltip">Вставить картинку из буфера обмена</string>
     <string name="portraits_source_url">По ссылке</string>
     <string name="portraits_source_url_description">Прямая ссылка на картинку.</string>
     <string name="portraits_source_url_placeholder">https://…</string>
     <string name="portraits_source_url_load">Загрузить</string>
+    <string name="portraits_source_url_load_tooltip">Загрузить картинку по введённой ссылке</string>
     <string name="portraits_source_loading">Загружаю изображение…</string>
     <string name="portraits_cancel">Отмена</string>
+    <string name="portraits_cancel_tooltip">Закрыть окно, ничего не меняя</string>
+    <string name="portraits_confirm_tooltip">Выполнить действие, о котором сказано в окне</string>
 
     <!-- Подгонка под маску -->
     <string name="portraits_editor_title_all">Подгонка изображения</string>
@@ -52,7 +58,11 @@
     <string name="portraits_editor_zoom">Масштаб, %</string>
     <string name="portraits_editor_rotation">Поворот, °</string>
     <string name="portraits_editor_reset">Сбросить</string>
+    <string name="portraits_editor_reset_tooltip">Вернуть положение портрета, как было</string>
     <string name="portraits_editor_apply">Применить</string>
+    <string name="portraits_editor_apply_tooltip">Применить положение портрета в рамке</string>
+    <string name="portraits_decoration_apply_tooltip">Применить выбранное украшение к портретам</string>
+    <string name="portraits_decoration_colors_apply_tooltip">Применить выбранные цвета украшения</string>
     <string name="portraits_editor_saving">Сохраняю портреты…</string>
 
     <!-- Сообщения -->
@@ -106,17 +116,22 @@
     <string name="portraits_favorites_portraits">Портреты: %1$d</string>
     <string name="portraits_favorites_empty">В избранном пока пусто. Сохраните текущие портреты кнопкой ниже.</string>
     <string name="portraits_favorites_save">Сохранить текущие портреты</string>
+    <string name="portraits_favorites_save_tooltip">Сохранить текущие портреты в избранное</string>
     <string name="portraits_favorites_apply">Применить</string>
+    <string name="portraits_favorites_apply_tooltip">Применить выбранный набор портретов</string>
     <string name="portraits_favorite_added">Портреты сохранены в избранное: «BDO Tools\\portraitConstructor\\%1$s».</string>
     <string name="portraits_favorites_loading">Читаю избранное…</string>
     <string name="portraits_favorites_close">Закрыть</string>
+    <string name="portraits_favorites_close_tooltip">Закрыть окно избранного</string>
     <string name="portraits_favorite_applied">Портреты из избранного применены. Старые файлы — в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
     <string name="portraits_favorites_title_placeholder">Название набора</string>
     <string name="portraits_favorites_rename">Переименовать</string>
+    <string name="portraits_favorites_rename_tooltip">Переименовать набор избранного</string>
     <string name="portraits_favorites_delete_title">Удалить наборы избранного?</string>
     <string name="portraits_favorites_delete_text">Будут удалены наборы: %1$d. Портреты из них вернуть уже не получится.</string>
     <string name="portraits_favorites_deleted">Удалено наборов избранного: %1$d.</string>
     <string name="portraits_favorites_replace">Заменить выбранный</string>
+    <string name="portraits_favorites_replace_tooltip">Заменить выбранный набор текущими портретами</string>
     <string name="portraits_favorites_replace_title">Заменить набор текущими портретами?</string>
     <string name="portraits_favorites_replace_text">Портреты в наборе заменятся на текущие, название останется. Старые портреты из набора вернуть уже не получится.</string>
     <string name="portraits_favorites_replace_confirm">Заменить</string>
@@ -139,9 +154,12 @@
     <string name="portraits_restore_description_one">Выберите версию портрета.</string>
     <string name="portraits_restore_warning">Заметки и значки у восстановленных портретов пропадут. На картинке из копии они могут остаться нарисованными, но изменить их или сохранить при следующей замене картинки уже не получится.</string>
     <string name="portraits_restore_check_all">Отметить все</string>
+    <string name="portraits_restore_check_all_tooltip">Отметить все резервные копии</string>
     <string name="portraits_restore_uncheck_all">Снять отметки</string>
+    <string name="portraits_restore_uncheck_all_tooltip">Снять отметки со всех резервных копий</string>
     <string name="portraits_restore_current">Сейчас</string>
     <string name="portraits_restore_apply">Восстановить</string>
+    <string name="portraits_restore_apply_tooltip">Вернуть портреты из выбранной резервной копии</string>
     <string name="portraits_restore_apply_count">Восстановить (%1$d)</string>
     <string name="portraits_restore_loading">Загружаю превью…</string>
     <string name="portraits_restored">Портреты восстановлены. Файлы, которые были до этого, сохранены в «%1$s». Откройте окно выбора персонажа заново, чтобы увидеть изменения.</string>
@@ -156,6 +174,8 @@
 
     <!-- Удаление резервных копий -->
     <string name="portraits_delete_marked">Удалить (%1$d)</string>
+    <string name="portraits_restore_delete_marked_tooltip">Удалить отмеченные резервные копии</string>
+    <string name="portraits_favorites_delete_marked_tooltip">Удалить отмеченные портреты из набора</string>
     <string name="portraits_backups_delete_title">Удалить резервные копии?</string>
     <string name="portraits_backups_delete_text">Будут удалены копии: %1$d. Портреты из них вернуть уже не получится.</string>
     <string name="portraits_delete_confirm">Удалить</string>
@@ -175,6 +195,7 @@
     <string name="portraits_notes_game_closed">Игра закрыта</string>
     <string name="portraits_notes_game_running">Игра запущена. Закройте её и нажмите «Проверить снова»: пока она работает, при смене персонажа, телепорте или выходе она перезапишет файл заметками из своей памяти.</string>
     <string name="portraits_notes_recheck">Проверить снова</string>
+    <string name="portraits_notes_recheck_tooltip">Проверить заметки ещё раз</string>
     <string name="portraits_error_game_running">Игра запущена, заметки не записаны. Закройте игру и синхронизируйте снова.</string>
     <string name="portraits_notes_changes">Изменятся заметки (%1$d)</string>
     <string name="portraits_notes_added">новая заметка</string>
@@ -183,6 +204,7 @@
     <string name="portraits_notes_loading">Читаю заметки…</string>
     <string name="portraits_notes_backup">Перед записью копия gameVariable_lobby.xml сохранится в «BDO Tools\\portraitConstructor\\&lt;аккаунт&gt;\\lobby_backup».</string>
     <string name="portraits_notes_apply">Синхронизировать</string>
+    <string name="portraits_notes_apply_tooltip">Синхронизировать заметки с игрой</string>
     <string name="portraits_notes_synced">Заметки записаны. Прежний файл — в «%1$s». Запустите игру, чтобы увидеть их.</string>
     <!-- Подсказки к действиям под сеткой -->
     <string name="portraits_folder_change_hint">Выбрать другую папку «Документы\\Black Desert».</string>

@@ -10,6 +10,10 @@ internal object BrowserSystemStartup : SystemStartup {
 
     override suspend fun setRunsAsAdmin(enabled: Boolean) = Unit
 
+    override suspend fun startsInTray(): Boolean = false
+
+    override suspend fun setStartsInTray(enabled: Boolean) = Unit
+
     override suspend fun setLaunchAtStartup(enabled: Boolean, elevated: Boolean) = Unit
 }
 

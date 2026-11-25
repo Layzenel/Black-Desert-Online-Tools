@@ -5,7 +5,9 @@
     <string name="window_close_title">Close the app?</string>
     <string name="window_close_text">Minimized to the tray, the app keeps running and the combo overlay stays on top of the game. Click the tray icon to open it.</string>
     <string name="window_close_tray">Minimize to tray</string>
+    <string name="window_close_tray_tooltip">Close the window and keep the program running in the tray</string>
     <string name="window_close_exit">Close</string>
+    <string name="window_close_exit_tooltip">Close the program completely</string>
     <!-- Browser tab title: the page and the app name -->
     <string name="page_title">%1$s — %2$s</string>
 
@@ -26,7 +28,9 @@
     <string name="account_picker_title">Select an account</string>
     <string name="account_picker_description">Several accounts have played on this PC, and their portraits are stored in one folder. The tools will show only the selected account; you can change it in the top navigation.</string>
     <string name="account_picker_apply">Select</string>
+    <string name="account_picker_apply_tooltip">Work with the selected account</string>
     <string name="account_picker_cancel">Cancel</string>
+    <string name="account_picker_cancel_tooltip">Close the window without changing the account</string>
     <string name="account_last_played">Latest</string>
     <string name="account_details">Last played: %1$s · characters: %2$d</string>
     <string name="account_played_today">today</string>
@@ -37,6 +41,7 @@
     <string name="account_more_portraits">+%1$d</string>
     <string name="account_switcher_label">Account</string>
     <string name="account_option">%1$s · %2$d chars.</string>
+    <string name="account_option_tooltip">Choose another Black Desert account</string>
 
     <!-- Disclaimer at the bottom of the window: the wording is required by the Pearl Abyss Fan Content Guidelines -->
     <string name="app_disclaimer_short">Unofficial fan project, not affiliated with Pearl Abyss. Hover to read in full.</string>
@@ -52,6 +57,7 @@
     <!-- Website update -->
     <string name="web_update_available">A new version of the site %1$s is available. Reload the page to get the changes.</string>
     <string name="web_update_reload">Reload page</string>
+    <string name="web_update_reload_tooltip">Reload the page to get the new version</string>
 
     <!-- Desktop version update -->
     <string name="update_check">Check for updates</string>
@@ -59,8 +65,11 @@
     <string name="update_up_to_date">You have the latest version.</string>
     <string name="update_check_failed">Could not check for updates. Check your internet connection.</string>
     <string name="update_install_version">Update to %1$s</string>
+    <string name="update_install_version_tooltip">Show what is new in this version and update</string>
     <string name="update_later">Later</string>
+    <string name="update_later_tooltip">Postpone reloading the page</string>
     <string name="update_install">Update</string>
+    <string name="update_install_tooltip">Download and install the update</string>
     <string name="update_downloading">Downloading version %1$s: %2$d%%. After the download the program will close, update, and start again.</string>
     <string name="update_failed">Could not download or unpack the update. Check your internet connection and disk space and try again.</string>
     <!-- Console window that replaces the program files: no parentheses, &, <, > or | — cmd treats them as commands -->
@@ -69,6 +78,8 @@
     <string name="update_script_copying">Replacing program files with the new version...</string>
     <string name="update_script_failed">Could not replace the files. Starting the previous version.</string>
     <string name="update_retry">Retry</string>
+    <string name="update_retry_tooltip">Try downloading and installing the update again</string>
     <string name="update_notes_title">What's new in version %1$s</string>
     <string name="update_notes_empty">No changelog was provided for this version.</string>
+    <string name="language_switcher_tooltip">Choose the interface language</string>
 </resources>

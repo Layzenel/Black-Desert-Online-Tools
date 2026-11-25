@@ -11,7 +11,9 @@ import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.update_downloading
 import com.layzen.bdotools.resources.update_failed
 import com.layzen.bdotools.resources.update_later
+import com.layzen.bdotools.resources.update_later_tooltip
 import com.layzen.bdotools.resources.update_retry
+import com.layzen.bdotools.resources.update_retry_tooltip
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ProgressBar
@@ -47,6 +49,6 @@ private fun RowScope.DownloadingContent(state: UpdateState.Downloading) {
 @Composable
 private fun RowScope.FailedContent(viewModel: UpdateViewModel) {
     WarningText(stringResource(Res.string.update_failed), Modifier.weight(1f))
-    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.update_later), onClick = viewModel::postpone))
-    ActionButton(ActionButtonState.Positive(stringResource(Res.string.update_retry), onClick = viewModel::install))
+    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.update_later), onClick = viewModel::postpone, tooltip = stringResource(Res.string.update_later_tooltip)))
+    ActionButton(ActionButtonState.Positive(stringResource(Res.string.update_retry), onClick = viewModel::install, tooltip = stringResource(Res.string.update_retry_tooltip)))
 }

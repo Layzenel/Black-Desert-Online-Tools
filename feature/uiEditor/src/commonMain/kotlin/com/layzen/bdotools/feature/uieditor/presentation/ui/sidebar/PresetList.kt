@@ -62,6 +62,7 @@ internal fun PresetList(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             fieldText = stringResource(Res.string.slots_user_presets),
             minHeight = SlotsDimens.sidebarSelectHeight,
             trailing = { name -> DeleteButton { onEvent(SlotsEvent.RequestDelete(name)) } },
+            onMove = { from, to -> onEvent(SlotsEvent.MoveUserPreset(from, to)) },
         )
     }
     if (state.presets.isEmpty()) DescriptionText(stringResource(Res.string.slots_user_presets_empty))

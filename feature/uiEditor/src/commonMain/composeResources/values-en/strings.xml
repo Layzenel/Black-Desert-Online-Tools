@@ -4,6 +4,7 @@
     <string name="slots_unsupported_title">Browser not supported</string>
     <string name="slots_unsupported_description">The site needs access to the game folder, which is only available in Chrome, Edge, Opera and Yandex Browser.</string>
     <string name="slots_folder_title">Game folder</string>
+    <string name="slots_folder_button_tooltip">Give the app access to the game folder</string>
     <string name="slots_folder_description">Select the "Documents\\Black Desert" folder — it contains the interface settings (UserCache\\…\\gamevariable.xml).</string>
     <string name="slots_folder_select">Select folder</string>
     <string name="slots_permission_description">Confirm access to the "%1$s" folder to read and change the slot layout.</string>
@@ -29,12 +30,15 @@
     <string name="slots_grid_off">X</string>
     <string name="slots_grid_size">%1$d</string>
     <string name="slots_background">Backdrop</string>
-    <string name="slots_background_description">Your own game screenshot taken with the UI hidden will make placing elements easier.</string>
     <string name="slots_background_pick">Select</string>
     <string name="slots_background_hide">Hide</string>
     <string name="slots_background_show">Show</string>
     <string name="slots_background_hide_preview">Hide backdrop</string>
     <string name="slots_background_show_preview">Show backdrop</string>
+    <string name="slots_preview_background_tooltip">Show or hide the background image in the preview</string>
+    <string name="slots_background_pick_tooltip">Pick your own game screenshot with the UI hidden: it goes under the layout</string>
+    <string name="slots_background_hide_tooltip">Hide the backdrop on the canvas; the image is kept</string>
+    <string name="slots_background_show_tooltip">Bring the backdrop back onto the canvas</string>
     <string name="slots_background_dim">Dimming, %</string>
 
     <!-- Selected slot -->
@@ -81,8 +85,11 @@
     <string name="slots_import_character_description">The layout has %1$s skills. Tick characters of this class or with empty slots: their cooldown slots are replaced by the import, and Apply writes the skills to every ticked character.</string>
     <string name="slots_import_character_none">No matching character: a character's class is found from the skills in their slots.</string>
     <string name="slots_import_without_skills">Without skills</string>
+    <string name="slots_import_without_skills_tooltip">Import the characters without their skills</string>
     <string name="slots_import_characters_confirm">Import</string>
+    <string name="slots_import_characters_confirm_tooltip">Import the selected characters</string>
     <string name="slots_apply_skills">Cooldown slots of the checked characters have changed. Uncheck a character to skip applying its changes.</string>
+    <string name="slots_apply_chat_lock">If a chat is locked in the game, the game keeps its old position and size. Unlock the chat in the game before applying.</string>
     <string name="slots_apply_changed_skills">Skills</string>
     <string name="slots_apply_changed_memos">Labels</string>
     <string name="slots_apply_changed_both">Skills and labels</string>
@@ -131,7 +138,9 @@
     <string name="slots_split_hp_description">Works like the in-game setting of the same name: on — HP, PVP and Black Spirit's Rage are separate, off — a single fixed panel at the top left.</string>
     <string name="slots_legend_off_screen">off screen</string>
     <string name="slots_undo">Undo</string>
+    <string name="slots_preview_undo_tooltip">Undo the last change in the preview</string>
     <string name="slots_redo">Redo</string>
+    <string name="slots_preview_redo_tooltip">Redo the undone change</string>
 
     <!-- Toolbar -->
     <string name="slots_snap_to_slots">Slot snapping</string>
@@ -187,27 +196,35 @@
 
     <!-- Action bar -->
     <string name="slots_apply">Apply to game</string>
+    <string name="slots_apply_tooltip">Write the changes to the game files</string>
 
     <!-- Dialogs -->
     <string name="slots_cancel">Cancel</string>
+    <string name="slots_confirm_tooltip">Perform the action described in the window</string>
+    <string name="slots_cancel_tooltip">Close the window without changes</string>
     <string name="slots_save">Save</string>
+    <string name="slots_memo_save_tooltip">Save the note</string>
     <string name="slots_save_as_title">Save preset</string>
     <string name="slots_save_as_name">Name</string>
     <string name="slots_save_as_description">Enter a new name or pick one of your presets from the list to replace it with the current layout.</string>
     <string name="slots_save_as_replace">Replace preset</string>
     <string name="slots_save_replace">Replace</string>
+    <string name="slots_save_as_confirm_tooltip">Save the interface settings as a preset with the entered name</string>
     <string name="slots_import_title">Import layout</string>
     <string name="slots_import_description">Paste the contents of a .json file or select the file itself. Elements will be placed relative to the crosshair and screen corners just like the author's, even if their monitor is different. Groups that are not in the file stay unchanged.</string>
     <string name="slots_import_file">Select file</string>
+    <string name="slots_import_file_tooltip">Load interface settings from a file</string>
     <string name="slots_import_confirm">Import</string>
     <string name="slots_import_next">Next</string>
+    <string name="slots_import_next_tooltip">Go on to preview the imported settings</string>
     <string name="slots_import_not_json">Could not read the JSON.</string>
     <string name="slots_import_wrong_format">This is not a BDO Tools layout file.</string>
     <string name="slots_import_unsupported_version">The file is from a newer version of BDO Tools — update the site or the app.</string>
     <string name="slots_apply_title">Apply to game</string>
     <string name="slots_apply_description">Fully close the game: while it is running, it will overwrite the file with its own values. A copy of gamevariable.xml is saved to "BDO Tools\\uiEditor\\&lt;account&gt;\\backups" before writing.</string>
     <string name="slots_apply_confirm">Game is closed, apply</string>
-    <string name="slots_apply_target">Write to</string>
+    <string name="slots_apply_confirm_tooltip">Write the changes to the files of the selected characters</string>
+    <string name="slots_apply_target">Write to (one or more)</string>
     <string name="slots_game_preset">In-game presets</string>
     <string name="slots_game_preset_hint">Position sets from the game's Interface Editing window: general or Preset 1–3. The chosen one opens in the editor.</string>
     <string name="slots_presets_hint">The layout from the game file and ready-made cooldown slot layouts.</string>
@@ -217,15 +234,19 @@
     <string name="slots_preview_import_title">Import preview</string>
     <string name="slots_preview_export_title">Export preview</string>
     <string name="slots_preview_export_confirm">Export</string>
+    <string name="slots_preview_confirm_tooltip">Confirm the import or export of the marked elements</string>
     <string name="slots_preview_screen">Preview monitor</string>
     <string name="slots_preview_screen_description">For preview only: this is how the layout will look on someone else's monitor. It is saved to the file with anchors and will be placed to fit the recipient's screen.</string>
     <string name="slots_preview_resolution">Resolution</string>
     <string name="slots_preview_resolution_value">%1$d × %2$d</string>
     <string name="slots_preview_scale">UI scale</string>
     <string name="slots_preview_reset_screen">My screen</string>
+    <string name="slots_preview_reset_screen_tooltip">Restore the screen size used in the game</string>
     <string name="slots_preview_elements">Elements</string>
     <string name="slots_preview_include_all">Select all</string>
+    <string name="slots_preview_include_all_tooltip">Mark all elements</string>
     <string name="slots_preview_exclude_all">Clear all</string>
+    <string name="slots_preview_exclude_all_tooltip">Unmark all elements</string>
     <string name="slots_preview_hint">Mouse wheel zooms. Click an element to check or uncheck it, hold the left mouse button on an empty spot to draw a frame: it checks the touched ones, or unchecks them if all are already checked. Shift or Space + left mouse button, or the middle mouse button, pans. Ctrl+Z undoes. Dimmed elements will not be saved to the file.</string>
     <string name="slots_group_cooldown">Skill Cooldown</string>
     <string name="slots_group_hotbar">Hotbar</string>
@@ -262,7 +283,6 @@
 
     <!-- Left menu sections -->
     <string name="slots_game_settings">Game settings</string>
-    <string name="slots_view">View</string>
     <string name="slots_background_aspect">The %1$d×%2$d screenshot has a different aspect ratio than the %3$d×%4$d game screen: the backdrop won't match the layout.</string>
 
     <!-- Bottom of the left menu -->
@@ -276,6 +296,7 @@
     <string name="slots_notice_apply_undone">The game files are restored to how they were before applying.</string>
 
     <!-- Tooltips: edit history and layout file actions -->
+    <string name="slots_discard_tooltip">Discard all unsaved edits and return to the layout from the game file</string>
     <string name="slots_undo_tooltip">Undo (Ctrl+Z)</string>
     <string name="slots_redo_tooltip">Redo (Ctrl+Y or Ctrl+Shift+Z)</string>
     <string name="slots_import_tooltip">Import: another player's layout from a file or text</string>
@@ -287,6 +308,7 @@
 
     <!-- Export as text -->
     <string name="slots_preview_copy">Copy as text</string>
+    <string name="slots_preview_copy_tooltip">Copy the preview image to the clipboard</string>
     <string name="slots_notice_layout_copied">Layout copied. Paste it in chat; the other player pastes the text into Import.</string>
 
     <!-- Applying while the game is running -->

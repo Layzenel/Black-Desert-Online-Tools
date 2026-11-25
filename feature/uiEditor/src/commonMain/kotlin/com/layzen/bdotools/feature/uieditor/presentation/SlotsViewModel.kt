@@ -79,6 +79,7 @@ class SlotsViewModel(
             is SlotsEvent.SetPosition -> editor.setPosition(event.id, event.position)
             SlotsEvent.Undo -> editor.undo()
             SlotsEvent.Redo -> editor.redo()
+            SlotsEvent.DiscardChanges -> editor.discardChanges()
             is SlotsEvent.SetGrid -> editor.setGrid(event.step)
             is SlotsEvent.SetSnapToGrid -> editor.setSnapToGrid(event.enabled)
             is SlotsEvent.SetSnapStep -> editor.setSnapStep(event.step)
@@ -124,6 +125,7 @@ class SlotsViewModel(
             SlotsEvent.UseGameLayout -> presets.useGameLayout()
             is SlotsEvent.UseBuiltIn -> presets.useBuiltIn(event.layout)
             is SlotsEvent.UseUserPreset -> presets.useUserPreset(event.name)
+            is SlotsEvent.MoveUserPreset -> presets.moveUserPreset(event.from, event.to)
             SlotsEvent.OpenSaveAs -> presets.openSaveAs()
             is SlotsEvent.SaveAsNameChanged -> presets.changeSaveAsName(event.name)
             SlotsEvent.ConfirmSaveAs -> presets.confirmSaveAs()
@@ -146,7 +148,7 @@ class SlotsViewModel(
             SlotsEvent.ConfirmPreview -> files.confirmPreview()
 
             SlotsEvent.OpenApply -> game.openApply()
-            is SlotsEvent.SelectApplyTarget -> game.selectApplyTarget(event.preset)
+            is SlotsEvent.ToggleApplyTarget -> game.toggleApplyTarget(event.preset)
             is SlotsEvent.ToggleApplyCharacter -> game.toggleApplyCharacter(event.characterNo)
             SlotsEvent.ConfirmApply -> game.confirmApply()
             SlotsEvent.OpenUndoApply -> context.update { it.copy(dialog = SlotsDialog.ConfirmUndoApply) }

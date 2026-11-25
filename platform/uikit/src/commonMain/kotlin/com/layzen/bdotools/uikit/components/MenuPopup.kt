@@ -6,7 +6,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -51,6 +61,35 @@ internal fun MenuPopup(
 @Composable
 internal fun Modifier.menuPanel(): Modifier =
     background(AppTheme.colors.backgroundRaised).border(AppTheme.dimens.borderWidth, AppTheme.colors.border)
+
+/**
+ * Пункт выпадающего списка ([OptionsMenu], [GroupedOptionsMenu]): под курсором — подложка тёмного цвета акцента
+ * темы окон (`titleBarDark`), а не серая подсветка Material3.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun MenuOption(
+    text: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+    contentPadding: PaddingValues = MenuDefaults.DropdownMenuItemContentPadding,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+) {
+    val hovered by interactionSource.collectIsHoveredAsState()
+    CompositionLocalProvider(LocalRippleConfiguration provides null) {
+        DropdownMenuItem(
+            text = text,
+            onClick = onClick,
+            modifier = modifier.background(if (hovered) AppTheme.window.titleBarDark else Color.Transparent),
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            contentPadding = contentPadding,
+            interactionSource = interactionSource,
+        )
+    }
+}
 
 /** Текст пункта списка: выбранный или раскрытый вариант подсвечен золотом. */
 @Composable

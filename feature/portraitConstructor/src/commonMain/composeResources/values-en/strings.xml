@@ -9,6 +9,7 @@
     <string name="portraits_desktop_description">You can change portraits without a browser too: the BDO Tools app for Windows does everything the website does and works with the game folder directly.</string>
     <string name="portraits_desktop_download">Download installer (.msi)</string>
     <string name="portraits_folder_title">Game folder</string>
+    <string name="portraits_folder_button_tooltip">Give the app access to the game folder</string>
     <string name="portraits_folder_description">Select the "Documents\\Black Desert" folder. The website will read portraits from FaceTexture and the character order from UserCache, and will be able to write new portraits.</string>
     <string name="portraits_folder_description_desktop">Select the "Documents\\Black Desert" folder. The app will read portraits from FaceTexture and the character order from UserCache, and will be able to write new portraits. The folder is remembered until the next launch.</string>
     <string name="portraits_folder_select">Select folder</string>
@@ -34,15 +35,20 @@
     <string name="portraits_source_device">From device</string>
     <string name="portraits_source_device_description">PNG, JPG, WEBP, BMP or GIF from this computer.</string>
     <string name="portraits_source_device_pick">Choose file</string>
+    <string name="portraits_source_device_pick_tooltip">Pick an image on this device</string>
     <string name="portraits_source_clipboard">From clipboard</string>
     <string name="portraits_source_clipboard_description">A copied image (from a browser, Snipping Tool or an editor) or a picture file.</string>
     <string name="portraits_source_clipboard_paste">Paste</string>
+    <string name="portraits_source_clipboard_paste_tooltip">Paste an image from the clipboard</string>
     <string name="portraits_source_url">From link</string>
     <string name="portraits_source_url_description">A direct link to an image.</string>
     <string name="portraits_source_url_placeholder">https://…</string>
     <string name="portraits_source_url_load">Load</string>
+    <string name="portraits_source_url_load_tooltip">Load the image from the entered link</string>
     <string name="portraits_source_loading">Loading image…</string>
     <string name="portraits_cancel">Cancel</string>
+    <string name="portraits_cancel_tooltip">Close the window without changes</string>
+    <string name="portraits_confirm_tooltip">Perform the action described in the window</string>
 
     <!-- Fitting to the mask -->
     <string name="portraits_editor_title_all">Fit image</string>
@@ -52,7 +58,11 @@
     <string name="portraits_editor_zoom">Zoom, %</string>
     <string name="portraits_editor_rotation">Rotation, °</string>
     <string name="portraits_editor_reset">Reset</string>
+    <string name="portraits_editor_reset_tooltip">Restore the original portrait position</string>
     <string name="portraits_editor_apply">Apply</string>
+    <string name="portraits_editor_apply_tooltip">Apply the portrait position in the frame</string>
+    <string name="portraits_decoration_apply_tooltip">Apply the chosen decoration to the portraits</string>
+    <string name="portraits_decoration_colors_apply_tooltip">Apply the chosen decoration colors</string>
     <string name="portraits_editor_saving">Saving portraits…</string>
 
     <!-- Messages -->
@@ -106,17 +116,22 @@
     <string name="portraits_favorites_portraits">Portraits: %1$d</string>
     <string name="portraits_favorites_empty">Favorites are empty for now. Save the current portraits with the button below.</string>
     <string name="portraits_favorites_save">Save current portraits</string>
+    <string name="portraits_favorites_save_tooltip">Save the current portraits to favorites</string>
     <string name="portraits_favorites_apply">Apply</string>
+    <string name="portraits_favorites_apply_tooltip">Apply the selected portrait set</string>
     <string name="portraits_favorite_added">Portraits saved to favorites: "BDO Tools\\portraitConstructor\\%1$s".</string>
     <string name="portraits_favorites_loading">Reading favorites…</string>
     <string name="portraits_favorites_close">Close</string>
+    <string name="portraits_favorites_close_tooltip">Close the favorites window</string>
     <string name="portraits_favorite_applied">Portraits from favorites applied. Old files are in "%1$s". Reopen the character selection window to see the changes.</string>
     <string name="portraits_favorites_title_placeholder">Set name</string>
     <string name="portraits_favorites_rename">Rename</string>
+    <string name="portraits_favorites_rename_tooltip">Rename the favorite set</string>
     <string name="portraits_favorites_delete_title">Delete favorite sets?</string>
     <string name="portraits_favorites_delete_text">Sets to be deleted: %1$d. The portraits in them can't be recovered.</string>
     <string name="portraits_favorites_deleted">Favorite sets deleted: %1$d.</string>
     <string name="portraits_favorites_replace">Replace selected</string>
+    <string name="portraits_favorites_replace_tooltip">Replace the selected set with the current portraits</string>
     <string name="portraits_favorites_replace_title">Replace the set with the current portraits?</string>
     <string name="portraits_favorites_replace_text">The portraits in the set will be replaced with the current ones; the name stays. The old portraits from the set can't be recovered.</string>
     <string name="portraits_favorites_replace_confirm">Replace</string>
@@ -139,9 +154,12 @@
     <string name="portraits_restore_description_one">Choose a portrait version.</string>
     <string name="portraits_restore_warning">Memos and badges on restored portraits will be lost. They may remain drawn on the backup image, but you won't be able to edit them or keep them the next time you replace the image.</string>
     <string name="portraits_restore_check_all">Check all</string>
+    <string name="portraits_restore_check_all_tooltip">Mark all backups</string>
     <string name="portraits_restore_uncheck_all">Uncheck all</string>
+    <string name="portraits_restore_uncheck_all_tooltip">Unmark all backups</string>
     <string name="portraits_restore_current">Current</string>
     <string name="portraits_restore_apply">Restore</string>
+    <string name="portraits_restore_apply_tooltip">Restore the portraits from the selected backup</string>
     <string name="portraits_restore_apply_count">Restore (%1$d)</string>
     <string name="portraits_restore_loading">Loading previews…</string>
     <string name="portraits_restored">Portraits restored. The previous files are saved in "%1$s". Reopen the character selection window to see the changes.</string>
@@ -156,6 +174,8 @@
 
     <!-- Deleting backups -->
     <string name="portraits_delete_marked">Delete (%1$d)</string>
+    <string name="portraits_restore_delete_marked_tooltip">Delete the marked backups</string>
+    <string name="portraits_favorites_delete_marked_tooltip">Delete the marked portraits from the set</string>
     <string name="portraits_backups_delete_title">Delete backups?</string>
     <string name="portraits_backups_delete_text">Backups to be deleted: %1$d. The portraits in them can't be recovered.</string>
     <string name="portraits_delete_confirm">Delete</string>
@@ -175,6 +195,7 @@
     <string name="portraits_notes_game_closed">Game is closed</string>
     <string name="portraits_notes_game_running">The game is running. Close it and click "Check again": while it is running, on character switch, teleport or exit it will overwrite the file with the memos from its memory.</string>
     <string name="portraits_notes_recheck">Check again</string>
+    <string name="portraits_notes_recheck_tooltip">Check the notes again</string>
     <string name="portraits_error_game_running">The game is running, memos were not written. Close the game and sync again.</string>
     <string name="portraits_notes_changes">Memos to change (%1$d)</string>
     <string name="portraits_notes_added">new memo</string>
@@ -183,6 +204,7 @@
     <string name="portraits_notes_loading">Reading memos…</string>
     <string name="portraits_notes_backup">Before writing, a copy of gameVariable_lobby.xml will be saved to "BDO Tools\\portraitConstructor\\&lt;account&gt;\\lobby_backup".</string>
     <string name="portraits_notes_apply">Sync</string>
+    <string name="portraits_notes_apply_tooltip">Sync the notes with the game</string>
     <string name="portraits_notes_synced">Memos written. The previous file is in "%1$s". Launch the game to see them.</string>
     <!-- Hints for the actions under the grid -->
     <string name="portraits_folder_change_hint">Select a different "Documents\\Black Desert" folder.</string>

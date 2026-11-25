@@ -13,10 +13,12 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
+import com.layzen.bdotools.feature.uieditor.resources.slots_cancel_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_memo_add_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_memo_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_memo_edit_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_memo_placeholder
+import com.layzen.bdotools.feature.uieditor.resources.slots_memo_save_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_save
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
@@ -35,8 +37,8 @@ internal fun MemoDialog(dialog: SlotsDialog.EditMemo, skillName: String, onEvent
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.slots_save), onClick = { onEvent(SlotsEvent.ConfirmMemo) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close, tooltip = stringResource(Res.string.slots_cancel_tooltip)))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.slots_save), onClick = { onEvent(SlotsEvent.ConfirmMemo) }, tooltip = stringResource(Res.string.slots_memo_save_tooltip)))
         },
     ) {
         Column(Modifier.padding(AppTheme.dimens.spaceL), verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS)) {

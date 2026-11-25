@@ -16,9 +16,12 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
 import com.layzen.bdotools.feature.uieditor.resources.Res
 import com.layzen.bdotools.feature.uieditor.resources.slots_cancel
+import com.layzen.bdotools.feature.uieditor.resources.slots_cancel_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_description
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_file
+import com.layzen.bdotools.feature.uieditor.resources.slots_import_file_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_next
+import com.layzen.bdotools.feature.uieditor.resources.slots_import_next_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_not_json
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_title
 import com.layzen.bdotools.feature.uieditor.resources.slots_import_unsupported_version
@@ -45,14 +48,15 @@ internal fun ImportDialog(dialog: SlotsDialog.Import, onEvent: (SlotsEvent) -> U
         onDismissRequest = close,
         modifier = Modifier.width(SlotsDimens.dialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_import_file), onClick = { onEvent(SlotsEvent.ImportFromFile) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_import_file), onClick = { onEvent(SlotsEvent.ImportFromFile) }, tooltip = stringResource(Res.string.slots_import_file_tooltip)))
             Spacer(Modifier.weight(1f))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.slots_cancel), onClick = close, tooltip = stringResource(Res.string.slots_cancel_tooltip)))
             ActionButton(
                 ActionButtonState.Positive(
                     stringResource(Res.string.slots_import_next),
                     enabled = dialog.text.isNotBlank(),
                     onClick = { onEvent(SlotsEvent.ConfirmImport) },
+                    tooltip = stringResource(Res.string.slots_import_next_tooltip),
                 ),
             )
         },

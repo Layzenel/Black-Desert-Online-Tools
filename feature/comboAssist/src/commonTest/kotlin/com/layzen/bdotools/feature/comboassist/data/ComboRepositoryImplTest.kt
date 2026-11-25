@@ -25,6 +25,14 @@ class ComboRepositoryImplTest {
     }
 
     @Test
+    fun reorderKeepsNewOrderAndUnlistedAtEnd() = runTest {
+        val repository = ComboRepositoryImpl(MemoryStorage())
+        listOf("a", "b", "c").forEach { repository.save(StrikerFixture.demo.copy(id = it)) }
+        repository.reorder(listOf("c", "a"))
+        assertEquals(listOf("c", "a", "b"), repository.combos().map { it.id })
+    }
+
+    @Test
     fun brokenFileReadsAsEmpty() = runTest {
         assertEquals(emptyList(), ComboRepositoryImpl(MemoryStorage("{не json")).combos())
     }

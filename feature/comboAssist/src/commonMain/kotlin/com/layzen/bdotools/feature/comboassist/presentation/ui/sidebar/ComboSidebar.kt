@@ -17,6 +17,7 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.editor.PaletteDra
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_name_placeholder
 import com.layzen.bdotools.feature.comboassist.resources.combo_new
+import com.layzen.bdotools.feature.comboassist.resources.combo_new_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_none
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_combo
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_class
@@ -49,7 +50,16 @@ internal fun ComboSidebarContent(state: ComboState, onEvent: (ComboEvent) -> Uni
     if (stances.isNotEmpty()) StanceSelect(state, stances, onEvent)
     SectionHeader(stringResource(Res.string.combo_section_combo))
     SavedCombos(state, onEvent, tint)
-    ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_new), icon = painterResource(Res.drawable.menu_add), onClick = { onEvent(ComboEvent.NewCombo) }), Modifier.fillMaxWidth())
+    // открыто несохранённое новое комбо — второе новое не нужно
+    if (state.combo == null || state.combos.any { it.id == state.combo.id }) {
+        ActionButton(
+            ActionButtonState.Neutral(
+                stringResource(Res.string.combo_new), icon = painterResource(Res.drawable.menu_add),
+                onClick = { onEvent(ComboEvent.NewCombo) }, tooltip = stringResource(Res.string.combo_new_tooltip),
+            ),
+            Modifier.fillMaxWidth(),
+        )
+    }
     state.combo?.let { combo ->
         InputField(combo.name, { onEvent(ComboEvent.Rename(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_name_placeholder))
     }
@@ -78,6 +88,7 @@ private fun SavedCombos(state: ComboState, onEvent: (ComboEvent) -> Unit, tint: 
             else -> stringResource(Res.string.combo_none)
         },
         icon = { combo -> classOf(combo)?.let { Image(painterResource(it.icon), null, Modifier.size(ComboDimens.paletteIcon), colorFilter = tint) } },
+        onMove = { from, to -> onEvent(ComboEvent.MoveCombo(from, to)) },
     )
 }
 

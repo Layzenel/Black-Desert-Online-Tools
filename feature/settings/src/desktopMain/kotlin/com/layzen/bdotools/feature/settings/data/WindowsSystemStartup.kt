@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.settings.data
 
 import com.layzen.bdotools.composable.overlay.isRunningAsAdmin
+import com.layzen.bdotools.core.folder.GameFolderSettings
 import com.sun.jna.platform.win32.Advapi32Util
 import com.sun.jna.platform.win32.WinReg.HKEY_CURRENT_USER
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +42,11 @@ internal class WindowsSystemStartup(private val exe: String?) : SystemStartup {
             Advapi32Util.registryDeleteValue(HKEY_CURRENT_USER, LAYERS_KEY, path)
         }
     }
+
+    // не реестр Windows, а настройки программы: их читает окно при запуске (`DesktopApp`)
+    override suspend fun startsInTray(): Boolean = io { GameFolderSettings().startInTray }
+
+    override suspend fun setStartsInTray(enabled: Boolean) = io { GameFolderSettings().startInTray = enabled }
 
     override suspend fun setLaunchAtStartup(enabled: Boolean, elevated: Boolean) = io {
         val path = exe ?: return@io

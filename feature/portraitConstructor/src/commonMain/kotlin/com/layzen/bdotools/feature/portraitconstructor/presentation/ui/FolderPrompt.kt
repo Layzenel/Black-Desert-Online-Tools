@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_folder_button_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_folder_title
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
@@ -18,6 +19,6 @@ import org.jetbrains.compose.resources.stringResource
 internal fun FolderPrompt(description: String, button: String, onClick: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL)) {
         SectionHeader(stringResource(Res.string.portraits_folder_title), Modifier.weight(1f), description = description)
-        ActionButton(ActionButtonState.Neutral(button, onClick = onClick))
+        ActionButton(ActionButtonState.Neutral(button, onClick = onClick, tooltip = stringResource(Res.string.portraits_folder_button_tooltip)))
     }
 }

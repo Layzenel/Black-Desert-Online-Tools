@@ -34,6 +34,7 @@ fun SettingsScreen(state: SettingsState, onEvent: (SettingsEvent) -> Unit) {
                     when (state.section) {
                         SettingsSection.General -> GeneralSettings(state, onEvent)
                         SettingsSection.Theme -> ThemeSettings(state.theme) { onEvent(SettingsEvent.SelectTheme(it)) }
+                        SettingsSection.Display -> DisplaySettings(state.keyHints) { onEvent(SettingsEvent.SelectKeyHints(it)) }
                         SettingsSection.Overlay -> OverlaySettings()
                     }
                 }

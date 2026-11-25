@@ -51,6 +51,12 @@ interface SlotsStorage {
     /** Удаляет файл пресета [fileName] аккаунта [account]. */
     suspend fun deletePreset(account: String, fileName: String)
 
+    /** Названия пресетов аккаунта [account] в порядке, который выбрал пользователь; пусто, если порядок не задавали. */
+    suspend fun readPresetOrder(account: String): List<String>
+
+    /** Запоминает порядок пресетов аккаунта [account] — их названия сверху вниз. */
+    suspend fun writePresetOrder(account: String, names: List<String>)
+
     /** Картинка-подложка редактора аккаунта — файл `<account>\background\image`; `null`, если её не выбирали. */
     suspend fun readBackground(account: String): ByteArray?
 

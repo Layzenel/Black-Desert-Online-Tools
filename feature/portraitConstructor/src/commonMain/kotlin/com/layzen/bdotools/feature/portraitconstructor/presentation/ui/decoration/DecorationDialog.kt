@@ -15,8 +15,10 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.state.Decora
 import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.PortraitsDimens
 import com.layzen.bdotools.feature.portraitconstructor.resources.Res
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_cancel_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_caption_description
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_caption_placeholder
+import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_decoration_apply_tooltip
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_decoration_hint
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_decoration_title
 import com.layzen.bdotools.feature.portraitconstructor.resources.portraits_editor_apply
@@ -45,12 +47,13 @@ internal fun DecorationDialog(
         onDismissRequest = { onEvent(PortraitsEvent.CloseDecoration) },
         modifier = Modifier.width(PortraitsDimens.decorationDialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseDecoration) }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.portraits_cancel), onClick = { onEvent(PortraitsEvent.CloseDecoration) }, tooltip = stringResource(Res.string.portraits_cancel_tooltip)))
             ActionButton(
                 ActionButtonState.Positive(
                     stringResource(Res.string.portraits_editor_apply),
                     enabled = ready,
                     onClick = { onEvent(PortraitsEvent.ApplyDecoration) },
+                    tooltip = stringResource(Res.string.portraits_decoration_apply_tooltip),
                 ),
             )
         },

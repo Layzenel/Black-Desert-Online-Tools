@@ -14,6 +14,9 @@ interface ComboRepository {
     /** Сохраняет [combo]: заменяет комбо с тем же [Combo.id] или добавляет новое. */
     suspend fun save(combo: Combo)
 
+    /** Меняет порядок комбо на порядок [ids]; комбо, которых нет в [ids], остаются в конце. */
+    suspend fun reorder(ids: List<String>)
+
     /** Удаляет комбо [id]. */
     suspend fun delete(id: String)
 

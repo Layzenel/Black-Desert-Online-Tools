@@ -58,7 +58,7 @@ private fun PingWindow(viewModel: GameInfoViewModel) {
     if (!viewModel.supported || !state.windowShown) return
     GameOverlayWindow(PING_WINDOW, OverlayAnchor.TopRight, GameInfoDimens.pingWindow) {
         ScaledOverlay(state.settings.scale, state.settings.opacity) {
-            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown, state.settings.fpsStyle, state.directX)
+            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown, state.settings.fpsStyle)
         }
     }
 }
@@ -102,13 +102,13 @@ private val FpsStyle.title: StringResource
         FpsStyle.Detailed -> Res.string.game_info_fps_style_detailed
     }
 
-/** Непрозрачность пинга, проценты. */
-private val OPACITY = 20..100
+/** Непрозрачность пинга и сетки, проценты. */
+internal val OPACITY = 20..100
 
 /** Сетка на весь экран игры, пока она включена и размер экрана игры прочитан. */
 @Composable
 private fun GridWindow(viewModel: GameInfoViewModel) {
     val state by viewModel.state.collectAsState()
     val uiHeight = state.uiHeight
-    if (viewModel.supported && state.settings.gridShown && uiHeight != null) GameGridWindow(state.settings.gridStep, uiHeight)
+    if (viewModel.supported && state.settings.gridShown && uiHeight != null) GameGridWindow(state.settings.gridStep, state.settings.gridOpacity, uiHeight)
 }

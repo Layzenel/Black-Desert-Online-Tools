@@ -1,5 +1,6 @@
 package com.layzen.bdotools.feature.settings.presentation.event
 
+import com.layzen.bdotools.core.keyhint.KeyHints
 import com.layzen.bdotools.core.theme.WindowTheme
 import com.layzen.bdotools.feature.settings.presentation.state.SettingsSection
 
@@ -9,4 +10,6 @@ sealed interface SettingsEvent {
     data class SetLaunchAtStartup(val enabled: Boolean) : SettingsEvent
     data class SetAlwaysAdmin(val enabled: Boolean) : SettingsEvent
     data class SelectTheme(val theme: WindowTheme) : SettingsEvent
+    data class SetStartInTray(val enabled: Boolean) : SettingsEvent
+    data class SelectKeyHints(val hints: KeyHints) : SettingsEvent
 }

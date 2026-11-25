@@ -25,7 +25,7 @@ editing game files by hand and combo hints on top of the game. Runs in the brows
 | **[Interface Editor](docs/uiEditor.en.md)** | Lay out cooldown slots, chats and other elements on a canvas, skills and labels in slots, presets, layout import and export. |
 | **[Combo Assist](docs/comboAssist.en.md)** | Your own class combo with forks and fillers, training and an in-game hint showing which skill to press next. Windows app only. |
 | **[Overlay](docs/overlay.en.md)** | Windows app windows on top of the game: the combo hint, skill details over cooldown slots, the ping and FPS. |
-| **[Settings](docs/settings.en.md)** | Launch with Windows and as administrator, an interface theme like the game's. |
+| **[Settings](docs/settings.en.md)** | Launch with Windows, in the tray and as administrator, skill key labels, an interface theme like the game's. |
 | **[Several accounts](docs/accounts.en.md)** | Picking an account if several have played on this PC, and where BDO Tools keeps its files. |
 
 Interface language — Russian or English, the `RU` / `EN` button in the top bar.

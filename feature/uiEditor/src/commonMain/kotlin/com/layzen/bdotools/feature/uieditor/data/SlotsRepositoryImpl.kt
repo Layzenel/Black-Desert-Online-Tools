@@ -18,6 +18,7 @@ import com.layzen.bdotools.feature.uieditor.domain.game.writeUiData
 import com.layzen.bdotools.feature.uieditor.domain.game.writeVisibility
 import com.layzen.bdotools.feature.uieditor.domain.layout.SlotLayout
 import com.layzen.bdotools.feature.uieditor.domain.preset.NamedLayout
+import com.layzen.bdotools.feature.uieditor.domain.preset.orderedBy
 import com.layzen.bdotools.feature.uieditor.domain.skill.CharacterSkills
 import com.layzen.bdotools.feature.uieditor.domain.skill.parseCharacterSkills
 import com.layzen.bdotools.feature.uieditor.domain.skill.writeCharacterSkills
@@ -58,25 +59,31 @@ class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
         return LoadedGame(account, presets, file, edited.takeIf { it in presets } ?: GamePreset.General)
     }
 
-    override suspend fun apply(loaded: LoadedGame, layout: SlotLayout, target: GamePreset): String {
-        val game = loaded.presets.getValue(target)
-        val entries = game.changedEntries(layout)
-        val quickSlots = layout.customQuickSlots?.takeIf { game.quickSlotsChanged(layout) }
-        val splitHp = layout.splitHp?.takeIf { game.splitHpChanged(layout) }
-        val chats = game.changedChats(layout)
-        var text = writeUiData(loaded.file.text, entries, target)
-        text = writeChats(text, chats, game.screen, target)
+    override suspend fun apply(loaded: LoadedGame, layout: SlotLayout, targets: Set<GamePreset>): String {
+        require(targets.isNotEmpty()) { "No apply targets" }
+        val general = loaded.presets.getValue(GamePreset.General)
+        val quickSlots = layout.customQuickSlots?.takeIf { general.quickSlotsChanged(layout) }
+        val splitHp = layout.splitHp?.takeIf { general.splitHpChanged(layout) }
+        // Все наборы — в один текст: одна резервная копия и одна запись файла
+        var text = loaded.file.text
+        GamePreset.entries.filter { it in targets }.forEach { target ->
+            val game = loaded.presets.getValue(target)
+            text = writeChats(writeUiData(text, game.changedEntries(layout), target), game.changedChats(layout), game.screen, target)
+        }
         if (quickSlots != null) text = writeCustomQuickSlots(text, quickSlots)
         if (splitHp != null) text = writeSplitHp(text, splitHp)
         val companions = companionVisibility(quickSlots, splitHp)
-        if (target == GamePreset.General) text = writeVisibility(text, companions)
+        val toGeneral = GamePreset.General in targets
+        if (toGeneral) text = writeVisibility(text, companions)
         val backup = storage.writeGameVariable(loaded.account, text, loaded.file.modified)
         journal = ApplyJournal(loaded.account, loaded.file.text)
-        if (target != GamePreset.General) return backup
+        if (!toGeneral) return backup
+        val entries = general.changedEntries(layout)
+        val chats = general.changedChats(layout)
         val visibility = entries
-            .filter { it.isShow != game.uiData.getValue(it.index).isShow }
+            .filter { it.isShow != general.uiData.getValue(it.index).isShow }
             .associate { it.index to it.isShow } + companions
-        val chatVisibility = chats.filter { (window, chat) -> chat.visible != game.chats[window]?.visible }.mapValues { it.value.visible }
+        val chatVisibility = chats.filter { (window, chat) -> chat.visible != general.chats[window]?.visible }.mapValues { it.value.visible }
         if (visibility.isNotEmpty() || chatVisibility.isNotEmpty()) {
             applyVisibility(loaded.account, visibility, chatWindowOrder(loaded.file.text), chatVisibility)
         }
@@ -132,11 +139,13 @@ class SlotsRepositoryImpl(private val storage: SlotsStorage) : SlotsRepository {
         } catch (e: LayoutFormatException) {
             null
         }
-    }.sortedBy { it.name.lowercase() }
+    }.orderedBy(storage.readPresetOrder(account))
 
     override suspend fun savePreset(account: String, preset: NamedLayout) {
         storage.writePreset(account, fileName(preset.name), LayoutCodec.encode(preset))
     }
+
+    override suspend fun savePresetOrder(account: String, names: List<String>) = storage.writePresetOrder(account, names)
 
     override suspend fun deletePreset(account: String, name: String) {
         storage.deletePreset(account, fileName(name))

@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import com.layzen.bdotools.composable.skill.KeyIcon
+import com.layzen.bdotools.composable.skill.rememberKeyIcon
 import com.layzen.bdotools.composable.skill.rememberKeyLabel
 import com.layzen.bdotools.core.skill.domain.KeyBindings
 import com.layzen.bdotools.core.skill.domain.SkillDetails
@@ -69,6 +71,7 @@ internal fun KeyCaps(line: String, modifier: Modifier = Modifier) {
         return
     }
     val label = rememberKeyLabel(KeyBindings.Default)
+    val icon = rememberKeyIcon(KeyBindings.Default)
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXxs), verticalAlignment = Alignment.CenterVertically) {
         all.dropWhile { it !is SkillTextPart.Key }.forEach { part ->
             when (part) {
@@ -76,7 +79,11 @@ internal fun KeyCaps(line: String, modifier: Modifier = Modifier) {
                     Modifier.background(AppTheme.colors.button, AppShapes.Small).border(AppTheme.dimens.borderWidth, AppTheme.colors.buttonBorder, AppShapes.Small)
                         .widthIn(min = ComboDimens.keyCapMinWidth).padding(horizontal = ComboDimens.keyCapPadding),
                     contentAlignment = Alignment.Center,
-                ) { Text(label(part.action), style = AppTheme.typography.caption, color = AppTheme.colors.textButton, maxLines = 1, softWrap = false) }
+                ) {
+                    val keyIcon = icon(part.action)
+                    if (keyIcon != null) KeyIcon(keyIcon, AppTheme.typography.caption, AppTheme.colors.textButton)
+                    else Text(label(part.action), style = AppTheme.typography.caption, color = AppTheme.colors.textButton, maxLines = 1, softWrap = false)
+                }
                 is SkillTextPart.Plain -> part.text.trim().takeIf { it.isNotEmpty() }?.let {
                     Text(it, style = AppTheme.typography.caption, color = AppTheme.colors.textMuted, maxLines = 1, softWrap = false)
                 }

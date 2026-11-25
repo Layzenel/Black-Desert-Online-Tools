@@ -31,6 +31,8 @@ actual fun GameOverlayWindow(id: String, anchor: OverlayAnchor, size: DpSize, co
     val shown by rememberOverlayShown()
     // кнопка меню поднимается над окном после каждого его появления
     LaunchedEffect(shown) { if (shown) OverlayLayers.overlayShown++ }
+    // скрытое окно не держим: у каждого окна своя поверхность отрисовки в памяти; место и размер — в state выше
+    if (!shown) return
     Window(
         onCloseRequest = {},
         state = state,

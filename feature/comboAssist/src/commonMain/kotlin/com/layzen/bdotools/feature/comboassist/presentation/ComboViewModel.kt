@@ -94,13 +94,17 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
     /** Подробности умения для тултипа и клавиш; справочник кэширует их сам. */
     suspend fun details(skillNo: Int): SkillDetails? = interactor.details(skillNo)
 
-    /** Умения схем при наведении в меню оверлея по набору умений комбо: иконки качаются один раз, правка комбо — новый набор. */
+    /**
+     * Умения схем при наведении в меню оверлея по набору умений комбо: иконки качаются один раз, правка комбо — новый
+     * набор. Наборов не больше [PREVIEW_LIMIT], давно не нужные забываются: иначе каждая правка оставляла в памяти
+     * старый набор с иконками.
+     */
     private val previews = mutableMapOf<Set<Int>, Map<Int, SkillItem>>()
 
     /** Умения комбо [combo] с иконками — для его схемы при наведении в меню оверлея (класс может быть не открытым). */
     suspend fun previewSkills(combo: Combo): Map<Int, SkillItem> {
         val needed = combo.parts().flatMap { part -> part.cells().mapNotNull { it.second.skillNo } }.toSet()
-        previews[needed]?.let { return it }
+        previews.remove(needed)?.let { previews[needed] = it; return it }
         val loaded = mutableState.value.skills
         val items = coroutineScope {
             interactor.classSkills(combo.classKey, stance = null).filterKeys { it in needed }.map { (no, skill) ->
@@ -110,7 +114,9 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
                 }
             }.awaitAll().toMap()
         }
-        return items.also { previews[needed] = it }
+        previews[needed] = items
+        while (previews.size > PREVIEW_LIMIT) previews.remove(previews.keys.first())
+        return items
     }
 
     /** Действие игрока. */
@@ -138,9 +144,17 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             is ComboEvent.SelectStance -> { mutableState.update { it.copy(stance = event.stance) }; reloadSkills() }
             is ComboEvent.Query -> mutableState.update { it.copy(query = event.text) }
             ComboEvent.Save -> save()
+            ComboEvent.AskName -> mutableState.update { it.copy(nameAsked = it.combo != null) }
+            ComboEvent.CancelName -> mutableState.update { it.copy(nameAsked = false) }
+            is ComboEvent.SaveAs -> {
+                mutableState.update { it.copy(combo = it.combo?.copy(name = event.name.trim()), nameAsked = false) }
+                save()
+            }
             ComboEvent.AskDelete -> mutableState.update { it.copy(deleteAsked = it.combo != null) }
             ComboEvent.CancelDelete -> mutableState.update { it.copy(deleteAsked = false) }
             ComboEvent.Delete -> { mutableState.update { it.copy(deleteAsked = false) }; delete() }
+            is ComboEvent.MoveCombo -> moveCombo(event.from, event.to)
+            ComboEvent.Discard -> discard()
             ComboEvent.Undo -> undo()
             ComboEvent.Redo -> redo()
             ComboEvent.ExportCombo -> mutableState.value.combo?.let { combo -> viewModelScope.launch { interactor.export(combo) } }
@@ -223,6 +237,28 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
             editor.refresh(s.copy(combo = next, selection = null, dirty = true, editingRage = s.editingRage && next.rage != null), skills)
         }
         publishHistory()
+        if (watcher?.isActive == true) restartWatching() else restartTraining()
+    }
+
+    /** Сохранённые комбо в новом порядке: [from] встаёт на место [to]. */
+    private fun moveCombo(from: Int, to: Int) {
+        val combos = mutableState.value.combos.toMutableList()
+        if (from !in combos.indices || to !in combos.indices) return
+        combos.add(to, combos.removeAt(from))
+        mutableState.update { it.copy(combos = combos) }
+        viewModelScope.launch { interactor.reorder(combos.map { it.id }) }
+    }
+
+    /** Сброс несохранённых правок — тоже шаг истории: его можно отменить Ctrl+Z. */
+    private fun discard() {
+        val current = mutableState.value.combo ?: return
+        val saved = mutableState.value.combos.firstOrNull { it.id == current.id }
+            ?: interactor.newCombo(current.classKey, "").copy(id = current.id)
+        if (saved == current) return
+        rememberEdit(current)
+        mutableState.update { s ->
+            editor.refresh(s.copy(combo = saved, selection = null, dirty = saved.id !in s.combos.map { it.id }, editingRage = s.editingRage && saved.rage != null), skills)
+        }
         if (watcher?.isActive == true) restartWatching() else restartTraining()
     }
 
@@ -471,6 +507,9 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
         /** Сколько правок помнит Ctrl+Z. */
         const val HISTORY_LIMIT = 100
+
+        /** Сколько наборов умений для схем при наведении держать в памяти: столько комбо обычно в списке оверлея. */
+        const val PREVIEW_LIMIT = 16
 
         const val MS_PER_SECOND = 1000L
 

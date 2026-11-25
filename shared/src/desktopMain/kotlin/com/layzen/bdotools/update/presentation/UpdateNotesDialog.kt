@@ -9,7 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.resources.Res
 import com.layzen.bdotools.resources.update_install
+import com.layzen.bdotools.resources.update_install_tooltip
 import com.layzen.bdotools.resources.update_later
+import com.layzen.bdotools.resources.update_later_tooltip
 import com.layzen.bdotools.resources.update_notes_empty
 import com.layzen.bdotools.resources.update_notes_title
 import com.layzen.bdotools.uikit.components.ActionButton
@@ -28,8 +30,8 @@ internal fun UpdateNotesDialog(info: UpdateInfo, onClose: () -> Unit, onInstall:
         onDismissRequest = onClose,
         modifier = Modifier.width(UpdateDimens.notesDialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.update_later), onClick = onClose))
-            ActionButton(ActionButtonState.Positive(stringResource(Res.string.update_install), onClick = onInstall))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.update_later), onClick = onClose, tooltip = stringResource(Res.string.update_later_tooltip)))
+            ActionButton(ActionButtonState.Positive(stringResource(Res.string.update_install), onClick = onInstall, tooltip = stringResource(Res.string.update_install_tooltip)))
         },
     ) {
         Column(

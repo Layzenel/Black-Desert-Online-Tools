@@ -11,6 +11,12 @@ interface SystemStartup {
     /** У exe стоит флаг совместимости «запускать от имени администратора». */
     suspend fun runsAsAdmin(): Boolean
 
+    /** При запуске программа сразу сворачивается в трей. */
+    suspend fun startsInTray(): Boolean
+
+    /** Включает или выключает запуск сразу в трее. */
+    suspend fun setStartsInTray(enabled: Boolean)
+
     /** Ставит или снимает флаг «запускать от имени администратора». */
     suspend fun setRunsAsAdmin(enabled: Boolean)
 

@@ -26,6 +26,7 @@ import com.layzen.bdotools.uikit.resources.showcase_badge_hot
 import com.layzen.bdotools.uikit.resources.showcase_badge_new
 import com.layzen.bdotools.uikit.resources.showcase_grouped_first
 import com.layzen.bdotools.uikit.resources.showcase_grouped_open
+import com.layzen.bdotools.uikit.resources.showcase_grouped_open_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_grouped_rest
 import com.layzen.bdotools.uikit.resources.showcase_menu_character
 import com.layzen.bdotools.uikit.resources.showcase_menu_game_info
@@ -91,7 +92,7 @@ private fun GroupedPick(selected: Int, onSelect: (Int) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     val half = menuEntries.size / 2
     Box(Modifier.padding(AppTheme.dimens.spaceS)) {
-        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_grouped_open), onClick = { expanded = true }))
+        ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_grouped_open), onClick = { expanded = true }, tooltip = stringResource(Res.string.showcase_grouped_open_tooltip)))
         GroupedOptionsMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },

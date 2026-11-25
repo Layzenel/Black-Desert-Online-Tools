@@ -15,6 +15,7 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.overlay.SchemaOve
 import com.layzen.bdotools.feature.comboassist.presentation.ui.overlay.title
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_horizontal
+import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_rotate_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_overlay_vertical
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_schema
 import com.layzen.bdotools.feature.comboassist.resources.combo_panel_tracker
@@ -43,6 +44,6 @@ internal fun OverlaySettingsPanel(state: ComboState, onEvent: (ComboEvent) -> Un
         ScaledOverlay(settings.comboScale, settings.comboOpacity) {
             SchemaOverlay(combo, state.overlay, state.skills, loadDetails, onPress = { onEvent(ComboEvent.Press(it)) }, rage = state.rageTracked, keys = settings.schemaKeys)
         }
-        ActionButton(ActionButtonState.Neutral(stringResource(if (combo.vertical) Res.string.combo_overlay_horizontal else Res.string.combo_overlay_vertical), onClick = { onEvent(ComboEvent.ToggleVertical) }))
+        ActionButton(ActionButtonState.Neutral(stringResource(if (combo.vertical) Res.string.combo_overlay_horizontal else Res.string.combo_overlay_vertical), onClick = { onEvent(ComboEvent.ToggleVertical) }, tooltip = stringResource(Res.string.combo_overlay_rotate_tooltip)))
     }
 }

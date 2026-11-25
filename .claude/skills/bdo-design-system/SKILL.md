@@ -58,6 +58,10 @@ description: Дизайн-система сайта BDO Tools в стиле ок
    **Кнопка в приложении одна — `ActionButton`**: в окнах, в строке действий под страницей, в меню слева у `ToolPage`,
    в меню оверлея. Своих «кнопок-пунктов» с другой подложкой не заводи: два стиля одной роли уже были и разошлись.
    Включатель режима («Порядок» в портретах) — `ActionButtonState.Toggle`.
+   **Кнопка в окне подтверждения удаления** («Удалить комбо», «Удалить пресет») — тоже `Negative`: вид кнопки задаёт
+   смысл действия, а не место, где она стоит.
+   **У каждой кнопки есть подсказка при наведении** — `tooltip` в `ActionButtonState` (у `ToolbarButton` — `description`):
+   одна короткая фраза о том, что кнопка делает здесь, а не повтор подписи. Новая кнопка без подсказки — ошибка.
 7. **Выделение = коричневая подложка + рамка.** Выбранный пункт меню или вариант получает `backgroundSelected` и
    `borderSelected`, выбранная плитка — рамку `accentGoldPale`.
 8. **Жирный шрифт по умолчанию.** Почти весь текст в игре жирный. Обычный вес (`body`) — только для длинных абзацев.
@@ -76,7 +80,18 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 11. **Подписи пунктов меню и кнопок — в одну строку.** Если подпись не влезает, её сокращают («Загрузить»
     вместо «Загрузить изображение»), а не переносят. `ActionButton` обрезает лишнее многоточием.
     Подробности действия — в описании секции (`SectionHeader(description = …)`).
-12. **Вёрстка не зависит от языка.** Интерфейс переводится (скилл `resources-externalization`, раздел «Языки»),
+12. **Переключатель — только с названием.** У `ToggleSwitch` под подписью нет текста: пояснение передаётся в
+    `description` и показывается подсказкой при наведении. Так же и у секций, где пояснение относится к кнопкам
+    (подложка в редакторе интерфейса): подробности — в подсказках кнопок, а не в `SectionHeader(description = …)`.
+13. **Вкладки — `TabBar`, а не `OptionGroup`.** Вкладки, как на рынке игры («Продажа / Покупка»), стоят у левого края,
+    ширина — по подписи, но не уже `tabMinWidth`; на всю ширину не растягиваются. `OptionGroup` — для выбора варианта
+    настройки, а не для переключения содержимого.
+14. **Подсветка пункта выпадающего списка** (`OptionsMenu`, `DropdownSelect`, `GroupedOptionsMenu`) под курсором — тёмный
+    цвет акцента темы окон (`AppTheme.window.titleBarDark`), а не серая подсветка Material3 (`MenuOption`).
+15. **Порядок, который меняет пользователь** (сохранённые комбо, пресеты), меняется перетаскиванием: такие пункты
+    помечены значком ⠿ (`DragHandle`) в начале, за него и тянут. Значок нарисован — символа ⠿ в шрифте web-сборки нет.
+16. **Слайдеры компактные**: `ValueSlider` — одна строка, дорожка и значение справа, без подписей min/max.
+17. **Вёрстка не зависит от языка.** Интерфейс переводится (скилл `resources-externalization`, раздел «Языки»),
     и перевод бывает длиннее русского текста. Не подгоняй ширину кнопки, колонки или окна под русскую подпись:
     пусть элемент растягивается по содержимому или обрезает его многоточием. Каждый экран смотри на всех
     языках приложения. Знаки новой письменности (не латиница и не кириллица) требуют своего шрифта — см. правило 9.
@@ -106,6 +121,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `actionButtonDisabled`, `actionButtonDisabledEdge` | `#424243`, `#575758` | любая недоступная кнопка — плоская серая |
 | `buttonPositiveTop` → `buttonPositiveMiddle` → `buttonPositiveBottom` | `#9F7B59` → `#704E38` → `#8C6144` | бронза `ActionButtonState.Positive`: темнеет к 65 % высоты и снова светлеет |
 | `buttonNegativeTop` → `buttonNegativeBottom` | `#603730` → `#442620` | `ActionButtonState.Negative` (удалить): темнеет книзу |
+| `tab` / `tabBorder` / `tabHover` / `tabSelected` / `tabSelectedBorder` / `textTab` | `#2B2B30` / `#3A3A40` / `#36363C` / `#3F3F45` / `#5A5A62` / `#8C8C93` | вкладки `TabBar`: невыбранная, под курсором, выбранная; серая подпись невыбранной |
 | `option` / `optionBorder` | `#35353A` / `#4D4D55` | невыбранный `OptionButton` (внутри тёмной рамки `windowOutline`) |
 | `optionHover` / `optionHoverBorder` | `#625244` / `#866550` | `OptionButton` под курсором |
 | `toggleTrack` / `toggleTrackBorder` / `toggleThumbOff` | `#34343A` / `#4D4E55` / `#686868` | выключенный `ToggleSwitch`: серый кружок внутри дорожки |
@@ -195,7 +211,7 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `ProgressBar(progress)` | полоса прогресса 0…1 |
 | `BusyOverlay(text, progress, details)` | окно ожидания поверх страницы на время долгой операции, закрыть нельзя. В браузере всё работает в одном потоке: между тяжёлыми шагами делай короткую паузу (`delay(16)`), иначе индикатор замрёт вместе со страницей |
 | `ActionMenuItem(text, onClick, enabled, icon, trailingIcon, trailingText, toggled)`, `ActionMenuDivider()` | пункт меню действий (`icon` слева, `trailingIcon` справа — белые силуэты, `trailingText` — значение золотом, `toggled` — пункт-переключатель: включён золотой, выключен приглушённый) и разделитель между пунктами. Кликается вся строка, подсветка — скруглённая плашка `AppShapes.MenuItem` с отступом от разделителей. Длинный текст переносится на вторую строку |
-| `ActionButton(state, modifier)`, `ActionButtonState` | любое действие, единственная кнопка приложения. `state` — sealed-состояние: подпись, `icon` (белый силуэт слева), `hotkey` (приглушённый текст справа), `enabled`, `onClick` и вид по подклассу — `ActionButtonState.Neutral(text, onClick = …)` (серая, под курсором коричневая), `ActionButtonState.Toggle(text, checked, …)` (включатель режима: включённый — коричневый с золотой подписью), `ActionButtonState.Positive(…)` (бронзовая с градиентом: применить, сохранить, OK) или `ActionButtonState.Negative(…)` (тёмно-красная: удалить). Ширину задаёт место: в строке — `Modifier.weight(1f)`, в столбце — `Modifier.fillMaxWidth()`; длинная подпись обрезается многоточием. Подложки — `ActionButtonSurfaces.kt` |
+| `ActionButton(state, modifier)`, `ActionButtonState` | любое действие, единственная кнопка приложения. `state` — sealed-состояние: подпись, `icon` (белый силуэт слева), `hotkey` (приглушённый текст справа), `enabled`, `onClick`, `tooltip` (подсказка при наведении — обязательна по смыслу, правило 6) и вид по подклассу — `ActionButtonState.Neutral(text, onClick = …)` (серая, под курсором коричневая), `ActionButtonState.Toggle(text, checked, …)` (включатель режима: включённый — коричневый с золотой подписью), `ActionButtonState.Positive(…)` (бронзовая с градиентом: применить, сохранить, OK) или `ActionButtonState.Negative(…)` (тёмно-красная: удалить). Ширину задаёт место: в строке — `Modifier.weight(1f)`, в столбце — `Modifier.fillMaxWidth()`; длинная подпись обрезается многоточием. Подложки — `ActionButtonSurfaces.kt` |
 | `MenuItem(text, hotkey, badge, selected, highlighted)` | список разделов или тулз, как главное меню игры. Слот `icon` — не меньше квадрата иконки и шире под содержимое (отметка и портрет) |
 | `NavGroup(title, icon) { NavItem(...) }` | боковая навигация по разделам страницы |
 | `SectionHeader(title, description, warning)` | заголовок блока настроек или параметров |
@@ -203,15 +219,17 @@ description: Дизайн-система сайта BDO Tools в стиле ок
 | `LinkText(text, url)` | ссылка на внешний адрес (скачать файл, открыть страницу): подчёркнутый бежевый текст, при наведении светлеет до `textPrimary`. Открывает `url` через `LocalUriHandler` — в вебе новая вкладка, на Desktop системный браузер |
 | `SectionDivider` | разделитель между секциями |
 | `LabelBadge(text, kind)` | NEW / HOT (`LabelBadgeKind.New` / `Hot`) |
+| `TabBar(tabs, selected, onSelect, label)` | вкладки: ряд у левого края, ширина по подписи (не уже `tabMinWidth`, высота `tabHeight`); невыбранная тёмная с серой подписью, под курсором светлее с белой, выбранная светлая графитовая. Вкладки редактора комбо, частей комбо (обычное / под гневом), меню оверлея |
+| `rememberReorderState(onMove)`, `Modifier.reorderItem(state, index)`, `DragHandle(state, index)` | перестановка пунктов столбца мышью: пункт тянут за значок ⠿ `DragHandle` в его начале, он едет поверх соседей, отпустили — `onMove(откуда, куда)`. Каждому пункту — `reorderItem` с его номером. В `DropdownSelect`/`OptionsMenu` то же включается параметром `onMove` |
 | `OptionGroup(options, selected, onSelect, label)`, `OptionButton` | выбор одного из 2–4 вариантов, как в настройках игры: квадратик-индикатор и подпись. Невыбранный — серая подложка `option`, тёмный индикатор; выбранный — `backgroundSelected`, светлая отметка `indicatorMark` в индикаторе, текст `textSelected` |
-| `DropdownSelect(selected, options, onSelect, label, fieldText, trailing, icon, minHeight, searchPlaceholder)` | выбор из длинного списка; `fieldText` — постоянная подпись поля вместо выбранного значения (кнопка-список «Готовые пресеты»), `trailing` — элемент справа от варианта (корзина удаления), его центр — на оси стрелки поля; `icon` — картинка слева от варианта в списке и у выбранного в поле (портрет персонажа); `minHeight` — наименьшая высота поля, чтобы соседние списки были одной высоты; `searchPlaceholder` — строка поиска в списке (как у `OptionsMenu`) |
+| `DropdownSelect(selected, options, onSelect, label, fieldText, trailing, icon, minHeight, searchPlaceholder)` | выбор из длинного списка; `fieldText` — постоянная подпись поля вместо выбранного значения (кнопка-список «Готовые пресеты»), `trailing` — элемент справа от варианта (корзина удаления), его центр — на оси стрелки поля; `icon` — картинка слева от варианта в списке и у выбранного в поле (портрет персонажа); `minHeight` — наименьшая высота поля, чтобы соседние списки были одной высоты; `searchPlaceholder` — строка поиска в списке (как у `OptionsMenu`); `query` + `onQueryChange` — набор с клавиатуры при открытом списке уходит в своё поле поиска над списком (выбор класса в комбо); `onMove` — пункты переставляются за ⠿ |
 | `OptionsMenu(expanded, onDismissRequest, options, selected, onSelect, label, icon, trailing, searchPlaceholder)` | всплывающий список вариантов, привязанный к любому элементу (ставится в тот же `Box`): например, выбор по клику на иконку. Не выше `optionsMenuMaxHeight`, длинный прокручивается с полосой прокрутки. С `searchPlaceholder` сверху строка поиска: печатать можно сразу, крестик очищает, видны только подходящие варианты. `DropdownSelect` построен на нём |
 | `GroupedOptionsMenu(expanded, onDismissRequest, groups, groupLabel, options, selected, onSelect, label, groupIcon, icon)` | двухуровневый список: слева группы со стрелкой, при наведении справа раскрываются их варианты (с прокруткой) и прячутся, когда курсор уходит и с группы, и с вариантов. У каждой колонки своя панель своей высоты |
 | `Modifier.verticalScrollbar(scrollState)` | полоса прокрутки у правого края: тонкая, под курсором и при перетаскивании шире (`scrollbarHoverWidth`); бегунок тянется мышью, клик по дорожке переносит его. Ставится перед `verticalScroll(scrollState)` |
-| `ValueSlider(value, onValueChange, range, onValueChangeFinished)` | целое число в диапазоне, где важна наглядность; колесо мыши над ним меняет значение на шаг (сотая диапазона, не меньше 1); `onValueChangeFinished` — конец перетаскивания или клик, чтобы правка по ходу жеста легла в историю отмены одним шагом |
+| `ValueSlider(value, onValueChange, range, onValueChangeFinished)` | целое число в диапазоне, где важна наглядность; компактный — одна строка: дорожка и значение золотом справа (`sliderValueWidth`); колесо мыши над ним меняет значение на шаг (сотая диапазона, не меньше 1); `onValueChangeFinished` — конец перетаскивания или клик, чтобы правка по ходу жеста легла в историю отмены одним шагом |
 | `NumberField(value, onValueChange, range)` | точный ввод числа (фейлстак, цена, количество) |
 | `InputField(value, onValueChange, placeholder, leading, trailing, minLines)` | текст и поиск; `trailing` — кнопки в конце поля, например `CloseButton` для очистки и `InfoButton` с ограничениями. `minLines` больше 1 — многострочное поле (вставка текста файла) |
-| `ToggleSwitch(checked, onCheckedChange, label, description, enabled)` | включить или выключить опцию; `enabled = false` — опция недоступна (серая подпись, не нажимается), причину пиши рядом (`WarningText`) |
+| `ToggleSwitch(checked, onCheckedChange, label, description, enabled)` | включить или выключить опцию; рядом только `label`, `description` — подсказкой при наведении; `enabled = false` — опция недоступна (серая подпись, не нажимается), причину пиши рядом (`WarningText`) |
 | `CheckBox(checked, onCheckedChange)` | отметка элементов списка для массового действия (например, удаления). Внутри строки `MenuItem` передавай его в слот `icon` |
 | `Tile(selected, onClick) { }` | плитка в сетке: предметы, классы, персонажи |
 

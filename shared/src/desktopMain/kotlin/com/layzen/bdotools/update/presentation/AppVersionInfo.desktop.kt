@@ -9,6 +9,7 @@ import com.layzen.bdotools.resources.update_check
 import com.layzen.bdotools.resources.update_check_failed
 import com.layzen.bdotools.resources.update_checking
 import com.layzen.bdotools.resources.update_install_version
+import com.layzen.bdotools.resources.update_install_version_tooltip
 import com.layzen.bdotools.resources.update_up_to_date
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
@@ -37,6 +38,7 @@ internal actual fun AppVersionInfo() {
                 ActionButtonState.Neutral(
                     stringResource(Res.string.update_install_version, current.info.version.toString()),
                     onClick = { viewModel.showNotes(true) },
+                    tooltip = stringResource(Res.string.update_install_version_tooltip),
                 ),
             )
         } else {

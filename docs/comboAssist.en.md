@@ -8,7 +8,8 @@ The tool is in the Windows app only; the website does not have it. For the in-ga
 
 ## Editor
 
-- On the left — "Choose class" and "Saved combos". A combo belongs to a class and fits all of its characters.
+- On the left — "Choose class" and "Saved combos". A combo belongs to a class and fits all of its characters. Drag saved combos to change their order.
+- A combo without a name is not saved: the "Combo name" window asks for it. The "Discard changes" button in the toolbar drops all unsaved edits.
 - The buttons above the editor and Ctrl+Z / Ctrl+Y (Ctrl+Shift+Z) undo and redo combo edits; a dragged cell moves
   under the others, and a blue pointer at a cell edge shows where it will go; deleting a combo asks for confirmation. At the bottom of the menu — "How the tracker works" and removing the rage combo.
 - "Skills" — the class skills with search (by name or keys: "shift lmb") and the "Succession" or "Awakening" stances; for Seraph —

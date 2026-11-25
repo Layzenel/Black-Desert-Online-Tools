@@ -19,6 +19,9 @@ sealed interface GameInfoEvent {
     /** Шаг линий сетки. */
     data class SetGridStep(val step: GridStep) : GameInfoEvent
 
+    /** Непрозрачность сетки в процентах; [save] — закончили двигать ползунок, сохранить. */
+    data class SetGridOpacity(val percent: Int, val save: Boolean) : GameInfoEvent
+
     /** Размер пинга в процентах; [save] — закончили двигать ползунок, сохранить. */
     data class SetScale(val percent: Int, val save: Boolean) : GameInfoEvent
 

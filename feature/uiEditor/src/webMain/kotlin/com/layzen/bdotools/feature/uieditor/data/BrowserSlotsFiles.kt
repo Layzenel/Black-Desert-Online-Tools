@@ -49,6 +49,13 @@ internal class BrowserSlotsFiles : SlotsFiles {
         slotsBridge.call("presetDelete", account, fileName)
     }
 
+    override suspend fun readPresetOrder(account: String): List<String> =
+        slotsBridge.call("presetOrderRead", account).lines().filter { it.isNotBlank() }
+
+    override suspend fun writePresetOrder(account: String, names: List<String>) {
+        slotsBridge.call("presetWrite", "$account/order.txt", names.joinToString("\n"))
+    }
+
     override suspend fun readBackground(account: String): ByteArray? {
         val result = slotsBridge.call("backgroundRead", account)
         return if (result.startsWith("1")) Base64.decode(result.substring(1)) else null

@@ -15,12 +15,13 @@ import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.resources.Res
+import com.layzen.bdotools.feature.uieditor.resources.menu_discard
 import com.layzen.bdotools.feature.uieditor.resources.menu_redo
 import com.layzen.bdotools.feature.uieditor.resources.menu_undo
+import com.layzen.bdotools.feature.uieditor.resources.slots_discard_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_help_button
 import com.layzen.bdotools.feature.uieditor.resources.slots_redo_tooltip
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance
-import com.layzen.bdotools.feature.uieditor.resources.slots_snap_distance_value
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_step
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_step_caption
 import com.layzen.bdotools.feature.uieditor.resources.slots_snap_to_slots
@@ -33,7 +34,6 @@ import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.ToolbarButton
 import com.layzen.bdotools.uikit.components.ToolbarDivider
 import com.layzen.bdotools.uikit.components.ValueSlider
-import com.layzen.bdotools.uikit.components.ValueText
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -85,6 +85,12 @@ private fun HelpTool(state: SlotsState) {
 private fun HistoryTools(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
     ToolGroup {
         ToolbarButton(
+            painterResource(Res.drawable.menu_discard),
+            stringResource(Res.string.slots_discard_tooltip),
+            onClick = { onEvent(SlotsEvent.DiscardChanges) },
+            enabled = state.hasChanges,
+        )
+        ToolbarButton(
             painterResource(Res.drawable.menu_undo),
             stringResource(Res.string.slots_undo_tooltip),
             onClick = { onEvent(SlotsEvent.Undo) },
@@ -115,8 +121,7 @@ private fun ToggleWithSlider(
         ToolbarButton(icon, title, onClick = { onToggle(!enabled) }, selected = enabled)
         if (enabled) {
             DescriptionText(caption)
-            ValueSlider(value, onValueChange, range = range, modifier = Modifier.width(SlotsDimens.snapSliderWidth), showLabels = false)
-            ValueText(stringResource(Res.string.slots_snap_distance_value, value), color = AppTheme.colors.accentGold)
+            ValueSlider(value, onValueChange, range = range, modifier = Modifier.width(SlotsDimens.snapSliderWidth))
         }
     }
 }

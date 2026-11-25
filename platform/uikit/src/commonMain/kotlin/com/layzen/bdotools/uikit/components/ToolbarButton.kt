@@ -21,11 +21,9 @@ fun ToolbarButton(
     selected: Boolean = false,
 ) {
     val state = if (selected) {
-        ActionButtonState.Toggle(text = "", checked = true, icon = icon, enabled = enabled, onClick = onClick)
+        ActionButtonState.Toggle(text = "", checked = true, icon = icon, enabled = enabled, onClick = onClick, tooltip = description)
     } else {
-        ActionButtonState.Neutral(text = "", icon = icon, enabled = enabled, onClick = onClick)
+        ActionButtonState.Neutral(text = "", icon = icon, enabled = enabled, onClick = onClick, tooltip = description)
     }
-    HoverTooltip(description, modifier) {
-        ActionButton(state, Modifier.semantics { contentDescription = description })
-    }
+    ActionButton(state, modifier.semantics { contentDescription = description })
 }

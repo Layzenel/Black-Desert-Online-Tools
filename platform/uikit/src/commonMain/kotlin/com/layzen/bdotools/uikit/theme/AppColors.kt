@@ -72,6 +72,15 @@ data class AppColors(
     val indicatorMark: Color,
     val indicatorMarkShade: Color,
 
+    // Вкладка ([TabBar]), как «Продажа / Покупка» на рынке игры: невыбранная тёмная с серой подписью,
+    // под курсором светлее, выбранная — светлая графитовая с белой подписью
+    val tab: Color,
+    val tabBorder: Color,
+    val tabHover: Color,
+    val tabSelected: Color,
+    val tabSelectedBorder: Color,
+    val textTab: Color,
+
     // Линии
     val border: Color,
     val borderSelected: Color,
@@ -164,6 +173,13 @@ val DefaultAppColors = AppColors(
     indicatorBorderSelected = Color(0xFF7E6454),
     indicatorMark = Color(0xFFFFF2E0),
     indicatorMarkShade = Color(0xFFE4C89F),
+
+    tab = Color(0xFF2B2B30),
+    tabBorder = Color(0xFF3A3A40),
+    tabHover = Color(0xFF36363C),
+    tabSelected = Color(0xFF3F3F45),
+    tabSelectedBorder = Color(0xFF5A5A62),
+    textTab = Color(0xFF8C8C93),
 
     border = Color(0xFF39393F),
     borderSelected = Color(0xFF685048),

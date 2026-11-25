@@ -1,6 +1,6 @@
 package com.layzen.bdotools.feature.settings.domain.startup
 
-/** Автозапуск программы и запуск от имени администратора. */
+/** Автозапуск, запуск от имени администратора и запуск в трее. */
 class StartupInteractor(private val repository: StartupRepository) {
     /** См. [StartupRepository.options]. */
     suspend fun options(): StartupOptions = repository.options()
@@ -10,6 +10,9 @@ class StartupInteractor(private val repository: StartupRepository) {
 
     /** Включает или выключает запуск от имени администратора и возвращает то, что получилось. */
     suspend fun setAlwaysAdmin(enabled: Boolean): StartupOptions = change { it.copy(alwaysAdmin = enabled) }
+
+    /** Включает или выключает запуск сразу в трее и возвращает то, что получилось. */
+    suspend fun setStartInTray(enabled: Boolean): StartupOptions = change { it.copy(startInTray = enabled) }
 
     private suspend fun change(edit: (StartupOptions) -> StartupOptions): StartupOptions {
         val current = repository.options()

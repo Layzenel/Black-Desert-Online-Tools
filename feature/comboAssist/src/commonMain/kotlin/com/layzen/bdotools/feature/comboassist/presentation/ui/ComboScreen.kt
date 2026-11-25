@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.comboassist.presentation.ui
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -47,13 +48,26 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.sidebar.ComboSide
 import com.layzen.bdotools.feature.comboassist.presentation.ui.overlaysettings.OverlaySettingsPanel
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_delete
+import com.layzen.bdotools.feature.comboassist.resources.combo_delete_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_export
+import com.layzen.bdotools.feature.comboassist.resources.combo_export_tooltip
+import com.layzen.bdotools.feature.comboassist.resources.combo_import_tooltip
+import com.layzen.bdotools.feature.comboassist.resources.combo_notice_open_tooltip
+import com.layzen.bdotools.feature.comboassist.resources.combo_rage_remove_tooltip
+import com.layzen.bdotools.feature.comboassist.resources.combo_save_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.menu_delete
 import com.layzen.bdotools.feature.comboassist.resources.menu_redo
 import com.layzen.bdotools.feature.comboassist.resources.menu_undo
 import com.layzen.bdotools.feature.comboassist.resources.combo_redo_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_undo_tooltip
 import com.layzen.bdotools.uikit.components.ToolbarButton
+import com.layzen.bdotools.uikit.components.ToolbarDivider
+import com.layzen.bdotools.feature.comboassist.resources.menu_discard
+import com.layzen.bdotools.feature.comboassist.resources.menu_rage_add
+import com.layzen.bdotools.feature.comboassist.resources.menu_copy
+import com.layzen.bdotools.feature.comboassist.resources.combo_discard_tooltip
+import com.layzen.bdotools.feature.comboassist.resources.combo_rage_add_tooltip
+import com.layzen.bdotools.feature.comboassist.resources.combo_rage_copy_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.menu_export
 import com.layzen.bdotools.feature.comboassist.resources.menu_import
 import com.layzen.bdotools.feature.comboassist.resources.menu_save
@@ -74,7 +88,7 @@ import com.layzen.bdotools.uikit.components.ActionBar
 import com.layzen.bdotools.uikit.components.ActionButton
 import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.DescriptionText
-import com.layzen.bdotools.uikit.components.OptionGroup
+import com.layzen.bdotools.uikit.components.TabBar
 import com.layzen.bdotools.uikit.components.ToolPage
 import com.layzen.bdotools.uikit.components.WarningText
 import com.layzen.bdotools.uikit.theme.AppTheme
@@ -121,19 +135,24 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         sidebarWidth = ComboDimens.sidebarWidth,
         sidebar = { ComboSidebarContent(state, onEvent, loadDetails, paletteDrag) },
         sidebarFooter = {
-            if (canWatchGame) ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_notice_open), icon = painterResource(Res.drawable.menu_info), onClick = { onEvent(ComboEvent.ShowTrackerNotice) }), Modifier.fillMaxWidth())
+            val unnamed = needsName(state.combo?.name.orEmpty())
+            if (canWatchGame) ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_notice_open), icon = painterResource(Res.drawable.menu_info), onClick = { onEvent(ComboEvent.ShowTrackerNotice) }, tooltip = stringResource(Res.string.combo_notice_open_tooltip)), Modifier.fillMaxWidth())
             if (state.importFailed) WarningText(stringResource(Res.string.combo_import_failed))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_import), icon = painterResource(Res.drawable.menu_import), onClick = { onEvent(ComboEvent.ImportCombos) }), Modifier.fillMaxWidth())
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_export), icon = painterResource(Res.drawable.menu_export), enabled = state.combo != null, onClick = { onEvent(ComboEvent.ExportCombo) }), Modifier.fillMaxWidth())
+            // работа с файлом — одним рядом: подписи короткие, подробности в подсказках
+            Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_import), icon = painterResource(Res.drawable.menu_import), onClick = { onEvent(ComboEvent.ImportCombos) }, tooltip = stringResource(Res.string.combo_import_tooltip)), Modifier.weight(1f))
+                ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_export), icon = painterResource(Res.drawable.menu_export), enabled = state.combo != null, onClick = { onEvent(ComboEvent.ExportCombo) }, tooltip = stringResource(Res.string.combo_export_tooltip)), Modifier.weight(1f))
+            }
             if (state.combo?.rage != null) {
-                ActionButton(ActionButtonState.Negative(stringResource(Res.string.combo_rage_remove), icon = painterResource(Res.drawable.menu_delete), onClick = { onEvent(ComboEvent.RemoveRage) }), Modifier.fillMaxWidth())
+                ActionButton(ActionButtonState.Negative(stringResource(Res.string.combo_rage_remove), icon = painterResource(Res.drawable.menu_delete), onClick = { onEvent(ComboEvent.RemoveRage) }, tooltip = stringResource(Res.string.combo_rage_remove_tooltip)), Modifier.fillMaxWidth())
             }
             ActionButton(
                 ActionButtonState.Negative(
                     text = stringResource(Res.string.combo_delete),
                     icon = painterResource(Res.drawable.menu_delete),
                     enabled = state.combo != null,
-                    onClick = { onEvent(ComboEvent.AskDelete) }
+                    onClick = { onEvent(ComboEvent.AskDelete) },
+                    tooltip = stringResource(Res.string.combo_delete_tooltip)
                 ),
                 Modifier.fillMaxWidth(),
             )
@@ -142,7 +161,8 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
                     text = stringResource(if (state.dirty) Res.string.combo_save_dirty else Res.string.combo_save),
                     icon = painterResource(Res.drawable.menu_save),
                     enabled = state.combo != null,
-                    onClick = { onEvent(ComboEvent.Save) },
+                    onClick = { onEvent(if (unnamed) ComboEvent.AskName else ComboEvent.Save) },
+                    tooltip = stringResource(Res.string.combo_save_tooltip),
                 ),
                 Modifier.fillMaxWidth(),
             )
@@ -151,13 +171,10 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         Column(Modifier.fillMaxSize()) {
             // настройка оверлея есть только в настольной версии: на сайте остаётся один редактор и переключать нечего
             if (canWatchGame) ActionBar {
-                OptionGroup(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
+                TabBar(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
             }
-            // отмена и повтор правок — под табами, как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
-            ActionBar {
-                ToolbarButton(painterResource(Res.drawable.menu_undo), stringResource(Res.string.combo_undo_tooltip), { onEvent(ComboEvent.Undo) }, enabled = state.canUndo)
-                ToolbarButton(painterResource(Res.drawable.menu_redo), stringResource(Res.string.combo_redo_tooltip), { onEvent(ComboEvent.Redo) }, enabled = state.canRedo)
-            }
+            // сброс, отмена и повтор правок — под табами, как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
+            ActionBar { EditorTools(state, onEvent) }
             Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceL),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL),
@@ -169,11 +186,34 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
     }
     PaletteDragGhost(paletteDrag, origin) { state.skills[it]?.icon }
     }
+    state.combo?.takeIf { state.nameAsked }?.let { combo ->
+        ComboNameDialog(combo.name, onCancel = { onEvent(ComboEvent.CancelName) }, onSave = { onEvent(ComboEvent.SaveAs(it)) })
+    }
     if (state.trackerNotice) TrackerNoticeDialog { onEvent(ComboEvent.CloseTrackerNotice) }
     val deleted = state.combo
     if (state.deleteAsked && deleted != null) {
         val name = deleted.name.ifBlank { stringResource(Res.string.combo_untitled) }
         DeleteComboDialog(name, onCancel = { onEvent(ComboEvent.CancelDelete) }, onConfirm = { onEvent(ComboEvent.Delete) })
+    }
+}
+
+/**
+ * Инструменты над редактором: сброс к сохранённому, отмена, повтор; у комбо без варианта под гневом — «добавить
+ * комбо под гневом», на вкладке гнева — «скопировать обычное комбо». Без подписей, что делают — в подсказках.
+ */
+@Composable
+private fun EditorTools(state: ComboState, onEvent: (ComboEvent) -> Unit) {
+    ToolbarButton(painterResource(Res.drawable.menu_discard), stringResource(Res.string.combo_discard_tooltip), { onEvent(ComboEvent.Discard) }, enabled = state.dirty)
+    ToolbarButton(painterResource(Res.drawable.menu_undo), stringResource(Res.string.combo_undo_tooltip), { onEvent(ComboEvent.Undo) }, enabled = state.canUndo)
+    ToolbarButton(painterResource(Res.drawable.menu_redo), stringResource(Res.string.combo_redo_tooltip), { onEvent(ComboEvent.Redo) }, enabled = state.canRedo)
+    val combo = state.combo ?: return
+    if (state.mode != ComboMode.Editor) return
+    ToolbarDivider()
+    if (combo.rage == null) {
+        ToolbarButton(painterResource(Res.drawable.menu_rage_add), stringResource(Res.string.combo_rage_add_tooltip), { onEvent(ComboEvent.AddRage) })
+    } else if (state.rageEdited) {
+        // комбо под гневом обычно — то же комбо с парой замен: копия обычного, а дальше правятся отличия
+        ToolbarButton(painterResource(Res.drawable.menu_copy), stringResource(Res.string.combo_rage_copy_tooltip), { onEvent(ComboEvent.CopyToRage) })
     }
 }
 

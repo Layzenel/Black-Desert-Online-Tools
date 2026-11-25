@@ -24,6 +24,8 @@ private const val CACHE = "UserCache"
 private const val GAME_FILE = "gamevariable.xml"
 private const val SERVERS = "11"
 private const val PRESET_EXTENSION = ".json"
+/** Файл с порядком пресетов в их папке; без расширения `.json`, поэтому в список пресетов не попадает. */
+private const val PRESET_ORDER_FILE = "order.txt"
 private const val GAME_FOLDER = "Black Desert"
 
 private val stamp = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
@@ -120,6 +122,14 @@ internal class DesktopSlotsStorage(
     override suspend fun deletePreset(account: String, fileName: String) = fileCall {
         (tool(account) / PRESETS / fileName).deleteIfExists()
         Unit
+    }
+
+    override suspend fun readPresetOrder(account: String): List<String> = fileCall {
+        (tool(account) / PRESETS / PRESET_ORDER_FILE).takeIf { it.isRegularFile() }?.readBytes()?.decodeToString()?.lines()?.filter { it.isNotBlank() }.orEmpty()
+    }
+
+    override suspend fun writePresetOrder(account: String, names: List<String>) = fileCall {
+        ((tool(account) / PRESETS).createDirectories() / PRESET_ORDER_FILE).writeBytes(names.joinToString("\n").encodeToByteArray())
     }
 
     override suspend fun readBackground(account: String): ByteArray? = fileCall {

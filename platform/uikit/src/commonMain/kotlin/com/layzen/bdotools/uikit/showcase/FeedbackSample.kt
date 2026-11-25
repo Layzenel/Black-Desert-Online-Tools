@@ -24,6 +24,8 @@ import com.layzen.bdotools.uikit.resources.showcase_feedback_link
 import com.layzen.bdotools.uikit.resources.showcase_feedback_message
 import com.layzen.bdotools.uikit.resources.showcase_feedback_show
 import com.layzen.bdotools.uikit.resources.showcase_feedback_show_error
+import com.layzen.bdotools.uikit.resources.showcase_feedback_show_error_tooltip
+import com.layzen.bdotools.uikit.resources.showcase_feedback_show_tooltip
 import com.layzen.bdotools.uikit.resources.showcase_feedback_title
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
@@ -39,8 +41,8 @@ internal fun FeedbackSample(modifier: Modifier) {
         title = stringResource(Res.string.showcase_feedback_title),
         modifier = modifier,
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_feedback_show_error), onClick = { toast = true }))
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_feedback_show), onClick = { toast = false }))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_feedback_show_error), onClick = { toast = true }, tooltip = stringResource(Res.string.showcase_feedback_show_error_tooltip)))
+            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.showcase_feedback_show), onClick = { toast = false }, tooltip = stringResource(Res.string.showcase_feedback_show_tooltip)))
         },
     ) {
         Column(
