@@ -12,9 +12,9 @@ description: Правило проекта BDO Tools — как подписыв
 | Модель, выбор, сохранение | `platform/core`, `core.keyhint`: `KeyHints` (`styleOf(код клавиши)`), `KeyHintStyle` (`Text`, `Short`, `Icon`), `AppKeyHints` (Koin, `keyHintModule` в `App.kt`), `KeyHintSettings` (сайт — `localStorage`, Desktop — `GameFolderSettings.keyHints`, `Preferences`) |
 | Подпись текстом | `rememberKeyLabel(keys)` в `platform/composable` — уже учитывает «Sh»; всегда бери подпись только через неё |
 | Картинка | `rememberKeyIcon(keys)(action)` — не `null`, только если выбрана картинка; рисуй `KeyIcon(icon, textStyle, color)` — высота по тексту, красится `ColorFilter.tint` |
-| Иконки | `platform/composable/.../drawable/key_shift.svg`, `key_lmb.svg`, `key_rmb.svg`: белый контур, `viewBox 0 0 24 24` |
+| Иконки | `platform/composable/.../drawable/key_shift.svg` — широкая клавиша с ⇧ в левом углу, `viewBox 0 0 36 24` (стрелку в квадрате путали с W); `key_lmb.svg`, `key_rmb.svg` — `viewBox 0 0 24 24`. Белый контур; в строке текста ширина — по пропорциям картинки |
 
 Правила:
-- Клавишу выводишь так: `rememberKeyIcon(...)(action)?.let { KeyIcon(...) } ?: Text(label(action))`. Там, где картинку не вставить (строка `OptionButton`, текст тултипа), остаётся текст из `rememberKeyLabel`.
+- Клавишу выводишь так: `rememberKeyIcon(...)(action)?.let { KeyIcon(...) } ?: Text(label(action))`. Текст с клавишами (тултип навыка, «Shift + ПКМ») — `SkillMarkupText(markup, keys, style, color)`: `{KeyBind:…}` в нём — подпись или картинка в строке текста; набор клавиш в разметку — `keyVariantLine`. В `OptionButton` — через его `content`. Текстом из `rememberKeyLabel` остаётся только то, что не рисуется: текст в поле ввода, памятка игры, подпись для экранного диктора.
 - Не пиши «Shift», «ЛКМ», «ПКМ» литералами в фичах: подписи — `rememberKeyLabel`.
 - Новая клавиша с картинкой: поле в `KeyHints` (и `encode`/`decode`, тест), иконка, ветка в `keyIconOf`, `OptionGroup` в `DisplaySettings` (`feature/settings`), строки на всех языках.

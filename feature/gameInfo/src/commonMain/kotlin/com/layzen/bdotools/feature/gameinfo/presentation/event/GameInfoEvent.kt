@@ -13,6 +13,9 @@ sealed interface GameInfoEvent {
     /** Вид FPS: компактно или подробно. */
     data class SetFpsStyle(val style: FpsStyle) : GameInfoEvent
 
+    /** Время ПК в окне пинга: показать или спрятать. */
+    data object ToggleTime : GameInfoEvent
+
     /** Сетка на весь экран игры: показать или спрятать. */
     data object ToggleGrid : GameInfoEvent
 

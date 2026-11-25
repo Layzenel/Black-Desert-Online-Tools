@@ -14,7 +14,6 @@ import com.layzen.bdotools.core.game.CharacterClass
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_class_search
-import com.layzen.bdotools.uikit.components.CloseButton
 import com.layzen.bdotools.uikit.components.DropdownSelect
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.icons.icon
@@ -36,7 +35,6 @@ internal fun ClassSelect(selected: CharacterClass, onSelect: (CharacterClass) ->
     InputField(
         query, { query = it }, Modifier.fillMaxWidth(),
         placeholder = stringResource(Res.string.combo_class_search),
-        trailing = if (query.isEmpty()) null else { { CloseButton(onClick = { query = "" }) } },
     )
     DropdownSelect(
         selected, shown, onSelect, { titles.getValue(it) }, Modifier.fillMaxWidth(),

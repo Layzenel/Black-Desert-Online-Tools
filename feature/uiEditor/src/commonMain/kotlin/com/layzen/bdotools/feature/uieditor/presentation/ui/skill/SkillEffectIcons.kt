@@ -10,10 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.layzen.bdotools.composable.skill.skillMarkupText
+import com.layzen.bdotools.composable.skill.SkillMarkupText
 import com.layzen.bdotools.core.skill.domain.KeyBindings
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillControl
 import com.layzen.bdotools.feature.uieditor.domain.skill.SkillDefense
@@ -75,12 +74,7 @@ private fun EffectIcon(icon: DrawableResource, title: String, markup: String?, k
         HoverTooltip(title) { image() }
     } else {
         HoverTooltip(tooltip = {
-            Text(
-                skillMarkupText(markup, keys),
-                style = AppTheme.typography.bodyBold,
-                color = AppTheme.colors.textPrimary,
-                modifier = Modifier.widthIn(max = AppTheme.dimens.tooltipMaxWidth),
-            )
+            SkillMarkupText(markup, keys, AppTheme.typography.bodyBold, AppTheme.colors.textPrimary, Modifier.widthIn(max = AppTheme.dimens.tooltipMaxWidth))
         }) { image() }
     }
 }

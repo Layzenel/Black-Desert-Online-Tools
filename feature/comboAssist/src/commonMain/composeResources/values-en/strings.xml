@@ -7,7 +7,7 @@
     <string name="combo_section_class">Choose class</string>
     <string name="combo_section_combo">Saved combos</string>
     <string name="combo_none">No combos</string>
-    <string name="combo_search_by_keys">Press the skill keys to keep only skills with that command in the list</string>
+    <string name="combo_search_by_keys">Press the skill keys to keep only skills with that command in the list</string>
     <string name="combo_search_start_keys">Start input</string>
     <string name="combo_name_title">Combo name</string>
     <string name="combo_name_cancel_tooltip">Close without saving the combo</string>
@@ -132,7 +132,7 @@
     <string name="combo_menu_show">Show combo</string>
     <string name="combo_menu_hide">Hide combo</string>
     <string name="combo_menu_hide_tooltip">Remove the combo from the game screen</string>
-    <string name="combo_menu_edit">Edit combo</string>
+    <string name="combo_menu_edit">Edit</string>
     <string name="combo_menu_edit_tooltip">Open the combo in the editor</string>
     <string name="combo_menu_empty">No saved combos</string>
     <string name="combo_panel_tab_combo">Combo</string>
@@ -167,6 +167,5 @@
     <string name="combo_notice_tip_resync">If the tracker gets lost, start the combo from its first skill: it will recognize it and continue from there. If that does not help, use no combo skills for a few seconds: the tracker will start the combo over.</string>
     <string name="combo_notice_ok">Got it</string>
     <string name="combo_notice_ok_tooltip">Close the notice window</string>
-    <string name="combo_notice_open">How the tracker works</string>
     <string name="combo_notice_open_tooltip">Show how the combo tracker works and what it needs</string>
 </resources>

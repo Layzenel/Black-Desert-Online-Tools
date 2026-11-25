@@ -28,7 +28,6 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillIconVi
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_names_language
 import com.layzen.bdotools.uikit.components.CheckBox
-import com.layzen.bdotools.uikit.components.CloseButton
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.MenuItem
 import com.layzen.bdotools.uikit.components.SectionHeader
@@ -67,7 +66,6 @@ internal fun SkillChecklistSection(
     if (!open) return
     InputField(
         query, { query = it }, Modifier.fillMaxWidth(), placeholder = searchPlaceholder,
-        trailing = { if (query.isNotEmpty()) CloseButton({ query = "" }) },
     )
     val matches = rememberSkillSearch(query)
     val chosen = checked.mapNotNull { skills[it] }.filter(matches)

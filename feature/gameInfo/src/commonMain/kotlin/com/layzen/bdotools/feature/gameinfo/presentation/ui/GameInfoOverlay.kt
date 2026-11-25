@@ -17,6 +17,7 @@ import com.layzen.bdotools.feature.gameinfo.presentation.event.GameInfoEvent
 import com.layzen.bdotools.feature.gameinfo.resources.Res
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_needs_admin
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_show
+import com.layzen.bdotools.feature.gameinfo.resources.game_info_time_show
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_style_compact
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_fps_style_detailed
 import com.layzen.bdotools.feature.gameinfo.resources.game_info_ping_needs_admin
@@ -58,12 +59,12 @@ private fun PingWindow(viewModel: GameInfoViewModel) {
     if (!viewModel.supported || !state.windowShown) return
     GameOverlayWindow(PING_WINDOW, OverlayAnchor.TopRight, GameInfoDimens.pingWindow) {
         ScaledOverlay(state.settings.scale, state.settings.opacity) {
-            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown, state.settings.fpsStyle)
+            PingBadge(state.ping, state.settings.shown, state.fps, state.fpsShown, state.settings.fpsStyle, state.settings.timeShown)
         }
     }
 }
 
-/** Вкладка «Информация»: пинг и FPS игры — показ, размер и непрозрачность их окна. */
+/** Вкладка «Информация»: пинг, FPS игры и время ПК — показ, размер и непрозрачность их окна. */
 @Composable
 private fun InfoTab(viewModel: GameInfoViewModel) {
     val state by viewModel.state.collectAsState()
@@ -81,6 +82,7 @@ private fun InfoTab(viewModel: GameInfoViewModel) {
     if (state.fpsShown) {
         OptionGroup(FpsStyle.entries, settings.fpsStyle, { onEvent(GameInfoEvent.SetFpsStyle(it)) }, { stringResource(it.title) }, Modifier.fillMaxWidth())
     }
+    ToggleSwitch(settings.timeShown, { onEvent(GameInfoEvent.ToggleTime) }, label = stringResource(Res.string.game_info_time_show))
     if (!state.windowShown) return
     val scale = settings.scale.coerceIn(OverlayScalePercent)
     SectionHeader(stringResource(Res.string.game_info_ping_scale, scale))

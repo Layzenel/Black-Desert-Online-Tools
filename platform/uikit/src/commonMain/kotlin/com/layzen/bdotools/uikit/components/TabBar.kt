@@ -28,6 +28,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Вкладки, как «Продажа / Покупка» на рынке игры: ряд у левого края, ширина вкладки — по подписи, но не уже
  * `tabMinWidth`; на всю ширину не растягиваются. Невыбранная — тёмная с серой подписью, под курсором светлее
  * с белой подписью, выбранная — светлая графитовая с белой подписью.
+ * [fill] — вкладки делят ширину ряда поровну (узкое окно, например меню оверлея); ряду тогда нужна ширина.
  */
 @Composable
 fun <T> TabBar(
@@ -36,14 +37,15 @@ fun <T> TabBar(
     onSelect: (T) -> Unit,
     label: @Composable (T) -> String,
     modifier: Modifier = Modifier,
+    fill: Boolean = false,
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXxs)) {
-        tabs.forEach { tab -> TabItem(label(tab), tab == selected) { onSelect(tab) } }
+        tabs.forEach { tab -> TabItem(label(tab), tab == selected, if (fill) Modifier.weight(1f) else Modifier) { onSelect(tab) } }
     }
 }
 
 @Composable
-private fun TabItem(text: String, selected: Boolean, onClick: () -> Unit) {
+private fun TabItem(text: String, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
     val interaction = remember { MutableInteractionSource() }
@@ -54,7 +56,7 @@ private fun TabItem(text: String, selected: Boolean, onClick: () -> Unit) {
         else -> colors.tab
     }
     Box(
-        Modifier
+        modifier
             .widthIn(min = dimens.tabMinWidth)
             .height(dimens.tabHeight)
             .pointerHoverIcon(if (selected) PointerIcon.Default else PointerIcon.Hand)

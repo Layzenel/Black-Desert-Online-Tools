@@ -39,7 +39,6 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_search
 import com.layzen.bdotools.feature.comboassist.resources.combo_section_skills
 import com.layzen.bdotools.feature.comboassist.resources.combo_suggest_chain
 import com.layzen.bdotools.feature.comboassist.resources.combo_suggest_title
-import com.layzen.bdotools.uikit.components.CloseButton
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.LoadingRow
 import com.layzen.bdotools.uikit.components.MenuItem
@@ -69,7 +68,6 @@ internal fun SkillPalette(state: ComboState, onEvent: (ComboEvent) -> Unit, load
     var recording by remember { mutableStateOf(false) }
     InputField(
         state.query, { onEvent(ComboEvent.Query(it)) }, Modifier.fillMaxWidth(), placeholder = stringResource(Res.string.combo_search),
-        trailing = if (state.query.isEmpty()) null else { { CloseButton({ onEvent(ComboEvent.Query("")) }) } },
     )
     ActionButton(
         ActionButtonState.Neutral(
@@ -83,7 +81,7 @@ internal fun SkillPalette(state: ComboState, onEvent: (ComboEvent) -> Unit, load
     // нажатые клавиши ищут умения по команде активации: запрос — их подписи, как если бы их набрали («Shift + F»)
     if (recording) {
         val keyLabel = rememberKeyLabel(KeyBindings.Default)
-        KeyRecorder(keyLabel) { actions ->
+        KeyRecorder { actions ->
             recording = false
             if (actions.isNotEmpty()) onEvent(ComboEvent.Query(actions.joinToString(" + ") { keyLabel(it) }))
         }

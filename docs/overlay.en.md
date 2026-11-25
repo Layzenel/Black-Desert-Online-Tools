@@ -42,11 +42,11 @@ How to build a combo — [Combo Assist](comboAssist.en.md).
 - "Combo layout" — "Show layout", "Vertical" and "Show skill activation keys" on the layout. The orientation applies to the layout and to the combo preview on hover.
 - "Overlay size" (20 to 100 %) and "Overlay opacity" — for the tracker and the layout.
 
-**"Info"** — "Show game ping", "Show FPS" (style "Compact" or "Detailed"), "Info panel size" (20 to 100 %) and "Info panel opacity".
+**"Info"** — "Show game ping", "Show FPS" (style "Compact" or "Detailed"), "Show time" (the PC time at the end of the panel), "Info panel size" (20 to 100 %) and "Info panel opacity".
 
 ## Ping
 
-The info panel (ping, FPS, "1%", freezes) has a fixed width.
+The info panel (ping, FPS, "1%", freezes, time) has a fixed width.
 
 Latency to the game server in milliseconds, as in Windows Resource Monitor. The server is looked up again when you
 change channel or reconnect.

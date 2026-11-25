@@ -14,6 +14,7 @@ import com.layzen.bdotools.feature.gameinfo.domain.grid.GridStep
  * @property gridShown показывать сетку на весь экран игры
  * @property gridStep шаг линий сетки
  * @property gridOpacity непрозрачность сетки в процентах
+ * @property timeShown показывать время ПК справа от пинга и FPS
  */
 data class PingSettings(
     val shown: Boolean = false,
@@ -24,4 +25,5 @@ data class PingSettings(
     val gridShown: Boolean = false,
     val gridStep: GridStep = GridStep.Medium,
     val gridOpacity: Int = 100,
+    val timeShown: Boolean = false,
 )

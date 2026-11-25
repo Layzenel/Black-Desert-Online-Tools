@@ -56,6 +56,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_notice_open_toolt
 import com.layzen.bdotools.feature.comboassist.resources.combo_rage_remove_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.combo_save_tooltip
 import com.layzen.bdotools.feature.comboassist.resources.menu_delete
+import com.layzen.bdotools.feature.comboassist.resources.menu_help
 import com.layzen.bdotools.feature.comboassist.resources.menu_redo
 import com.layzen.bdotools.feature.comboassist.resources.menu_undo
 import com.layzen.bdotools.feature.comboassist.resources.combo_redo_tooltip
@@ -76,9 +77,7 @@ import com.layzen.bdotools.feature.comboassist.resources.combo_import_failed
 import com.layzen.bdotools.feature.comboassist.resources.combo_empty_hint
 import com.layzen.bdotools.feature.comboassist.resources.combo_mode_editor
 import com.layzen.bdotools.feature.comboassist.resources.combo_mode_overlay
-import com.layzen.bdotools.feature.comboassist.resources.combo_notice_open
 import com.layzen.bdotools.feature.comboassist.resources.combo_rage_remove
-import com.layzen.bdotools.feature.comboassist.resources.menu_info
 import com.layzen.bdotools.feature.comboassist.resources.combo_save
 import com.layzen.bdotools.feature.comboassist.resources.combo_save_dirty
 import com.layzen.bdotools.feature.comboassist.resources.combo_untitled
@@ -136,7 +135,6 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
         sidebar = { ComboSidebarContent(state, onEvent, loadDetails, paletteDrag) },
         sidebarFooter = {
             val unnamed = needsName(state.combo?.name.orEmpty())
-            if (canWatchGame) ActionButton(ActionButtonState.Neutral(stringResource(Res.string.combo_notice_open), icon = painterResource(Res.drawable.menu_info), onClick = { onEvent(ComboEvent.ShowTrackerNotice) }, tooltip = stringResource(Res.string.combo_notice_open_tooltip)), Modifier.fillMaxWidth())
             if (state.importFailed) WarningText(stringResource(Res.string.combo_import_failed))
             // работа с файлом — одним рядом: подписи короткие, подробности в подсказках
             Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceXs)) {
@@ -174,7 +172,14 @@ fun ComboScreen(state: ComboState, canWatchGame: Boolean, onEvent: (ComboEvent) 
                 TabBar(ComboMode.entries, state.mode, { onEvent(ComboEvent.SetMode(it)) }, { stringResource(if (it == ComboMode.Editor) Res.string.combo_mode_editor else Res.string.combo_mode_overlay) })
             }
             // сброс, отмена и повтор правок — под табами, как в редакторе интерфейса, и Ctrl+Z / Ctrl+Y
-            ActionBar { EditorTools(state, onEvent) }
+            ActionBar {
+                EditorTools(state, onEvent)
+                // как работает трекер — только там, где он есть (настольная версия)
+                if (canWatchGame) {
+                    ToolbarDivider()
+                    ToolbarButton(painterResource(Res.drawable.menu_help), stringResource(Res.string.combo_notice_open_tooltip), { onEvent(ComboEvent.ShowTrackerNotice) })
+                }
+            }
             Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(AppTheme.dimens.spaceL),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceL),

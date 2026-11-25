@@ -48,6 +48,7 @@ class GameInfoViewModel(private val interactor: PingInteractor) : ViewModel() {
                 change(save = true) { it.copy(fpsShown = !it.fpsShown) }.also { updateWatching() }
             }
             is GameInfoEvent.SetFpsStyle -> change(save = true) { it.copy(fpsStyle = event.style) }
+            GameInfoEvent.ToggleTime -> change(save = true) { it.copy(timeShown = !it.timeShown) }
             GameInfoEvent.ToggleGrid -> {
                 change(save = true) { it.copy(gridShown = !it.gridShown) }
                 // масштаб интерфейса игры читается при каждом включении: его могли поменять

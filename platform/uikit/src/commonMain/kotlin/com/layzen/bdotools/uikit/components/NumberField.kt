@@ -22,5 +22,6 @@ fun NumberField(
         modifier = modifier,
         keyboardType = KeyboardType.Number,
         textAlign = TextAlign.End,
+        clearable = false,
     )
 }
