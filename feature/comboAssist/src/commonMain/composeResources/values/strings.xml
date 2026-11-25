@@ -7,7 +7,7 @@
     <string name="combo_section_class">Выберите класс</string>
     <string name="combo_section_combo">Сохранённые комбо</string>
     <string name="combo_none">Нет комбо</string>
-    <string name="combo_search_by_keys">Нажми клавиши умения — в списке останутся умения с этой командой</string>
+    <string name="combo_search_by_keys">Нажми клавиши умения — в списке останутся умения с этой командой</string>
     <string name="combo_search_start_keys">Начать ввод</string>
     <string name="combo_name_title">Название комбо</string>
     <string name="combo_name_cancel_tooltip">Закрыть окно, не сохраняя комбо</string>
@@ -132,7 +132,7 @@
     <string name="combo_menu_show">Показать комбо</string>
     <string name="combo_menu_hide">Скрыть комбо</string>
     <string name="combo_menu_hide_tooltip">Убрать комбо с экрана игры</string>
-    <string name="combo_menu_edit">Редактировать комбо</string>
+    <string name="combo_menu_edit">Редактировать</string>
     <string name="combo_menu_edit_tooltip">Открыть комбо в редакторе</string>
     <string name="combo_menu_empty">Сохранённых комбо нет</string>
     <string name="combo_panel_tab_combo">Комбо</string>
@@ -167,6 +167,5 @@
     <string name="combo_notice_tip_resync">Трекер сбился — начните комбо с первого умения: он узнает его и продолжит оттуда. Если не помогло, несколько секунд не применяйте умений комбо — трекер начнёт его сначала.</string>
     <string name="combo_notice_ok">Понятно</string>
     <string name="combo_notice_ok_tooltip">Закрыть окно с пояснением</string>
-    <string name="combo_notice_open">Как работает трекер</string>
     <string name="combo_notice_open_tooltip">Показать, как работает трекер комбо и что ему нужно</string>
 </resources>

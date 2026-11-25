@@ -26,6 +26,6 @@ data class GameInfoState(
     /** FPS включён и его можно мерить: сохранённая настройка без прав администратора не действует. */
     val fpsShown: Boolean get() = settings.fpsShown && fpsAvailable
 
-    /** Окно пинга видно: показывают пинг или FPS. */
-    val windowShown: Boolean get() = settings.shown || fpsShown
+    /** Окно пинга видно: показывают пинг, FPS или время. */
+    val windowShown: Boolean get() = settings.shown || fpsShown || settings.timeShown
 }

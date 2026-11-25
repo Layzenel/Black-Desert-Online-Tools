@@ -30,7 +30,9 @@ import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.layzen.bdotools.composable.skill.SkillMarkupText
 import com.layzen.bdotools.core.skill.domain.KeyBindings
+import com.layzen.bdotools.feature.comboassist.domain.keys.keyVariantLine
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_activation_recording
 import com.layzen.bdotools.uikit.theme.AppShapes
@@ -41,10 +43,10 @@ import org.jetbrains.compose.resources.stringResource
  * Запись команды умения: поверх всего окна, чтобы клик мыши в любом месте попал в запись (Shift + ЛКМ ловился только
  * над полем). Игрок зажимает клавиши и кнопки мыши, а когда отпустил все — [onDone] получает действия игры, которые они
  * значат по раскладке игры по умолчанию ([KeyBindings.Default]), в порядке нажатия. Клавиши без действия игры не
- * записываются. Esc — отмена (пустой набор). [label] — подпись действия.
+ * записываются. Esc — отмена (пустой набор). Клавиши видны подписью или картинкой, как выбрано в настройках.
  */
 @Composable
-internal fun KeyRecorder(label: (String) -> String, onDone: (Set<String>) -> Unit) {
+internal fun KeyRecorder(onDone: (Set<String>) -> Unit) {
     val actionOf = remember { KeyBindings.Default.keyCodes.entries.associate { (action, code) -> code to action } }
     var actions by remember { mutableStateOf(listOf<String>()) }
     var held by remember { mutableStateOf(setOf<Int>()) }
@@ -58,7 +60,6 @@ internal fun KeyRecorder(label: (String) -> String, onDone: (Set<String>) -> Uni
         held = held - code
         if (held.isEmpty() && actions.isNotEmpty()) onDone(actions.toCollection(LinkedHashSet()))
     }
-    val text = if (actions.isEmpty()) stringResource(Res.string.combo_activation_recording) else actions.joinToString(" + ") { label(it) }
     Popup(alignment = Alignment.Center, onDismissRequest = { onDone(emptySet()) }, properties = PopupProperties(focusable = true)) {
         Box(
             Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep.copy(alpha = SCRIM_ALPHA))
@@ -92,7 +93,10 @@ internal fun KeyRecorder(label: (String) -> String, onDone: (Set<String>) -> Uni
                 Modifier.background(AppTheme.colors.backgroundRaised, AppShapes.Small)
                     .border(AppTheme.dimens.borderWidth, AppTheme.colors.accentGold, AppShapes.Small)
                     .padding(horizontal = AppTheme.dimens.spaceL, vertical = AppTheme.dimens.spaceM),
-            ) { Text(text, style = AppTheme.typography.bodyBold, color = AppTheme.colors.textPrimary) }
+            ) {
+                if (actions.isEmpty()) Text(stringResource(Res.string.combo_activation_recording), style = AppTheme.typography.bodyBold, color = AppTheme.colors.textPrimary)
+                else SkillMarkupText(keyVariantLine(actions.toSet()), KeyBindings.Default, AppTheme.typography.bodyBold, AppTheme.colors.textPrimary)
+            }
         }
     }
 }

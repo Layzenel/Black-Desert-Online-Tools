@@ -1,12 +1,21 @@
 package com.layzen.bdotools.composable.skill
 
 import com.layzen.bdotools.core.skill.domain.keyName
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import com.layzen.bdotools.composable.resources.skill_key_shift_short
 import com.layzen.bdotools.composable.resources.skill_key_lmb_short
 import com.layzen.bdotools.composable.resources.skill_key_rmb_short
@@ -25,20 +34,48 @@ import com.layzen.bdotools.composable.resources.skill_key_space
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Текст тултипа навыка [markup] с цветами сайта данных; `{KeyBind:…}` заменяется подписью клавиши из [keys].
- * Действие без клавиши остаётся своим именем.
+ * Текст тултипа навыка [markup] с цветами сайта данных; `{KeyBind:…}` — клавиша из [keys], как выбрано в настройках
+ * (Отображение): подписью или картинкой ([KeyIcon], цвета [color]). Действие без клавиши остаётся своим именем.
  */
 @Composable
-fun skillMarkupText(markup: String, keys: KeyBindings): AnnotatedString {
+fun SkillMarkupText(
+    markup: String,
+    keys: KeyBindings,
+    style: TextStyle,
+    color: Color,
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+) {
     val label = rememberPartLabel(keys)
-    return buildAnnotatedString {
+    val icon = rememberKeyIcon(keys)
+    val icons = mutableMapOf<String, DrawableResource>()
+    val text = buildAnnotatedString {
         parseSkillMarkup(markup).forEach { part ->
-            val text = label(part)
-            val color = part.color
-            if (color == null) append(text) else withStyle(SpanStyle(color = Color(0xFF000000 or color.toLong()))) { append(text) }
+            val keyIcon = (part as? SkillTextPart.Key)?.let { icon(it.action) }
+            val partColor = part.color
+            when {
+                part is SkillTextPart.Key && keyIcon != null -> {
+                    val id = KEY_ICON_ID + part.action
+                    icons[id] = keyIcon
+                    appendInlineContent(id, label(part))
+                }
+                partColor == null -> append(label(part))
+                else -> withStyle(SpanStyle(color = Color(0xFF000000 or partColor.toLong()))) { append(label(part)) }
+            }
         }
     }
+    // картинка клавиши высотой в строку текста, как в KeyIcon, ширина — по её пропорциям (Shift — широкая клавиша)
+    val size = if (style.lineHeight.isSp) style.lineHeight else style.fontSize
+    val inline = icons.mapValues { (_, keyIcon) ->
+        val intrinsic = painterResource(keyIcon).intrinsicSize
+        val aspect = if (intrinsic.height > 0f) intrinsic.width / intrinsic.height else 1f
+        InlineTextContent(Placeholder(size * aspect, size, PlaceholderVerticalAlign.TextCenter)) { KeyIcon(keyIcon, style, color) }
+    }
+    Text(text, modifier, style = style, color = color, maxLines = maxLines, overflow = TextOverflow.Ellipsis, inlineContent = inline)
 }
+
+/** Начало id картинки клавиши во встроенном содержимом текста. */
+private const val KEY_ICON_ID = "key:"
 
 /** Куски тултипа [parts] одной строкой без цветов: `{KeyBind:…}` — подписью клавиши из [keys], как в тултипе. */
 @Composable

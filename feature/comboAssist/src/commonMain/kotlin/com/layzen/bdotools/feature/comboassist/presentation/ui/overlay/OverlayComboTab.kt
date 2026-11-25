@@ -61,6 +61,7 @@ import com.layzen.bdotools.uikit.components.verticalScrollbar
 import com.layzen.bdotools.uikit.icons.icon
 import com.layzen.bdotools.uikit.icons.title
 import com.layzen.bdotools.uikit.theme.AppTheme
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -127,7 +128,11 @@ private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit, onHover:
     val tint = ColorFilter.tint(AppTheme.colors.textBeige)
     val scroll = rememberScrollState()
     var hovered by remember { mutableStateOf<Combo?>(null) }
-    LaunchedEffect(hovered) { onHover(hovered) }
+    LaunchedEffect(hovered) {
+        // между строками курсор на миг ни над одной: схема не прячется, чтобы её окно не мигало при переходе
+        if (hovered == null) delay(HOVER_HIDE_DELAY_MS)
+        onHover(hovered)
+    }
     val reorder = rememberReorderState { from, to -> onEvent(ComboEvent.MoveCombo(from, to)) }
     Column(Modifier.fillMaxWidth().heightIn(max = ComboDimens.overlayPanelListHeight).verticalScrollbar(scroll).verticalScroll(scroll)) {
         state.combos.forEachIndexed { index, combo ->
@@ -146,6 +151,9 @@ private fun ComboList(state: ComboState, onEvent: (ComboEvent) -> Unit, onHover:
         }
     }
 }
+
+/** Через сколько мс после ухода курсора с комбо прятать его схему. */
+private const val HOVER_HIDE_DELAY_MS = 150L
 
 /** Непрозрачность оверлея комбо, проценты: совсем прозрачный не нужен — его не найти. */
 private val COMBO_OPACITY = 20..100

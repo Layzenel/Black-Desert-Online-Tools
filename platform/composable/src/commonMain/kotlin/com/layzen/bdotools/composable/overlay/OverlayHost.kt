@@ -29,8 +29,10 @@ fun OverlayHost(contributions: List<OverlayContribution>, onOpenApp: (id: String
         .sortedBy { it.second.order }
     if (tabs.isEmpty()) return
     var open by remember { mutableStateOf(false) }
+    // то, что вкладка показывает рядом с меню (схема комбо под курсором)
+    var aside by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
     OverlayMenuWindow(open) { dragModifier, gameElevated -> OverlayMenuButton(open, { open = it }, dragModifier, gameElevated) }
-    OverlayPanelWindow(open) { dragModifier, alignEnd ->
-        if (open) OverlayMenuPanel(tabs, onOpenApp, onClose = { open = false }, dragModifier, alignEnd)
+    OverlayPanelWindow(open, aside.takeIf { open }) { dragModifier ->
+        if (open) OverlayMenuPanel(tabs, onOpenApp, onClose = { open = false }, dragModifier, onAside = { aside = it })
     }
 }

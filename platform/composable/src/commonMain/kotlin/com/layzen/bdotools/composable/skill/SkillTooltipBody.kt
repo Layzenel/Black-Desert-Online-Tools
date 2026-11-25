@@ -2,7 +2,6 @@ package com.layzen.bdotools.composable.skill
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.AnnotatedString
 import com.layzen.bdotools.core.skill.domain.KeyBindings
 import com.layzen.bdotools.core.skill.domain.SkillText
 import com.layzen.bdotools.composable.resources.Res
@@ -25,7 +24,7 @@ import org.jetbrains.compose.resources.stringResource
  */
 @Composable
 fun SkillTooltipBody(text: SkillText, keys: KeyBindings) {
-    Section(stringResource(Res.string.skill_tooltip_description), skillMarkupText(text.description.trim(), keys))
+    Section(stringResource(Res.string.skill_tooltip_description), text.description.trim(), keys)
     val requirements = listOfNotNull(
         text.requiredLevel.takeIf { it > 0 }?.let { stringResource(Res.string.skill_tooltip_level, it) },
         text.requiredSkillPoints.takeIf { it > 0 }?.let { stringResource(Res.string.skill_tooltip_skill_points, it) },
@@ -43,17 +42,17 @@ fun SkillTooltipBody(text: SkillText, keys: KeyBindings) {
             }
         }
     }
-    Section(stringResource(Res.string.skill_tooltip_command), skillMarkupText(text.command.trim(), keys))
+    Section(stringResource(Res.string.skill_tooltip_command), text.command.trim(), keys)
     val effects = text.effects.joinToString("\n\n") { it.joinToString("\n") }
-    Section(stringResource(Res.string.skill_tooltip_effects), skillMarkupText(effects.trim(), keys))
+    Section(stringResource(Res.string.skill_tooltip_effects), effects.trim(), keys)
 }
 
 /** Блок с заголовком и текстом; без текста блока нет. */
 @Composable
-private fun Section(title: String, body: AnnotatedString) {
-    if (body.isBlank()) return
+private fun Section(title: String, markup: String, keys: KeyBindings) {
+    if (markup.isBlank()) return
     TooltipSection(title = title) {
-        Text(body, style = AppTheme.typography.body, color = AppTheme.colors.textPrimary)
+        SkillMarkupText(markup, keys, AppTheme.typography.body, AppTheme.colors.textPrimary)
     }
 }
 

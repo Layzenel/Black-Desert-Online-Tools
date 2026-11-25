@@ -24,6 +24,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * Поле ввода (поиск, числа в калькуляторах). Тёмная подложка, бежевая подсказка.
  * [leading] и [trailing] — иконки или кнопки слева и справа от текста.
  * [minLines] больше 1 — многострочное поле, например для вставки текста файла.
+ * [clearable] — крестик в конце непустого поля очищает его (после [trailing]); у чисел ([NumberField]) его нет.
  */
 @Composable
 fun InputField(
@@ -36,6 +37,7 @@ fun InputField(
     keyboardType: KeyboardType = KeyboardType.Text,
     textAlign: TextAlign = TextAlign.Start,
     minLines: Int = 1,
+    clearable: Boolean = true,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -73,6 +75,7 @@ fun InputField(
                     inner()
                 }
                 if (trailing != null) trailing()
+                if (clearable && value.isNotEmpty()) CloseButton({ onValueChange("") })
             }
         },
     )

@@ -28,6 +28,7 @@ internal object ComboDimens {
     val frame = 2.dp
     val nextFrame = 3.dp
     val gapButton = 22.dp
+    val activationWidth = 200.dp
     val forkIcon = 12.dp
     val keyCapPadding = 3.dp
     val keyCapMinWidth = 18.dp

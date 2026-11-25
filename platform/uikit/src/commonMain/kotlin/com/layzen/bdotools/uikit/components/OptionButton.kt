@@ -1,6 +1,7 @@
 package com.layzen.bdotools.uikit.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
@@ -34,6 +35,7 @@ import com.layzen.bdotools.uikit.theme.AppTheme
  * светло-коричневая подложка и светлый текст; выбранный — коричневая подложка, светлая отметка в индикаторе.
  * Тёмная рамка снаружи и светлая кромка внутри, углы скруглены [AppShapes.Control].
  * [icon] — картинка (белый силуэт) вместо подписи, цвета подписи; [text] тогда — её описание для экранного диктора.
+ * [content] — своё содержимое вместо подписи (текст с картинками клавиш), получает цвет подписи.
  */
 @Composable
 fun OptionButton(
@@ -43,6 +45,7 @@ fun OptionButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: Painter? = null,
+    content: (@Composable (color: Color) -> Unit)? = null,
 ) {
     val colors = AppTheme.colors
     val dimens = AppTheme.dimens
@@ -88,7 +91,9 @@ fun OptionButton(
             }
         }
         val contentColor = if (selected || highlighted) colors.textSelected else colors.textDisabled
-        if (icon != null) {
+        if (content != null) {
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { content(contentColor) }
+        } else if (icon != null) {
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 Image(icon, contentDescription = text, modifier = Modifier.size(dimens.iconSize), colorFilter = ColorFilter.tint(contentColor))
             }

@@ -26,10 +26,10 @@ import org.jetbrains.compose.resources.stringResource
  * Пинг игры на тёмной подложке: значок связи и миллисекунды, оба цвета качества — до 60 мс зелёный, до 120
  * золотой, до 200 оранжевый, дальше красный; `null` — пинг не узнать (игра не запущена). Справа — FPS ([fps]), если его
  * показывают; без пинга ([showPing] = `false`) на подложке один FPS. В подробном виде ([fpsStyle]) под строкой —
- * график времени кадра шириной со строку.
+ * график времени кадра шириной со строку. [showTime] — в конце строки время ПК.
  */
 @Composable
-internal fun PingBadge(ping: Int?, showPing: Boolean, fps: FrameStats?, showFps: Boolean, fpsStyle: FpsStyle) {
+internal fun PingBadge(ping: Int?, showPing: Boolean, fps: FrameStats?, showFps: Boolean, fpsStyle: FpsStyle, showTime: Boolean) {
     Column(
         Modifier.width(IntrinsicSize.Max)
             .background(AppTheme.colors.backgroundDeep.copy(alpha = BACKDROP_ALPHA)).border(GameInfoDimens.frame, AppTheme.colors.border)
@@ -39,6 +39,7 @@ internal fun PingBadge(ping: Int?, showPing: Boolean, fps: FrameStats?, showFps:
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS), verticalAlignment = Alignment.CenterVertically) {
             if (showPing) PingValue(ping)
             if (showFps) FpsValue(fps, fpsStyle)
+            if (showTime) TimeValue()
         }
         if (showFps && fpsStyle == FpsStyle.Detailed && fps != null) FrameGraph(fps)
     }

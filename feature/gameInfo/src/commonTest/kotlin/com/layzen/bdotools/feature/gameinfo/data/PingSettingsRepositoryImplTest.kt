@@ -17,8 +17,8 @@ class PingSettingsRepositoryImplTest {
     @Test
     fun savedSettingsReadBack() = runTest {
         val repository = PingSettingsRepositoryImpl(MemoryStorage())
-        repository.save(PingSettings(true, 150, 70, true, FpsStyle.Detailed, gridShown = true, gridStep = GridStep.Game))
-        assertEquals(PingSettings(true, 150, 70, true, FpsStyle.Detailed, true, GridStep.Game), repository.settings())
+        repository.save(PingSettings(true, 150, 70, true, FpsStyle.Detailed, gridShown = true, gridStep = GridStep.Game, timeShown = true))
+        assertEquals(PingSettings(true, 150, 70, true, FpsStyle.Detailed, true, GridStep.Game, timeShown = true), repository.settings())
     }
 
     @Test
