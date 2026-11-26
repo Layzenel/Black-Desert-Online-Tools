@@ -16,7 +16,7 @@ package com.layzen.bdotools.feature.comboassist.domain.tracker
  * @property lastComboMs когда было последнее умение комбо или филлер: от него считается простой
  * @property lane ветка развилки (строка), по которой игрок шёл последней: при неоднозначности трекер держится её
  * @property usedAt когда шаг проходили последний раз (мс), по номеру шага; не сбрасывается между проходами — по нему
- *   ветки развилки идут по очереди
+ *   ветки развилки идут по очереди; очищается при сбросе комбо
  */
 class TrackerState {
     var positions: List<Int> = emptyList(); internal set

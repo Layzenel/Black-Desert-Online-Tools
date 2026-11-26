@@ -62,6 +62,14 @@ class ForkRotationTest {
     }
 
     @Test
+    fun idleResetStartsLanesFromTheFirst() {
+        val tracker = ComboTracker(twoLanes, ComboSkills.Empty)
+        tracker.press(A1, B)
+        assertIs<TrackerEvent.Reset>(tracker.tick(9 * step))
+        assertEquals(A1, tracker.next(9 * step).first())
+    }
+
+    @Test
     fun olderLaneWaitsUpToOneStep() {
         val tracker = ComboTracker(twoLanes, skills(cooldownA1 = 4 * step + step / 2))
         tracker.press(A1, B, A2, B)
