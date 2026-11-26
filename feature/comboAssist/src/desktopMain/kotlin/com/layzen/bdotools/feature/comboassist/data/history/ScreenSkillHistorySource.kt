@@ -99,13 +99,12 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         val accountDir = folder?.let { SlotLayoutFiles.accountDir(it, settings.account) }
         val accountText = accountDir?.let(SlotLayoutFiles::accountText)
         val geometry = HistoryGeometry.forScreen(accountText?.let(HistoryPlace::parse))
-        val layouts = accountDir?.let(SlotLayoutFiles::readAll).orEmpty()
-        val slots = CooldownSlotWatch(layouts, matcher, log)
+        val slots = CooldownSlotWatch({ accountDir?.let(SlotLayoutFiles::readAll).orEmpty() }, matcher, log)
         val merge = HistoryMerge()
         val keys = KeyStepWatch(log)
         val resource = ResourceWatch.of(accountText, log)
         currentCoroutineContext().job.invokeOnCompletion { keys.close() }
-        log.line(0, "start: $geometry, icons ${icons.size}, combo ${preferred.size}, characters with cooldown slots ${layouts.values.count { it.slots.isNotEmpty() }}")
+        log.line(0, "start: $geometry, icons ${icons.size}, combo ${preferred.size}")
         var gameActive = false
         // лучший кадр открытой и ещё не узнанной строки: в журнал вместе с картинкой, если узнать не выйдет
         var miss: Pair<IconMatch, BufferedImage>? = null
