@@ -82,8 +82,10 @@ class ComboTracker(private val combo: Combo, private val skills: ComboSkills, pr
         return TrackerEvent.Step(skillNo, wrapped, chain = chain)
     }
 
+    /** Комбо сначала: и позиция, и очередь веток развилок. */
     private fun resetPosition() {
         state.positions = emptyList(); state.done.clear(); state.burned.clear()
+        state.usedAt.clear(); state.lane = null
         state.forced = null; state.rescue = null; state.offCount = 0
     }
 
