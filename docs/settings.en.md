@@ -15,7 +15,7 @@ Only in the installed Windows app; on the website the switches are disabled, wit
 
 ## Display
 
-"Key hints" — how skill keys are labeled in the tracker and the combo schema: Shift as a word, "Sh" or a picture; LMB and RMB as a word or a mouse picture.
+"Key hints" — how skill keys are labeled in the tracker and the combo schema: Shift as a word, "Sh" or a picture; LMB and RMB as a word or a picture of the two mouse buttons; W/A/S/D as letters or arrows ↑/←/↓/→.
 
 ## Theme
 

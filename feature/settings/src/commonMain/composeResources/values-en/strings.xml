@@ -24,10 +24,12 @@
     <string name="settings_display_shift">Shift key</string>
     <string name="settings_display_lmb">Left mouse button</string>
     <string name="settings_display_rmb">Right mouse button</string>
+    <string name="settings_display_move">Movement keys</string>
     <string name="settings_key_text_shift">Shift</string>
     <string name="settings_key_text_shift_short">Sh</string>
     <string name="settings_key_text_lmb">LMB</string>
     <string name="settings_key_text_rmb">RMB</string>
+    <string name="settings_key_text_move">W/A/S/D</string>
     <string name="settings_key_text_lmb_short">L</string>
     <string name="settings_key_text_rmb_short">R</string>
     <string name="settings_key_style_icon">Icon</string>

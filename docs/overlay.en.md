@@ -25,10 +25,11 @@ While the game hides the cursor (combat mode), the button and windows pass click
   to the slot in game.
 - "Skill protection on slots" — shields in the top-right corner of the icon: yellow — Super
   Armor, blue — Forward Guard, red — Invincible. Protection against monsters only (PvE) is not shown.
-  Shields and tooltips disappear from slots covered by a game window (skills, settings, hidden UI), each slot on its own; when all are covered, the tracker and the layout hide too.
+  Shields are shown only in combat mode, while the game hides the cursor: with the cursor, game windows are open and may cover the slots.
+  Tooltips disappear from slots covered by a game window (skills, settings, hidden UI), each slot on its own;
+  when all are covered, the tracker and the layout hide too.
 - "Crowd controls on slots" — crowd control icons (stun, knockdown and so on) at the
   bottom of the icon, as in game. Crowd controls against monsters only are not shown; they hide together with the shields.
-  Hover a shield or a crowd control icon to see its name.
 
 - "Show grid" and "Grid step (game UI units)" (10, 25 or 50) and a "Grid opacity" slider (20 to 100 %) — a grid over the game screen to line windows up, measured from the crosshair (the screen center). It assumes the game is fullscreen or windowed fullscreen on the primary monitor; the resolution and interface size come from `gamevariable.xml`.
 

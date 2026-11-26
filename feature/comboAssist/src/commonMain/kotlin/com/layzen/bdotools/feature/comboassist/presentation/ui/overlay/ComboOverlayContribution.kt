@@ -65,7 +65,10 @@ internal fun comboOverlayContribution(): OverlayContribution = OverlayContributi
 private fun ComboOverlayWindows(viewModel: ComboViewModel) {
     if (!viewModel.canWatchGame) return
     val state by viewModel.state.collectAsState()
-    val hidden by viewModel.hiddenSlots.collectAsState()
+    // видимость слотов снимает экран 10 раз в секунду: подписываемся, только пока её кто-то использует —
+    // тултипы умений или показанный трекер; без подписки поток останавливается
+    val needsVisibility = state.settings.slotTooltips || (state.overlayShown && state.tracked != null)
+    val hidden = if (needsVisibility) viewModel.hiddenSlots.collectAsState().value else emptySet()
     val visibleSlots = state.slots.filterIndexed { index, _ -> index !in hidden }
     // все слоты закрыты окном игры (умения, настройки, карта) — трекер и схема прячутся вместе с ними
     val slotsCovered = state.slots.isNotEmpty() && visibleSlots.isEmpty()
@@ -93,8 +96,9 @@ private fun ComboOverlayWindows(viewModel: ComboViewModel) {
     }
     val protections = if (state.settings.slotShields) state.slotProtections else emptyMap()
     val controls = if (state.settings.slotControls) state.slotControls else emptyMap()
-    if (state.settings.slotTooltips) SlotTooltipWindow(visibleSlots, state.slotSkills, viewModel::details, protections, controls)
-    if (state.settings.slotShields || state.settings.slotControls) SlotShieldsWindow(visibleSlots, protections, controls)
+    if (state.settings.slotTooltips) SlotTooltipWindow(visibleSlots, state.slotSkills, viewModel::details)
+    // значки видны только при спрятанном курсоре (окна игры с курсором), проверка видимости слотов их только прятала зря
+    if (state.settings.slotShields || state.settings.slotControls) SlotShieldsWindow(state.slots, protections, controls)
 }
 
 /** Пункт общей вкладки «Настройки»: тултипы над слотами перезарядки, щиты защиты и значки контролей на слотах. */

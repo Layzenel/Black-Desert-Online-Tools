@@ -11,10 +11,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -95,7 +98,10 @@ fun OptionButton(
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { content(contentColor) }
         } else if (icon != null) {
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                Image(icon, contentDescription = text, modifier = Modifier.size(dimens.iconSize), colorFilter = ColorFilter.tint(contentColor))
+                // высота — как у иконки, ширина — по пропорциям картинки: широкая клавиша (Shift, ряд стрелок) не сжимается в квадрат
+                val intrinsic = icon.intrinsicSize
+                val aspect = if (intrinsic.isSpecified && intrinsic.height > 0f) intrinsic.width / intrinsic.height else 1f
+                Image(icon, contentDescription = text, modifier = Modifier.height(dimens.iconSize).aspectRatio(aspect), colorFilter = ColorFilter.tint(contentColor))
             }
         } else {
             Text(

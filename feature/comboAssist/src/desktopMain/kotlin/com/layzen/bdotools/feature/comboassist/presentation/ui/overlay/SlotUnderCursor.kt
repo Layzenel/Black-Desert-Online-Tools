@@ -12,10 +12,9 @@ import kotlin.math.abs
  * так масштаб Windows не мешает. Игра на весь основной экран («Полноэкранный в окне»). Курсор, спрятанный игрой
  * (режим боя), ни над чем не стоит; курсор над щитом или значком контроля из [marks] — тоже: там своя подсказка.
  */
-internal fun slotUnderCursor(slots: List<ScreenSlot>, marks: List<SlotMarks>): ScreenSlot? {
+internal fun slotUnderCursor(slots: List<ScreenSlot>): ScreenSlot? {
     if (!isCursorShown()) return null
     val pointer = MouseInfo.getPointerInfo()?.location ?: return null
-    if (marks.any { it.titleAt(Offset(pointer.x.toFloat(), pointer.y.toFloat())) != null }) return null
     val screen = Toolkit.getDefaultToolkit().screenSize
     val x = pointer.x.toDouble() / screen.width
     val y = pointer.y.toDouble() / screen.height
