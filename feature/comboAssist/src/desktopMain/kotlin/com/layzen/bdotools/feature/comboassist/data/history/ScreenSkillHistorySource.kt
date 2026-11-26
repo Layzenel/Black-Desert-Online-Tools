@@ -8,7 +8,7 @@ import com.layzen.bdotools.feature.comboassist.data.rage.rageBuffs
 import com.layzen.bdotools.feature.comboassist.data.slots.CooldownSlot
 import com.layzen.bdotools.feature.comboassist.data.slots.CooldownSlotWatch
 import com.layzen.bdotools.feature.comboassist.data.slots.HistoryMerge
-import com.layzen.bdotools.feature.comboassist.data.slots.PlayedCharacterDetector
+import com.layzen.bdotools.feature.comboassist.data.slots.PlayedLayout
 import com.layzen.bdotools.feature.comboassist.data.slots.SlotLayout
 import com.layzen.bdotools.feature.comboassist.data.slots.SlotLayoutFiles
 import com.layzen.bdotools.feature.comboassist.data.slots.slotVisibility
@@ -44,9 +44,8 @@ import kotlin.time.TimeSource
  * ([KeyStepWatch]) и расход ресурса ([ResourceWatch]). Чему верить первым — в [HistoryMerge].
  * Ход работы — в [WatchLog].
  *
- * shortcut: область истории — замер 2026-11-13 (2560×1440, «Размер интерфейса» 80 %, элемент у левого края над чатом),
- * пересчитанный по высоте экрана; когда понадобится другая позиция — брать `UIData Index="158"` из
- * `gamevariable.xml` выбранного аккаунта и дать игроку подвинуть рамку.
+ * Место истории — `UIData Index="158"` файла аккаунта ([HistoryPlace]), читается при старте слежения: если игрок
+ * подвинул историю, игра запишет новое место только при смене персонажа, телепорте или выходе.
  */
 internal class ScreenSkillHistorySource : SkillHistorySource {
     override val supported: Boolean = true
@@ -97,16 +96,16 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         val lines = HistoryLines()
         val robot = Robot()
         val start = TimeSource.Monotonic.markNow()
-        val geometry = HistoryGeometry.forScreen()
         val accountDir = folder?.let { SlotLayoutFiles.accountDir(it, settings.account) }
+        val accountText = accountDir?.let(SlotLayoutFiles::accountText)
+        val geometry = HistoryGeometry.forScreen(accountText?.let(HistoryPlace::parse))
         val layouts = accountDir?.let(SlotLayoutFiles::readAll).orEmpty()
         val slots = CooldownSlotWatch(layouts, matcher, log)
         val merge = HistoryMerge()
         val keys = KeyStepWatch(log)
-        val accountText = accountDir?.let(SlotLayoutFiles::accountText)
         val resource = ResourceWatch.of(accountText, log)
         currentCoroutineContext().job.invokeOnCompletion { keys.close() }
-        log.line(0, "start: $geometry, icons ${icons.size}, combo ${preferred.size}, characters with cooldown slots ${layouts.size}")
+        log.line(0, "start: $geometry, icons ${icons.size}, combo ${preferred.size}, characters with cooldown slots ${layouts.values.count { it.slots.isNotEmpty() }}")
         var gameActive = false
         // лучший кадр открытой и ещё не узнанной строки: в журнал вместе с картинкой, если узнать не выйдет
         var miss: Pair<IconMatch, BufferedImage>? = null
@@ -177,7 +176,7 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         if (!isGameForeground()) return@withContext null
         val settings = GameFolderSettings()
         val layouts = settings.folder?.let { SlotLayoutFiles.accountDir(it, settings.account) }?.let(SlotLayoutFiles::readAll).orEmpty()
-        val skills = layouts.flatMap { layout -> layout.slots.map { it.skillNo } }.toSet()
+        val skills = layouts.values.flatMap { layout -> layout.slots.map { it.skillNo } }.toSet()
         // иконки скачиваются один раз и лежат в памяти: проверка повторяется, пока программа следит за игрой
         val missing = skills - triedIcons
         triedIcons += missing
@@ -191,7 +190,7 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         }
         // иконки могли качаться долго: пока качались, игру могли свернуть
         if (!isGameForeground()) return@withContext null
-        val layout = PlayedCharacterDetector.detect(Robot(), layouts, slotMatcher) ?: return@withContext null
+        val layout = PlayedLayout.find(Robot(), layouts, slotMatcher) ?: return@withContext null
         played = layout
         val size = SLOT_UNITS * layout.uiScale / layout.resolutionHeight
         layout.slots.map { ScreenSlot(it.skillNo, it.centerX, it.centerY, size) }

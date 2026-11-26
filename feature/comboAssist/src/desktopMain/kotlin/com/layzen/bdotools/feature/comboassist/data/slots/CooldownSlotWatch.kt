@@ -2,29 +2,30 @@ package com.layzen.bdotools.feature.comboassist.data.slots
 
 import com.layzen.bdotools.feature.comboassist.data.history.IconMatcher
 import com.layzen.bdotools.feature.comboassist.data.history.WatchLog
-import com.layzen.bdotools.feature.comboassist.data.history.captureScreen
 import com.layzen.bdotools.composable.overlay.isCursorShown
 import java.awt.MouseInfo
 import java.awt.Robot
 
 /**
- * Слоты перезарядок во время слежения: какие умения только что ушли на перезарядку. Раскладка — того персонажа,
- * которого видно на экране ([PlayedCharacterDetector]), а не угаданного по файлам: у двух персонажей одного класса
- * слоты бывают разложены по-разному, и чужая раскладка выдала бы не то умение. Персонаж проверяется раз в
- * [DETECT_MS]; пока он не узнан, слоты молчат. Пока курсор показан над слотами, слоты тоже молчат.
+ * Слоты перезарядок и хотбара во время слежения: какие умения только что ушли на перезарядку. Раскладка — того
+ * персонажа, которым играют ([PlayedLayout]): у двух персонажей одного класса слоты бывают разложены по-разному, и
+ * чужая раскладка выдала бы не то умение. Персонаж проверяется раз в [DETECT_MS]; пока он не узнан или все его слоты
+ * скрыты, слоты молчат. Пока курсор показан над слотами, слоты тоже молчат.
  *
- * @property layouts слоты всех персонажей аккаунта
+ * С хотбара следятся только умения, которых нет на видимых слотах перезарядки: одно умение в обоих рядах темнеет
+ * дважды, а слот перезарядки точнее (на хотбаре бывают и предметы).
+ *
+ * @property layouts слоты всех персонажей аккаунта по `CharacterNo`
  * @property matcher иконки умений для узнавания персонажа
  * @property log журнал слежения
  */
 internal class CooldownSlotWatch(
-    private val layouts: List<SlotLayout>,
+    private val layouts: Map<String, SlotLayout>,
     private val matcher: IconMatcher,
     private val log: WatchLog,
 ) {
     private var layout: SlotLayout? = null
-    private var geometry: SlotGeometry? = null
-    private var darkening: SlotDarkening? = null
+    private var rows: List<SlotRowWatch> = emptyList()
     private var detectedAt = -DETECT_MS
 
     /** Кадр в момент [nowMs] → умения, чьи слоты только что ушли на перезарядку. */
@@ -33,34 +34,30 @@ internal class CooldownSlotWatch(
             detectedAt = nowMs
             detect(robot, nowMs)
         }
-        val current = layout ?: return emptyList()
-        val slots = geometry ?: return emptyList()
-        val shot = captureScreen(robot, slots.logicalArea, slots.area.width, slots.area.height)
-        val gone = darkening?.onFrame(slots.saturations(shot)).orEmpty()
-        if (gone.isNotEmpty() && pointerOverSlots(slots)) {
-            gone.forEach { log.line(nowMs, "slot ${current.slots[it].skillNo} darkened under the cursor, ignored") }
-            return emptyList()
-        }
-        return gone.map { current.slots[it].skillNo }
+        val gone = rows.associateWith { it.onFrame(robot) }.filterValues { it.isNotEmpty() }
+        val (ignored, used) = gone.entries.partition { (row, _) -> pointerOver(row.geometry) }
+        ignored.flatMap { it.value }.forEach { log.line(nowMs, "slot ${it.skillNo} darkened under the cursor, ignored") }
+        return used.flatMap { it.value }.map { it.skillNo }
     }
 
     /**
-     * Курсор показан и стоит над слотами: тултипы и подсказки у курсора закрывают соседние слоты, а снимок экрана видит
-     * их вместе с игрой — потемневший слот тогда не значит, что умение применили. В бою игра курсор прячет.
+     * Курсор показан и стоит над рядом слотов: тултипы и подсказки у курсора закрывают соседние слоты, а снимок экрана
+     * видит их вместе с игрой — потемневший слот тогда не значит, что умение применили. В бою игра курсор прячет.
      */
-    private fun pointerOverSlots(slots: SlotGeometry): Boolean {
+    private fun pointerOver(slots: SlotGeometry): Boolean {
         if (!isCursorShown()) return false
         val pointer = MouseInfo.getPointerInfo()?.location ?: return false
         return slots.logicalArea.contains(pointer)
     }
 
     private fun detect(robot: Robot, nowMs: Long) {
-        val found = PlayedCharacterDetector.detect(robot, layouts, matcher) ?: return
+        val found = PlayedLayout.find(robot, layouts, matcher) ?: return
         if (found == layout) return
         layout = found
-        geometry = SlotGeometry.forScreen(found)
-        darkening = SlotDarkening(found.slots.size)
-        log.line(nowMs, "cooldown slots of the played character: ${found.slots.map { it.skillNo }}")
+        val onSlots = found.slots.map { it.skillNo }.toSet()
+        val hotbar = found.hotbar.filter { it.skillNo !in onSlots }
+        rows = listOfNotNull(SlotRowWatch.of(found, found.slots), SlotRowWatch.of(found, hotbar))
+        log.line(nowMs, "played character: cooldown slots ${found.slots.map { it.skillNo }}, hotbar ${hotbar.map { it.skillNo }}")
     }
 
     private companion object {

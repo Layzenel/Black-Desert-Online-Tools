@@ -10,6 +10,7 @@ import com.layzen.bdotools.core.skill.domain.KeyBindings
  * @property resolutionHeight высота разрешения игры в пикселях
  * @property keys клавиши действий персонажа (`ShortcutKey_Action_Key` его файла)
  * @property historyShown видна ли у персонажа «История испол. навыков» ([parseHistoryShown])
+ * @property hotbar видимые слоты хотбара с умениями: они, как и слоты перезарядки, темнеют, когда умение применили
  */
 internal data class SlotLayout(
     val slots: List<CooldownSlot>,
@@ -17,4 +18,5 @@ internal data class SlotLayout(
     val resolutionHeight: Int,
     val keys: KeyBindings = KeyBindings.Default,
     val historyShown: Boolean = true,
+    val hotbar: List<CooldownSlot> = emptyList(),
 )

@@ -12,7 +12,7 @@ import kotlin.io.path.name
 
 /**
  * Читает слоты перезарядок всех персонажей выбранного аккаунта из файлов игры. Какой персонаж сейчас в игре,
- * файлы не говорят: его узнаёт [PlayedCharacterDetector] по слотам на экране.
+ * эти файлы не говорят: его находит [PlayedLayout].
  * Файлы игры смешанной кодировки читаются как Latin-1: нужны только числа.
  */
 internal object SlotLayoutFiles {
@@ -35,8 +35,11 @@ internal object SlotLayoutFiles {
         }
     }
 
-    /** Слоты всех персонажей аккаунта [accountDir], у кого они есть. */
-    fun readAll(accountDir: Path): List<SlotLayout> = characters(accountDir).map { it.second }.filter { it.slots.isNotEmpty() }
+    /**
+     * Слоты всех персонажей аккаунта [accountDir] по `CharacterNo`; у персонажа, чьи слоты все скрыты или пусты,
+     * раскладка без слотов.
+     */
+    fun readAll(accountDir: Path): Map<String, SlotLayout> = characters(accountDir)
 
     /** Текст файла аккаунта [accountDir] (как Latin-1) или `null`, если его не прочитать. */
     fun accountText(accountDir: Path): String? = try {
@@ -45,34 +48,37 @@ internal object SlotLayoutFiles {
         null
     }
 
-    /** Персонажи аккаунта: время изменения их файла и слоты. Пусто, если файлы не прочитать. */
-    private fun characters(accountDir: Path): List<Pair<Long, SlotLayout>> = try {
+    /** Персонажи аккаунта: `CharacterNo` → слоты. Пусто, если файлы не прочитать. */
+    private fun characters(accountDir: Path): Map<String, SlotLayout> = try {
         val accountText = readGameFile(accountDir)
         val height = accountText?.let(::parseResolutionHeight)
         if (accountText == null || height == null) {
-            emptyList()
+            emptyMap()
         } else {
             val centers = parseSlotCenters(accountText)
+            val hotbarCenters = parseHotbarCenters(accountText)
             val scale = parseUiScale(accountText) ?: 1.0
-            characterFiles(accountDir).map { (modified, text) ->
-                val hidden = parseHiddenSlots(text)
-                val slots = parseSlotSkills(text).filterKeys { it !in hidden }.mapNotNull { (slot, skillNo) ->
-                    centers[slot]?.let { (x, y) -> CooldownSlot(skillNo, x, y) }
-                }
-                modified to SlotLayout(slots, scale, height, parseKeyBindings(text), parseHistoryShown(text, accountText))
+            characterFiles(accountDir).mapValues { (_, text) ->
+                val slots = visibleSlots(parseSlotSkills(text), parseHiddenSlots(text), centers)
+                val hotbar = visibleSlots(parseHotbarSkills(text), parseHiddenHotbar(text), hotbarCenters)
+                SlotLayout(slots, scale, height, parseKeyBindings(text), parseHistoryShown(text, accountText), hotbar)
             }
         }
     } catch (e: IOException) {
-        emptyList()
+        emptyMap()
     }
 
-    /** Файлы персонажей: время изменения (для сравнения) и текст. */
-    private fun characterFiles(accountDir: Path): List<Pair<Long, String>> {
-        val dir = accountDir.resolve(CHARACTERS_DIR).takeIf { it.isDirectory() } ?: return emptyList()
+    /** Слоты с умениями [skills] (номер слота → умение), кроме скрытых [hidden], на местах [centers]. */
+    private fun visibleSlots(skills: Map<Int, Int>, hidden: Set<Int>, centers: Map<Int, Pair<Double, Double>>): List<CooldownSlot> =
+        skills.filterKeys { it !in hidden }.mapNotNull { (slot, skillNo) -> centers[slot]?.let { (x, y) -> CooldownSlot(skillNo, x, y) } }
+
+    /** Тексты файлов персонажей по `CharacterNo` (имя папки персонажа). */
+    private fun characterFiles(accountDir: Path): Map<String, String> {
+        val dir = accountDir.resolve(CHARACTERS_DIR).takeIf { it.isDirectory() } ?: return emptyMap()
         return dir.listDirectoryEntries().filter { it.isDirectory() }.mapNotNull { character ->
             val file = gameFile(character) ?: return@mapNotNull null
-            file.getLastModifiedTime().toMillis() to Files.readString(file, StandardCharsets.ISO_8859_1)
-        }
+            character.name to Files.readString(file, StandardCharsets.ISO_8859_1)
+        }.toMap()
     }
 
     private fun readGameFile(dir: Path): String? = gameFile(dir)?.let { Files.readString(it, StandardCharsets.ISO_8859_1) }

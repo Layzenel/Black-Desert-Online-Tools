@@ -24,7 +24,7 @@ description: Окна поверх игры в настольной версии
 | Игра на переднем плане | `isGameForeground()` (JNA, `BlackDesert64.exe`), в UI — `rememberGameActive()`; сквозные клики — `setClickThrough` (всё — `desktopMain`) |
 | Корень в приложении | `shared/src/desktopMain/.../window/DesktopApp.kt`: `OverlayHost` стоит рядом с окном программы, а не внутри него — скрытое в трей окно не перерисовывается. Общая ViewModel — `ViewModelStoreOwner` приложения; подписка на состояние в окнах поверх игры — `collectAsState` (вне окна программы нет `LifecycleOwner`) |
 | Помощник комбо | `feature/comboAssist/.../overlay/ComboOverlayContribution.kt`: два окна — трекер (`ComboOverlayContent` по `OverlayStyle`: `Next` — `NextSkillsOverlay`, `Focus` — `FocusOverlay`, у `BottomCenter`) и схема комбо (`SchemaOverlay`, окно `combo-schema` у `CenterLeft`, показ — `OverlaySettings.schemaShown`, ориентация `Combo.vertical` — только у схемы). Всё на подложке `TooltipPanel`, тот же вид — в предпросмотре вкладки «Настройки трекера». Пометка шага (`ComboCell.note`) — под трекером (`StepNote`). Ещё тултипы слотов (`SlotTooltipWindow`, `SlotUnderCursor.kt`) и щиты защиты в правом верхнем углу иконки слота (`SlotShieldsWindow`: защита в PvP по английскому тултипу — `skillProtections`, строки «(PvE only)» пропускаются), вкладка «Комбо» (`OverlayComboTab`) и пункт в «Настройках»; настройки (`OverlaySettings`) — в `combos.json` |
-| Чтение экрана (комбо) | `data/history/ScreenSkillHistorySource.kt`: история умений + слоты перезарядок (`data/slots/CooldownSlotWatch`) + клавиши (`data/keys`) + полоска ресурса (`data/resource`); персонаж — `data/slots/PlayedCharacterDetector`, видимость каждого слота — `data/slots/slotVisibility` |
+| Чтение экрана (комбо) | `data/history/ScreenSkillHistorySource.kt`: история умений + слоты перезарядок (`data/slots/CooldownSlotWatch`) + клавиши (`data/keys`) + полоска ресурса (`data/resource`); персонаж — `data/slots/PlayedLayout` (журнал игры, запасной — `PlayedCharacterDetector`), видимость каждого слота — `data/slots/slotVisibility` |
 | Пинг | `feature/gameInfo`: окно пинга и вкладка «Информация» (`GameInfoOverlay.kt`), настройки — `Preferences` `bdo-tools/game-info` |
 | Окно программы и трей | `shared/src/desktopMain/.../window/` (`DesktopApp`, `AppTray`, `CloseChoiceDialog`) |
 ## Правила окон
@@ -58,7 +58,8 @@ description: Окна поверх игры в настольной версии
   и щитов проверяется отдельно. Пока игра не на переднем плане, программа
   за ней не следит: экран не снимается, файлы слотов не читаются, иконки не качаются (`ScreenSkillHistorySource`).
   20 кадров/с: история умений (≈240×54 px) и полоска ресурса.
-- Чему верить (`HistoryMerge`): 1) история, 2) слот перезарядки (`CooldownSlotWatch` + `SlotDarkening`; ждёт строку
+- Чему верить (`HistoryMerge`): 1) история, 2) слот перезарядки или хотбара (`CooldownSlotWatch` — два ряда `SlotRowWatch`,
+  с хотбара — только умения, которых нет на видимых слотах перезарядки; + `SlotDarkening`; ждёт строку
   истории 600 мс, потом выпускается сам), 3) клавиши с расходом ресурса (`data/keys/KeyStepWatch`). Одно применение
   из разных источников за 1,5 с засчитывается один раз; нажатие умения, которое уже ждёт слот, не учитывается.
   Клавиши слушаются **только для умений из `Combo.keyTracked`** — у них в редакторе снят флаг «Видно в истории или на
@@ -131,8 +132,12 @@ description: Окна поверх игры в настольной версии
   (цифры и блёстки на заливке её не обрывают). Область поиска — вокруг `UIData Index="13"` или панель слева вверху
   при `Bool Index="72"` = `true`. Проверено на двух скриншотах 2026-11-20 (`ResourceBarPixelsTest`): 452/490 → 211 px
   из ≈222 и 249 px.
-- **Раскладку слотов брать только у персонажа с экрана**, не по файлам: файл персонажа игра пишет, когда с него уходят,
-  а у двух персонажей одного класса слоты бывают разложены по-разному (так «шаг 3» читался как «5.2»).
+- **Раскладку слотов брать только у персонажа, которым играют** (`PlayedLayout`): сначала по журналу игры
+  (`CharacterJournal`, новейший `Cache\11\MyJournal\<CharacterNo>_*.bcf` в папке установки — она берётся из пути процесса
+  игры, `foregroundGameFolder`), иначе по слотам на экране (`PlayedCharacterDetector`). Не «новейший файл персонажа»:
+  его игра пишет, когда с персонажа уходят. У двух персонажей одного класса слоты бывают разложены по-разному (так
+  «шаг 3» читался как «5.2»). Персонаж из журнала известен и со скрытыми слотами — тогда слотов в раскладке нет:
+  ни тултипов, ни щитов, а комбо игрок выбирает сам (`followPlayedCharacter` переключает комбо только при смене класса).
 - Всё, что видно в слежении, пишется в `Документы\Black Desert\BDO Tools\comboAssist\watch.log` — сначала смотри его.
   Нераспознанная строка: в журнале лучший кандидат со счётом и отрывом, рядом картинка иконки `miss-<мс>.png`.
   Пороги совпадения — `accepts` в `IconMatch.kt` (иконка в истории бывает темнее справочной).

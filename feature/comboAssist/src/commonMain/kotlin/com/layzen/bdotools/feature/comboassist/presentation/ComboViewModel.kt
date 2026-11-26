@@ -290,16 +290,18 @@ class ComboViewModel(private val interactor: ComboInteractor) : ViewModel() {
 
     /**
      * Следит, каким персонажем играют: его слоты — для тултипов, а если сменился класс и для него есть комбо —
-     * открывает первое такое комбо (оверлей и слежение переходят на него).
+     * открывает первое такое комбо (оверлей и слежение переходят на него). Только при смене класса: комбо, выбранное
+     * игроком, не перебивается, а если класс не понять (все слоты скрыты) — остаётся то, что выбрано.
      */
     private fun followPlayedCharacter() = viewModelScope.launch {
         while (isActive) {
             interactor.playedCharacter()?.let { played ->
+                val previousClass = mutableState.value.playedClass
                 mutableState.update { it.copy(slots = played.slots, playedClass = played.classKey ?: it.playedClass, historyHidden = !played.historyShown) }
                 loadSlotSkills()
                 loadSlotProtections()
                 val s = mutableState.value
-                if (played.classKey != null && played.classKey != s.combo?.classKey && !s.dirty) {
+                if (played.classKey != null && played.classKey != previousClass && played.classKey != s.combo?.classKey && !s.dirty) {
                     s.combos.firstOrNull { it.classKey == played.classKey }?.let { selectCombo(it.id) }
                 }
             }
