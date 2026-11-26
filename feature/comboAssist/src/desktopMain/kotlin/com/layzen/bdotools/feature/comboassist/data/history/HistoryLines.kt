@@ -36,6 +36,16 @@ internal class HistoryLines(private val timeoutMs: Long = DEFAULT_TIMEOUT_MS) {
     /** Умение новой строки узнано: до следующей строки больше не сравнивать. */
     fun recognized() { recognized = true }
 
+    /**
+     * Новую строку в момент [nowMs] заметили по смене иконки ([HistoryIconChange]) и уже узнали: её позднее появление
+     * текста снизу — не ещё одна строка.
+     */
+    fun openedByIcon(nowMs: Long) {
+        open = true
+        recognized = true
+        openedAtMs = nowMs
+    }
+
     /** Решение по кадру. */
     sealed interface Step {
         /** Ничего не делать. */

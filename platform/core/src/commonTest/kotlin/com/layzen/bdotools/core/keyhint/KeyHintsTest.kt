@@ -14,9 +14,22 @@ class KeyHintsTest {
 
     @Test
     fun encodeAndDecodeRoundTrip() {
-        val hints = KeyHints(KeyHintStyle.Short, KeyHintStyle.Icon, KeyHintStyle.Text)
+        val hints = KeyHints(KeyHintStyle.Short, KeyHintStyle.Icon, KeyHintStyle.Text, KeyHintStyle.Icon)
 
         assertEquals(hints, KeyHints.decode(hints.encode()))
+    }
+
+    @Test
+    fun oldSettingWithoutMovementKeysShowsLetters() {
+        assertEquals(KeyHints(rmb = KeyHintStyle.Icon), KeyHints.decode("text,text,icon"))
+    }
+
+    @Test
+    fun movementKeysShareOneStyle() {
+        val hints = KeyHints(move = KeyHintStyle.Icon)
+
+        listOf(KEY_CODE_W, KEY_CODE_A, KEY_CODE_S, KEY_CODE_D).forEach { assertEquals(KeyHintStyle.Icon, hints.styleOf(it)) }
+        assertEquals(KeyHintStyle.Text, hints.styleOf(KEY_CODE_SHIFT))
     }
 
     @Test
@@ -41,7 +54,7 @@ class KeyHintsTest {
         val hints = AppKeyHints(settings)
         hints.update { it.copy(rmb = KeyHintStyle.Icon) }
 
-        assertEquals("text,text,icon", settings.encoded)
+        assertEquals("text,text,icon,text", settings.encoded)
         assertEquals(KeyHintStyle.Icon, hints.selected.value.rmb)
     }
 }

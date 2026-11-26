@@ -20,10 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.rememberWindowState
-import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.feature.comboassist.domain.history.ScreenSlot
-import com.layzen.bdotools.feature.comboassist.domain.skill.SkillProtection
 import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
 import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillTooltipCard
@@ -52,20 +50,16 @@ internal actual fun SlotTooltipWindow(
     slots: List<ScreenSlot>,
     skills: Map<Int, SkillItem>,
     loadDetails: suspend (Int) -> SkillDetails?,
-    protections: Map<Int, Set<SkillProtection>>,
-    controls: Map<Int, Set<CrowdControl>>,
 ) {
     if (slots.isEmpty()) return
     val overlayShown by rememberOverlayShown()
-    val screen = remember { Toolkit.getDefaultToolkit().screenSize }
-    val marks = slots.mapNotNull { SlotMarks.of(it, protections[it.skillNo].orEmpty(), controls[it.skillNo].orEmpty(), screen) }
-    val hovered by produceState<ScreenSlot?>(null, slots, marks, overlayShown) {
+    val hovered by produceState<ScreenSlot?>(null, slots, overlayShown) {
         value = null
         if (!overlayShown) return@produceState
         var candidate: ScreenSlot? = null
         var since = 0L
         while (true) {
-            val slot = withContext(Dispatchers.IO) { slotUnderCursor(slots, marks) }
+            val slot = withContext(Dispatchers.IO) { slotUnderCursor(slots) }
             val now = System.currentTimeMillis()
             if (slot != candidate) {
                 candidate = slot

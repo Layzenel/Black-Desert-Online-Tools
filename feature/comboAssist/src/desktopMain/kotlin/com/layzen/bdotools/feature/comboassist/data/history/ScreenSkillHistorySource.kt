@@ -94,12 +94,13 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
         val log = WatchLog(folder?.resolve("BDO Tools")?.resolve("comboAssist")?.resolve("watch.log"))
         val matcher = IconMatcher(icons, preferred)
         val lines = HistoryLines()
+        val iconChange = HistoryIconChange()
         val robot = Robot()
         val start = TimeSource.Monotonic.markNow()
         val accountDir = folder?.let { SlotLayoutFiles.accountDir(it, settings.account) }
         val accountText = accountDir?.let(SlotLayoutFiles::accountText)
         val geometry = HistoryGeometry.forScreen(accountText?.let(HistoryPlace::parse))
-        val slots = CooldownSlotWatch({ accountDir?.let(SlotLayoutFiles::readAll).orEmpty() }, matcher, log)
+        val slots = CooldownSlotWatch({ accountDir?.let(SlotLayoutFiles::readAll).orEmpty() }, matcher, log, icons.keys)
         val merge = HistoryMerge()
         val keys = KeyStepWatch(log)
         val resource = ResourceWatch.of(accountText, log)
@@ -131,6 +132,7 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
                     if (step.shift) log.line(now, "line opened by shift")
                     if (match.accepted) {
                         lines.recognized()
+                        iconChange.recognized(match.skillNo!!)
                         historySeenSlots = played?.slots
                         miss = null
                         log.line(now, "skill ${match.skillNo} score %.1f second %.1f".format(match.score, match.second))
@@ -146,7 +148,15 @@ internal class ScreenSkillHistorySource : SkillHistorySource {
                     best?.let { log.miss(now, it.second) }
                     miss = null
                 }
-                HistoryLines.Step.Idle -> Unit
+                HistoryLines.Step.Idle -> {
+                    val match = matcher.match(geometry.icon(frame))
+                    iconChange.onFrame(match.skillNo.takeIf { match.accepted })?.let { skillNo ->
+                        lines.openedByIcon(now)
+                        historySeenSlots = played?.slots
+                        log.line(now, "line found by icon change: skill $skillNo score %.1f second %.1f".format(match.score, match.second))
+                        emitAll(merge.onHistory(skillNo, now), now, log, history = skillNo)
+                    }
+                }
             }
             slots.onFrame(robot, now).forEach { skillNo ->
                 log.line(now, "slot $skillNo on cooldown")

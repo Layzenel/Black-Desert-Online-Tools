@@ -24,10 +24,12 @@
     <string name="settings_display_shift">Клавиша Shift</string>
     <string name="settings_display_lmb">Левая кнопка мыши</string>
     <string name="settings_display_rmb">Правая кнопка мыши</string>
+    <string name="settings_display_move">Клавиши движения</string>
     <string name="settings_key_text_shift">Shift</string>
     <string name="settings_key_text_shift_short">Sh</string>
     <string name="settings_key_text_lmb">ЛКМ</string>
     <string name="settings_key_text_rmb">ПКМ</string>
+    <string name="settings_key_text_move">W/A/S/D</string>
     <string name="settings_key_text_lmb_short">Л</string>
     <string name="settings_key_text_rmb_short">П</string>
     <string name="settings_key_style_icon">Картинка</string>

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import com.layzen.bdotools.composable.overlay.rememberCursorShown
 import com.layzen.bdotools.composable.overlay.rememberOverlayShown
 import com.layzen.bdotools.composable.overlay.setClickThrough
 import com.layzen.bdotools.core.skill.domain.CrowdControl
@@ -39,8 +40,9 @@ private const val CONTROL_RING_SHARE = 0.07f
  * Окно щитов: прозрачное, без рамки и фокуса, поверх всех окон, клики сквозь него уходят в игру
  * ([setClickThrough]). Накрывает только слоты с защитой или контролями ([SlotMarks]): щиты — в правом верхнем углу
  * иконки, значки контролей — круглые, в бежевой рамке, по центру нижней кромки слота. Окно — в логических пикселях
- * Java, так масштаб Windows не мешает. Видно, только пока игра на переднем плане и слоты не закрыты окном игры;
- * над значком под курсором — подсказка с его названием ([SlotMarkTooltip]).
+ * Java, так масштаб Windows не мешает. Видно, только пока игра на переднем плане и курсор спрятан (режим боя):
+ * с курсором открыты окна игры, а закрыты ли ими слоты, по экрану надёжно не понять (2026-11-26: и по иконке,
+ * и по рамке слота значки то пропадали при движении, то оставались под инвентарём).
  */
 @Composable
 internal actual fun SlotShieldsWindow(
@@ -53,6 +55,8 @@ internal actual fun SlotShieldsWindow(
     if (marked.isEmpty()) return
     val bounds = marked.flatMap { listOfNotNull(it.rect, it.controlsArea()) }.reduce { a, b -> Rect(minOf(a.left, b.left), minOf(a.top, b.top), maxOf(a.right, b.right), maxOf(a.bottom, b.bottom)) }
     val overlayShown by rememberOverlayShown()
+    // курсор показан — открыто окно игры (инвентарь, карта, умения), и оно может закрывать слоты
+    val cursorShown by rememberCursorShown()
     val position = WindowPosition(bounds.left.dp, bounds.top.dp)
     val size = DpSize(bounds.width.dp, bounds.height.dp)
     val state = rememberWindowState(position = position, size = size)
@@ -66,7 +70,7 @@ internal actual fun SlotShieldsWindow(
     Window(
         onCloseRequest = {},
         state = state,
-        visible = overlayShown,
+        visible = overlayShown && !cursorShown,
         undecorated = true,
         transparent = true,
         resizable = false,
@@ -84,7 +88,6 @@ internal actual fun SlotShieldsWindow(
             }
         }
     }
-    SlotMarkTooltip(marked, overlayShown)
 }
 
 /** Цвета значков: обводка щита, фон и рамка значка контроля. */

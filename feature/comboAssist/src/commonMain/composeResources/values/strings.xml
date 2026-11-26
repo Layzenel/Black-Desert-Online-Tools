@@ -144,9 +144,6 @@
     <string name="combo_setting_slot_shields_description">Показать модификаторы защиты умения при наведении курсора на слот перезарядки (только PvP)</string>
     <string name="combo_setting_slot_controls">Показать применяемые контроли умения</string>
     <string name="combo_setting_slot_controls_description">Показать применяемые контроли умения при наведении курсора на слот перезарядки (только PvP)</string>
-    <string name="combo_protection_super_armor">Устойчивость</string>
-    <string name="combo_protection_forward_guard">Защита спереди</string>
-    <string name="combo_protection_invincible">Неуязвимость</string>
     <string name="combo_notice_title">Как работает трекер комбо</string>
     <string name="combo_notice_intro">Трекер показывает поверх игры следующее умение комбо и сам замечает, что вы применили. Программа только смотрит на экран и слушает нажатия клавиш: в игру она ничего не отправляет и ничего в ней не меняет. Подсказка не всегда точна — ниже написано почему.</string>
     <string name="combo_notice_sources">Откуда трекер знает, что вы применили</string>

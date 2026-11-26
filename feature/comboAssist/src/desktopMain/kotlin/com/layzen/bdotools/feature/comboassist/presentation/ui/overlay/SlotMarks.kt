@@ -6,8 +6,6 @@ import androidx.compose.ui.geometry.Size
 import com.layzen.bdotools.core.skill.domain.CrowdControl
 import com.layzen.bdotools.feature.comboassist.domain.history.ScreenSlot
 import com.layzen.bdotools.feature.comboassist.domain.skill.SkillProtection
-import com.layzen.bdotools.uikit.icons.title
-import org.jetbrains.compose.resources.StringResource
 import java.awt.Dimension
 
 /** Порядок щитов от правого края слота влево: самая сильная защита — с края. */
@@ -34,7 +32,7 @@ private const val CONTROL_OVERLAP_SHARE = 0.08f
 /**
  * Что рисуется на слоте [rect] и где: щиты [shields] в правом верхнем углу иконки, круглые значки контролей
  * [controls] по центру нижней кромки (наполовину ниже неё). Все координаты — экранные, в логических пикселях Java;
- * по ним и рисует окно щитов, и ищется значок под курсором для подсказки.
+ * по ним рисует окно щитов.
  */
 internal data class SlotMarks(val rect: Rect, val shields: List<SkillProtection>, val controls: List<CrowdControl>) {
 
@@ -62,12 +60,6 @@ internal data class SlotMarks(val rect: Rect, val shields: List<SkillProtection>
         val diameter = rect.width * CONTROL_SHARE
         val width = diameter + diameter * (1 - CONTROL_OVERLAP_SHARE) * (controls.size - 1)
         return Rect(Offset(rect.center.x - width / 2, rect.bottom - diameter / 2), Size(width, diameter))
-    }
-
-    /** Название защиты или контроля под точкой [point]; верхний из перекрытых значков — тот, что нарисован последним. */
-    fun titleAt(point: Offset): StringResource? {
-        controlRects().lastOrNull { (_, box) -> (box.center - point).getDistance() <= box.width / 2 }?.let { return it.first.title }
-        return shieldRects().firstOrNull { (_, box) -> box.contains(point) }?.first?.title
     }
 
     companion object {

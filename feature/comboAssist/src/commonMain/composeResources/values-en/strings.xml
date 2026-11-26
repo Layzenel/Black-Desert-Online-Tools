@@ -144,9 +144,6 @@
     <string name="combo_setting_slot_shields_description">Show skill protection modifiers when hovering over a cooldown slot (PvP only)</string>
     <string name="combo_setting_slot_controls">Show applied crowd controls</string>
     <string name="combo_setting_slot_controls_description">Show the crowd controls a skill applies when hovering over a cooldown slot (PvP only)</string>
-    <string name="combo_protection_super_armor">Super Armor</string>
-    <string name="combo_protection_forward_guard">Forward Guard</string>
-    <string name="combo_protection_invincible">Invincible</string>
     <string name="combo_notice_title">How the combo tracker works</string>
     <string name="combo_notice_intro">The tracker shows the next combo skill over the game and notices on its own what you used. The program only looks at the screen and listens to key presses: it sends nothing to the game and changes nothing in it. The hint is not always exact; the reasons are below.</string>
     <string name="combo_notice_sources">How the tracker knows what you used</string>
