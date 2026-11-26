@@ -37,6 +37,29 @@ class CooldownSlotParsingTest {
     }
 
     @Test
+    fun readsHotbarSkillsWithoutItems() {
+        val text = """
+            <QuickSlotSkillData Key="0" SkillNo="9971" SkillLevel="1" Position="0.000000 0.000000" KeyboardKey="48" Memo=""/>
+            <QuickSlotSkillData Key="10" SkillNo="9992" SkillLevel="1"/>
+            <QuickSlotItemData Key="5" ItemKey="59418" ItemLevel="0"/>
+            <UIData Index="100" IsShow="true"/>
+            <UIData Index="110" IsShow="false"/>
+        """.trimIndent()
+        assertEquals(mapOf(0 to 9971, 10 to 9992), parseHotbarSkills(text))
+        assertEquals(setOf(10), parseHiddenHotbar(text))
+    }
+
+    @Test
+    fun hotbarCentersFollowEditorOrder() {
+        val text = """
+            <UIData Index="100" IsShow="true" RelativePosX="0.46875" RelativePosY="0.81"/>
+            <UIData Index="91" IsShow="true" RelativePosX="0.484375" RelativePosY="0.81"/>
+            <UIData Index="101" IsShow="true" RelativePosX="0.74" RelativePosY="0.87"/>
+        """.trimIndent()
+        assertEquals(mapOf(0 to (0.46875 to 0.81), 1 to (0.484375 to 0.81), 11 to (0.74 to 0.87)), parseHotbarCenters(text))
+    }
+
+    @Test
     fun historyVisibilityComesFromCharacterThenAccount() {
         val hidden = """<UIData Index="158" IsShow="false"/>"""
         val shown = """<UIData Index="158" IsShow="true" PosX="1"/>"""

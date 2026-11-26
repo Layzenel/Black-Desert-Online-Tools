@@ -74,7 +74,8 @@ horizontal. Skill activation keys on the layout are turned on in the overlay men
 
 The tracker learns what you used from three sources. "Skill Usage History" is the most accurate but up to 0.75 s
 late, and the game skips some skills there (flow follow-ups and animation cancels, such as Seraph's Combo: Bone
-Breaker). If the history skipped a skill that is on a cooldown slot, the tracker counts it when the slot goes on cooldown.
+Breaker). If the history skipped a skill that is on a cooldown slot or on the hotbar (with "Quick Slot Settings" on), the tracker
+counts it when the slot goes on cooldown; hidden slots are not watched.
 For skills that are neither in the history nor on a slot, clear "Seen in history or on a slot" in the editor's cell
 panel (it is on by default and shared by every cell of the skill): only those skills count by key presses, by the
 character's key bindings. In the cell's "Activation" you pick the command you use for the skill (any from the
@@ -88,6 +89,11 @@ slots and keys and makes more mistakes.
 
 The tracker, the layout and the marks over cooldown slots hide while the slots are covered by a game window; marks
 disappear only from the covered slots.
+
+The app learns which character you play from the game's journal in its install folder (≈10 s after entering the
+world), and without it from the cooldown slots on screen. When the character's class changes, the first combo of that
+class opens; a combo picked in the overlay menu stays until the next class change, also for a character with hidden
+slots.
 
 Use Windowed Fullscreen. The app only reads the screen and key presses: it never touches the game, never intercepts
 input and never presses keys.

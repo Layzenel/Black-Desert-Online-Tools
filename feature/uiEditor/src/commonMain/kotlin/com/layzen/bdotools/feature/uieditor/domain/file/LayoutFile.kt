@@ -17,8 +17,9 @@ import kotlinx.serialization.Serializable
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class LayoutFile(
-    val format: String = FORMAT,
-    val version: Int = VERSION,
+    // заголовок пишется всегда, и в компактном тексте без значений по умолчанию: по нему импорт узнаёт файл
+    @EncodeDefault val format: String = FORMAT,
+    @EncodeDefault val version: Int = VERSION,
     val name: String,
     val units: String = "ui-px",
     val cooldown: List<LayoutSlot> = emptyList(),

@@ -46,6 +46,11 @@ class LayoutCodecTest {
     }
 
     @Test
+    fun compactTextForClipboardRoundTrips() {
+        assertEquals(layout, LayoutCodec.decode(LayoutCodec.encode(layout, compact = true)))
+    }
+
+    @Test
     fun skillsAndMemosRoundTripOnlyWhenIncluded() {
         val slot = SlotId(SlotGroup.Cooldown, 1)
         val withSkills = layout.copy(layout = layout.layout.copy(skills = mapOf(slot to 5338), memos = mapOf(5338 to "ЛКМ", 1 to "чужая")))
