@@ -15,15 +15,20 @@ import java.awt.Robot
  * С хотбара следятся только умения, которых нет на видимых слотах перезарядки: одно умение в обоих рядах темнеет
  * дважды, а слот перезарядки точнее (на хотбаре бывают и предметы).
  *
- * @property layouts слоты всех персонажей аккаунта по `CharacterNo`
+ * Файлы персонажей игра переписывает по ходу игры (смена персонажа, телепорт), поэтому раскладки перечитываются,
+ * когда меняется журнал игры ([CharacterJournal.stamp]): к его записи файл персонажа, с которого ушли, уже обновлён.
+ *
+ * @property readLayouts читает слоты всех персонажей аккаунта по `CharacterNo` из файлов игры
  * @property matcher иконки умений для узнавания персонажа
  * @property log журнал слежения
  */
 internal class CooldownSlotWatch(
-    private val layouts: Map<String, SlotLayout>,
+    private val readLayouts: () -> Map<String, SlotLayout>,
     private val matcher: IconMatcher,
     private val log: WatchLog,
 ) {
+    private var layouts = readLayouts()
+    private var journalStamp = CharacterJournal.stamp()
     private var layout: SlotLayout? = null
     private var rows: List<SlotRowWatch> = emptyList()
     private var detectedAt = -DETECT_MS
@@ -51,6 +56,12 @@ internal class CooldownSlotWatch(
     }
 
     private fun detect(robot: Robot, nowMs: Long) {
+        val stamp = CharacterJournal.stamp()
+        if (stamp != journalStamp) {
+            journalStamp = stamp
+            layouts = readLayouts()
+            log.line(nowMs, "game journal changed ($stamp): character files re-read")
+        }
         val found = PlayedLayout.find(robot, layouts, matcher) ?: return
         if (found == layout) return
         layout = found

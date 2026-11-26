@@ -21,17 +21,26 @@ internal object CharacterJournal {
     @Volatile private var gameFolder: Path? = null
 
     /** Номер (`CharacterNo`) персонажа, которым сейчас играют, или `null`, если журнала нет. */
-    fun current(): String? {
+    fun current(): String? = newest()?.let { characterNo(it.name) }
+
+    /**
+     * Отметка журнала — имя и время изменения самого свежего файла — или `null`, если журнала нет. Меняется, когда
+     * персонаж вошёл в мир (к этому моменту игра уже переписала файл персонажа, с которого ушли) и когда журнал
+     * дописан по ходу игры.
+     */
+    fun stamp(): String? = newest()?.let { "${it.name} ${it.getLastModifiedTime().toMillis()}" }
+
+    /** Номер персонажа из имени файла журнала [fileName] или `null`, если это не файл журнала. */
+    fun characterNo(fileName: String): String? = JOURNAL_FILE.matchEntire(fileName)?.groupValues?.get(1)
+
+    /** Самый свежий файл журнала или `null`. */
+    private fun newest(): Path? {
         foregroundGameFolder()?.let { gameFolder = it }
         val dir = gameFolder?.resolve("Cache")?.resolve("11")?.resolve("MyJournal")?.takeIf { it.isDirectory() } ?: return null
-        val newest = try {
+        return try {
             dir.listDirectoryEntries("*.bcf").maxByOrNull { it.getLastModifiedTime() }
         } catch (e: IOException) {
             null
         }
-        return newest?.let { characterNo(it.name) }
     }
-
-    /** Номер персонажа из имени файла журнала [fileName] или `null`, если это не файл журнала. */
-    fun characterNo(fileName: String): String? = JOURNAL_FILE.matchEntire(fileName)?.groupValues?.get(1)
 }
