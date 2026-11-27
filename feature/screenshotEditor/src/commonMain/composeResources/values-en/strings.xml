@@ -58,4 +58,55 @@
     <string name="screenshots_error_not_image">The file could not be opened as a picture</string>
     <string name="screenshots_error_save">Could not save the copy</string>
     <string name="screenshots_error_clipboard">The clipboard is unavailable: allow access or save a copy</string>
+    <string name="screenshots_error_folder">No access to the ScreenShot folder</string>
+    <string name="screenshots_error_trash">Could not move the screenshot to the Recycle Bin</string>
+    <string name="screenshots_trashed">Screenshot moved to the Recycle Bin</string>
+
+    <!-- Retouch, rotation, comparison -->
+    <string name="screenshots_rotate">Rotate 90° clockwise</string>
+    <string name="screenshots_flip">Flip horizontally</string>
+    <string name="screenshots_compare">Compare with the original</string>
+    <string name="screenshots_adjust">Retouch</string>
+    <string name="screenshots_adjust_description">Colors of the whole picture; arrows and captions stay as they are.</string>
+    <string name="screenshots_filter_field">Filter</string>
+    <string name="screenshots_filter_none">No filter</string>
+    <string name="screenshots_filter_warm">Warm</string>
+    <string name="screenshots_filter_cold">Cold</string>
+    <string name="screenshots_filter_vivid">Vivid</string>
+    <string name="screenshots_filter_cinema">Cinema</string>
+    <string name="screenshots_filter_mono">B&amp;W</string>
+    <string name="screenshots_brightness">Brightness</string>
+    <string name="screenshots_contrast">Contrast</string>
+    <string name="screenshots_saturation">Saturation</string>
+    <string name="screenshots_exposure">Exposure</string>
+    <string name="screenshots_temperature">Temperature</string>
+    <string name="screenshots_tint">Tint</string>
+    <string name="screenshots_vignette">Vignette</string>
+
+    <!-- Gallery -->
+    <string name="screenshots_gallery">Gallery</string>
+    <string name="screenshots_gallery_tooltip">Close the screenshot and go back to the gallery; unsaved edits are lost</string>
+    <string name="screenshots_gallery_title">Game screenshots</string>
+    <string name="screenshots_gallery_count">Files: %1$d — Documents\\Black Desert\\ScreenShot</string>
+    <string name="screenshots_gallery_empty">The ScreenShot folder has no screenshots yet: take one in the game.</string>
+    <string name="screenshots_gallery_refresh">Refresh</string>
+    <string name="screenshots_gallery_refresh_tooltip">Read the ScreenShot folder again</string>
+    <string name="screenshots_gallery_reveal">Show in folder</string>
+    <string name="screenshots_gallery_trash">Move to bin</string>
+    <string name="screenshots_open_file">Open file</string>
+    <string name="screenshots_folder_hint">To see your game screenshots here, choose the Documents\\Black Desert folder — or open any file.</string>
+    <string name="screenshots_folder_select">Choose folder</string>
+    <string name="screenshots_folder_select_tooltip">Choose the Documents\\Black Desert folder that contains ScreenShot</string>
+    <string name="screenshots_folder_permission">Allow access</string>
+    <string name="screenshots_folder_permission_tooltip">The browser asks again for permission to the folder chosen earlier</string>
+    <string name="screenshots_folder_unsupported">This browser cannot open folders: open a file or install the Windows app.</string>
+
+    <!-- In-game notification -->
+    <string name="screenshots_alert_title">New screenshot</string>
+    <string name="screenshots_alert_count">New screenshots: %1$d</string>
+    <string name="screenshots_alert_edit">Edit</string>
+    <string name="screenshots_alert_edit_tooltip">Open the screenshot in the BDO Tools editor</string>
+    <string name="screenshots_alert_hint">Ctrl — show the cursor</string>
+    <string name="screenshots_alert_setting">Offer to edit screenshots</string>
+    <string name="screenshots_alert_setting_description">When you take a screenshot in the game, an "Edit" button appears over it</string>
 </resources>

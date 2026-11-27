@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.screenshoteditor.domain.edit
 
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
+
 /**
  * Правки скриншота по порядку и отменённые правки для повтора. Новая правка очищает повтор, как в любом редакторе.
  *
@@ -14,10 +16,16 @@ data class EditHistory(val edits: List<Edit> = emptyList(), val undone: List<Edi
     val canRedo: Boolean get() = undone.isNotEmpty()
 
     /** Действующая обрезка — последняя в истории; `null` — картинка целиком. */
-    val crop: ImageRect? get() = edits.lastOrNull { it is Edit.Crop }?.let { (it as Edit.Crop).rect }
+    val crop: ImageRect? get() = edits.filterIsInstance<Edit.Crop>().lastOrNull()?.rect
 
-    /** Правки, которые рисуются на картинке: всё, кроме обрезки. */
-    val drawn: List<Edit> get() = edits.filterNot { it is Edit.Crop }
+    /** Действующая ретушь — последняя в истории. */
+    val adjustments: Adjustments get() = edits.filterIsInstance<Edit.Adjust>().lastOrNull()?.adjustments ?: Adjustments()
+
+    /** Действующий поворот — последний в истории. */
+    val orientation: Orientation get() = edits.filterIsInstance<Edit.Orient>().lastOrNull()?.orientation ?: Orientation()
+
+    /** Правки, которые рисуются на картинке поверх: всё, кроме обрезки, ретуши и поворота. */
+    val drawn: List<Edit> get() = edits.filterNot { it is Edit.Crop || it is Edit.Adjust || it is Edit.Orient }
 
     /** История с новой правкой [edit]. */
     fun add(edit: Edit) = EditHistory(edits + edit)

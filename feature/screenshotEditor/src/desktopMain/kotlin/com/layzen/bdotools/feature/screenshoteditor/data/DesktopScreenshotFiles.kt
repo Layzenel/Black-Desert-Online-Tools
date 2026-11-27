@@ -1,6 +1,5 @@
 package com.layzen.bdotools.feature.screenshoteditor.data
 
-import com.layzen.bdotools.core.folder.GameFolderSettings
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.Screenshot
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotError
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotException
@@ -22,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 private val imageExtensions = listOf("png", "jpg", "jpeg", "bmp", "webp")
-private const val SCREENSHOT_FOLDER = "ScreenShot"
+
 private const val TOOLS = "BDO Tools"
 private const val MODULE = "screenshotEditor"
 
@@ -58,4 +57,3 @@ internal class DesktopScreenshotFiles(private val gameFolder: () -> Path?) : Scr
     private fun documents(): Path = FileSystemView.getFileSystemView().defaultDirectory.toPath()
 }
 
-internal actual fun createScreenshotFiles(): ScreenshotFiles = DesktopScreenshotFiles { GameFolderSettings().folder }

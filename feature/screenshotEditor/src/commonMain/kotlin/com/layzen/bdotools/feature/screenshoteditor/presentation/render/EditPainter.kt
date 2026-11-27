@@ -4,6 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
@@ -19,6 +21,8 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.colorMatrix
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.Edit
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImagePoint
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImageRect
@@ -44,17 +48,27 @@ private const val LABEL_SHADOW_PER_SIZE = 0.06f
 internal class EditPainter(private val source: ImageBitmap, private val measurer: TextMeasurer) {
     private val block = max(MIN_BLOCK, max(source.width, source.height) / PIXEL_BLOCKS)
     private val tiles = mutableMapOf<ImageRect, ImageBitmap>()
+    private var adjustments = Adjustments()
+    private var filter: ColorFilter? = null
 
-    /** Скриншот и [edits] по порядку. */
-    fun DrawScope.paint(edits: List<Edit>) {
-        drawImage(source)
+    /**
+     * Скриншот с ретушью [adjustments] и [edits] по порядку. Виньетка ложится по краям [frame] — той части картинки,
+     * что останется после обрезки.
+     */
+    fun DrawScope.paint(edits: List<Edit>, adjustments: Adjustments, frame: ImageRect) {
+        if (adjustments != this@EditPainter.adjustments) {
+            this@EditPainter.adjustments = adjustments
+            filter = if (adjustments.changesColor) ColorFilter.colorMatrix(ColorMatrix(adjustments.colorMatrix())) else null
+        }
+        drawImage(source, colorFilter = filter)
+        if (adjustments.vignette > 0) vignette(frame, adjustments.vignette)
         edits.forEach { paintEdit(it) }
     }
 
     /** Одна правка поверх уже нарисованного. Обрезку не рисует: её показывает экран и применяет сохранение. */
     fun DrawScope.paintEdit(edit: Edit) {
         when (edit) {
-            is Edit.Crop -> Unit
+            is Edit.Crop, is Edit.Adjust, is Edit.Orient -> Unit
             is Edit.Pixelate -> pixelate(edit.rect)
             is Edit.Arrow -> arrow(edit)
             is Edit.Frame -> drawRect(
@@ -76,6 +90,7 @@ internal class EditPainter(private val source: ImageBitmap, private val measurer
             dstOffset = IntOffset(rect.left.roundToInt(), rect.top.roundToInt()),
             dstSize = IntSize(rect.width.roundToInt(), rect.height.roundToInt()),
             filterQuality = FilterQuality.None,
+            colorFilter = filter,
         )
     }
 

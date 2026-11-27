@@ -13,6 +13,9 @@ sealed interface EditorNotice {
     /** Картинка в буфере обмена. */
     data object Copied : EditorNotice
 
+    /** Скриншот перенесён в корзину. */
+    data object Trashed : EditorNotice
+
     /** Не получилось: [error]. */
     data class Failed(val error: ScreenshotError) : EditorNotice
 }

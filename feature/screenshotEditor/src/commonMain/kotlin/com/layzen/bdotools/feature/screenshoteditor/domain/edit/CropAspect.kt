@@ -15,10 +15,11 @@ enum class CropAspect(val ratio: Float?) {
 
     /**
      * Рамка обрезки, которую тянут из [from] в [to]: ширина — по движению мыши, высота — по пропорции,
-     * в ту сторону, куда тянут.
+     * в ту сторону, куда тянут. У картинки, повёрнутой набок ([sideways]), пропорция берётся обратная: рамку
+     * видно повёрнутой.
      */
-    fun rect(from: ImagePoint, to: ImagePoint): ImageRect {
-        val ratio = ratio ?: return ImageRect.between(from, to)
+    fun rect(from: ImagePoint, to: ImagePoint, sideways: Boolean = false): ImageRect {
+        val ratio = ratio?.let { if (sideways) 1 / it else it } ?: return ImageRect.between(from, to)
         val dx = to.x - from.x
         val dy = to.y - from.y
         val width = maxOf(abs(dx), abs(dy) * ratio)

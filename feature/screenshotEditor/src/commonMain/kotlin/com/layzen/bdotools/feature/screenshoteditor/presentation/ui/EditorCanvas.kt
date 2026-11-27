@@ -30,10 +30,12 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.unit.IntSize
 import com.layzen.bdotools.composable.input.handleHistoryKeys
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.Edit
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImageRect
 import com.layzen.bdotools.feature.screenshoteditor.presentation.event.ScreenshotEditorEvent
 import com.layzen.bdotools.feature.screenshoteditor.presentation.render.EditPainter
+import com.layzen.bdotools.feature.screenshoteditor.presentation.render.oriented
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.ScreenshotEditorState
 import com.layzen.bdotools.uikit.theme.AppTheme
 
@@ -54,7 +56,7 @@ internal fun EditorCanvas(
 ) {
     val painter = remember(image, measurer) { EditPainter(image, measurer) }
     var area by remember { mutableStateOf(IntSize.Zero) }
-    val fit = ImageFit.of(IntSize(image.width, image.height), area)
+    val fit = ImageFit.of(IntSize(image.width, image.height), state.history.orientation, area)
     val currentFit by rememberUpdatedState(fit)
     val currentOnEvent by rememberUpdatedState(onEvent)
     val focus = remember { FocusRequester() }
@@ -89,12 +91,11 @@ internal fun EditorCanvas(
             translate(fit.offset.x, fit.offset.y)
             scale(fit.scale, fit.scale, Offset.Zero)
         }) {
-            with(painter) {
-                paint(state.history.drawn)
-                state.draft?.let { paintEdit(it) }
+            oriented(fit.orientation, image.width.toFloat(), image.height.toFloat()) {
+                paintScreenshot(painter, image, state)
+                val crop = (state.draft as? Edit.Crop)?.rect ?: state.history.crop
+                if (crop != null && !state.comparing) cropShade(crop, image, shade, border, ScreenshotEditorDimens.cropBorder.toPx() / fit.scale)
             }
-            val crop = (state.draft as? Edit.Crop)?.rect ?: state.history.crop
-            if (crop != null) cropShade(crop, image, shade, border, ScreenshotEditorDimens.cropBorder.toPx() / fit.scale)
         }
     }
 }
@@ -114,4 +115,17 @@ private fun DrawScope.cropShade(
     drawRect(shade, Offset(0f, crop.top), Size(crop.left, crop.height))
     drawRect(shade, Offset(crop.right, crop.top), Size(width - crop.right, crop.height))
     drawRect(border, Offset(crop.left, crop.top), Size(crop.width, crop.height), style = Stroke(borderWidth))
+}
+
+/** Скриншот с ретушью и правками; в режиме сравнения — исходный, без них. */
+private fun DrawScope.paintScreenshot(painter: EditPainter, image: ImageBitmap, state: ScreenshotEditorState) {
+    val whole = ImageRect(0f, 0f, image.width.toFloat(), image.height.toFloat())
+    with(painter) {
+        if (state.comparing) {
+            paint(emptyList(), Adjustments(), whole)
+            return
+        }
+        paint(state.history.drawn, state.shownAdjustments, state.history.crop ?: whole)
+        state.draft?.let { paintEdit(it) }
+    }
 }

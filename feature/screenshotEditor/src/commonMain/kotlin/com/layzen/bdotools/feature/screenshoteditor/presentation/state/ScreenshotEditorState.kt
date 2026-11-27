@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.screenshoteditor.presentation.state
 
 import androidx.compose.ui.graphics.ImageBitmap
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.CropAspect
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.Edit
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.EditHistory
@@ -21,6 +22,7 @@ internal const val MAX_THICKNESS = 20
  * @property thickness толщина линий и размер текста, 1…[MAX_THICKNESS]
  * @property text текст для инструмента «Текст»
  * @property busy идёт открытие или сохранение
+ * @property comparing показать исходный скриншот без правок — сравнить «до» и «после»
  */
 data class ScreenshotEditorState(
     val image: ImageBitmap? = null,
@@ -36,4 +38,8 @@ data class ScreenshotEditorState(
     val format: ExportFormat = ExportFormat.Png,
     val busy: Boolean = false,
     val notice: EditorNotice? = null,
-)
+    val comparing: Boolean = false,
+) {
+    /** Ретушь на экране: пока ползунок тянут — из черновика, иначе из истории. */
+    val shownAdjustments: Adjustments get() = (draft as? Edit.Adjust)?.adjustments ?: history.adjustments
+}

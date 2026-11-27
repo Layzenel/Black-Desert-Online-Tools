@@ -3,7 +3,6 @@ package com.layzen.bdotools.feature.screenshoteditor.presentation.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,44 +12,49 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.layzen.bdotools.feature.screenshoteditor.presentation.ScreenshotEditorViewModel
 import com.layzen.bdotools.feature.screenshoteditor.presentation.event.ScreenshotEditorEvent
+import com.layzen.bdotools.feature.screenshoteditor.presentation.gallery.GalleryEvent
+import com.layzen.bdotools.feature.screenshoteditor.presentation.gallery.GalleryState
+import com.layzen.bdotools.feature.screenshoteditor.presentation.gallery.GalleryViewModel
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.EditorNotice
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.ScreenshotEditorState
 import com.layzen.bdotools.feature.screenshoteditor.resources.Res
-import com.layzen.bdotools.feature.screenshoteditor.resources.menu_copy
-import com.layzen.bdotools.feature.screenshoteditor.resources.menu_open
-import com.layzen.bdotools.feature.screenshoteditor.resources.menu_save
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_busy
-import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_copy
-import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_copy_tooltip
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_open
-import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_open_tooltip
-import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_save
-import com.layzen.bdotools.uikit.components.ActionButton
-import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.BusyOverlay
 import com.layzen.bdotools.uikit.components.SectionDivider
 import com.layzen.bdotools.uikit.components.Toast
 import com.layzen.bdotools.uikit.components.ToolPage
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 /** Вкладка редактора скриншотов. */
 @Composable
-fun ScreenshotEditorRoute(viewModel: ScreenshotEditorViewModel = koinViewModel()) {
+fun ScreenshotEditorRoute(
+    viewModel: ScreenshotEditorViewModel = koinViewModel(),
+    gallery: GalleryViewModel = koinViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    ScreenshotEditorScreen(state, viewModel::onEvent)
+    val galleryState by gallery.state.collectAsStateWithLifecycle()
+    ScreenshotEditorScreen(state, viewModel::onEvent, galleryState, gallery::onEvent)
 }
 
-/** Редактор: пока скриншота нет — вступление, потом меню слева, инструменты сверху и скриншот на всё место. */
+/**
+ * Редактор: пока скриншот не открыт — галерея папки `ScreenShot` (или вступление, если доступа к ней нет), потом
+ * меню слева, инструменты сверху и скриншот на всё место.
+ */
 @Composable
-fun ScreenshotEditorScreen(state: ScreenshotEditorState, onEvent: (ScreenshotEditorEvent) -> Unit) {
+fun ScreenshotEditorScreen(
+    state: ScreenshotEditorState,
+    onEvent: (ScreenshotEditorEvent) -> Unit,
+    gallery: GalleryState,
+    onGalleryEvent: (GalleryEvent) -> Unit,
+) {
     val image = state.image
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         if (image == null) {
-            EditorIntro(onEvent)
+            GalleryScreen(gallery, onGalleryEvent, { onEvent(ScreenshotEditorEvent.OpenEntry(it)) }, { onEvent(ScreenshotEditorEvent.Open) })
         } else {
             val measurer = rememberTextMeasurer()
             ToolPage(
@@ -58,9 +62,11 @@ fun ScreenshotEditorScreen(state: ScreenshotEditorState, onEvent: (ScreenshotEdi
                 sidebar = {
                     ToolSettings(state, onEvent)
                     SectionDivider()
+                    AdjustSettings(state, onEvent)
+                    SectionDivider()
                     ExportSettings(state, onEvent)
                 },
-                sidebarFooter = { FileActions(onEvent, onCopy = { onEvent(ScreenshotEditorEvent.Copy(measurer)) }, onSave = { onEvent(ScreenshotEditorEvent.Save(measurer)) }) },
+                sidebarFooter = { FileActions(onEvent, measurer) },
             ) {
                 Column(Modifier.fillMaxSize()) {
                     EditorToolbar(state, onEvent)
@@ -69,45 +75,16 @@ fun ScreenshotEditorScreen(state: ScreenshotEditorState, onEvent: (ScreenshotEdi
             }
         }
         if (state.busy) BusyOverlay(stringResource(Res.string.screenshots_busy))
-        val notice = state.notice
+        val notice = state.notice ?: gallery.notice
         Toast(
             text = notice?.let { noticeText(it) },
-            onDismiss = { onEvent(ScreenshotEditorEvent.DismissNotice) },
+            onDismiss = {
+                onEvent(ScreenshotEditorEvent.DismissNotice)
+                onGalleryEvent(GalleryEvent.DismissNotice)
+            },
             isError = notice is EditorNotice.Failed,
         )
     }
-}
-
-/** Открыть другой скриншот, скопировать и последним — главное действие «Сохранить копию». */
-@Composable
-private fun FileActions(onEvent: (ScreenshotEditorEvent) -> Unit, onCopy: () -> Unit, onSave: () -> Unit) {
-    ActionButton(
-        ActionButtonState.Neutral(
-            stringResource(Res.string.screenshots_open),
-            icon = painterResource(Res.drawable.menu_open),
-            onClick = { onEvent(ScreenshotEditorEvent.Open) },
-            tooltip = stringResource(Res.string.screenshots_open_tooltip),
-        ),
-        Modifier.fillMaxWidth(),
-    )
-    ActionButton(
-        ActionButtonState.Neutral(
-            stringResource(Res.string.screenshots_copy),
-            icon = painterResource(Res.drawable.menu_copy),
-            onClick = onCopy,
-            tooltip = stringResource(Res.string.screenshots_copy_tooltip),
-        ),
-        Modifier.fillMaxWidth(),
-    )
-    ActionButton(
-        ActionButtonState.Positive(
-            stringResource(Res.string.screenshots_save),
-            icon = painterResource(Res.drawable.menu_save),
-            onClick = onSave,
-            tooltip = stringResource(saveTooltip),
-        ),
-        Modifier.fillMaxWidth(),
-    )
 }
 
 /** Строки вкладки заранее, чтобы при первом открытии кнопки не мелькали пустыми. */

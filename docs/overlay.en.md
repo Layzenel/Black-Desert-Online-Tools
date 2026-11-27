@@ -2,7 +2,8 @@
 
 # Overlay
 
-BDO Tools windows on top of the game: the combo tracker and layout, skill details over cooldown slots, the ping and FPS.
+BDO Tools windows on top of the game: the combo tracker and layout, skill details over cooldown slots, the ping and FPS,
+an offer to edit a new screenshot.
 Windows app only.
 
 - The overlay shows only while the game is in front. Use Windowed Fullscreen.
@@ -70,6 +71,12 @@ frames by Windows system events about frame output, like Xbox Game Bar, and does
 > [!IMPORTANT]
 > Windows shares these events with administrators only, so "Show FPS" can be turned on only when BDO Tools runs as
 > administrator. Without the rights the switch is unavailable.
+
+## New screenshot
+
+When you take a screenshot in the game, "New screenshot — Edit" appears on the right over the game for 8 seconds:
+the button opens it in the [Screenshot Editor](screenshotEditor.en.md). It can be clicked while the cursor is shown (Ctrl).
+To turn it off — "Offer to edit screenshots" in the overlay menu's "Settings" tab.
 
 ## Tray
 
