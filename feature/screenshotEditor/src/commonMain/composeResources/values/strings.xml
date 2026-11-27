@@ -15,13 +15,21 @@
     <string name="screenshots_copy_tooltip">Скопировать картинку с правками в буфер обмена, чтобы вставить в Discord или чат</string>
     <string name="screenshots_save">Сохранить копию</string>
     <string name="screenshots_save_tooltip_desktop">Сохранить картинку с правками в Black Desert\\BDO Tools\\screenshotEditor; оригинал не меняется</string>
+    <string name="screenshots_portraits">Применить как фон портретов</string>
+    <string name="screenshots_portraits_tooltip">Открыть картинку с правками в «Конструкторе портретов» и нарезать её на все портреты</string>
+    <string name="screenshots_close_title">Закрыть скриншот?</string>
+    <string name="screenshots_close_text">Есть несохранённые правки: если закрыть скриншот, они пропадут.</string>
+    <string name="screenshots_close_discard">Закрыть без сохранения</string>
+    <string name="screenshots_close_discard_tooltip">Закрыть скриншот, правки пропадут</string>
+    <string name="screenshots_close_cancel">Отмена</string>
+    <string name="screenshots_close_cancel_tooltip">Остаться в редакторе</string>
     <string name="screenshots_save_tooltip_web">Скачать картинку с правками в загрузки браузера; оригинал не меняется</string>
 
     <!-- Правка -->
     <string name="screenshots_undo">Отменить (Ctrl+Z)</string>
     <string name="screenshots_redo">Повторить (Ctrl+Y)</string>
     <string name="screenshots_tool_crop">Обрезка</string>
-    <string name="screenshots_tool_crop_hint">Выделите мышью область, которая останется на картинке.</string>
+    <string name="screenshots_tool_crop_hint">Обведите мышью область, которая останется, и нажмите зелёную галочку. Правая кнопка мыши, клик мимо и Esc отменяют обрезку.</string>
     <string name="screenshots_tool_pixelate">Скрыть</string>
     <string name="screenshots_tool_pixelate_hint">Выделите ник, семью, гильдию или чат: область станет пиксельной.</string>
     <string name="screenshots_tool_arrow">Стрелка</string>
@@ -37,8 +45,11 @@
     <string name="screenshots_aspect_wide">16:9</string>
     <string name="screenshots_aspect_square">1:1</string>
     <string name="screenshots_aspect_tall">9:16</string>
-    <string name="screenshots_crop_reset">Сбросить обрезку</string>
-    <string name="screenshots_crop_reset_tooltip">Вернуть картинку целиком</string>
+    <string name="screenshots_select_hint">Клик по стрелке, рамке, линии, надписи или скрытой области выбирает её: её можно перетащить или удалить крестиком.</string>
+    <string name="screenshots_crop_confirm">Обрезать (Enter)</string>
+    <string name="screenshots_crop_cancel">Отменить обрезку (Esc)</string>
+    <string name="screenshots_delete">Удалить (Delete)</string>
+    <string name="screenshots_discard_tooltip">Сбросить все правки скриншота</string>
     <string name="screenshots_text_placeholder">Текст надписи</string>
     <string name="screenshots_color">Цвет</string>
     <string name="screenshots_color_default">Красный</string>
@@ -85,7 +96,7 @@
 
     <!-- Галерея -->
     <string name="screenshots_gallery">Галерея</string>
-    <string name="screenshots_gallery_tooltip">Закрыть скриншот и вернуться к галерее; несохранённые правки пропадут</string>
+    <string name="screenshots_gallery_tooltip">Закрыть скриншот и вернуться к галерее</string>
     <string name="screenshots_gallery_title">Скриншоты игры</string>
     <string name="screenshots_gallery_count">Файлов: %1$d — Документы\\Black Desert\\ScreenShot</string>
     <string name="screenshots_gallery_empty">В папке ScreenShot пока нет скриншотов: сделайте снимок в игре.</string>
@@ -106,7 +117,13 @@
     <string name="screenshots_alert_count">Новых скриншотов: %1$d</string>
     <string name="screenshots_alert_edit">Редактировать</string>
     <string name="screenshots_alert_edit_tooltip">Открыть скриншот в редакторе BDO Tools</string>
-    <string name="screenshots_alert_hint">Ctrl — показать курсор</string>
+    <string name="screenshots_alert_copy">Копировать</string>
+    <string name="screenshots_alert_copy_tooltip">Скопировать скриншот в буфер обмена</string>
+    <string name="screenshots_alert_crop">Обрезать</string>
+    <string name="screenshots_alert_crop_tooltip">Выделить часть скриншота и скопировать её в буфер обмена</string>
+    <string name="screenshots_quick_crop_title">Обрезать в буфер обмена</string>
+    <string name="screenshots_quick_crop_hint">Обведите область и нажмите зелёную галочку: она попадёт в буфер обмена.</string>
+    <string name="screenshots_quick_crop_close">Закрыть без копирования</string>
     <string name="screenshots_alert_setting">Предлагать редактировать скриншоты</string>
     <string name="screenshots_alert_setting_description">Когда вы делаете скриншот в игре, поверх неё появляется кнопка «Редактировать»</string>
 </resources>

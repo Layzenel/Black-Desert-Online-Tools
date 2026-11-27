@@ -15,13 +15,21 @@
     <string name="screenshots_copy_tooltip">Copy the edited picture to the clipboard to paste it into Discord or a chat</string>
     <string name="screenshots_save">Save copy</string>
     <string name="screenshots_save_tooltip_desktop">Save the edited picture to Black Desert\\BDO Tools\\screenshotEditor; the original stays untouched</string>
+    <string name="screenshots_portraits">Use as portrait background</string>
+    <string name="screenshots_portraits_tooltip">Open the edited picture in the Portrait Constructor and cut it into all portraits</string>
+    <string name="screenshots_close_title">Close the screenshot?</string>
+    <string name="screenshots_close_text">There are unsaved edits: closing the screenshot loses them.</string>
+    <string name="screenshots_close_discard">Close without saving</string>
+    <string name="screenshots_close_discard_tooltip">Close the screenshot and lose the edits</string>
+    <string name="screenshots_close_cancel">Cancel</string>
+    <string name="screenshots_close_cancel_tooltip">Stay in the editor</string>
     <string name="screenshots_save_tooltip_web">Download the edited picture to the browser's downloads; the original stays untouched</string>
 
     <!-- Editing -->
     <string name="screenshots_undo">Undo (Ctrl+Z)</string>
     <string name="screenshots_redo">Redo (Ctrl+Y)</string>
     <string name="screenshots_tool_crop">Crop</string>
-    <string name="screenshots_tool_crop_hint">Drag over the area that should stay in the picture.</string>
+    <string name="screenshots_tool_crop_hint">Drag over the area that should stay and click the green check mark. Right click, a click outside or Esc cancels the crop.</string>
     <string name="screenshots_tool_pixelate">Hide</string>
     <string name="screenshots_tool_pixelate_hint">Drag over a name, family, guild or chat: the area gets pixelated.</string>
     <string name="screenshots_tool_arrow">Arrow</string>
@@ -37,8 +45,11 @@
     <string name="screenshots_aspect_wide">16:9</string>
     <string name="screenshots_aspect_square">1:1</string>
     <string name="screenshots_aspect_tall">9:16</string>
-    <string name="screenshots_crop_reset">Reset crop</string>
-    <string name="screenshots_crop_reset_tooltip">Bring back the whole picture</string>
+    <string name="screenshots_select_hint">Click an arrow, frame, line, caption or hidden area to select it: drag it to move or remove it with the cross.</string>
+    <string name="screenshots_crop_confirm">Crop (Enter)</string>
+    <string name="screenshots_crop_cancel">Cancel the crop (Esc)</string>
+    <string name="screenshots_delete">Delete (Delete)</string>
+    <string name="screenshots_discard_tooltip">Discard all edits of the screenshot</string>
     <string name="screenshots_text_placeholder">Caption text</string>
     <string name="screenshots_color">Color</string>
     <string name="screenshots_color_default">Red</string>
@@ -85,7 +96,7 @@
 
     <!-- Gallery -->
     <string name="screenshots_gallery">Gallery</string>
-    <string name="screenshots_gallery_tooltip">Close the screenshot and go back to the gallery; unsaved edits are lost</string>
+    <string name="screenshots_gallery_tooltip">Close the screenshot and go back to the gallery</string>
     <string name="screenshots_gallery_title">Game screenshots</string>
     <string name="screenshots_gallery_count">Files: %1$d — Documents\\Black Desert\\ScreenShot</string>
     <string name="screenshots_gallery_empty">The ScreenShot folder has no screenshots yet: take one in the game.</string>
@@ -106,7 +117,13 @@
     <string name="screenshots_alert_count">New screenshots: %1$d</string>
     <string name="screenshots_alert_edit">Edit</string>
     <string name="screenshots_alert_edit_tooltip">Open the screenshot in the BDO Tools editor</string>
-    <string name="screenshots_alert_hint">Ctrl — show the cursor</string>
+    <string name="screenshots_alert_copy">Copy</string>
+    <string name="screenshots_alert_copy_tooltip">Copy the screenshot to the clipboard</string>
+    <string name="screenshots_alert_crop">Crop</string>
+    <string name="screenshots_alert_crop_tooltip">Select a part of the screenshot and copy it to the clipboard</string>
+    <string name="screenshots_quick_crop_title">Crop to clipboard</string>
+    <string name="screenshots_quick_crop_hint">Drag over an area and click the green check mark: it goes to the clipboard.</string>
+    <string name="screenshots_quick_crop_close">Close without copying</string>
     <string name="screenshots_alert_setting">Offer to edit screenshots</string>
     <string name="screenshots_alert_setting_description">When you take a screenshot in the game, an "Edit" button appears over it</string>
 </resources>

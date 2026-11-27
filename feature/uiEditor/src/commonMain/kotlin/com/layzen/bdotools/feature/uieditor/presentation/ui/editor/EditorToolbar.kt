@@ -1,5 +1,7 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 
+import com.layzen.bdotools.composable.canvas.CanvasViewport
+import com.layzen.bdotools.composable.canvas.ZoomSlider
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
@@ -39,12 +41,12 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Панель над холстом: история правок, привязка к сетке и прилипание к слотам. Выравнивание — в контекстном
+ * Панель над холстом: история правок, привязка к сетке, прилипание к слотам и масштаб холста [viewport]. Выравнивание — в контекстном
  * меню холста. Импорт, экспорт и пресет — внизу меню слева. У каждой кнопки подсказка, у истории — с горячими клавишами.
  * Последней — «?»: окно «Справка».
  */
 @Composable
-internal fun EditorToolbar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
+internal fun EditorToolbar(state: SlotsState, viewport: CanvasViewport, onEvent: (SlotsEvent) -> Unit) {
     ActionBar {
         HistoryTools(state, onEvent)
         ToolbarDivider()
@@ -69,6 +71,8 @@ internal fun EditorToolbar(state: SlotsState, onEvent: (SlotsEvent) -> Unit) {
             range = SlotsState.SNAP_DISTANCE_RANGE,
             onValueChange = { onEvent(SlotsEvent.SetSnapDistance(it)) },
         )
+        ToolbarDivider()
+        ZoomSlider(viewport)
         ToolbarDivider()
         HelpTool(state)
     }

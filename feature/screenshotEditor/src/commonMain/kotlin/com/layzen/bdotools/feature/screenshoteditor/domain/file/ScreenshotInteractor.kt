@@ -1,9 +1,15 @@
 package com.layzen.bdotools.feature.screenshoteditor.domain.file
 
+import com.layzen.bdotools.core.handoff.HandoffTarget
+import com.layzen.bdotools.core.handoff.ImageHandoff
 import com.layzen.bdotools.feature.screenshoteditor.domain.export.ExportFormat
 
-/** Сценарии работы с файлами скриншотов: открыть, сохранить копию, скопировать в буфер. */
-class ScreenshotInteractor(private val files: ScreenshotFiles, private val gallery: ScreenshotGallery) {
+/** Сценарии работы с файлами скриншотов: открыть, сохранить копию, скопировать в буфер, отдать портретам. */
+class ScreenshotInteractor(
+    private val files: ScreenshotFiles,
+    private val gallery: ScreenshotGallery,
+    private val handoff: ImageHandoff,
+) {
     /** См. [ScreenshotFiles.open]. */
     suspend fun open(): Screenshot? = files.open()
 
@@ -16,4 +22,7 @@ class ScreenshotInteractor(private val files: ScreenshotFiles, private val galle
 
     /** См. [ScreenshotFiles.copy]. */
     suspend fun copy(png: ByteArray) = files.copy(png)
+
+    /** Отдаёт картинку [png] «Конструктору портретов» фоном для всех портретов; вкладку открывает приложение. */
+    fun sendToPortraits(png: ByteArray) = handoff.send(HandoffTarget.PortraitBackground, png)
 }

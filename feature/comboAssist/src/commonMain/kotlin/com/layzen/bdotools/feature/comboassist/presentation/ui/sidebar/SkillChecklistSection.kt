@@ -1,13 +1,10 @@
 package com.layzen.bdotools.feature.comboassist.presentation.ui.sidebar
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -17,9 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.layzen.bdotools.core.skill.domain.SkillDetails
 import com.layzen.bdotools.feature.comboassist.presentation.state.SkillItem
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboDimens
@@ -28,9 +22,9 @@ import com.layzen.bdotools.feature.comboassist.presentation.ui.skill.SkillIconVi
 import com.layzen.bdotools.feature.comboassist.resources.Res
 import com.layzen.bdotools.feature.comboassist.resources.combo_names_language
 import com.layzen.bdotools.uikit.components.CheckBox
+import com.layzen.bdotools.uikit.components.ExpandableHeader
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.MenuItem
-import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.verticalScrollbar
 import com.layzen.bdotools.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
@@ -55,14 +49,7 @@ internal fun SkillChecklistSection(
     val language = stringResource(Res.string.combo_names_language)
     var query by remember { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
-    Row(
-        Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand).clickable { open = !open },
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        ExpandArrow(open)
-        SectionHeader(title, description = if (open) description else null)
-    }
+    ExpandableHeader(title, open, { open = !open }, description)
     if (!open) return
     InputField(
         query, { query = it }, Modifier.fillMaxWidth(), placeholder = searchPlaceholder,
@@ -92,22 +79,3 @@ internal fun SkillChecklistSection(
         }
     }
 }
-
-/** Треугольник раскрытия: вправо — свёрнуто, вниз — раскрыто. Нарисован: символов ▸ ▾ в шрифте сайта нет. */
-@Composable
-private fun ExpandArrow(open: Boolean) {
-    val color = AppTheme.colors.textBeige
-    Canvas(Modifier.size(ComboDimens.expandArrow)) {
-        val path = Path().apply {
-            if (open) {
-                moveTo(0f, size.height * ARROW_INSET); lineTo(size.width, size.height * ARROW_INSET); lineTo(size.width / 2, size.height * (1 - ARROW_INSET))
-            } else {
-                moveTo(size.width * ARROW_INSET, 0f); lineTo(size.width * (1 - ARROW_INSET), size.height / 2); lineTo(size.width * ARROW_INSET, size.height)
-            }
-            close()
-        }
-        drawPath(path, color)
-    }
-}
-
-private const val ARROW_INSET = 0.2f

@@ -1,12 +1,16 @@
 package com.layzen.bdotools.feature.screenshoteditor.presentation.ui
 
 import androidx.compose.runtime.Composable
+import com.layzen.bdotools.composable.canvas.CanvasViewport
+import com.layzen.bdotools.composable.canvas.ZoomSlider
 import com.layzen.bdotools.feature.screenshoteditor.presentation.event.ScreenshotEditorEvent
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.EditorTool
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.ScreenshotEditorState
 import com.layzen.bdotools.feature.screenshoteditor.resources.Res
+import com.layzen.bdotools.feature.screenshoteditor.resources.menu_discard
 import com.layzen.bdotools.feature.screenshoteditor.resources.menu_redo
 import com.layzen.bdotools.feature.screenshoteditor.resources.menu_undo
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_discard_tooltip
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_redo
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_undo
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_compare
@@ -21,10 +25,16 @@ import com.layzen.bdotools.uikit.components.ToolbarDivider
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Строка над скриншотом: отмена, повтор, инструменты, поворот, отражение и сравнение с оригиналом. */
+/** Строка над скриншотом: сброс, отмена, повтор, инструменты, поворот, отражение, сравнение с оригиналом и масштаб [viewport]. */
 @Composable
-internal fun EditorToolbar(state: ScreenshotEditorState, onEvent: (ScreenshotEditorEvent) -> Unit) {
+internal fun EditorToolbar(state: ScreenshotEditorState, viewport: CanvasViewport, onEvent: (ScreenshotEditorEvent) -> Unit) {
     ActionBar {
+        ToolbarButton(
+            painterResource(Res.drawable.menu_discard),
+            stringResource(Res.string.screenshots_discard_tooltip),
+            onClick = { onEvent(ScreenshotEditorEvent.Discard) },
+            enabled = state.history.edits.isNotEmpty(),
+        )
         ToolbarButton(
             painterResource(Res.drawable.menu_undo),
             stringResource(Res.string.screenshots_undo),
@@ -55,5 +65,7 @@ internal fun EditorToolbar(state: ScreenshotEditorState, onEvent: (ScreenshotEdi
             onClick = { onEvent(ScreenshotEditorEvent.ToggleCompare) },
             selected = state.comparing,
         )
+        ToolbarDivider()
+        ZoomSlider(viewport)
     }
 }

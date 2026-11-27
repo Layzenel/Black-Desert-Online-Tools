@@ -20,4 +20,5 @@
     <string name="overlay_panel_title">BDO Tools overlay</string>
     <string name="overlay_tab_settings">Settings</string>
     <string name="overlay_game_admin">The game is running as administrator</string>
+    <string name="canvas_zoom">Zoom, %</string>
 </resources>

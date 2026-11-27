@@ -10,6 +10,8 @@ Lay out cooldown slots and other interface elements on a canvas instead of dragg
 
 - Box selection, aligning and distributing elements (the gap slider moves the selection right away), snapping
   to the grid and to each other.
+- Canvas zoom — the "Zoom" slider in the toolbar or the mouse wheel (at the cursor); pan the canvas by holding the wheel,
+  Space or Shift with the left button.
 - The eye on an element hides or shows it; for a selected group — "Hide group" / "Show group" in the right-click
   menu.
 - Fixed game elements — tips and the menu bar at the bottom, the health bar at the top left without "Split HP" —

@@ -2,6 +2,10 @@ package com.layzen.bdotools.feature.screenshoteditor.presentation.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
 import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.FilterPreset
@@ -20,7 +24,7 @@ import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_tint
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_vignette
 import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect
-import com.layzen.bdotools.uikit.components.SectionHeader
+import com.layzen.bdotools.uikit.components.ExpandableHeader
 import com.layzen.bdotools.uikit.components.ValueSlider
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -47,13 +51,15 @@ private val sliders = listOf(
 )
 
 /**
- * Ретушь всей картинки: готовый фильтр и ползунки. Пока ползунок тянут, правка видна сразу, а в историю
+ * Ретушь всей картинки: готовый фильтр и ползунки. Свёрнута, как «Филлеры» в помощнике комбо: нужна не каждый раз. Пока ползунок тянут, правка видна сразу, а в историю
  * попадает одним шагом, когда его отпустили.
  */
 @Composable
 internal fun AdjustSettings(state: ScreenshotEditorState, onEvent: (ScreenshotEditorEvent) -> Unit) {
     val adjustments = state.shownAdjustments
-    SectionHeader(stringResource(Res.string.screenshots_adjust), description = stringResource(Res.string.screenshots_adjust_description))
+    var open by remember { mutableStateOf(false) }
+    ExpandableHeader(stringResource(Res.string.screenshots_adjust), open, { open = !open }, stringResource(Res.string.screenshots_adjust_description))
+    if (!open) return
     DropdownSelect(
         FilterPreset.entries.firstOrNull { it.adjustments == adjustments },
         FilterPreset.entries,

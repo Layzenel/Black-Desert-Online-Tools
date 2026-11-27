@@ -24,6 +24,9 @@ import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.account.accountsModule
 import com.layzen.bdotools.core.language.AppLanguages
 import com.layzen.bdotools.core.language.languageModule
+import com.layzen.bdotools.core.handoff.HandoffTarget
+import com.layzen.bdotools.core.handoff.ImageHandoff
+import com.layzen.bdotools.core.handoff.handoffModule
 import com.layzen.bdotools.core.theme.AppThemes
 import com.layzen.bdotools.core.keyhint.keyHintModule
 import com.layzen.bdotools.core.theme.themeModule
@@ -74,6 +77,7 @@ private val featureModules = listOf(
     skillCatalogModule,
     languageModule,
     themeModule,
+    handoffModule,
     keyHintModule,
     updateModule,
     portraitsModule,
@@ -135,6 +139,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
         preloadScreenshotEditorStrings()
     }
 
+    HandoffNavigation(backStack)
     val runningAsAdmin = remember { isRunningAsAdmin() }
     Column(Modifier.fillMaxSize().background(AppTheme.colors.backgroundDeep)) {
         TopNavigation(
@@ -193,5 +198,19 @@ private fun TabContent(tab: AppTab) {
         AppTab.Slots -> SlotsRoute()
         AppTab.Combo -> ComboRoute()
         AppTab.Screenshots -> ScreenshotEditorRoute()
+    }
+}
+
+/** Картинку передали из одной тулзы в другую — открываем вкладку получателя, он заберёт её сам. */
+@Composable
+private fun HandoffNavigation(backStack: SnapshotStateList<Destination>) {
+    val transfer by koinInject<ImageHandoff>().pending.collectAsState()
+    LaunchedEffect(transfer) {
+        val target = transfer?.target ?: return@LaunchedEffect
+        backStack.openTab(
+            when (target) {
+                HandoffTarget.PortraitBackground -> AppTab.Portraits
+            },
+        )
     }
 }
