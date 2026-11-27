@@ -30,6 +30,8 @@
   - `presets` — «Мои пресеты»;
   - `background` — подложка;
   - `backups` — копии настроек игры перед записью.
+- «Редактор скриншотов» — `BDO Tools\screenshotEditor\`: копии скриншотов с правками (одна папка на все аккаунты,
+  как `ScreenShot` в игре).
 
 Папки и файлы прошлых версий (`FaceTexture_backup` и `Favorite FaceTexture` в корне `Black Desert`,
 `BDO Tools\portraits`, `BDO Tools\slots`, `BDO Tools\lobby_backup`) при первом открытии переезжают в папку своего

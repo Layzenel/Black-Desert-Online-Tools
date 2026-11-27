@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Empty screen -->
+    <string name="screenshots_intro_title">Screenshot editor</string>
+    <string name="screenshots_intro_description">The original stays untouched: edits are saved to a copy.</string>
+    <string name="screenshots_intro_crop">Crop, including 16:9, 1:1 and 9:16</string>
+    <string name="screenshots_intro_pixelate">Pixelate names, family, guild and chat</string>
+    <string name="screenshots_intro_marks">Arrows, frames, brush and captions</string>
+    <string name="screenshots_intro_export">Save a PNG or JPG copy, downscaled if needed, or copy it to the clipboard</string>
+
+    <!-- Files -->
+    <string name="screenshots_open">Open</string>
+    <string name="screenshots_open_tooltip">Choose a screenshot, usually from Documents\\Black Desert\\ScreenShot</string>
+    <string name="screenshots_copy">Copy</string>
+    <string name="screenshots_copy_tooltip">Copy the edited picture to the clipboard to paste it into Discord or a chat</string>
+    <string name="screenshots_save">Save copy</string>
+    <string name="screenshots_save_tooltip_desktop">Save the edited picture to Black Desert\\BDO Tools\\screenshotEditor; the original stays untouched</string>
+    <string name="screenshots_save_tooltip_web">Download the edited picture to the browser's downloads; the original stays untouched</string>
+
+    <!-- Editing -->
+    <string name="screenshots_undo">Undo (Ctrl+Z)</string>
+    <string name="screenshots_redo">Redo (Ctrl+Y)</string>
+    <string name="screenshots_tool_crop">Crop</string>
+    <string name="screenshots_tool_crop_hint">Drag over the area that should stay in the picture.</string>
+    <string name="screenshots_tool_pixelate">Hide</string>
+    <string name="screenshots_tool_pixelate_hint">Drag over a name, family, guild or chat: the area gets pixelated.</string>
+    <string name="screenshots_tool_arrow">Arrow</string>
+    <string name="screenshots_tool_arrow_hint">Drag from the start of the arrow to its tip.</string>
+    <string name="screenshots_tool_frame">Frame</string>
+    <string name="screenshots_tool_frame_hint">Draw a frame around what matters.</string>
+    <string name="screenshots_tool_brush">Brush</string>
+    <string name="screenshots_tool_brush_hint">Draw while holding the mouse button.</string>
+    <string name="screenshots_tool_text">Text</string>
+    <string name="screenshots_tool_text_hint">Type the text below and click the screenshot where it should start.</string>
+    <string name="screenshots_aspect">Aspect ratio</string>
+    <string name="screenshots_aspect_free">Free</string>
+    <string name="screenshots_aspect_wide">16:9</string>
+    <string name="screenshots_aspect_square">1:1</string>
+    <string name="screenshots_aspect_tall">9:16</string>
+    <string name="screenshots_crop_reset">Reset crop</string>
+    <string name="screenshots_crop_reset_tooltip">Bring back the whole picture</string>
+    <string name="screenshots_text_placeholder">Caption text</string>
+    <string name="screenshots_color">Color</string>
+    <string name="screenshots_color_default">Red</string>
+    <string name="screenshots_thickness">Thickness</string>
+    <string name="screenshots_text_size">Text size</string>
+
+    <!-- Saving -->
+    <string name="screenshots_export">Saving</string>
+    <string name="screenshots_export_size">Result: %1$d × %2$d</string>
+    <string name="screenshots_scale_percent">%1$d %</string>
+    <string name="screenshots_busy">Preparing the picture…</string>
+
+    <!-- Notices -->
+    <string name="screenshots_saved">Copy saved: %1$s</string>
+    <string name="screenshots_downloaded">Copy saved to the browser's downloads</string>
+    <string name="screenshots_copied">Picture copied to the clipboard</string>
+    <string name="screenshots_error_not_image">The file could not be opened as a picture</string>
+    <string name="screenshots_error_save">Could not save the copy</string>
+    <string name="screenshots_error_clipboard">The clipboard is unavailable: allow access or save a copy</string>
+</resources>

@@ -22,7 +22,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.state.SkillsState
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsDialog
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.title
-import com.layzen.bdotools.feature.uieditor.presentation.ui.handleHistoryKeys
+import com.layzen.bdotools.composable.input.handleHistoryKeys
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.QuickSlotSettings
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.SplitHpSettings
 import com.layzen.bdotools.feature.uieditor.resources.Res

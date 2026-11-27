@@ -10,6 +10,8 @@ import com.layzen.bdotools.resources.tab_combo
 import com.layzen.bdotools.resources.tab_combo_icon
 import com.layzen.bdotools.resources.tab_slots
 import com.layzen.bdotools.resources.tab_slots_icon
+import com.layzen.bdotools.resources.tab_screenshots
+import com.layzen.bdotools.resources.tab_screenshots_icon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 
@@ -28,7 +30,8 @@ enum class AppTab(
 ) {
     Portraits("portraits", Res.string.tab_portraits, Res.drawable.tab_portraits_icon),
     Slots("slots", Res.string.tab_slots, Res.drawable.tab_slots_icon, fillsScreen = true),
-    Combo("combo", Res.string.tab_combo, Res.drawable.tab_combo_icon, fillsScreen = true, desktopOnly = true);
+    Combo("combo", Res.string.tab_combo, Res.drawable.tab_combo_icon, fillsScreen = true, desktopOnly = true),
+    Screenshots("screenshots", Res.string.tab_screenshots, Res.drawable.tab_screenshots_icon, fillsScreen = true);
 
     companion object {
         /** Вкладки этой платформы: на сайте — без [desktopOnly]. */

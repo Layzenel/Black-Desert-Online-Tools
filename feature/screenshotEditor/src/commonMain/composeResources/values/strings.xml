@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Пустой экран -->
+    <string name="screenshots_intro_title">Редактор скриншотов</string>
+    <string name="screenshots_intro_description">Оригинал не меняется: правки сохраняются в копию.</string>
+    <string name="screenshots_intro_crop">Обрезка, в том числе под 16:9, 1:1 и 9:16</string>
+    <string name="screenshots_intro_pixelate">Пикселизация ников, семьи, гильдии и чата</string>
+    <string name="screenshots_intro_marks">Стрелки, рамки, кисть и надписи</string>
+    <string name="screenshots_intro_export">Копия в PNG или JPG с уменьшением и копирование в буфер обмена</string>
+
+    <!-- Файлы -->
+    <string name="screenshots_open">Открыть</string>
+    <string name="screenshots_open_tooltip">Выбрать скриншот, обычно из Документы\\Black Desert\\ScreenShot</string>
+    <string name="screenshots_copy">Копировать</string>
+    <string name="screenshots_copy_tooltip">Скопировать картинку с правками в буфер обмена, чтобы вставить в Discord или чат</string>
+    <string name="screenshots_save">Сохранить копию</string>
+    <string name="screenshots_save_tooltip_desktop">Сохранить картинку с правками в Black Desert\\BDO Tools\\screenshotEditor; оригинал не меняется</string>
+    <string name="screenshots_save_tooltip_web">Скачать картинку с правками в загрузки браузера; оригинал не меняется</string>
+
+    <!-- Правка -->
+    <string name="screenshots_undo">Отменить (Ctrl+Z)</string>
+    <string name="screenshots_redo">Повторить (Ctrl+Y)</string>
+    <string name="screenshots_tool_crop">Обрезка</string>
+    <string name="screenshots_tool_crop_hint">Выделите мышью область, которая останется на картинке.</string>
+    <string name="screenshots_tool_pixelate">Скрыть</string>
+    <string name="screenshots_tool_pixelate_hint">Выделите ник, семью, гильдию или чат: область станет пиксельной.</string>
+    <string name="screenshots_tool_arrow">Стрелка</string>
+    <string name="screenshots_tool_arrow_hint">Тяните от начала стрелки к острию.</string>
+    <string name="screenshots_tool_frame">Рамка</string>
+    <string name="screenshots_tool_frame_hint">Обведите важное рамкой.</string>
+    <string name="screenshots_tool_brush">Кисть</string>
+    <string name="screenshots_tool_brush_hint">Рисуйте, зажав кнопку мыши.</string>
+    <string name="screenshots_tool_text">Текст</string>
+    <string name="screenshots_tool_text_hint">Напишите текст ниже и кликните по скриншоту там, где он должен начинаться.</string>
+    <string name="screenshots_aspect">Пропорции</string>
+    <string name="screenshots_aspect_free">Свободно</string>
+    <string name="screenshots_aspect_wide">16:9</string>
+    <string name="screenshots_aspect_square">1:1</string>
+    <string name="screenshots_aspect_tall">9:16</string>
+    <string name="screenshots_crop_reset">Сбросить обрезку</string>
+    <string name="screenshots_crop_reset_tooltip">Вернуть картинку целиком</string>
+    <string name="screenshots_text_placeholder">Текст надписи</string>
+    <string name="screenshots_color">Цвет</string>
+    <string name="screenshots_color_default">Красный</string>
+    <string name="screenshots_thickness">Толщина</string>
+    <string name="screenshots_text_size">Размер текста</string>
+
+    <!-- Сохранение -->
+    <string name="screenshots_export">Сохранение</string>
+    <string name="screenshots_export_size">Итог: %1$d × %2$d</string>
+    <string name="screenshots_scale_percent">%1$d %</string>
+    <string name="screenshots_busy">Готовим картинку…</string>
+
+    <!-- Сообщения -->
+    <string name="screenshots_saved">Копия сохранена: %1$s</string>
+    <string name="screenshots_downloaded">Копия сохранена в загрузки браузера</string>
+    <string name="screenshots_copied">Картинка в буфере обмена</string>
+    <string name="screenshots_error_not_image">Файл не открылся как картинка</string>
+    <string name="screenshots_error_save">Не удалось сохранить копию</string>
+    <string name="screenshots_error_clipboard">Буфер обмена недоступен: разрешите доступ или сохраните копию</string>
+</resources>

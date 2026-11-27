@@ -32,6 +32,8 @@ Black Desert\BDO Tools\
     ├── backups\                          копии gamevariable.xml аккаунта и персонажей перед записью
     ├── presets\*.json                    «Мои пресеты»
     └── background\image                  подложка
+└── screenshotEditor\                    редактор скриншотов (настольная версия; сайт скачивает копию в загрузки)
+    └── <скриншот>_edited.png|jpg         копии с правками — без папки аккаунта: `ScreenShot` в игре один на все аккаунты
 ```
 
 ## Правила

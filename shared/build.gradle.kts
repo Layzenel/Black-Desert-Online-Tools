@@ -27,6 +27,7 @@ kotlin {
             implementation(project(":feature:comboAssist"))
             implementation(project(":feature:gameInfo"))
             implementation(project(":feature:settings"))
+            implementation(project(":feature:screenshotEditor"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

@@ -30,6 +30,8 @@ game installation folder), separately for each tool and each account:
   - `presets` — "My presets";
   - `background` — the backdrop;
   - `backups` — copies of the game settings before writing.
+- "Screenshot Editor" — `BDO Tools\screenshotEditor\`: edited copies of screenshots (one folder for all accounts,
+  like the game's `ScreenShot`).
 
 Folders and files of previous versions (`FaceTexture_backup` and `Favorite FaceTexture` in the root of
 `Black Desert`, `BDO Tools\portraits`, `BDO Tools\slots`, `BDO Tools\lobby_backup`) move to the folder of their

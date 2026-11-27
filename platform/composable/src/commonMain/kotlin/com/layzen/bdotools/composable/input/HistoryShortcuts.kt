@@ -1,4 +1,4 @@
-package com.layzen.bdotools.feature.uieditor.presentation.ui
+package com.layzen.bdotools.composable.input
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
@@ -13,7 +13,7 @@ import androidx.compose.ui.input.key.type
  * Горячие клавиши истории: Ctrl+Z — [onUndo], Ctrl+Shift+Z и Ctrl+Y — [onRedo]. На Mac вместо Ctrl — Cmd.
  * Возвращает `true`, если клавиша — одна из них: тогда её не нужно обрабатывать дальше.
  */
-internal fun KeyEvent.handleHistoryKeys(onUndo: () -> Unit, onRedo: () -> Unit): Boolean {
+fun KeyEvent.handleHistoryKeys(onUndo: () -> Unit, onRedo: () -> Unit): Boolean {
     if (!isCtrlPressed && !isMetaPressed) return false
     val action = when {
         key == Key.Z && isShiftPressed -> onRedo

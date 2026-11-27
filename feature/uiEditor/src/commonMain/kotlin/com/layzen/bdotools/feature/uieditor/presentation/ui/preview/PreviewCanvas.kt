@@ -42,7 +42,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.CanvasViewpor
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.CrosshairLayer
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.ScreenCanvas
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.frameColor
-import com.layzen.bdotools.feature.uieditor.presentation.ui.handleHistoryKeys
+import com.layzen.bdotools.composable.input.handleHistoryKeys
 import com.layzen.bdotools.feature.uieditor.presentation.ui.slotTitle
 import com.layzen.bdotools.uikit.theme.AppTheme
 import kotlin.math.roundToInt

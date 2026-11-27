@@ -34,6 +34,9 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.ui.preloadPo
 import com.layzen.bdotools.feature.comboassist.di.comboModule
 import com.layzen.bdotools.feature.gameinfo.di.gameInfoModule
 import com.layzen.bdotools.feature.settings.di.settingsModule
+import com.layzen.bdotools.feature.screenshoteditor.di.screenshotEditorModule
+import com.layzen.bdotools.feature.screenshoteditor.presentation.ui.ScreenshotEditorRoute
+import com.layzen.bdotools.feature.screenshoteditor.presentation.ui.preloadScreenshotEditorStrings
 import com.layzen.bdotools.feature.settings.presentation.ui.SettingsRoute
 import com.layzen.bdotools.feature.comboassist.presentation.ui.ComboRoute
 import com.layzen.bdotools.navigation.openTab
@@ -78,6 +81,7 @@ private val featureModules = listOf(
     comboModule,
     gameInfoModule,
     settingsModule,
+    screenshotEditorModule,
 )
 
 /** Корень сайта: Koin, тема, язык ([AppRoot]) и экран с верхней навигацией ([AppScreen]). */
@@ -128,6 +132,7 @@ private fun AppContent(backStack: SnapshotStateList<Destination>, languages: App
         preloadPortraitsStrings()
         preloadSlotsStrings()
         preloadComboStrings()
+        preloadScreenshotEditorStrings()
     }
 
     val runningAsAdmin = remember { isRunningAsAdmin() }
@@ -187,5 +192,6 @@ private fun TabContent(tab: AppTab) {
         AppTab.Portraits -> PortraitsRoute()
         AppTab.Slots -> SlotsRoute()
         AppTab.Combo -> ComboRoute()
+        AppTab.Screenshots -> ScreenshotEditorRoute()
     }
 }
