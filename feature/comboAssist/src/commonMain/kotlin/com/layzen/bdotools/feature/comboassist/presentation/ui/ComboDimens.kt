@@ -53,7 +53,6 @@ internal object ComboDimens {
     val focusWidth = 118.dp
     val noteMaxWidth = 240.dp
     val cooldownIcon = 12.dp
-    val expandArrow = 10.dp
     val buttonIcon = 16.dp
     val dropArrow = 10.dp
     val dropSlop = 14.dp

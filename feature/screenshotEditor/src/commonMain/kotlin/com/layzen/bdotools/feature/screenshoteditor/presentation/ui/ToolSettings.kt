@@ -14,14 +14,12 @@ import com.layzen.bdotools.feature.screenshoteditor.resources.Res
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_aspect
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_color
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_color_default
-import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_crop_reset
-import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_crop_reset_tooltip
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_select_hint
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_text_placeholder
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_text_size
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_thickness
-import com.layzen.bdotools.uikit.components.ActionButton
-import com.layzen.bdotools.uikit.components.ActionButtonState
 import com.layzen.bdotools.uikit.components.ColorPalette
+import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.DropdownSelect
 import com.layzen.bdotools.uikit.components.InputField
 import com.layzen.bdotools.uikit.components.SectionHeader
@@ -42,6 +40,7 @@ internal fun ToolSettings(state: ScreenshotEditorState, onEvent: (ScreenshotEdit
         )
     }
     if (state.tool.usesColor) MarkSettings(state, onEvent)
+    DescriptionText(stringResource(Res.string.screenshots_select_hint))
 }
 
 @Composable
@@ -52,18 +51,6 @@ private fun CropSettings(state: ScreenshotEditorState, onEvent: (ScreenshotEdito
         CropAspect.entries,
         { onEvent(ScreenshotEditorEvent.Aspect(it)) },
         { stringResource(it.title) },
-        Modifier.fillMaxWidth(),
-    )
-    val image = state.image
-    val crop = state.history.crop
-    val cropped = image != null && crop != null && (crop.width < image.width || crop.height < image.height)
-    ActionButton(
-        ActionButtonState.Neutral(
-            stringResource(Res.string.screenshots_crop_reset),
-            enabled = cropped,
-            onClick = { onEvent(ScreenshotEditorEvent.ResetCrop) },
-            tooltip = stringResource(Res.string.screenshots_crop_reset_tooltip),
-        ),
         Modifier.fillMaxWidth(),
     )
 }

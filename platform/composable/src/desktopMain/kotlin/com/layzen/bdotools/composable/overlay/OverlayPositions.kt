@@ -51,6 +51,7 @@ internal fun savedPosition(id: String, anchor: OverlayAnchor, size: DpSize): Win
         OverlayAnchor.TopRight -> WindowPosition((screen.width - TOP_RIGHT_MARGIN * 2).dp, TOP_RIGHT_MARGIN.dp)
         OverlayAnchor.CenterLeft -> WindowPosition(LEFT_MARGIN.dp, (screen.height.dp - size.height) / 2)
         OverlayAnchor.BottomRight -> WindowPosition(screen.width.dp - size.width - LEFT_MARGIN.dp, screen.height.dp * RIGHT_SHARE - size.height)
+        OverlayAnchor.Center -> WindowPosition((screen.width.dp - size.width) / 2, (screen.height.dp - size.height) / 2)
     }
 }
 

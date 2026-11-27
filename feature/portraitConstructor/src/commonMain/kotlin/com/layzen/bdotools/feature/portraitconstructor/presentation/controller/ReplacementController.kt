@@ -35,6 +35,12 @@ internal class ReplacementController(private val context: PortraitsContext) {
     /** Загружает картинку из буфера обмена. */
     fun pasteFromClipboard() = loadImage { context.portraits.pasteImage() }
 
+    /** Открывает картинку [bytes] из другой тулзы для всех портретов — как если бы её выбрали после «Загрузить». */
+    fun loadReceived(bytes: ByteArray) {
+        openSource(ReplaceTarget.All)
+        loadImage { bytes }
+    }
+
     /** Загружает картинку по введённой ссылке; пустая ссылка игнорируется. */
     fun loadFromUrl() {
         val url = context.current.sourceDialog?.url?.trim().orEmpty()

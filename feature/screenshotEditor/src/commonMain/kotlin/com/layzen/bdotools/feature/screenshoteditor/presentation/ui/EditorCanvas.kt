@@ -5,6 +5,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,38 +14,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.unit.IntSize
-import com.layzen.bdotools.composable.input.handleHistoryKeys
-import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
-import com.layzen.bdotools.feature.screenshoteditor.domain.edit.Edit
-import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImageRect
+import com.layzen.bdotools.composable.canvas.CanvasViewport
+import com.layzen.bdotools.composable.canvas.middleButtonPan
+import com.layzen.bdotools.composable.canvas.wheelZoom
+import com.layzen.bdotools.feature.screenshoteditor.presentation.controller.bounds
 import com.layzen.bdotools.feature.screenshoteditor.presentation.event.ScreenshotEditorEvent
 import com.layzen.bdotools.feature.screenshoteditor.presentation.render.EditPainter
-import com.layzen.bdotools.feature.screenshoteditor.presentation.render.oriented
+import com.layzen.bdotools.feature.screenshoteditor.presentation.render.hitIndex
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.ScreenshotEditorState
-import com.layzen.bdotools.uikit.theme.AppTheme
-
-// Затемнение за рамкой обрезки: то, что не попадёт в копию, видно, но приглушено
-private const val CROP_SHADE_ALPHA = 0.7f
 
 /**
- * Скриншот с правками, вписанный в область: инструменты рисуют мышью, Ctrl+Z / Ctrl+Y отменяют и повторяют.
- * Обрезка показывается рамкой с затемнением вокруг — картинка остаётся целиком, чтобы рамку можно было переделать.
+ * Видимая часть скриншота с правками, вписанная в область: после обрезки — только она. Инструменты рисуют мышью,
+ * клик по правке выбирает её, а тянуть — двигает; колесо мыши меняет масштаб [viewport], зажатое колесо двигает холст.
+ * Обведённая обрезка ждёт галочки; правая кнопка, клик мимо и Esc её отменяют.
+ * Ctrl+Z / Ctrl+Y отменяют и повторяют, Delete удаляет выбранную правку, Enter подтверждает обрезку.
  */
 @Composable
 internal fun EditorCanvas(
@@ -52,80 +49,62 @@ internal fun EditorCanvas(
     state: ScreenshotEditorState,
     onEvent: (ScreenshotEditorEvent) -> Unit,
     measurer: TextMeasurer,
+    viewport: CanvasViewport,
     modifier: Modifier = Modifier,
 ) {
     val painter = remember(image, measurer) { EditPainter(image, measurer) }
     var area by remember { mutableStateOf(IntSize.Zero) }
-    val fit = ImageFit.of(IntSize(image.width, image.height), state.history.orientation, area)
+    // масштаб заводится заново после обрезки, а размер области от этого не меняется — задаём его при каждом показе
+    viewport.size = Size(area.width.toFloat(), area.height.toFloat())
+    val fit = ImageFit.of(IntSize(image.width, image.height), state.history.orientation, state.bounds, area)
     val currentFit by rememberUpdatedState(fit)
+    val currentState by rememberUpdatedState(state)
     val currentOnEvent by rememberUpdatedState(onEvent)
     val focus = remember { FocusRequester() }
-    val shade = AppTheme.colors.backgroundDeep.copy(alpha = CROP_SHADE_ALPHA)
-    val border = AppTheme.colors.accentGold
-    Canvas(
+    val colors = canvasColors()
+    Box(
         modifier
             .fillMaxSize()
+            .clipToBounds()
             .onSizeChanged { area = it }
             .focusRequester(focus)
             .focusable()
-            .onPreviewKeyEvent { it.handleHistoryKeys({ currentOnEvent(ScreenshotEditorEvent.Undo) }, { currentOnEvent(ScreenshotEditorEvent.Redo) }) }
-            .pointerHoverIcon(PointerIcon.Crosshair)
-            .pointerInput(Unit) {
-                // правка начинается точно там, где нажали: detectDragGestures начинает её после порога сдвига
-                awaitEachGesture {
-                    val down = awaitFirstDown()
-                    focus.requestFocus()
-                    currentOnEvent(ScreenshotEditorEvent.DragStart(currentFit.toImage(down.position)))
-                    var moved = false
-                    drag(down.id) { change ->
-                        moved = true
-                        change.consume()
-                        currentOnEvent(ScreenshotEditorEvent.DragMove(currentFit.toImage(change.position)))
-                    }
-                    currentOnEvent(ScreenshotEditorEvent.DragEnd)
-                    if (!moved) currentOnEvent(ScreenshotEditorEvent.Tap(currentFit.toImage(down.position)))
-                }
-            },
+            .onPreviewKeyEvent { it.handleEditorKeys(currentOnEvent) }
+            .middleButtonPan(viewport)
+            .wheelZoom(viewport),
     ) {
-        withTransform({
-            translate(fit.offset.x, fit.offset.y)
-            scale(fit.scale, fit.scale, Offset.Zero)
-        }) {
-            oriented(fit.orientation, image.width.toFloat(), image.height.toFloat()) {
-                paintScreenshot(painter, image, state)
-                val crop = (state.draft as? Edit.Crop)?.rect ?: state.history.crop
-                if (crop != null && !state.comparing) cropShade(crop, image, shade, border, ScreenshotEditorDimens.cropBorder.toPx() / fit.scale)
-            }
+        Canvas(
+            Modifier
+                .fillMaxSize()
+                .pointerHoverIcon(PointerIcon.Crosshair)
+                .pointerInput(viewport) {
+                    // правка начинается точно там, где нажали: detectDragGestures начинает её после порога сдвига
+                    awaitEachGesture {
+                        val down = awaitFirstDown()
+                        // окно поверх игры тянется за любое место: правка на холсте его двигать не должна
+                        down.consume()
+                        focus.requestFocus()
+                        if (currentEvent.buttons.isSecondaryPressed) {
+                            currentOnEvent(ScreenshotEditorEvent.Cancel)
+                            return@awaitEachGesture
+                        }
+                        val toImage = { point: Offset -> currentFit.toImage(viewport.toContent(point)) }
+                        val at = toImage(down.position)
+                        val tolerance = ScreenshotEditorDimens.hitTolerance.toPx() / (currentFit.scale * viewport.zoom)
+                        currentOnEvent(ScreenshotEditorEvent.Press(at, hitIndex(currentState.history.edits, at, tolerance, measurer)))
+                        var moved = false
+                        drag(down.id) { change ->
+                            moved = true
+                            change.consume()
+                            currentOnEvent(ScreenshotEditorEvent.DragMove(toImage(change.position)))
+                        }
+                        currentOnEvent(ScreenshotEditorEvent.DragEnd)
+                        if (!moved) currentOnEvent(ScreenshotEditorEvent.Tap(at))
+                    }
+                },
+        ) {
+            paintCanvas(CanvasScene(image, state, painter, fit, viewport, measurer), colors)
         }
-    }
-}
-
-/** Затемняет картинку [image] вокруг обрезки [crop] и обводит её рамкой толщиной [borderWidth] пикселей картинки. */
-private fun DrawScope.cropShade(
-    crop: ImageRect,
-    image: ImageBitmap,
-    shade: Color,
-    border: Color,
-    borderWidth: Float,
-) {
-    val width = image.width.toFloat()
-    val height = image.height.toFloat()
-    drawRect(shade, Offset.Zero, Size(width, crop.top))
-    drawRect(shade, Offset(0f, crop.bottom), Size(width, height - crop.bottom))
-    drawRect(shade, Offset(0f, crop.top), Size(crop.left, crop.height))
-    drawRect(shade, Offset(crop.right, crop.top), Size(width - crop.right, crop.height))
-    drawRect(border, Offset(crop.left, crop.top), Size(crop.width, crop.height), style = Stroke(borderWidth))
-}
-
-/** Скриншот с ретушью и правками; в режиме сравнения — исходный, без них. */
-private fun DrawScope.paintScreenshot(painter: EditPainter, image: ImageBitmap, state: ScreenshotEditorState) {
-    val whole = ImageRect(0f, 0f, image.width.toFloat(), image.height.toFloat())
-    with(painter) {
-        if (state.comparing) {
-            paint(emptyList(), Adjustments(), whole)
-            return
-        }
-        paint(state.history.drawn, state.shownAdjustments, state.history.crop ?: whole)
-        state.draft?.let { paintEdit(it) }
+        CanvasControls(state, fit, viewport, measurer, onEvent)
     }
 }

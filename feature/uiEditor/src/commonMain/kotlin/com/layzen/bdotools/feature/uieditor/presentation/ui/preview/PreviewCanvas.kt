@@ -38,7 +38,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.ui.SlotsDimens
 import com.layzen.bdotools.feature.uieditor.presentation.ui.chatTitle
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.BackgroundImage
-import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.CanvasViewport
+import com.layzen.bdotools.composable.canvas.CanvasViewport
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.CrosshairLayer
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.ScreenCanvas
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.frameColor

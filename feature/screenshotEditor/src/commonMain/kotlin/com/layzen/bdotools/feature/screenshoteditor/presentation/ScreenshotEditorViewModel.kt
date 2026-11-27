@@ -3,16 +3,14 @@ package com.layzen.bdotools.feature.screenshoteditor.presentation
 import androidx.compose.ui.text.TextMeasurer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.layzen.bdotools.feature.screenshoteditor.domain.edit.Edit
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.EditHistory
-import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImagePoint
 import com.layzen.bdotools.feature.screenshoteditor.domain.export.ExportFormat
+import com.layzen.bdotools.feature.screenshoteditor.domain.export.ExportScale
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.Screenshot
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotError
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotException
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotInteractor
-import com.layzen.bdotools.feature.screenshoteditor.presentation.controller.dragDraft
-import com.layzen.bdotools.feature.screenshoteditor.presentation.controller.isMeaningful
+import com.layzen.bdotools.feature.screenshoteditor.presentation.controller.CanvasGesture
 import com.layzen.bdotools.feature.screenshoteditor.presentation.controller.reduce
 import com.layzen.bdotools.feature.screenshoteditor.presentation.event.ScreenshotEditorEvent
 import com.layzen.bdotools.feature.screenshoteditor.presentation.render.encode
@@ -42,7 +40,7 @@ class ScreenshotEditorViewModel(private val interactor: ScreenshotInteractor) : 
     /** Состояние экрана. */
     val state: StateFlow<ScreenshotEditorState> = _state.asStateFlow()
 
-    private var dragStart: ImagePoint? = null
+    private val gesture = CanvasGesture()
 
     /** Обрабатывает действие на экране. */
     fun onEvent(event: ScreenshotEditorEvent) {
@@ -51,23 +49,12 @@ class ScreenshotEditorViewModel(private val interactor: ScreenshotInteractor) : 
             is ScreenshotEditorEvent.OpenEntry -> load { interactor.open(event.entry) }
             is ScreenshotEditorEvent.Save -> save(event.measurer)
             is ScreenshotEditorEvent.Copy -> copy(event.measurer)
-            is ScreenshotEditorEvent.DragStart -> dragStart = event.at.also { at -> _state.update { it.copy(draft = dragDraft(it, at, at, null)) } }
-            is ScreenshotEditorEvent.DragMove -> dragTo(event.to)
-            ScreenshotEditorEvent.DragEnd -> finishDrag()
+            is ScreenshotEditorEvent.ApplyToPortraits -> applyToPortraits(event.measurer)
+            is ScreenshotEditorEvent.Press -> _state.update { gesture.press(it, event.at, event.hit) }
+            is ScreenshotEditorEvent.DragMove -> _state.update { gesture.move(it, event.to) }
+            ScreenshotEditorEvent.DragEnd -> _state.update(gesture::release)
+            is ScreenshotEditorEvent.Tap -> _state.update { gesture.tap(it, event.at) }
             else -> _state.update { it.reduce(event) ?: it }
-        }
-    }
-
-    private fun dragTo(to: ImagePoint) {
-        val start = dragStart ?: return
-        _state.update { it.copy(draft = dragDraft(it, start, to, it.draft)) }
-    }
-
-    private fun finishDrag() {
-        dragStart = null
-        _state.update { state ->
-            val draft = state.draft?.takeIf(Edit::isMeaningful)
-            state.copy(draft = null, history = draft?.let(state.history::add) ?: state.history)
         }
     }
 
@@ -88,29 +75,43 @@ class ScreenshotEditorViewModel(private val interactor: ScreenshotInteractor) : 
         val image = withContext(Dispatchers.Default) { runCatching { shot.bytes.decodeToImageBitmap() }.getOrNull() }
         _state.update {
             if (image == null) it.copy(busy = false, notice = EditorNotice.Failed(ScreenshotError.NotImage))
-            else it.copy(busy = false, image = image, name = shot.name, history = EditHistory(), draft = null, comparing = false)
+            else it.copy(busy = false, image = image, name = shot.name, history = EditHistory(), saved = emptyList(), draft = null, pendingCrop = null, selected = null, comparing = false)
         }
     }
 
-    private fun save(measurer: TextMeasurer) = export(measurer, _state.value.format) { bytes ->
-        interactor.saveCopy(_state.value.name, _state.value.format, bytes)?.let(EditorNotice::Saved) ?: EditorNotice.Downloaded
+    private fun save(measurer: TextMeasurer) {
+        val edits = _state.value.history.edits
+        export(measurer, _state.value.format, _state.value.scale) { bytes ->
+            val notice = interactor.saveCopy(_state.value.name, _state.value.format, bytes)?.let(EditorNotice::Saved) ?: EditorNotice.Downloaded
+            _state.update { it.copy(saved = edits) }
+            notice
+        }
     }
 
     // браузер кладёт в буфер только PNG
-    private fun copy(measurer: TextMeasurer) = export(measurer, ExportFormat.Png) { png ->
+    private fun copy(measurer: TextMeasurer) = export(measurer, ExportFormat.Png, _state.value.scale) { png ->
         interactor.copy(png)
         EditorNotice.Copied
     }
 
-    /** Рисует картинку с правками в [format] и отдаёт байты [deliver]; ошибки показывает сообщением. */
-    private fun export(measurer: TextMeasurer, format: ExportFormat, deliver: suspend (ByteArray) -> EditorNotice) =
+    // портреты нарезаются из полного размера: уменьшенная копия дала бы мыло
+    private fun applyToPortraits(measurer: TextMeasurer) = export(measurer, ExportFormat.Png, ExportScale.Full) { png ->
+        interactor.sendToPortraits(png)
+        null
+    }
+
+    /**
+     * Рисует картинку с правками в [format] и размере [scale] и отдаёт байты [deliver]; его сообщение или ошибку
+     * показывает внизу экрана.
+     */
+    private fun export(measurer: TextMeasurer, format: ExportFormat, scale: ExportScale, deliver: suspend (ByteArray) -> EditorNotice?) =
         viewModelScope.launch {
             val state = _state.value
             val image = state.image ?: return@launch
             _state.update { it.copy(busy = true) }
             delay(FRAME_MS)
             val notice = try {
-                val bytes = withContext(Dispatchers.Default) { encode(renderEdited(image, state.history, state.scale, measurer), format) }
+                val bytes = withContext(Dispatchers.Default) { encode(renderEdited(image, state.history, scale, measurer), format) }
                 deliver(bytes)
             } catch (e: ScreenshotException) {
                 EditorNotice.Failed(e.error)

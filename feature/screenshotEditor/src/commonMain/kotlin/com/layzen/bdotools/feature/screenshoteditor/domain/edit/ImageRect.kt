@@ -15,6 +15,9 @@ data class ImageRect(val left: Float, val top: Float, val right: Float, val bott
     /** Меньше пикселя по одной из сторон: такую область правкой не считаем (случайный клик). */
     val isEmpty: Boolean get() = width < 1f || height < 1f
 
+    /** Точка [point] внутри прямоугольника. */
+    operator fun contains(point: ImagePoint): Boolean = point.x in left..right && point.y in top..bottom
+
     /** Тот же прямоугольник по целым пикселям внутри картинки [imageWidth]×[imageHeight]. */
     fun snappedInto(imageWidth: Int, imageHeight: Int): ImageRect = ImageRect(
         left.roundToInt().coerceIn(0, imageWidth).toFloat(),

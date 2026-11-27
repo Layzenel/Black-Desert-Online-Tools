@@ -20,4 +20,5 @@
     <string name="overlay_panel_title">BDO Tools оверлей</string>
     <string name="overlay_tab_settings">Настройки</string>
     <string name="overlay_game_admin">Игра запущена от имени администратора</string>
+    <string name="canvas_zoom">Масштаб, %</string>
 </resources>

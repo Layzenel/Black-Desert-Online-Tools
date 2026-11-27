@@ -13,7 +13,7 @@ import com.layzen.bdotools.feature.uieditor.presentation.event.SlotsEvent
 import com.layzen.bdotools.feature.uieditor.presentation.state.SlotsState
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.EditorToolbar
 import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.SlotsCanvas
-import com.layzen.bdotools.feature.uieditor.presentation.ui.editor.rememberCanvasViewport
+import com.layzen.bdotools.composable.canvas.rememberCanvasViewport
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.SlotsFileActions
 import com.layzen.bdotools.feature.uieditor.presentation.ui.sidebar.SlotsSidebar
 import com.layzen.bdotools.uikit.components.ToolPage
@@ -38,7 +38,7 @@ internal fun SlotsContent(state: SlotsState, onEvent: (SlotsEvent) -> Unit, modi
                 it.handleHistoryKeys(onUndo = { onEvent(SlotsEvent.Undo) }, onRedo = { onEvent(SlotsEvent.Redo) })
             },
         ) {
-            EditorToolbar(state, onEvent)
+            EditorToolbar(state, viewport, onEvent)
             Column(
                 Modifier.weight(1f).fillMaxWidth().padding(AppTheme.dimens.spaceL),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spaceS),

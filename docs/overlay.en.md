@@ -74,8 +74,9 @@ frames by Windows system events about frame output, like Xbox Game Bar, and does
 
 ## New screenshot
 
-When you take a screenshot in the game, "New screenshot — Edit" appears on the right over the game for 8 seconds:
-the button opens it in the [Screenshot Editor](screenshotEditor.en.md). It can be clicked while the cursor is shown (Ctrl).
+When you take a screenshot in the game, "New screenshot" appears on the right over the game for 8 seconds: "Edit" opens
+it in the [Screenshot Editor](screenshotEditor.en.md), "Copy" puts it on the clipboard, "Crop" lets you select a part
+and put it on the clipboard. The buttons can be clicked while the cursor is shown.
 To turn it off — "Offer to edit screenshots" in the overlay menu's "Settings" tab.
 
 ## Tray

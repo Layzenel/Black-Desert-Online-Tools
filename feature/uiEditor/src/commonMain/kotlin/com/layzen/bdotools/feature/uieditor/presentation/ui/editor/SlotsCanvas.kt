@@ -1,5 +1,9 @@
 package com.layzen.bdotools.feature.uieditor.presentation.ui.editor
 
+import com.layzen.bdotools.composable.canvas.CanvasViewport
+import com.layzen.bdotools.composable.canvas.middleButtonPan
+import com.layzen.bdotools.composable.canvas.wheelZoom
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset

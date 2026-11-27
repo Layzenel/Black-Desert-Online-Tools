@@ -76,6 +76,7 @@ data class AppDimens(
     val inputHeight: Dp = 32.dp,
     val dropdownArrowWidth: Dp = 12.dp,
     val dropdownArrowHeight: Dp = 7.dp,
+    val expandArrowSize: Dp = 10.dp,
     // Место под элемент справа от варианта списка (корзина): не уже, чем отводит пункт меню Material3
     val menuTrailingWidth: Dp = 24.dp,
 

@@ -22,7 +22,7 @@ sealed interface ScreenshotEditorEvent {
     data class Copy(val measurer: TextMeasurer) : ScreenshotEditorEvent
     data object Undo : ScreenshotEditorEvent
     data object Redo : ScreenshotEditorEvent
-    data object ResetCrop : ScreenshotEditorEvent
+    data object Discard : ScreenshotEditorEvent
     data class SelectTool(val tool: EditorTool) : ScreenshotEditorEvent
     data class SelectColor(val index: Int?) : ScreenshotEditorEvent
     data class Thickness(val value: Int) : ScreenshotEditorEvent
@@ -30,10 +30,17 @@ sealed interface ScreenshotEditorEvent {
     data class Aspect(val aspect: CropAspect) : ScreenshotEditorEvent
     data class Scale(val scale: ExportScale) : ScreenshotEditorEvent
     data class Format(val format: ExportFormat) : ScreenshotEditorEvent
-    data class DragStart(val at: ImagePoint) : ScreenshotEditorEvent
+    /** Нажали левую кнопку в точке [at] над правкой номер [hit] в истории (`null` — не над правкой). */
+    data class Press(val at: ImagePoint, val hit: Int?) : ScreenshotEditorEvent
     data class DragMove(val to: ImagePoint) : ScreenshotEditorEvent
     data object DragEnd : ScreenshotEditorEvent
     data class Tap(val at: ImagePoint) : ScreenshotEditorEvent
+
+    /** Правая кнопка или Esc: отменить обведённую обрезку и снять выбор. */
+    data object Cancel : ScreenshotEditorEvent
+    data object ConfirmCrop : ScreenshotEditorEvent
+    data object DeleteSelected : ScreenshotEditorEvent
+    data class ApplyToPortraits(val measurer: TextMeasurer) : ScreenshotEditorEvent
 
     /** Ползунок ретуши двигают: видно сразу, в историю попадёт по [AdjustFinished]. */
     data class Adjust(val adjustments: Adjustments) : ScreenshotEditorEvent

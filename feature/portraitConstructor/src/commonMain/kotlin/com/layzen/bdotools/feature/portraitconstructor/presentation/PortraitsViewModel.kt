@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.layzen.bdotools.core.account.GameAccounts
 import com.layzen.bdotools.core.folder.FolderAccess
+import com.layzen.bdotools.core.handoff.HandoffTarget
+import com.layzen.bdotools.core.handoff.ImageHandoff
 import com.layzen.bdotools.feature.portraitconstructor.domain.backup.BackupsInteractor
 import com.layzen.bdotools.feature.portraitconstructor.domain.favorite.FavoritesInteractor
 import com.layzen.bdotools.feature.portraitconstructor.domain.memo.MemosInteractor
@@ -21,6 +23,7 @@ import com.layzen.bdotools.feature.portraitconstructor.presentation.state.LoadPr
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.PortraitItem
 import com.layzen.bdotools.feature.portraitconstructor.presentation.state.PortraitsState
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
@@ -28,7 +31,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Страница портретов. Сама отвечает только за доступ к папке и загрузку портретов,
- * а замену, украшения и резервные копии раздаёт контроллерам.
+ * а замену, украшения и резервные копии раздаёт контроллерам. Картинку из другой тулзы ([handoff]) открывает
+ * для замены всех портретов, как после «Загрузить».
  */
 class PortraitsViewModel(
     private val portraits: PortraitsInteractor,
@@ -36,6 +40,7 @@ class PortraitsViewModel(
     favorites: FavoritesInteractor,
     memos: MemosInteractor,
     private val accounts: GameAccounts,
+    private val handoff: ImageHandoff,
 ) : ViewModel() {
 
     private val context = PortraitsContext(viewModelScope, portraits, backups, favorites, PortraitImages())
@@ -60,6 +65,12 @@ class PortraitsViewModel(
             accounts.state.map { it.selectedId }.distinctUntilChanged().drop(1).collect {
                 if (context.current.access is FolderAccess.Granted) context.launch { loadPortraits() }
             }
+        }
+        // картинка из другой тулзы ждёт, пока портреты загрузятся: маске нужно их число
+        viewModelScope.launch {
+            combine(handoff.pending, state) { transfer, page -> transfer != null && page.portraits.isNotEmpty() }
+                .distinctUntilChanged()
+                .collect { ready -> if (ready) handoff.take(HandoffTarget.PortraitBackground)?.let(replacement::loadReceived) }
         }
     }
 

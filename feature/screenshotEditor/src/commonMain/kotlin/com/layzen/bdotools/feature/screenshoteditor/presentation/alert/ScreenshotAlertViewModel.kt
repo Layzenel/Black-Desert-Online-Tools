@@ -3,6 +3,13 @@ package com.layzen.bdotools.feature.screenshoteditor.presentation.alert
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotEntry
+import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotException
+import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotInteractor
+import com.layzen.bdotools.feature.screenshoteditor.domain.export.ExportFormat
+import com.layzen.bdotools.feature.screenshoteditor.presentation.render.encode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.decodeToImageBitmap
 import com.layzen.bdotools.feature.screenshoteditor.domain.watch.ScreenshotWatchInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -24,7 +31,10 @@ private const val ALERT_MS = 8_000L
  * слежение идёт, даже когда окно программы свёрнуто в трей.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class ScreenshotAlertViewModel(private val watch: ScreenshotWatchInteractor) : ViewModel() {
+class ScreenshotAlertViewModel(
+    private val watch: ScreenshotWatchInteractor,
+    private val screenshots: ScreenshotInteractor,
+) : ViewModel() {
     private val _state = MutableStateFlow(ScreenshotAlertState(enabled = watch.alertsEnabled))
 
     /** Состояние уведомления. */
@@ -56,6 +66,25 @@ class ScreenshotAlertViewModel(private val watch: ScreenshotWatchInteractor) : V
     fun dismiss() {
         hide?.cancel()
         _state.update { it.copy(latest = null, count = 0) }
+    }
+
+    /**
+     * Копирует скриншот [entry] в буфер обмена PNG-картинкой и убирает уведомление. Не вышло — уведомление остаётся:
+     * можно открыть скриншот в редакторе.
+     */
+    fun copy(entry: ScreenshotEntry) {
+        viewModelScope.launch {
+            try {
+                val shot = screenshots.open(entry)
+                val png = withContext(Dispatchers.Default) {
+                    runCatching { encode(shot.bytes.decodeToImageBitmap(), ExportFormat.Png) }.getOrNull()
+                } ?: return@launch
+                screenshots.copy(png)
+                dismiss()
+            } catch (_: ScreenshotException) {
+                // shortcut: ошибку поверх игры не показываем, уведомление просто остаётся; показать — если будут жалобы
+            }
+        }
     }
 
     private fun show(entry: ScreenshotEntry) {

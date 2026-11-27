@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.layzen.bdotools.composable.canvas.rememberCanvasViewport
 import com.layzen.bdotools.feature.screenshoteditor.presentation.ScreenshotEditorViewModel
 import com.layzen.bdotools.feature.screenshoteditor.presentation.event.ScreenshotEditorEvent
 import com.layzen.bdotools.feature.screenshoteditor.presentation.gallery.GalleryEvent
@@ -57,8 +58,11 @@ fun ScreenshotEditorScreen(
             GalleryScreen(gallery, onGalleryEvent, { onEvent(ScreenshotEditorEvent.OpenEntry(it)) }, { onEvent(ScreenshotEditorEvent.Open) })
         } else {
             val measurer = rememberTextMeasurer()
+            // новая картинка или обрезка — снова «всё в окне»
+            val viewport = rememberCanvasViewport(image to state.history.crop)
             ToolPage(
                 modifier = Modifier.fillMaxSize(),
+                sidebarWidth = ScreenshotEditorDimens.sidebarWidth,
                 sidebar = {
                     ToolSettings(state, onEvent)
                     SectionDivider()
@@ -66,11 +70,11 @@ fun ScreenshotEditorScreen(
                     SectionDivider()
                     ExportSettings(state, onEvent)
                 },
-                sidebarFooter = { FileActions(onEvent, measurer) },
+                sidebarFooter = { FileActions(state, onEvent, measurer) },
             ) {
                 Column(Modifier.fillMaxSize()) {
-                    EditorToolbar(state, onEvent)
-                    EditorCanvas(image, state, onEvent, measurer, Modifier.weight(1f).padding(AppTheme.dimens.spaceL))
+                    EditorToolbar(state, viewport, onEvent)
+                    EditorCanvas(image, state, onEvent, measurer, viewport, Modifier.weight(1f).padding(AppTheme.dimens.spaceL))
                 }
             }
         }
