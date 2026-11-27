@@ -22,10 +22,12 @@ import kotlin.math.roundToInt
 internal fun ExportSettings(state: ScreenshotEditorState, onEvent: (ScreenshotEditorEvent) -> Unit) {
     val image = state.image ?: return
     val crop = state.history.crop
-    val size = state.scale.applyTo(
+    val scaled = state.scale.applyTo(
         crop?.width?.roundToInt() ?: image.width,
         crop?.height?.roundToInt() ?: image.height,
     )
+    // повёрнутая набок картинка сохраняется с переставленными сторонами
+    val size = if (state.history.orientation.sideways) scaled.copy(width = scaled.height, height = scaled.width) else scaled
     SectionHeader(
         stringResource(Res.string.screenshots_export),
         description = stringResource(Res.string.screenshots_export_size, size.width, size.height),

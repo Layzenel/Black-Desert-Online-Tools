@@ -20,7 +20,7 @@ private const val SETTINGS_ORDER = Int.MIN_VALUE
  */
 @Composable
 fun OverlayHost(contributions: List<OverlayContribution>, onOpenApp: (id: String) -> Unit) {
-    contributions.forEach { it.windows() }
+    contributions.forEach { contribution -> contribution.windows { onOpenApp(contribution.id) } }
     val settings = contributions.filter { it.settings != null }
     val settingsTab = settings.firstOrNull()?.let { first ->
         first.id to OverlayTab(SETTINGS_ORDER, Res.string.overlay_tab_settings) { settings.forEach { it.settings?.invoke() } }

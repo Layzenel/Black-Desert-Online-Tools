@@ -29,6 +29,9 @@ private const val TOP_RIGHT_MARGIN = 220f
 /** Отступ окна у [OverlayAnchor.CenterLeft] от левого края экрана. */
 private const val LEFT_MARGIN = 40f
 
+/** Нижний край окна у [OverlayAnchor.BottomRight] — доля высоты экрана: над мини-картой квестов, под пингом. */
+private const val RIGHT_SHARE = 0.62f
+
 private fun keys(id: String): Pair<String, String> = if (id == COMBO_ID) "x" to "y" else "${id}X" to "${id}Y"
 
 /** Сохранённое место окна [id] или `null`, если его ещё не двигали. */
@@ -47,6 +50,7 @@ internal fun savedPosition(id: String, anchor: OverlayAnchor, size: DpSize): Win
         OverlayAnchor.BottomCenter -> WindowPosition((screen.width.dp - size.width) / 2, screen.height.dp * BOTTOM_SHARE - size.height)
         OverlayAnchor.TopRight -> WindowPosition((screen.width - TOP_RIGHT_MARGIN * 2).dp, TOP_RIGHT_MARGIN.dp)
         OverlayAnchor.CenterLeft -> WindowPosition(LEFT_MARGIN.dp, (screen.height.dp - size.height) / 2)
+        OverlayAnchor.BottomRight -> WindowPosition(screen.width.dp - size.width - LEFT_MARGIN.dp, screen.height.dp * RIGHT_SHARE - size.height)
     }
 }
 

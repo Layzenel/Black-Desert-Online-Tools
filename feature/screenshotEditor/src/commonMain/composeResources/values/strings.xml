@@ -58,4 +58,55 @@
     <string name="screenshots_error_not_image">Файл не открылся как картинка</string>
     <string name="screenshots_error_save">Не удалось сохранить копию</string>
     <string name="screenshots_error_clipboard">Буфер обмена недоступен: разрешите доступ или сохраните копию</string>
+    <string name="screenshots_error_folder">Нет доступа к папке ScreenShot</string>
+    <string name="screenshots_error_trash">Не удалось перенести скриншот в корзину</string>
+    <string name="screenshots_trashed">Скриншот перенесён в корзину</string>
+
+    <!-- Ретушь, поворот, сравнение -->
+    <string name="screenshots_rotate">Повернуть на 90° по часовой стрелке</string>
+    <string name="screenshots_flip">Отразить по горизонтали</string>
+    <string name="screenshots_compare">Сравнить с оригиналом</string>
+    <string name="screenshots_adjust">Ретушь</string>
+    <string name="screenshots_adjust_description">Цвета всей картинки; стрелки и надписи не меняются.</string>
+    <string name="screenshots_filter_field">Фильтр</string>
+    <string name="screenshots_filter_none">Без фильтра</string>
+    <string name="screenshots_filter_warm">Тёплый</string>
+    <string name="screenshots_filter_cold">Холодный</string>
+    <string name="screenshots_filter_vivid">Яркий</string>
+    <string name="screenshots_filter_cinema">Кино</string>
+    <string name="screenshots_filter_mono">Ч/Б</string>
+    <string name="screenshots_brightness">Яркость</string>
+    <string name="screenshots_contrast">Контраст</string>
+    <string name="screenshots_saturation">Насыщенность</string>
+    <string name="screenshots_exposure">Экспозиция</string>
+    <string name="screenshots_temperature">Температура</string>
+    <string name="screenshots_tint">Оттенок</string>
+    <string name="screenshots_vignette">Виньетка</string>
+
+    <!-- Галерея -->
+    <string name="screenshots_gallery">Галерея</string>
+    <string name="screenshots_gallery_tooltip">Закрыть скриншот и вернуться к галерее; несохранённые правки пропадут</string>
+    <string name="screenshots_gallery_title">Скриншоты игры</string>
+    <string name="screenshots_gallery_count">Файлов: %1$d — Документы\\Black Desert\\ScreenShot</string>
+    <string name="screenshots_gallery_empty">В папке ScreenShot пока нет скриншотов: сделайте снимок в игре.</string>
+    <string name="screenshots_gallery_refresh">Обновить</string>
+    <string name="screenshots_gallery_refresh_tooltip">Перечитать папку ScreenShot</string>
+    <string name="screenshots_gallery_reveal">Показать в папке</string>
+    <string name="screenshots_gallery_trash">В корзину</string>
+    <string name="screenshots_open_file">Открыть файл</string>
+    <string name="screenshots_folder_hint">Чтобы видеть здесь скриншоты игры, выберите папку Документы\\Black Desert — или откройте любой файл.</string>
+    <string name="screenshots_folder_select">Выбрать папку</string>
+    <string name="screenshots_folder_select_tooltip">Выбрать папку Документы\\Black Desert, в которой лежит ScreenShot</string>
+    <string name="screenshots_folder_permission">Разрешить доступ</string>
+    <string name="screenshots_folder_permission_tooltip">Браузер снова спрашивает разрешение на папку, выбранную раньше</string>
+    <string name="screenshots_folder_unsupported">Этот браузер не открывает папки: откройте файл или установите программу для Windows.</string>
+
+    <!-- Уведомление поверх игры -->
+    <string name="screenshots_alert_title">Новый скриншот</string>
+    <string name="screenshots_alert_count">Новых скриншотов: %1$d</string>
+    <string name="screenshots_alert_edit">Редактировать</string>
+    <string name="screenshots_alert_edit_tooltip">Открыть скриншот в редакторе BDO Tools</string>
+    <string name="screenshots_alert_hint">Ctrl — показать курсор</string>
+    <string name="screenshots_alert_setting">Предлагать редактировать скриншоты</string>
+    <string name="screenshots_alert_setting_description">Когда вы делаете скриншот в игре, поверх неё появляется кнопка «Редактировать»</string>
 </resources>

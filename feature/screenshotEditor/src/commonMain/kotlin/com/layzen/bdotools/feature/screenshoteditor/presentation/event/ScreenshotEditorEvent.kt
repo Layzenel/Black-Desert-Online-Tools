@@ -1,10 +1,13 @@
 package com.layzen.bdotools.feature.screenshoteditor.presentation.event
 
 import androidx.compose.ui.text.TextMeasurer
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.FilterPreset
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.CropAspect
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImagePoint
 import com.layzen.bdotools.feature.screenshoteditor.domain.export.ExportFormat
 import com.layzen.bdotools.feature.screenshoteditor.domain.export.ExportScale
+import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotEntry
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.EditorTool
 
 /**
@@ -13,6 +16,8 @@ import com.layzen.bdotools.feature.screenshoteditor.presentation.state.EditorToo
  */
 sealed interface ScreenshotEditorEvent {
     data object Open : ScreenshotEditorEvent
+    data class OpenEntry(val entry: ScreenshotEntry) : ScreenshotEditorEvent
+    data object Close : ScreenshotEditorEvent
     data class Save(val measurer: TextMeasurer) : ScreenshotEditorEvent
     data class Copy(val measurer: TextMeasurer) : ScreenshotEditorEvent
     data object Undo : ScreenshotEditorEvent
@@ -29,5 +34,13 @@ sealed interface ScreenshotEditorEvent {
     data class DragMove(val to: ImagePoint) : ScreenshotEditorEvent
     data object DragEnd : ScreenshotEditorEvent
     data class Tap(val at: ImagePoint) : ScreenshotEditorEvent
+
+    /** Ползунок ретуши двигают: видно сразу, в историю попадёт по [AdjustFinished]. */
+    data class Adjust(val adjustments: Adjustments) : ScreenshotEditorEvent
+    data object AdjustFinished : ScreenshotEditorEvent
+    data class Preset(val preset: FilterPreset) : ScreenshotEditorEvent
+    data object Rotate : ScreenshotEditorEvent
+    data object Flip : ScreenshotEditorEvent
+    data object ToggleCompare : ScreenshotEditorEvent
     data object DismissNotice : ScreenshotEditorEvent
 }

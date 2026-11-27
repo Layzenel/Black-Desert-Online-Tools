@@ -1,6 +1,7 @@
 package com.layzen.bdotools.feature.screenshoteditor.presentation.ui
 
 import androidx.compose.runtime.Composable
+import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.FilterPreset
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.CropAspect
 import com.layzen.bdotools.feature.screenshoteditor.domain.file.ScreenshotError
 import com.layzen.bdotools.feature.screenshoteditor.presentation.state.EditorNotice
@@ -11,10 +12,19 @@ import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_aspect
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_aspect_tall
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_aspect_wide
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_copied
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_trashed
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_downloaded
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_error_clipboard
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_error_folder
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_error_trash
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_error_not_image
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_error_save
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_filter_cinema
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_filter_cold
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_filter_mono
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_filter_none
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_filter_vivid
+import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_filter_warm
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_saved
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_tool_arrow
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_tool_arrow_hint
@@ -86,11 +96,25 @@ internal fun noticeText(notice: EditorNotice): String = when (notice) {
     is EditorNotice.Saved -> stringResource(Res.string.screenshots_saved, notice.path)
     EditorNotice.Downloaded -> stringResource(Res.string.screenshots_downloaded)
     EditorNotice.Copied -> stringResource(Res.string.screenshots_copied)
+    EditorNotice.Trashed -> stringResource(Res.string.screenshots_trashed)
     is EditorNotice.Failed -> stringResource(
         when (notice.error) {
             ScreenshotError.NotImage -> Res.string.screenshots_error_not_image
             ScreenshotError.Save -> Res.string.screenshots_error_save
             ScreenshotError.Clipboard -> Res.string.screenshots_error_clipboard
+            ScreenshotError.Folder -> Res.string.screenshots_error_folder
+            ScreenshotError.Trash -> Res.string.screenshots_error_trash
         },
     )
 }
+
+/** Название готового фильтра. */
+internal val FilterPreset.title: StringResource
+    get() = when (this) {
+        FilterPreset.None -> Res.string.screenshots_filter_none
+        FilterPreset.Warm -> Res.string.screenshots_filter_warm
+        FilterPreset.Cold -> Res.string.screenshots_filter_cold
+        FilterPreset.Vivid -> Res.string.screenshots_filter_vivid
+        FilterPreset.Cinema -> Res.string.screenshots_filter_cinema
+        FilterPreset.Mono -> Res.string.screenshots_filter_mono
+    }

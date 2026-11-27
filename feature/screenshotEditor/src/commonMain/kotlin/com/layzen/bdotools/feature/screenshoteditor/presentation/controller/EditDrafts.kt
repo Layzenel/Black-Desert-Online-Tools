@@ -20,7 +20,7 @@ internal fun dragDraft(state: ScreenshotEditorState, start: ImagePoint, current:
     val width = lineWidth(state.thickness, image.width, image.height)
     val area = { rect: ImageRect -> rect.snappedInto(image.width, image.height) }
     return when (state.tool) {
-        EditorTool.Crop -> Edit.Crop(area(state.aspect.rect(start, current)))
+        EditorTool.Crop -> Edit.Crop(area(state.aspect.rect(start, current, state.history.orientation.sideways)))
         EditorTool.Pixelate -> Edit.Pixelate(area(ImageRect.between(start, current)))
         EditorTool.Arrow -> Edit.Arrow(start, current, color, width)
         EditorTool.Frame -> Edit.Frame(ImageRect.between(start, current), color, width)
@@ -44,4 +44,5 @@ internal fun Edit.isMeaningful(): Boolean = when (this) {
     is Edit.Arrow -> hypot(to.x - from.x, to.y - from.y) >= width
     is Edit.Stroke -> points.isNotEmpty()
     is Edit.Label -> text.isNotBlank()
+    is Edit.Adjust, is Edit.Orient -> true
 }
