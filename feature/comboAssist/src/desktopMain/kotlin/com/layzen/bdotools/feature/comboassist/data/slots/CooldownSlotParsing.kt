@@ -32,26 +32,33 @@ internal fun parseSlotCenters(accountText: String): Map<Int, Pair<Double, Double
 /** Центры слотов хотбара из файла аккаунта: номер слота → центр в долях экрана. */
 internal fun parseHotbarCenters(accountText: String): Map<Int, Pair<Double, Double>> = centers(accountText, HOTBAR_INDICES)
 
-/** Скрытые слоты: `IsShow="false"` в файле персонажа (видимость у каждого персонажа своя). */
-internal fun parseHiddenSlots(characterText: String): Set<Int> = hidden(characterText, SLOT_INDICES)
+/**
+ * Скрытые слоты: `IsShow="false"` в записях видимости [visibilityText] — верхний уровень файла аккаунта или пресет
+ * ([presetVisibility]). Пресет интерфейса один на аккаунт: в файле персонажа лишь копия на момент ухода с него.
+ */
+internal fun parseHiddenSlots(visibilityText: String): Set<Int> = hidden(visibilityText, SLOT_INDICES)
 
 /**
- * Скрытые слоты хотбара: `IsShow="false"` в файле персонажа. При выключенной «Настройке быстрых слотов» игра прячет
- * их все и показывает одну панель (`UIData Index="12"`).
+ * Скрытые слоты хотбара: `IsShow="false"` в [visibilityText], как у [parseHiddenSlots]. При выключенной «Настройке
+ * быстрых слотов» игра прячет их все и показывает одну панель (`UIData Index="12"`).
  *
  * shortcut: умения на панели «Быстрый слот» не следятся — её слоты не описаны в файлах по отдельности; если понадобятся,
  * считать их места от позиции панели.
  */
-internal fun parseHiddenHotbar(characterText: String): Set<Int> = hidden(characterText, HOTBAR_INDICES)
+internal fun parseHiddenHotbar(visibilityText: String): Set<Int> = hidden(visibilityText, HOTBAR_INDICES)
+
+/** Видна ли «История испол. навыков» (`UIData Index="158"`) по [visibilityText]; записи нет — видна. */
+internal fun parseHistoryShown(visibilityText: String): Boolean =
+    UI_DATA.findAll(visibilityText).map { attributesOf(it.value) }.firstOrNull { it["Index"] == HISTORY_INDEX }?.get("IsShow") != "false"
 
 /**
- * Видна ли «История испол. навыков» (`UIData Index="158"`): `IsShow` в файле персонажа (видимость у каждого своя),
- * без записи там — в файле аккаунта; нигде нет — видна.
+ * Записи пресета интерфейса [preset] (`UISettingPreset<N>` файла аккаунта, с нуля) в виде `UIData` — для разбора
+ * видимости, как у верхнего уровня; `null`, если такого пресета в файле нет.
  */
-internal fun parseHistoryShown(characterText: String, accountText: String): Boolean =
-    sequenceOf(characterText, accountText).firstNotNullOfOrNull { text ->
-        UI_DATA.findAll(text).map { attributesOf(it.value) }.firstOrNull { it["Index"] == HISTORY_INDEX }?.get("IsShow")
-    } != "false"
+internal fun presetVisibility(accountText: String, preset: Int): String? =
+    Regex("""<UISettingPreset$preset(\s+Index="\d+"[^>]*>)""").findAll(accountText)
+        .joinToString("\n") { "<UIData" + it.groupValues[1] }
+        .takeIf { it.isNotEmpty() }
 
 /** «Размер интерфейса» игры (100 % → 1) или `null`. */
 internal fun parseUiScale(accountText: String): Double? = UI_SCALE.find(accountText)?.groupValues?.get(1)?.toDoubleOrNull()
