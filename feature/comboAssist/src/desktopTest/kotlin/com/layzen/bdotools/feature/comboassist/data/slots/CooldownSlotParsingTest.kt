@@ -3,6 +3,7 @@ package com.layzen.bdotools.feature.comboassist.data.slots
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CooldownSlotParsingTest {
@@ -60,12 +61,27 @@ class CooldownSlotParsingTest {
     }
 
     @Test
-    fun historyVisibilityComesFromCharacterThenAccount() {
-        val hidden = """<UIData Index="158" IsShow="false"/>"""
-        val shown = """<UIData Index="158" IsShow="true" PosX="1"/>"""
-        assertFalse(parseHistoryShown(hidden, shown))
-        assertTrue(parseHistoryShown(shown, hidden))
-        assertFalse(parseHistoryShown("", hidden))
-        assertTrue(parseHistoryShown("", ""))
+    fun historyVisibility() {
+        assertFalse(parseHistoryShown("""<UIData Index="158" IsShow="false"/>"""))
+        assertTrue(parseHistoryShown("""<UIData Index="158" IsShow="true" PosX="1"/>"""))
+        assertTrue(parseHistoryShown(""))
+    }
+
+    @Test
+    fun presetVisibilityReadsOnlyThatPreset() {
+        val text = """
+            <UIData Index="128" IsShow="true" RelativePosX="0.4" RelativePosY="0.5"/>
+            <UISettingPreset Version="1">
+            	<UISettingPreset0/>
+            	<UISettingPreset0 Index="128" IsShow="false" PendingType="LeftTop" PosX="1" PosY="2"/>
+            	<UISettingPreset1/>
+            	<UISettingPreset1 Index="128" IsShow="true" PendingType="LeftTop" PosX="1" PosY="2"/>
+            	<UISettingRevert Index="128" IsShow="false"/>
+            </UISettingPreset>
+        """.trimIndent()
+        assertEquals(setOf(0), parseHiddenSlots(presetVisibility(text, 0)!!))
+        assertEquals(emptySet(), parseHiddenSlots(presetVisibility(text, 1)!!))
+        assertEquals(emptySet(), parseHiddenSlots(text))
+        assertNull(presetVisibility(text, 3))
     }
 }

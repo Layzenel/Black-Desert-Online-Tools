@@ -58,14 +58,27 @@ internal object SlotLayoutFiles {
             val centers = parseSlotCenters(accountText)
             val hotbarCenters = parseHotbarCenters(accountText)
             val scale = parseUiScale(accountText) ?: 1.0
+            val visibility = visibilityText(accountDir, accountText)
+            val hiddenSlots = parseHiddenSlots(visibility)
+            val hiddenHotbar = parseHiddenHotbar(visibility)
+            val historyShown = parseHistoryShown(visibility)
             characterFiles(accountDir).mapValues { (_, text) ->
-                val slots = visibleSlots(parseSlotSkills(text), parseHiddenSlots(text), centers)
-                val hotbar = visibleSlots(parseHotbarSkills(text), parseHiddenHotbar(text), hotbarCenters)
-                SlotLayout(slots, scale, height, parseKeyBindings(text), parseHistoryShown(text, accountText), hotbar)
+                val slots = visibleSlots(parseSlotSkills(text), hiddenSlots, centers)
+                val hotbar = visibleSlots(parseHotbarSkills(text), hiddenHotbar, hotbarCenters)
+                SlotLayout(slots, scale, height, parseKeyBindings(text), historyShown, hotbar)
             }
         }
     } catch (e: IOException) {
         emptyMap()
+    }
+
+    /**
+     * Откуда брать видимость элементов: пресет, выбранный в игре после последней записи файла аккаунта
+     * ([UiPresetLog]), иначе верхний уровень файла аккаунта — игра пишет его при смене персонажа.
+     */
+    private fun visibilityText(accountDir: Path, accountText: String): String {
+        val written = gameFile(accountDir)?.getLastModifiedTime()?.toMillis() ?: return accountText
+        return UiPresetLog.selectedAfter(written)?.let { presetVisibility(accountText, it) } ?: accountText
     }
 
     /** Слоты с умениями [skills] (номер слота → умение), кроме скрытых [hidden], на местах [centers]. */
