@@ -9,11 +9,14 @@ import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
  * @property edits применённые правки, последняя — в конце
  * @property past списки правок до каждого изменения, последний — в конце
  * @property future отменённые списки правок для повтора, последний отменённый — в конце
+ * @property restyled номер правки, которой последним изменением меняли цвет, толщину или размер: следующая такая же
+ * смена ей же входит в тот же шаг отмены — иначе каждый щелчок колеса был бы отдельным шагом
  */
 data class EditHistory(
     val edits: List<Edit> = emptyList(),
     val past: List<List<Edit>> = emptyList(),
     val future: List<List<Edit>> = emptyList(),
+    val restyled: Int? = null,
 ) {
     /** Есть что отменить. */
     val canUndo: Boolean get() = past.isNotEmpty()
@@ -38,6 +41,15 @@ data class EditHistory(
 
     /** История, где правка номер [index] заменена на [edit] — её сдвинули. */
     fun replace(index: Int, edit: Edit) = changed(edits.toMutableList().also { it[index] = edit })
+
+    /**
+     * История, где у правки номер [index] сменили цвет, толщину или размер на [edit]. Смены одной правки подряд —
+     * один шаг отмены.
+     */
+    fun restyle(index: Int, edit: Edit): EditHistory {
+        val next = edits.toMutableList().also { it[index] = edit }
+        return if (restyled == index) copy(edits = next, future = emptyList()) else changed(next).copy(restyled = index)
+    }
 
     /** История без правки номер [index]. */
     fun remove(index: Int) = changed(edits.filterIndexed { i, _ -> i != index })

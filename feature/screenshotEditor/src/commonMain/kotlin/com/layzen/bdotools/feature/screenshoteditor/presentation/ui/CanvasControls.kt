@@ -36,7 +36,7 @@ internal fun CanvasControls(
     measurer: TextMeasurer,
     onEvent: (ScreenshotEditorEvent) -> Unit,
 ) {
-    if (state.dragOffset != null || state.comparing) return
+    if (state.dragOffset != null || state.resized != null || state.comparing) return
     val colors = AppTheme.colors
     state.pendingCrop?.let { crop ->
         val rect = screenRect(crop, fit, viewport)

@@ -204,13 +204,14 @@ private fun TabContent(tab: AppTab) {
 /** Картинку передали из одной тулзы в другую — открываем вкладку получателя, он заберёт её сам. */
 @Composable
 private fun HandoffNavigation(backStack: SnapshotStateList<Destination>) {
-    val transfer by koinInject<ImageHandoff>().pending.collectAsState()
-    LaunchedEffect(transfer) {
-        val target = transfer?.target ?: return@LaunchedEffect
-        backStack.openTab(
-            when (target) {
-                HandoffTarget.PortraitBackground -> AppTab.Portraits
-            },
-        )
+    val handoff = koinInject<ImageHandoff>()
+    LaunchedEffect(handoff) {
+        handoff.sent.collect { target ->
+            backStack.openTab(
+                when (target) {
+                    HandoffTarget.PortraitBackground -> AppTab.Portraits
+                },
+            )
+        }
     }
 }

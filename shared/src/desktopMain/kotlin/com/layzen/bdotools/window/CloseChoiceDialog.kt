@@ -26,7 +26,7 @@ internal fun CloseChoiceDialog(onTray: () -> Unit, onExit: () -> Unit, onDismiss
         onDismissRequest = onDismiss,
         modifier = Modifier.width(WindowDimens.closeDialogWidth),
         footer = {
-            ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_exit), onClick = onExit, tooltip = stringResource(Res.string.window_close_exit_tooltip)))
+            ActionButton(ActionButtonState.Negative(stringResource(Res.string.window_close_exit), onClick = onExit, tooltip = stringResource(Res.string.window_close_exit_tooltip)))
             ActionButton(ActionButtonState.Neutral(stringResource(Res.string.window_close_tray), onClick = onTray, tooltip = stringResource(Res.string.window_close_tray_tooltip)))
         },
     ) {

@@ -3,6 +3,7 @@ package com.layzen.bdotools.composable.canvas
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -17,6 +18,8 @@ fun Modifier.wheelZoom(viewport: CanvasViewport): Modifier = pointerInput(viewpo
             val event = awaitPointerEvent()
             if (event.type != PointerEventType.Scroll) continue
             val change = event.changes.first()
+            // колесо уже занято элементом на холсте (например, меняет толщину выбранной пометки)
+            if (change.isConsumed) continue
             val factor = if (change.scrollDelta.y < 0) WHEEL_ZOOM_STEP else 1 / WHEEL_ZOOM_STEP
             viewport.zoomAt(change.position, factor)
             change.consume()
@@ -27,12 +30,19 @@ fun Modifier.wheelZoom(viewport: CanvasViewport): Modifier = pointerInput(viewpo
 /**
  * Средняя кнопка мыши (колесо) двигает холст, где бы её ни нажали, и поверх элементов.
  * Нажатие поглощается до дочерних элементов, поэтому они его не видят. [onPanning] сообщает, зажата ли кнопка.
+ * Пока [withPrimary] отвечает `true` (например, зажат пробел), холст так же двигает и левая кнопка.
  */
-fun Modifier.middleButtonPan(viewport: CanvasViewport, onPanning: (Boolean) -> Unit = {}): Modifier = pointerInput(viewport) {
+fun Modifier.middleButtonPan(
+    viewport: CanvasViewport,
+    withPrimary: () -> Boolean = { false },
+    onPanning: (Boolean) -> Unit = {},
+): Modifier = pointerInput(viewport) {
     awaitPointerEventScope {
         while (true) {
             val press = awaitPointerEvent(PointerEventPass.Initial)
-            if (press.type != PointerEventType.Press || !press.buttons.isTertiaryPressed) continue
+            if (press.type != PointerEventType.Press) continue
+            val primary = !press.buttons.isTertiaryPressed && press.buttons.isPrimaryPressed && withPrimary()
+            if (!press.buttons.isTertiaryPressed && !primary) continue
             press.changes.forEach { it.consume() }
             onPanning(true)
             try {
@@ -41,7 +51,7 @@ fun Modifier.middleButtonPan(viewport: CanvasViewport, onPanning: (Boolean) -> U
                     val change = event.changes.first()
                     viewport.panBy(change.positionChange())
                     change.consume()
-                } while (event.buttons.isTertiaryPressed)
+                } while (if (primary) event.buttons.isPrimaryPressed else event.buttons.isTertiaryPressed)
             } finally {
                 onPanning(false)
             }

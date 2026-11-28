@@ -12,7 +12,9 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.withTransform
 import com.layzen.bdotools.feature.screenshoteditor.domain.adjust.Adjustments
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.Edit
+import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImagePoint
 import com.layzen.bdotools.feature.screenshoteditor.domain.edit.ImageRect
+import com.layzen.bdotools.feature.screenshoteditor.domain.edit.handlePoints
 import com.layzen.bdotools.feature.screenshoteditor.presentation.controller.bounds
 import com.layzen.bdotools.feature.screenshoteditor.presentation.render.bounds
 import com.layzen.bdotools.feature.screenshoteditor.presentation.render.oriented
@@ -54,7 +56,8 @@ private fun DrawScope.paintImage(scene: CanvasScene) {
 /** Пунктир вокруг выбранной правки и обводка обрезки — её тянут или она ждёт галочки. */
 private fun DrawScope.paintMarks(scene: CanvasScene, colors: CanvasColors) {
     val line = ScreenshotEditorDimens.cropBorder.toPx() / scene.pixelsPerImagePixel
-    scene.state.shownSelection?.bounds(scene.measurer)?.let { selection ->
+    val selected = scene.state.shownSelection
+    selected?.bounds(scene.measurer)?.let { selection ->
         val dash = PathEffect.dashPathEffect(
             floatArrayOf(
                 ScreenshotEditorDimens.selectionDash.toPx() / scene.pixelsPerImagePixel,
@@ -63,9 +66,19 @@ private fun DrawScope.paintMarks(scene: CanvasScene, colors: CanvasColors) {
         )
         drawRect(colors.outline, selection.topLeft, selection.size, style = Stroke(line * 2))
         drawRect(colors.border, selection.topLeft, selection.size, style = Stroke(line, pathEffect = dash))
+        selected.handlePoints(selection).values.forEach { handle(it, scene, colors, line) }
     }
+    guides(scene, colors, line)
     val crop = (scene.state.draft as? Edit.Crop)?.rect ?: scene.state.shownCrop ?: return
     cropShade(crop, scene.state.bounds, colors, line)
+}
+
+/** Золотой квадратик ручки в точке [point] картинки: одного размера на экране при любом масштабе. */
+private fun DrawScope.handle(point: ImagePoint, scene: CanvasScene, colors: CanvasColors, line: Float) {
+    val side = ScreenshotEditorDimens.handleSize.toPx() / scene.pixelsPerImagePixel
+    val topLeft = Offset(point.x - side / 2, point.y - side / 2)
+    drawRect(colors.border, topLeft, Size(side, side))
+    drawRect(colors.outline, topLeft, Size(side, side), style = Stroke(line))
 }
 
 /** Затемняет видимую часть [visible] вокруг обрезки [crop] и обводит её рамкой толщиной [line] пикселей картинки. */
@@ -82,3 +95,10 @@ private fun DrawScope.cropShade(crop: ImageRect, visible: ImageRect, colors: Can
 
 private val ImageRect.topLeft get() = Offset(left, top)
 private val ImageRect.size get() = Size(width, height)
+
+/** Направляющие привязки через всю видимую часть картинки: к чему прилипла сдвигаемая пометка. */
+private fun DrawScope.guides(scene: CanvasScene, colors: CanvasColors, line: Float) {
+    val visible = scene.state.bounds
+    scene.guides.x?.let { drawLine(colors.border, Offset(it, visible.top), Offset(it, visible.bottom), line) }
+    scene.guides.y?.let { drawLine(colors.border, Offset(visible.left, it), Offset(visible.right, it), line) }
+}

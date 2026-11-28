@@ -8,4 +8,5 @@ enum class EditorTool(val usesColor: Boolean) {
     Frame(true),
     Brush(true),
     Text(true),
+    Counter(true),
 }

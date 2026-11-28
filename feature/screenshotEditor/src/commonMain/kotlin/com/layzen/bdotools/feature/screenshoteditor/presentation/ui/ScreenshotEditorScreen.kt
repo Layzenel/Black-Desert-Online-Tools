@@ -67,10 +67,12 @@ fun ScreenshotEditorScreen(
                     ToolSettings(state, onEvent)
                     SectionDivider()
                     AdjustSettings(state, onEvent)
-                    SectionDivider()
-                    ExportSettings(state, onEvent)
                 },
-                sidebarFooter = { FileActions(state, onEvent, measurer) },
+                // размер и формат копии — над кнопками, которые её сохраняют
+                sidebarFooter = {
+                    ExportSettings(state, onEvent)
+                    FileActions(state, onEvent, measurer)
+                },
             ) {
                 Column(Modifier.fillMaxSize()) {
                     EditorToolbar(state, viewport, onEvent)
