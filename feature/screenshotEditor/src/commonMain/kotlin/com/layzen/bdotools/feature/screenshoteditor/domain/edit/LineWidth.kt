@@ -13,3 +13,9 @@ fun lineWidth(thickness: Int, imageWidth: Int, imageHeight: Int): Float =
 /** Высота букв надписи в пикселях картинки для толщины [thickness]: в 6 раз больше толщины линии. */
 fun labelSize(thickness: Int, imageWidth: Int, imageHeight: Int): Float =
     lineWidth(thickness, imageWidth, imageHeight) * LABEL_SIZE_PER_WIDTH
+
+private const val COUNTER_RADIUS_PER_WIDTH = 3.5f
+
+/** Радиус кружка с номером в пикселях картинки для толщины [thickness]. */
+fun counterRadius(thickness: Int, imageWidth: Int, imageHeight: Int): Float =
+    lineWidth(thickness, imageWidth, imageHeight) * COUNTER_RADIUS_PER_WIDTH

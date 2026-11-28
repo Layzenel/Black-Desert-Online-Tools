@@ -30,5 +30,6 @@ fun Edit.movedBy(dx: Float, dy: Float): Edit = when (this) {
     is Edit.Frame -> copy(rect = rect.movedBy(dx, dy))
     is Edit.Stroke -> copy(points = points.map { it.movedBy(dx, dy) })
     is Edit.Label -> copy(at = at.movedBy(dx, dy))
+    is Edit.Counter -> copy(center = center.movedBy(dx, dy))
     is Edit.Crop, is Edit.Adjust, is Edit.Orient -> this
 }

@@ -12,6 +12,9 @@ data class ImageRect(val left: Float, val top: Float, val right: Float, val bott
     /** Высота в пикселях. */
     val height: Float get() = bottom - top
 
+    /** Середина прямоугольника. */
+    val center: ImagePoint get() = ImagePoint((left + right) / 2, (top + bottom) / 2)
+
     /** Меньше пикселя по одной из сторон: такую область правкой не считаем (случайный клик). */
     val isEmpty: Boolean get() = width < 1f || height < 1f
 

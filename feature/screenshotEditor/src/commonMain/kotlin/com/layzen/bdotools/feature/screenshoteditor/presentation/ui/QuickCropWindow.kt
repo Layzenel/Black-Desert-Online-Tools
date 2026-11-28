@@ -21,6 +21,7 @@ import com.layzen.bdotools.composable.overlay.OverlayAnchor
 import com.layzen.bdotools.feature.screenshoteditor.domain.export.ExportScale
 import com.layzen.bdotools.feature.screenshoteditor.presentation.ScreenshotEditorViewModel
 import com.layzen.bdotools.feature.screenshoteditor.presentation.event.ScreenshotEditorEvent
+import com.layzen.bdotools.feature.screenshoteditor.presentation.state.EditorTool
 import com.layzen.bdotools.feature.screenshoteditor.resources.Res
 import com.layzen.bdotools.feature.screenshoteditor.resources.menu_cancel
 import com.layzen.bdotools.feature.screenshoteditor.resources.screenshots_quick_crop_close
@@ -45,6 +46,8 @@ private const val QUICK_CROP_WINDOW = "screenshot-quick-crop"
 internal fun QuickCropWindow(quick: ScreenshotEditorViewModel) {
     val state by quick.state.collectAsState()
     val image = state.image ?: return
+    // обрезке нужен инструмент «Обрезка»: в редакторе его по умолчанию нет
+    LaunchedEffect(image) { quick.onEvent(ScreenshotEditorEvent.SelectTool(EditorTool.Crop)) }
     // скопировали или не вышло — окно больше не нужно
     LaunchedEffect(state.notice) {
         if (state.notice == null) return@LaunchedEffect
@@ -77,7 +80,7 @@ internal fun QuickCropWindow(quick: ScreenshotEditorViewModel) {
                     )
                 }
                 Box(Modifier.size(width, height)) {
-                    EditorCanvas(image, state, quick::onEvent, measurer, rememberCanvasViewport(image))
+                    EditorCanvas(image, state, quick::onEvent, measurer, rememberCanvasViewport(image), tools = false)
                 }
             }
         }

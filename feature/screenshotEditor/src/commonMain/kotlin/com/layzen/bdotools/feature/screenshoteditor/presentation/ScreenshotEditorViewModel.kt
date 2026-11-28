@@ -50,7 +50,7 @@ class ScreenshotEditorViewModel(private val interactor: ScreenshotInteractor) : 
             is ScreenshotEditorEvent.Save -> save(event.measurer)
             is ScreenshotEditorEvent.Copy -> copy(event.measurer)
             is ScreenshotEditorEvent.ApplyToPortraits -> applyToPortraits(event.measurer)
-            is ScreenshotEditorEvent.Press -> _state.update { gesture.press(it, event.at, event.hit) }
+            is ScreenshotEditorEvent.Press -> _state.update { gesture.press(it, event.at, event.hit, event.resize) }
             is ScreenshotEditorEvent.DragMove -> _state.update { gesture.move(it, event.to) }
             ScreenshotEditorEvent.DragEnd -> _state.update(gesture::release)
             is ScreenshotEditorEvent.Tap -> _state.update { gesture.tap(it, event.at) }

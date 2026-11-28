@@ -33,21 +33,42 @@ over the game for 8 seconds:
 ### Tools
 
 Above the screenshot: "Discard changes", undo (Ctrl+Z), redo (Ctrl+Y), the tools, rotation, flip, comparison with the
-original and zoom. The mouse wheel over the screenshot zooms in at the cursor and moves the same zoom slider; holding
-the wheel down pans the picture.
+original and zoom. Right after opening no tool is selected: a click only selects and moves marks.
 The selected tool's settings are in the menu on the left.
 
 - **Crop** — drag over the area that should stay and click the green check mark under it (or Enter); until then the
-  frame can be dragged. The red cross, a right click, a click outside and Esc cancel the crop. After the check mark only
-  the selected part stays on the canvas; Ctrl+Z brings back the whole picture. Aspect ratio: free, 16:9, 1:1, 9:16.
-- **Hide** — the selected area gets pixelated: a name, family, guild or chat.
-- **Arrow**, **Frame**, **Brush** — color and thickness in the menu. Thickness follows the screenshot size: a line
-  on 4K looks the same as on Full HD.
-- **Text** — type the text in the menu and click the screenshot where it should start.
+  frame can be dragged. The red cross, a click outside and Esc cancel the crop. After the check mark only the selected
+  part stays on the canvas; Ctrl+Z brings back the whole picture. Aspect ratio: free, 16:9, 1:1, 9:16.
+- **Hide** — the selected area gets pixelated or blurred: a name, family, guild or chat. The method and strength are in the menu.
+- **Arrow** — hovering the button opens a list of types: arrow, double, dashed, curved, line.
+- **Frame** — shapes in the list on hover: rectangle, circle, diamond, triangle, star and "Highlighter" —
+  a translucent fill, like a marker.
+- **Brush** — draw while holding the mouse button.
+- **Text** — click the screenshot and type right on it; Enter to finish, Esc to cancel. Styles in the list on hover:
+  with shadow, on a dark plate, outlined. Double-click a caption to edit its text.
+- **Number** — each click places a circle with the next number to show the order of steps.
+- Color and thickness are in the menu on the left. The eyedropper next to the palette takes a color from the
+  screenshot, and picked colors stay in the palette. Thickness follows the screenshot size: a line on 4K looks the
+  same as on Full HD.
 - **Rotate** 90° clockwise and **flip** horizontally — you can keep drawing on the rotated picture.
 - **Compare with the original** — while the button is on, the screenshot is shown without edits.
-- **Select and move** — a click on an arrow, frame, line, caption or hidden area outlines it with a dashed line: drag
-  it to move it, the cross above it (or Delete) removes it.
+
+**Marks on the screenshot**
+
+- A new mark is selected right away; a click on a mark selects it: it gets a dashed outline and squares.
+- Drag a mark to move it — its edges and center snap to other marks and to the screenshot center, shown with gold lines.
+- The corner squares (the ends of an arrow) resize it. The mouse wheel over the selected mark changes its thickness
+  (strength for a hidden area), Shift+wheel changes its size.
+- Color, thickness and type in the menu and the lists change the selected mark. Several such changes in a row are
+  undone with one Ctrl+Z.
+- Ctrl+C and Ctrl+V copy and paste a mark, Ctrl+D duplicates it; Ctrl+C without a selected mark copies the picture.
+  The cross above a mark or Delete removes it.
+
+**Mouse and menu**
+
+- The mouse wheel over the screenshot zooms in at the cursor; holding the wheel or Space with the left button pans the picture.
+- The right button opens a menu: edit a caption, copy, duplicate or delete the mark under the cursor, paste, undo,
+  redo and the tools; arrow, frame and text show their types.
 
 ### Retouch
 
@@ -59,7 +80,7 @@ The selected tool's settings are in the menu on the left.
 
 ### Save
 
-- Size — 100, 75, 50 or 25 %; the resulting size in pixels is shown under "Saving".
+- The "Saving" block is at the bottom of the menu, above the buttons. Size — 100, 75, 50 or 25 %; the resulting size in pixels is shown under the title.
 - PNG is lossless, JPG is several times lighter (handy for Discord).
 - "Copy" — the edited picture goes to the clipboard to paste into a chat right away. The browser may ask for permission.
 - "Save copy" — the website downloads the file to the browser's downloads, the app saves it to

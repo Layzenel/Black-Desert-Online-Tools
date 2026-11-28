@@ -32,6 +32,7 @@ import com.layzen.bdotools.uikit.components.DescriptionText
 import com.layzen.bdotools.uikit.components.SectionHeader
 import com.layzen.bdotools.uikit.components.ToolPage
 import com.layzen.bdotools.uikit.components.ToolbarButton
+import com.layzen.bdotools.uikit.components.ToolbarDropdownButton
 import com.layzen.bdotools.uikit.components.ToolbarDivider
 import com.layzen.bdotools.uikit.resources.Res
 import com.layzen.bdotools.uikit.resources.showcase_page_apply
@@ -82,6 +83,14 @@ internal fun ToolPageSample(modifier: Modifier) {
                     onClick = { mode = !mode },
                     selected = mode,
                 )
+                ToolbarDropdownButton(
+                    painterResource(Res.drawable.showcase_tool),
+                    stringResource(Res.string.showcase_page_tool),
+                    onClick = { mode = !mode },
+                ) {
+                    ToolbarButton(painterResource(Res.drawable.showcase_tool), stringResource(Res.string.showcase_page_tool), onClick = { mode = true }, selected = mode)
+                    ToolbarButton(painterResource(Res.drawable.showcase_tool), stringResource(Res.string.showcase_page_disabled), onClick = {}, enabled = false)
+                }
                 Spacer(Modifier.weight(1f))
                 ActionButton(ActionButtonState.Positive(stringResource(Res.string.showcase_page_apply), onClick = {}, tooltip = stringResource(Res.string.showcase_page_apply_tooltip)))
             }

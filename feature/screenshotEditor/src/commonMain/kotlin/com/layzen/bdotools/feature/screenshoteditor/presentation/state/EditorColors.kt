@@ -12,6 +12,6 @@ internal object EditorColors {
         0xFF000000,
     )
 
-    /** Цвет по номеру из палитры; `null` — цвет по умолчанию. */
-    fun of(index: Int?): Long = index?.let(choices::getOrNull) ?: DEFAULT
+    /** Сколько цветов пипетки помнит палитра. */
+    const val MAX_RECENT = 5
 }

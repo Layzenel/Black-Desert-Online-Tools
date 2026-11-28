@@ -22,6 +22,7 @@ import com.layzen.bdotools.feature.screenshoteditor.resources.tool_rotate
 import com.layzen.bdotools.uikit.components.ActionBar
 import com.layzen.bdotools.uikit.components.ToolbarButton
 import com.layzen.bdotools.uikit.components.ToolbarDivider
+import com.layzen.bdotools.uikit.components.ToolbarDropdownButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -49,12 +50,24 @@ internal fun EditorToolbar(state: ScreenshotEditorState, viewport: CanvasViewpor
         )
         ToolbarDivider()
         EditorTool.entries.forEach { tool ->
-            ToolbarButton(
-                painterResource(tool.icon),
-                stringResource(tool.title),
-                onClick = { onEvent(ScreenshotEditorEvent.SelectTool(tool)) },
-                selected = tool == state.tool && !state.comparing,
-            )
+            val selected = tool == state.tool && !state.comparing
+            val select = { onEvent(ScreenshotEditorEvent.SelectTool(tool)) }
+            if (tool.styles.isEmpty()) {
+                ToolbarButton(painterResource(tool.icon), stringResource(tool.title), onClick = select, selected = selected)
+            } else {
+                // значок инструмента — его текущий вид, а при наведении — список всех видов
+                val current = tool.styleIn(state)
+                ToolbarDropdownButton(painterResource(current?.icon ?: tool.icon), stringResource(tool.title), onClick = select, selected = selected) {
+                    tool.styles.forEach { style ->
+                        ToolbarButton(
+                            painterResource(style.icon),
+                            stringResource(style.title),
+                            onClick = { onEvent(ScreenshotEditorEvent.SelectStyle(style)) },
+                            selected = selected && style == current,
+                        )
+                    }
+                }
+            }
         }
         ToolbarDivider()
         ToolbarButton(painterResource(Res.drawable.tool_rotate), stringResource(Res.string.screenshots_rotate), { onEvent(ScreenshotEditorEvent.Rotate) })
